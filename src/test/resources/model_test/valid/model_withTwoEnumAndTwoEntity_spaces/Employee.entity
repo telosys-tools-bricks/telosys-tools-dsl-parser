@@ -1,0 +1,4 @@
+Employee {
+	id : integer { @Id , @NotNull }; // the id
+	poste : string [ 4 ] { @NotNull };
+}

@@ -1,0 +1,2 @@
+Employee
+    id : integer {@Id};

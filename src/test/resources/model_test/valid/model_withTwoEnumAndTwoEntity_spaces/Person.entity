@@ -1,0 +1,8 @@
+Person {
+	id : integer {@Id}; // the id
+	firstName : string {@SizeMax( 3)} ;
+	lastName : string;
+	birthDate : date ;
+	country : #Country[ 999]; 
+	gender : #Gender;
+}

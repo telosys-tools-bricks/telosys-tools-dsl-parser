@@ -1,0 +1,3 @@
+name = ModelWithTwoEntities
+version = 1.0
+description = A model with two entities (Employee references Country)

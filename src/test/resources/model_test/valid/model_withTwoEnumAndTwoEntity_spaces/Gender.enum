@@ -1,0 +1,4 @@
+Gender : string {
+	H = " Homme",
+	F = "Fem me "
+}

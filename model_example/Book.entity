@@ -1,0 +1,6 @@
+Book {
+    id : integer {@Id}; // the id
+    title : string {@NotNull, @SizeMax(50)} ;
+    description : string;
+    author : Author {@NotNull};
+}

@@ -1,0 +1,6 @@
+Library {
+    id : integer {@Id}; // the id
+    name : string {@NotNull};
+    books : Book[];
+    location : string;
+}
