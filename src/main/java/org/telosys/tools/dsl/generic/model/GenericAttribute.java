@@ -1,6 +1,7 @@
 package org.telosys.tools.dsl.generic.model;
 
 import org.telosys.tools.generic.model.Attribute;
+import org.telosys.tools.generic.model.DateType;
 import org.telosys.tools.generic.model.Entity;
 
 public class GenericAttribute implements Attribute {
@@ -15,7 +16,7 @@ public class GenericAttribute implements Attribute {
 	private String databaseType = "";
 	private String dateAfterValue = "";
 	private String dateBeforeValue = "";
-	private Integer dateType;
+	private DateType dateType;
 	private String defaultValue = "";
 	private Entity entity;
 	private String fullType = "";
@@ -51,7 +52,14 @@ public class GenericAttribute implements Attribute {
 	private boolean notEmpty;
 	private boolean notNull;
 	private boolean selected;
-	
+	private boolean hasSequenceGenerator;
+	private boolean hasTableGenerator;
+	private boolean isDateAfter;
+	private boolean isDateBefore;
+	private boolean isDateFuture;
+	private boolean isDatePast;
+	private boolean isUsedInForeignKey;
+
 	public String getName() {
 		return name;
 	}
@@ -112,10 +120,10 @@ public class GenericAttribute implements Attribute {
 	public void setDateBeforeValue(String dateBeforeValue) {
 		this.dateBeforeValue = dateBeforeValue;
 	}
-	public Integer getDateType() {
+	public DateType getDateType() {
 		return dateType;
 	}
-	public void setDateType(Integer dateType) {
+	public void setDateType(DateType dateType) {
 		this.dateType = dateType;
 	}
 	public String getDefaultValue() {
@@ -274,6 +282,17 @@ public class GenericAttribute implements Attribute {
 	public String getWrapperType() {
 		return wrapperType;
 	}
+
+	@Override
+	public boolean hasSequenceGenerator() {
+		return hasSequenceGenerator;
+	}
+
+	@Override
+	public boolean hasTableGenerator() {
+		return hasTableGenerator;
+	}
+
 	public void setWrapperType(String wrapperType) {
 		this.wrapperType = wrapperType;
 	}
@@ -286,6 +305,27 @@ public class GenericAttribute implements Attribute {
 	public boolean isDatabaseNotNull() {
 		return databaseNotNull;
 	}
+
+	@Override
+	public boolean isDateAfter() {
+		return isDateAfter;
+	}
+
+	@Override
+	public boolean isDateBefore() {
+		return isDateBefore;
+	}
+
+	@Override
+	public boolean isDateFuture() {
+		return isDateFuture;
+	}
+
+	@Override
+	public boolean isDatePast() {
+		return isDatePast;
+	}
+
 	public void setDatabaseNotNull(boolean databaseNotNull) {
 		this.databaseNotNull = databaseNotNull;
 	}
@@ -304,6 +344,15 @@ public class GenericAttribute implements Attribute {
 	public boolean isLongText() {
 		return longText;
 	}
+
+	public boolean isHasSequenceGenerator() {
+		return hasSequenceGenerator;
+	}
+
+	public void setHasSequenceGenerator(boolean hasSequenceGenerator) {
+		this.hasSequenceGenerator = hasSequenceGenerator;
+	}
+
 	public void setLongText(boolean longText) {
 		this.longText = longText;
 	}
@@ -328,6 +377,12 @@ public class GenericAttribute implements Attribute {
 	public boolean isSelected() {
 		return selected;
 	}
+
+	@Override
+	public boolean isUsedInForeignKey() {
+		return isUsedInForeignKey;
+	}
+
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}

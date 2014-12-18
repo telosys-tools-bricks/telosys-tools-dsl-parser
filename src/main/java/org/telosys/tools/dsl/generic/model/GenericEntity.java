@@ -9,7 +9,9 @@ import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.Link;
 
 public class GenericEntity implements Entity {
-	
+
+	private String className;
+	private String packageName;
 	private List<Attribute> attributes = new ArrayList<Attribute>();
 	private String databaseCatalog = "";
 	private List<ForeignKey> databaseForeignKeys = new ArrayList<ForeignKey>();
@@ -18,7 +20,6 @@ public class GenericEntity implements Entity {
 	private String databaseType = "";
 	private String fullName = "";
 	private List<Link> links = new ArrayList<Link>();
-	private String name = "";
 	private String _package = "";
 	private Boolean tableType = Boolean.FALSE;
 	private Boolean viewType = Boolean.FALSE;
@@ -32,8 +33,17 @@ public class GenericEntity implements Entity {
 		return null;
 	}
 
+	public void setClassName(String className) {
+		this.className = className;
+	}
 	public List<Attribute> getAttributes() {
 		return attributes;
+	}
+	public String getClassName() {
+		return className;
+	}
+	public String getPackageName() {
+		return packageName;
 	}
 	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
@@ -79,12 +89,6 @@ public class GenericEntity implements Entity {
 	}
 	public void setLinks(List<Link> links) {
 		this.links = links;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 	public String getPackage() {
 		return _package;

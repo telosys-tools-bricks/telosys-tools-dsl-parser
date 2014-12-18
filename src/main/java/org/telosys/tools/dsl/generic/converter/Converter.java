@@ -49,11 +49,11 @@ public class Converter {
 		for(DomainEntity domainEntity : domainModel.getEntities()) {
 			GenericEntity genericEntity = new GenericEntity();
 			genericModel.getEntities().add(genericEntity);
-			genericEntity.setName(convert(domainEntity.getName(), EMPTY_STRING));
+			genericEntity.setClassName(convert(domainEntity.getName(), EMPTY_STRING));
 		}
 		// Define all attributes with links resolution between entities
 		for(DomainEntity domainEntity : domainModel.getEntities()) {
-			GenericEntity genericEntity = (GenericEntity) genericModel.getEntityByName(domainEntity.getName());
+			GenericEntity genericEntity = (GenericEntity) genericModel.getEntityByClassName(domainEntity.getName());
 			convertAttributes(domainEntity, genericEntity, genericModel);
 		}
 	}

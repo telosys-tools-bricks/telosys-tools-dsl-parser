@@ -17,15 +17,24 @@ public class GenericModel implements Model {
 	private String databaseProductName = "";
 	private List<Entity> entities = new ArrayList<Entity>();
 
-	public Entity getEntityByName(String name) {
+	@Override
+	public Entity getEntityByClassName(String name) {
 		for(Entity entity : getEntities()) {
-			if(name.equals(entity.getName())) {
+			if(name.equals(entity.getClassName())) {
 				return entity;
 			}
 		}
 		return null;
 	}
-
+	@Override
+	public Entity getEntityByTableName(String name) {
+		for(Entity entity : getEntities()) {
+			if(name.equals(entity.getFullName())) {
+				return entity;
+			}
+		}
+		return null;
+	}
 	public String getName() {
 		return name;
 	}
