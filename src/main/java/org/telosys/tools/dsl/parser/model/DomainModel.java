@@ -149,6 +149,14 @@ private final String modelDescription ;
     }
 
     /**
+     * Return entities
+     * @return entities
+     */
+    public Collection<DomainEntity> getEntities() {
+		return entities.values();
+	}
+
+    /**
      * Returns the number of entities currently defined in the model
      *
      * @return
