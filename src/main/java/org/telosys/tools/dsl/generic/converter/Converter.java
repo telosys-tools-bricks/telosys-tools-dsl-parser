@@ -8,13 +8,7 @@ import java.util.Map;
 import org.telosys.tools.dsl.generic.model.GenericAttribute;
 import org.telosys.tools.dsl.generic.model.GenericEntity;
 import org.telosys.tools.dsl.generic.model.GenericModel;
-import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainEntityField;
-import org.telosys.tools.dsl.parser.model.DomainEnumeration;
-import org.telosys.tools.dsl.parser.model.DomainModel;
-import org.telosys.tools.dsl.parser.model.DomainNeutralType;
-import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
-import org.telosys.tools.dsl.parser.model.DomainType;
+import org.telosys.tools.dsl.parser.model.*;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
 
@@ -30,7 +24,8 @@ public class Converter {
 	public Model convertToGenericModel(DomainModel domainModel) {
 		GenericModel genericModel = new GenericModel();
 		genericModel.setName(convert(domainModel.getName(), EMPTY_STRING));
-		
+
+		// convert all entities
 		convertEntities(domainModel, genericModel);
 		
 		return genericModel;
@@ -51,7 +46,7 @@ public class Converter {
 			genericModel.getEntities().add(genericEntity);
 			genericEntity.setClassName(convert(domainEntity.getName(), EMPTY_STRING));
 		}
-		// Define all attributes with links resolution between entities
+		// Links resolution
 		for(DomainEntity domainEntity : domainModel.getEntities()) {
 			GenericEntity genericEntity = (GenericEntity) genericModel.getEntityByClassName(domainEntity.getName());
 			convertAttributes(domainEntity, genericEntity, genericModel);
@@ -75,14 +70,20 @@ public class Converter {
 			genericAttribute.setName(convert(domainEntityField.getName(), EMPTY_STRING));
 		
 			DomainType domainType = domainEntityField.getType();
+
+			// Java type
 			if(domainType instanceof DomainNeutralType) {
 				DomainNeutralType domainNeutralType = (DomainNeutralType) domainType;
 				genericAttribute.setType(convertNeutralType(domainNeutralType, EMPTY_STRING));
 			}
+
+			// Enumeration
 			if(domainType instanceof DomainEnumeration) {
 				DomainEnumeration<?> domainEnumeration = (DomainEnumeration<?>) domainType;
 				// TODO Add Enumerations
 			}
+
+			// Link
 			if(domainType instanceof DomainEntity) {
 				DomainEntity domainEntityTarget = (DomainEntity) domainType;
 				GenericEntity genericEntityTarget = null; 
@@ -93,9 +94,54 @@ public class Converter {
 				}
 				// TODO Add Foreign Key
 			}
+
+			// Annotation
+			if(domainEntityField.getAnnotations() != null) {
+				for(DomainEntityFieldAnnotation annotation : domainEntityField.getAnnotations().values()) {
+					if("@Id".equals(annotation.getName())) {
+						genericAttribute.setKeyElement(true);
+					}
+					if("@NotNull".equals(annotation.getName())) {
+						genericAttribute.setNotNull(true);
+					}
+					if("@Min".equals(annotation.getName())) {
+						Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
+						if(parameterValue != null) {
+							genericAttribute.setMinValue(parameterValue);
+						}
+					}
+					if("@Max".equals(annotation.getName())) {
+						Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
+						if(parameterValue != null) {
+							genericAttribute.setMaxValue(parameterValue);
+						}
+					}
+					if("@SizeMin".equals(annotation.getName())) {
+						Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
+						if(parameterValue != null) {
+							genericAttribute.setMinLength(parameterValue);
+						}
+					}
+					if("@SizeMax".equals(annotation.getName())) {
+						Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
+						if(parameterValue != null) {
+							genericAttribute.setMaxLength(parameterValue);
+						}
+					}
+					if("@Past".equals(annotation.getName())) {
+						genericAttribute.setDatePast(true);
+					}
+					if("@Future".equals(annotation.getName())) {
+						genericAttribute.setDateFuture(true);
+					}
+				}
+			}
 		}
 	}
-	
+
+	/**
+	 * Conversion des types
+	 */
 	private static final Map<String, String> mapTypeConversion = new HashMap<String, String>();
 	static {
 		mapTypeConversion.put(DomainNeutralTypes.BOOLEAN, Boolean.class.getName());
@@ -132,6 +178,25 @@ public class Converter {
 			return value;
 		}
 		return defaultValue;
+	}
+
+	/**
+	 * Convert String value to Integer
+	 * @param value String value
+	 * @param defaultValue Default Integer value
+	 * @return Integer value
+	 */
+	private Integer convertStringToInteger(String value, Integer defaultValue) {
+		if(!isDefined(value)) {
+			return defaultValue;
+		}
+		Integer integerValue;
+		try {
+			integerValue = Integer.valueOf(value);
+		} catch(NumberFormatException e) {
+			integerValue = defaultValue;
+		}
+		return integerValue;
 	}
 	
 	/**

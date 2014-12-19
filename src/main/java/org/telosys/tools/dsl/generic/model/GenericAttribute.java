@@ -63,9 +63,6 @@ public class GenericAttribute implements Attribute {
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
 	public String getBooleanFalseValue() {
 		return booleanFalseValue;
 	}
@@ -311,8 +308,17 @@ public class GenericAttribute implements Attribute {
 		return isDateAfter;
 	}
 
+	public boolean isHasTableGenerator() {
+		return hasTableGenerator;
+	}
+
+	public void setHasTableGenerator(boolean hasTableGenerator) {
+		this.hasTableGenerator = hasTableGenerator;
+	}
+
 	@Override
 	public boolean isDateBefore() {
+
 		return isDateBefore;
 	}
 
@@ -386,6 +392,29 @@ public class GenericAttribute implements Attribute {
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}
-	
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setDateAfter(boolean isDateAfter) {
+		this.isDateAfter = isDateAfter;
+	}
+
+	public void setDateBefore(boolean isDateBefore) {
+		this.isDateBefore = isDateBefore;
+	}
+
+	public void setDateFuture(boolean isDateFuture) {
+		this.isDateFuture = isDateFuture;
+	}
+
+	public void setDatePast(boolean isDatePast) {
+		this.isDatePast = isDatePast;
+	}
+
+	public void setUsedInForeignKey(boolean isUsedInForeignKey) {
+		this.isUsedInForeignKey = isUsedInForeignKey;
+	}
+
 	
 }

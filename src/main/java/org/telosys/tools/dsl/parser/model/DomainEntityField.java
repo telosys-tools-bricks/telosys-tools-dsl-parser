@@ -169,4 +169,12 @@ public class DomainEntityField {
         Collections.sort(names);
         return names;
     }
+
+    /**
+     * Return annotations
+     * @return annotations
+     */
+    public Map<String, DomainEntityFieldAnnotation> getAnnotations() {
+        return this.annotations;
+    }
 }

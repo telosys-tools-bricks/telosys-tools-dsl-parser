@@ -8,16 +8,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainEntityField;
-import org.telosys.tools.dsl.parser.model.DomainEnumerationForDecimal;
-import org.telosys.tools.dsl.parser.model.DomainEnumerationForInteger;
-import org.telosys.tools.dsl.parser.model.DomainEnumerationForString;
-import org.telosys.tools.dsl.parser.model.DomainModel;
-import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
+import org.telosys.tools.dsl.parser.model.*;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
+
+import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConverterTest {
@@ -124,6 +120,82 @@ public class ConverterTest {
 		assertTrue(entity_2.getAttributes().isEmpty());
 	}
 
+	@Test
+	public void testAttributeWithAnnotations() {
+		// Given
+		DomainModel domainModel = new DomainModel("domainModel");
+		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
+
+		domainModel.addEntity(domainEntity_1);
+		DomainEntityField domainEntityField_1_1 = new DomainEntityField("field_1_1", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainEntityField domainEntityField_1_2 = new DomainEntityField("field_1_2", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainEntityField domainEntityField_1_3 = new DomainEntityField("field_1_3", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainEntityField domainEntityField_1_4 = new DomainEntityField("field_1_4", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainEntityField domainEntityField_1_5 = new DomainEntityField("field_1_5", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainEntityField domainEntityField_1_6 = new DomainEntityField("field_1_6", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainEntityField domainEntityField_1_7 = new DomainEntityField("field_1_7", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainEntityField domainEntityField_1_8 = new DomainEntityField("field_1_8", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		domainEntity_1.addField(domainEntityField_1_1);
+		domainEntity_1.addField(domainEntityField_1_2);
+		domainEntity_1.addField(domainEntityField_1_3);
+		domainEntity_1.addField(domainEntityField_1_4);
+		domainEntity_1.addField(domainEntityField_1_5);
+		domainEntity_1.addField(domainEntityField_1_6);
+		domainEntity_1.addField(domainEntityField_1_7);
+		domainEntity_1.addField(domainEntityField_1_8);
+		domainEntityField_1_1.addAnnotation(new DomainEntityFieldAnnotation("@Id"));
+		domainEntityField_1_2.addAnnotation(new DomainEntityFieldAnnotation("@NotNull"));
+		domainEntityField_1_3.addAnnotation(new DomainEntityFieldAnnotation("@Min", "1"));
+		domainEntityField_1_4.addAnnotation(new DomainEntityFieldAnnotation("@Max", "2"));
+		domainEntityField_1_5.addAnnotation(new DomainEntityFieldAnnotation("@SizeMin", "3"));
+		domainEntityField_1_6.addAnnotation(new DomainEntityFieldAnnotation("@SizeMax", "4"));
+		domainEntityField_1_7.addAnnotation(new DomainEntityFieldAnnotation("@Past"));
+		domainEntityField_1_8.addAnnotation(new DomainEntityFieldAnnotation("@Future"));
+
+		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
+		domainModel.addEntity(domainEntity_2);
+
+		// When
+		Model model = converter.convertToGenericModel(domainModel);
+
+		// Then
+		assertEquals("domainModel", model.getName());
+		assertEquals(2, model.getEntities().size());
+
+		// entity 1
+		Entity entity_1 = getEntityByClassName(model, "domainEntity_1");
+		assertEquals("domainEntity_1", entity_1.getClassName());
+
+		// attributes of entity 1
+		assertEquals(8, entity_1.getAttributes().size());
+
+		assertEquals("java.lang.Boolean", getAttributeByName(entity_1, "field_1_2").getType());
+
+		Attribute attribute_1_1 = getAttributeByName(entity_1, "field_1_1");
+		Attribute attribute_1_2 = getAttributeByName(entity_1, "field_1_2");
+		Attribute attribute_1_3 = getAttributeByName(entity_1, "field_1_3");
+		Attribute attribute_1_4 = getAttributeByName(entity_1, "field_1_4");
+		Attribute attribute_1_5 = getAttributeByName(entity_1, "field_1_5");
+		Attribute attribute_1_6 = getAttributeByName(entity_1, "field_1_6");
+		Attribute attribute_1_7 = getAttributeByName(entity_1, "field_1_7");
+		Attribute attribute_1_8 = getAttributeByName(entity_1, "field_1_8");
+		assertTrue(attribute_1_1.isKeyElement());
+		assertTrue(attribute_1_2.isNotNull());
+		assertEquals(Integer.valueOf(1), attribute_1_3.getMinValue());
+		assertEquals(Integer.valueOf(2), attribute_1_4.getMaxValue());
+		assertEquals(Integer.valueOf(3), attribute_1_5.getMinLength());
+		assertEquals(Integer.valueOf(4), attribute_1_6.getMaxLength());
+		assertTrue(attribute_1_7.isDatePast());
+		assertTrue(attribute_1_8.isDateFuture());
+
+		// entity 2
+		Entity entity_2 = getEntityByClassName(model, "domainEntity_2");
+		assertEquals("domainEntity_2", entity_2.getClassName());
+
+		// attributes of entity 2
+		assertTrue(entity_2.getAttributes().isEmpty());
+	}
+
 	// @Test
 	public void testAttributeWithEnumeration() {
 		// Given
@@ -203,5 +275,4 @@ public class ConverterTest {
 		}
 		return null;
 	}
-	
 }
