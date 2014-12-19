@@ -13,16 +13,16 @@ public class GenericEntity implements Entity {
 	private String className;
 	private String packageName;
 	private List<Attribute> attributes = new ArrayList<Attribute>();
-	private String databaseCatalog = "";
+	private String databaseCatalog;
 	private List<ForeignKey> databaseForeignKeys = new ArrayList<ForeignKey>();
-	private String databaseSchema = "";
-	private String databaseTable = "";
-	private String databaseType = "";
-	private String fullName = "";
+	private String databaseSchema;
+	private String databaseTable;
+	private String databaseType;
+	private String fullName;
 	private List<Link> links = new ArrayList<Link>();
-	private String _package = "";
-	private Boolean tableType = Boolean.FALSE;
-	private Boolean viewType = Boolean.FALSE;
+	private String _package;
+	private Boolean tableType;
+	private Boolean viewType;
 
 	public Attribute getAttributeByName(String name) {
 		for(Attribute attribute : getAttributes()) {

@@ -105,14 +105,22 @@ public class ConverterTest {
 		// attributes of entity 1
 		assertEquals(7, entity_1.getAttributes().size());
 		
-		assertEquals("java.lang.Boolean", getAttributeByName(entity_1, "field_1_2").getType());
-		assertEquals("java.util.Date", getAttributeByName(entity_1, "field_1_4").getType());
-		assertEquals("java.math.BigDecimal", getAttributeByName(entity_1, "field_1_5").getType());
-		assertEquals("java.lang.Integer", getAttributeByName(entity_1, "field_1_6").getType());
-		assertEquals("java.lang.String", getAttributeByName(entity_1, "field_1_7").getType());
-		assertEquals("java.util.Date", getAttributeByName(entity_1, "field_1_8").getType());
-		assertEquals("java.util.Date", getAttributeByName(entity_1, "field_1_9").getType());
-		
+		assertEquals("Boolean", getAttributeByName(entity_1, "field_1_2").getSimpleType());
+		assertEquals("Date", getAttributeByName(entity_1, "field_1_4").getSimpleType());
+		assertEquals("BigDecimal", getAttributeByName(entity_1, "field_1_5").getSimpleType());
+		assertEquals("Integer", getAttributeByName(entity_1, "field_1_6").getSimpleType());
+		assertEquals("String", getAttributeByName(entity_1, "field_1_7").getSimpleType());
+		assertEquals("Date", getAttributeByName(entity_1, "field_1_8").getSimpleType());
+		assertEquals("Date", getAttributeByName(entity_1, "field_1_9").getSimpleType());
+
+		assertEquals("java.lang.Boolean", getAttributeByName(entity_1, "field_1_2").getFullType());
+		assertEquals("java.util.Date", getAttributeByName(entity_1, "field_1_4").getFullType());
+		assertEquals("java.math.BigDecimal", getAttributeByName(entity_1, "field_1_5").getFullType());
+		assertEquals("java.lang.Integer", getAttributeByName(entity_1, "field_1_6").getFullType());
+		assertEquals("java.lang.String", getAttributeByName(entity_1, "field_1_7").getFullType());
+		assertEquals("java.util.Date", getAttributeByName(entity_1, "field_1_8").getFullType());
+		assertEquals("java.util.Date", getAttributeByName(entity_1, "field_1_9").getFullType());
+
 		// entity 2
 		Entity entity_2 = getEntityByClassName(model, "domainEntity_2");
 		assertEquals("domainEntity_2", entity_2.getClassName());
@@ -170,7 +178,7 @@ public class ConverterTest {
 		// attributes of entity 1
 		assertEquals(8, entity_1.getAttributes().size());
 
-		assertEquals("java.lang.Boolean", getAttributeByName(entity_1, "field_1_2").getType());
+		assertEquals("java.lang.Boolean", getAttributeByName(entity_1, "field_1_2").getFullType());
 
 		Attribute attribute_1_1 = getAttributeByName(entity_1, "field_1_1");
 		Attribute attribute_1_2 = getAttributeByName(entity_1, "field_1_2");
@@ -256,7 +264,7 @@ public class ConverterTest {
 
 		GenericEntity entity_2 = (GenericEntity) getEntityByClassName(model, "domainEntity_2");
 
-		assertTrue(entity_1.getAttributeByName("field_1_1").getEntity() == entity_2);
+		assertTrue(entity_1.getLinks().get(0).getTargetEntityClassName() == "domainEntity_2");
 		
 	}
 	

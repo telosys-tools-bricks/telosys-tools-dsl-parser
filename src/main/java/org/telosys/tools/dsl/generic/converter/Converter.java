@@ -5,10 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.telosys.tools.dsl.generic.model.GenericAttribute;
-import org.telosys.tools.dsl.generic.model.GenericEntity;
-import org.telosys.tools.dsl.generic.model.GenericLink;
-import org.telosys.tools.dsl.generic.model.GenericModel;
+import org.telosys.tools.dsl.generic.model.*;
 import org.telosys.tools.dsl.parser.model.*;
 import org.telosys.tools.generic.model.*;
 
@@ -24,6 +21,8 @@ public class Converter {
 	public Model convertToGenericModel(DomainModel domainModel) {
 		GenericModel genericModel = new GenericModel();
 		genericModel.setName(convert(domainModel.getName(), EMPTY_STRING));
+		genericModel.setType(ModelType.DOMAIN_SPECIFIC_LANGUAGE);
+		genericModel.setVersion(GenericModelVersion.VERSION);
 
 		// convert all entities
 		convertEntities(domainModel, genericModel);
@@ -45,6 +44,7 @@ public class Converter {
 			GenericEntity genericEntity = new GenericEntity();
 			genericModel.getEntities().add(genericEntity);
 			genericEntity.setClassName(convert(domainEntity.getName(), EMPTY_STRING));
+			genericEntity.setFullName(convert(domainEntity.getName(), EMPTY_STRING));
 		}
 		// Links resolution
 		for(DomainEntity domainEntity : domainModel.getEntities()) {
@@ -74,7 +74,8 @@ public class Converter {
 			// Java type
 			if(domainFieldType.isNeutralType()) {
 				DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
-				genericAttribute.setType(convertNeutralType(domainNeutralType, EMPTY_STRING));
+				genericAttribute.setSimpleType(convertNeutralTypeToSimpleType(domainNeutralType, EMPTY_STRING));
+				genericAttribute.setFullType(convertNeutralTypeToFullType(domainNeutralType, EMPTY_STRING));
 			}
 
 			// Enumeration
@@ -119,7 +120,10 @@ public class Converter {
 					genericLink.setJoinTableName(null);
 					genericLink.setMappedBy(null);
 					genericLink.setOptional(Optional.UNDEFINED);
-					genericLink.setOwningSide(true);
+					genericLink.setOwningSide(false);
+					genericLink.setSelected(false);
+					genericLink.setSourceTableName(null);
+					genericLink.setTargetTableName(null);
 				}
 			}
 
@@ -170,15 +174,23 @@ public class Converter {
 	/**
 	 * Conversion des types
 	 */
-	private static final Map<String, String> mapTypeConversion = new HashMap<String, String>();
+	private static final Map<String, String> mapFullTypeConversion = new HashMap<String, String>();
+	private static final Map<String, String> mapSimpleTypeConversion = new HashMap<String, String>();
 	static {
-		mapTypeConversion.put(DomainNeutralTypes.BOOLEAN, Boolean.class.getName());
-		mapTypeConversion.put(DomainNeutralTypes.DATE, Date.class.getName());
-		mapTypeConversion.put(DomainNeutralTypes.DECIMAL, BigDecimal.class.getName());
-		mapTypeConversion.put(DomainNeutralTypes.INTEGER, Integer.class.getName());
-		mapTypeConversion.put(DomainNeutralTypes.STRING, String.class.getName());
-		mapTypeConversion.put(DomainNeutralTypes.TIME, Date.class.getName());
-		mapTypeConversion.put(DomainNeutralTypes.TIMESTAMP, Date.class.getName());
+		mapFullTypeConversion.put(DomainNeutralTypes.BOOLEAN, Boolean.class.getCanonicalName());
+		mapFullTypeConversion.put(DomainNeutralTypes.DATE, Date.class.getCanonicalName());
+		mapFullTypeConversion.put(DomainNeutralTypes.DECIMAL, BigDecimal.class.getCanonicalName());
+		mapFullTypeConversion.put(DomainNeutralTypes.INTEGER, Integer.class.getCanonicalName());
+		mapFullTypeConversion.put(DomainNeutralTypes.STRING, String.class.getCanonicalName());
+		mapFullTypeConversion.put(DomainNeutralTypes.TIME, Date.class.getCanonicalName());
+		mapFullTypeConversion.put(DomainNeutralTypes.TIMESTAMP, Date.class.getCanonicalName());
+		mapSimpleTypeConversion.put(DomainNeutralTypes.BOOLEAN, Boolean.class.getSimpleName());
+		mapSimpleTypeConversion.put(DomainNeutralTypes.DATE, Date.class.getSimpleName());
+		mapSimpleTypeConversion.put(DomainNeutralTypes.DECIMAL, BigDecimal.class.getSimpleName());
+		mapSimpleTypeConversion.put(DomainNeutralTypes.INTEGER, Integer.class.getSimpleName());
+		mapSimpleTypeConversion.put(DomainNeutralTypes.STRING, String.class.getSimpleName());
+		mapSimpleTypeConversion.put(DomainNeutralTypes.TIME, Date.class.getSimpleName());
+		mapSimpleTypeConversion.put(DomainNeutralTypes.TIMESTAMP, Date.class.getSimpleName());
 	}
 
 	/**
@@ -187,11 +199,25 @@ public class Converter {
 	 * @param defaultValue Default generic model type
 	 * @return Generic model type
 	 */
-	private String convertNeutralType(DomainNeutralType domainNeutralType, String defaultValue) {
+	private String convertNeutralTypeToSimpleType(DomainNeutralType domainNeutralType, String defaultValue) {
 		if(domainNeutralType == null) {
 			return defaultValue;
 		}
-		String genericModelType = mapTypeConversion.get(domainNeutralType.getName());
+		String genericModelType = mapSimpleTypeConversion.get(domainNeutralType.getName());
+		return genericModelType;
+	}
+
+	/**
+	 * Convert DSL types (string, integer, etc.) to Generic model types.
+	 * @param domainNeutralType DSL type
+	 * @param defaultValue Default generic model type
+	 * @return Generic model type
+	 */
+	private String convertNeutralTypeToFullType(DomainNeutralType domainNeutralType, String defaultValue) {
+		if(domainNeutralType == null) {
+			return defaultValue;
+		}
+		String genericModelType = mapFullTypeConversion.get(domainNeutralType.getName());
 		return genericModelType;
 	}
 
