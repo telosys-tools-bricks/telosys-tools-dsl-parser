@@ -86,13 +86,11 @@ public class Converter {
 			// Link
 			if(domainType instanceof DomainEntity) {
 				DomainEntity domainEntityTarget = (DomainEntity) domainType;
-				GenericEntity genericEntityTarget = null; 
-				for(Entity entity : genericModel.getEntities()) {
-					if(domainEntityTarget.getName().equals(entity)) {
-						genericEntityTarget = (GenericEntity) entity;
-					}
+				GenericEntity genericEntityTarget =
+						(GenericEntity) genericModel.getEntityByClassName(domainEntityTarget.getName());
+				if(genericEntityTarget != null) {
+					genericAttribute.setEntity(genericEntityTarget);
 				}
-				// TODO Add Foreign Key
 			}
 
 			// Annotation

@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.telosys.tools.dsl.generic.model.GenericEntity;
 import org.telosys.tools.dsl.parser.model.*;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
@@ -250,11 +251,12 @@ public class ConverterTest {
 		assertEquals(2, model.getEntities().size());
 		
 		// entity 1
-		Entity entity_1 = getEntityByClassName(model, "domainEntity_1");
+		GenericEntity entity_1 = (GenericEntity) getEntityByClassName(model, "domainEntity_1");
 		assertEquals("domainEntity_1", entity_1.getClassName());
-		
-		// TODO
-		fail("TODO : Link between entities");
+
+		GenericEntity entity_2 = (GenericEntity) getEntityByClassName(model, "domainEntity_2");
+
+		assertTrue(entity_1.getAttributeByName("field_1_1").getEntity() == entity_2);
 		
 	}
 	
