@@ -7,10 +7,10 @@ import java.util.Map;
 
 import org.telosys.tools.dsl.generic.model.GenericAttribute;
 import org.telosys.tools.dsl.generic.model.GenericEntity;
+import org.telosys.tools.dsl.generic.model.GenericLink;
 import org.telosys.tools.dsl.generic.model.GenericModel;
 import org.telosys.tools.dsl.parser.model.*;
-import org.telosys.tools.generic.model.Entity;
-import org.telosys.tools.generic.model.Model;
+import org.telosys.tools.generic.model.*;
 
 public class Converter {
 	
@@ -69,27 +69,57 @@ public class Converter {
 			genericEntity.getAttributes().add(genericAttribute);
 			genericAttribute.setName(convert(domainEntityField.getName(), EMPTY_STRING));
 		
-			DomainType domainType = domainEntityField.getType();
+			DomainType domainFieldType = domainEntityField.getType();
 
 			// Java type
-			if(domainType instanceof DomainNeutralType) {
-				DomainNeutralType domainNeutralType = (DomainNeutralType) domainType;
+			if(domainFieldType.isNeutralType()) {
+				DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
 				genericAttribute.setType(convertNeutralType(domainNeutralType, EMPTY_STRING));
 			}
 
 			// Enumeration
-			if(domainType instanceof DomainEnumeration) {
-				DomainEnumeration<?> domainEnumeration = (DomainEnumeration<?>) domainType;
+			if(domainFieldType.isEnumeration()) {
+				DomainEnumeration<?> domainEnumeration = (DomainEnumeration<?>) domainFieldType;
 				// TODO Add Enumerations
 			}
 
 			// Link
-			if(domainType instanceof DomainEntity) {
-				DomainEntity domainEntityTarget = (DomainEntity) domainType;
+			if(domainFieldType.isEntity()) {
+				DomainEntity domainEntityTarget = (DomainEntity) domainFieldType;
 				GenericEntity genericEntityTarget =
 						(GenericEntity) genericModel.getEntityByClassName(domainEntityTarget.getName());
 				if(genericEntityTarget != null) {
-					genericAttribute.setEntity(genericEntityTarget);
+					GenericLink genericLink = new GenericLink();
+					genericEntity.getLinks().add(genericLink);
+					genericLink.setTargetEntityClassName(domainEntityTarget.getName());
+					Cardinality cardinality;
+					if(domainEntityField.getCardinality() == 1) {
+						cardinality = Cardinality.MANY_TO_ONE;
+					} else {
+						cardinality = Cardinality.ONE_TO_MANY;
+					}
+					genericLink.setCardinality(cardinality);
+					genericLink.setFieldName(domainEntityField.getName());
+					if(domainEntityField.getCardinality() == 1) {
+						genericLink.setFieldType(domainEntityField.getType().getName());
+					} else {
+						genericLink.setFieldType("java.util.List");
+					}
+					genericLink.setTargetEntityClassName(domainEntityField.getType().getName());
+					genericLink.setBasedOnForeignKey(false);
+					genericLink.setBasedOnJoinTable(false);
+					genericLink.setCascadeOptions(null);
+					genericLink.setComparableString("");
+					genericLink.setFetchType(FetchType.DEFAULT);
+					genericLink.setForeignKeyName("");
+					genericLink.setInverseSide(false);
+					genericLink.setInverseSideLinkId(null);
+					genericLink.setJoinColumns(null);
+					genericLink.setJoinTable(null);
+					genericLink.setJoinTableName(null);
+					genericLink.setMappedBy(null);
+					genericLink.setOptional(Optional.UNDEFINED);
+					genericLink.setOwningSide(true);
 				}
 			}
 
