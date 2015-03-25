@@ -65,27 +65,73 @@ public class Converter {
 		}
 		for(DomainEntityField domainEntityField : domainEntity.getFields()) {
 
-			GenericAttribute genericAttribute = new GenericAttribute();
-			genericEntity.getAttributes().add(genericAttribute);
-			genericAttribute.setName(convert(domainEntityField.getName(), EMPTY_STRING));
-		
-			DomainType domainFieldType = domainEntityField.getType();
+            DomainType domainFieldType = domainEntityField.getType();
 
-			// Java type
-			if(domainFieldType.isNeutralType()) {
-				DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
-				genericAttribute.setSimpleType(convertNeutralTypeToSimpleType(domainNeutralType, EMPTY_STRING));
-				genericAttribute.setFullType(convertNeutralTypeToFullType(domainNeutralType, EMPTY_STRING));
-			}
+            // Is link ?
+            if(!domainFieldType.isEntity()) {
 
-			// Enumeration
-			if(domainFieldType.isEnumeration()) {
-				DomainEnumeration<?> domainEnumeration = (DomainEnumeration<?>) domainFieldType;
-				// TODO Add Enumerations
-			}
+                GenericAttribute genericAttribute = new GenericAttribute();
+                genericEntity.getAttributes().add(genericAttribute);
+                genericAttribute.setName(convert(domainEntityField.getName(), EMPTY_STRING));
 
-			// Link
-			if(domainFieldType.isEntity()) {
+                // Java type
+                if (domainFieldType.isNeutralType()) {
+                    DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
+                    genericAttribute.setSimpleType(convertNeutralTypeToSimpleType(domainNeutralType, EMPTY_STRING));
+                    genericAttribute.setFullType(convertNeutralTypeToFullType(domainNeutralType, EMPTY_STRING));
+                }
+
+                // Enumeration
+                if (domainFieldType.isEnumeration()) {
+                    DomainEnumeration<?> domainEnumeration = (DomainEnumeration<?>) domainFieldType;
+                    // TODO Add Enumerations
+                }
+
+                // Annotation
+                if(domainEntityField.getAnnotations() != null) {
+                    for(DomainEntityFieldAnnotation annotation : domainEntityField.getAnnotations().values()) {
+                        if("@Id".equals(annotation.getName())) {
+                            genericAttribute.setKeyElement(true);
+                        }
+                        if("@NotNull".equals(annotation.getName())) {
+                            genericAttribute.setNotNull(true);
+                        }
+                        if("@Min".equals(annotation.getName())) {
+                            Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
+                            if(parameterValue != null) {
+                                genericAttribute.setMinValue(parameterValue);
+                            }
+                        }
+                        if("@Max".equals(annotation.getName())) {
+                            Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
+                            if(parameterValue != null) {
+                                genericAttribute.setMaxValue(parameterValue);
+                            }
+                        }
+                        if("@SizeMin".equals(annotation.getName())) {
+                            Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
+                            if(parameterValue != null) {
+                                genericAttribute.setMinLength(parameterValue);
+                            }
+                        }
+                        if("@SizeMax".equals(annotation.getName())) {
+                            Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
+                            if(parameterValue != null) {
+                                genericAttribute.setMaxLength(parameterValue);
+                            }
+                        }
+                        if("@Past".equals(annotation.getName())) {
+                            genericAttribute.setDatePast(true);
+                        }
+                        if("@Future".equals(annotation.getName())) {
+                            genericAttribute.setDateFuture(true);
+                        }
+                    }
+                }
+
+            } else {
+                // Link
+
 				DomainEntity domainEntityTarget = (DomainEntity) domainFieldType;
 				GenericEntity genericEntityTarget =
 						(GenericEntity) genericModel.getEntityByClassName(domainEntityTarget.getName());
@@ -124,50 +170,18 @@ public class Converter {
 					genericLink.setSelected(false);
 					genericLink.setSourceTableName(null);
 					genericLink.setTargetTableName(null);
+
+                    // Annotation
+                    if(domainEntityField.getAnnotations() != null) {
+                        for(DomainEntityFieldAnnotation annotation : domainEntityField.getAnnotations().values()) {
+                            if("@Embedded".equals(annotation.getName())) {
+                                genericLink.setIsEmbedded(true);
+                            }
+                        }
+                    }
 				}
 			}
 
-			// Annotation
-			if(domainEntityField.getAnnotations() != null) {
-				for(DomainEntityFieldAnnotation annotation : domainEntityField.getAnnotations().values()) {
-					if("@Id".equals(annotation.getName())) {
-						genericAttribute.setKeyElement(true);
-					}
-					if("@NotNull".equals(annotation.getName())) {
-						genericAttribute.setNotNull(true);
-					}
-					if("@Min".equals(annotation.getName())) {
-						Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-						if(parameterValue != null) {
-							genericAttribute.setMinValue(parameterValue);
-						}
-					}
-					if("@Max".equals(annotation.getName())) {
-						Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-						if(parameterValue != null) {
-							genericAttribute.setMaxValue(parameterValue);
-						}
-					}
-					if("@SizeMin".equals(annotation.getName())) {
-						Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-						if(parameterValue != null) {
-							genericAttribute.setMinLength(parameterValue);
-						}
-					}
-					if("@SizeMax".equals(annotation.getName())) {
-						Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-						if(parameterValue != null) {
-							genericAttribute.setMaxLength(parameterValue);
-						}
-					}
-					if("@Past".equals(annotation.getName())) {
-						genericAttribute.setDatePast(true);
-					}
-					if("@Future".equals(annotation.getName())) {
-						genericAttribute.setDateFuture(true);
-					}
-				}
-			}
 		}
 	}
 

@@ -264,7 +264,7 @@ public class ConverterTest {
 
 		GenericEntity entity_2 = (GenericEntity) getEntityByClassName(model, "domainEntity_2");
 
-		assertTrue(entity_1.getLinks().get(0).getTargetEntityClassName() == "domainEntity_2");
+		assertEquals("domainEntity_2", entity_1.getLinks().get(0).getTargetEntityClassName());
 		
 	}
 	

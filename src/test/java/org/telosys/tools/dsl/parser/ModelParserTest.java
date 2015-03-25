@@ -6,14 +6,7 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainEntityField;
-import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
-import org.telosys.tools.dsl.parser.model.DomainEnumeration;
-import org.telosys.tools.dsl.parser.model.DomainEnumerationForString;
-import org.telosys.tools.dsl.parser.model.DomainEnumerationItem;
-import org.telosys.tools.dsl.parser.model.DomainModel;
-import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
+import org.telosys.tools.dsl.parser.model.*;
 
 public class ModelParserTest {
 
@@ -88,6 +81,7 @@ public class ModelParserTest {
         employee.addField(countryField);
         modelToCompare.addEntity(employee);
         assertEquals(modelToCompare,model);
+        assertEquals(DomainTypeNature.ENTITY, model.getEntity("Employee").getField("country").getType().getNature());
     }
 
     @Test
