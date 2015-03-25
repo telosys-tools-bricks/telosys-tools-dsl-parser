@@ -58,6 +58,7 @@ public class ModelParserTest {
 		employee.addField(new DomainEntityField("birthDate", DomainNeutralTypes.getType("date")));
 		DomainEntityField countryField = new DomainEntityField("country", country);
 		countryField.addAnnotation(new DomainEntityFieldAnnotation("Max", "3"));
+		countryField.addAnnotation(new DomainEntityFieldAnnotation("Embedded"));
 		employee.addField(countryField);
 		modelToCompare.addEntity(employee);
 		assertEquals(modelToCompare,model);

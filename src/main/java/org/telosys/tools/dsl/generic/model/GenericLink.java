@@ -28,6 +28,7 @@ public class GenericLink implements Link {
     private JoinTable joinTable;
     private String joinTableName;
     private String comparableString;
+    private boolean isEmbedded;
 
     @Override
     public String getId() {
@@ -225,5 +226,14 @@ public class GenericLink implements Link {
 
     public void setComparableString(String comparableString) {
         this.comparableString = comparableString;
+    }
+
+    public void setIsEmbedded(boolean isEmbedded) {
+        this.isEmbedded = isEmbedded;
+    }
+
+    @Override
+    public boolean isEmbedded() {
+        return this.isEmbedded;
     }
 }

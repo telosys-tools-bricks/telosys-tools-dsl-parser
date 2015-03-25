@@ -39,7 +39,8 @@ public class KeyWords {
 		"SizeMin#",
 		"SizeMax#",
 		"Past",
-		"Future" 
+		"Future",
+		"Embedded"
 	} ;
 	
 	/**
