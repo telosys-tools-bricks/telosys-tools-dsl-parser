@@ -1,0 +1,1 @@
+Person{id:integer{@Id};firstName:string;lastName:string;birthDate:date;country:#Country[998];gender:#Gender;}

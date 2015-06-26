@@ -56,11 +56,11 @@ public class FieldParser {
 
     /**
      * Parse a single field with its own informations
-     *
-     * @param fieldInfo String
+     * @param filename
+     * @param fieldInfo
      * @return The parsed field
      */
-    DomainEntityField parseField(String fieldInfo) {
+    DomainEntityField parseField(String  filename, String fieldInfo) {
         int startDescription = fieldInfo.indexOf(':');
         if (startDescription == -1) {
             String errorMessage = "You must specify the type of the field. The separator between the name of the field and its type is ':'";
@@ -71,12 +71,12 @@ public class FieldParser {
 
         // description and field is required
         if (!name.matches("^[\\w]*$")) {
-            String errorMessage = "The name of the fields must not contains special char " + name;
+            String errorMessage = "The name of the fields must not contains special char " + name + " (file '" + filename+"')";
             this.logger.error(errorMessage);
             throw new EntityParserException(errorMessage);
         }
         if (name.length() == 0) {
-            String errorMessage = "The name of the field is missing";
+            String errorMessage = "The name of the field is missing (file '" + filename+"')";
             this.logger.error(errorMessage);
             throw new EntityParserException(errorMessage);
         }
@@ -107,7 +107,7 @@ public class FieldParser {
                     cardinality = Integer.parseInt(figure.trim());
                     typeName = typeName.substring(0, startArray).trim();
                 } catch (Exception e) {
-                    String errorMessage = "The cardinality for " + typeName + " is not correct";
+                    String errorMessage = "Invalid cardinality for " + typeName + " (file '" + filename+"')";
                     this.logger.error(errorMessage);
                     throw new EntityParserException(errorMessage + "\n Documentation : " + e);
                 }
@@ -122,26 +122,41 @@ public class FieldParser {
         }
 
         DomainType type;
-        // enum
-        if (this.isTypeEnum(typeName)) {
-            if (!this.model.getEnumerationNames().contains(typeName.substring(1))) {
-                String errorMessage = "The enumeration " + typeName.substring(1) + " does not exist";
-                this.logger.error(errorMessage);
-                throw new EntityParserException(errorMessage);
-            } else {
-                type = this.model.getEnumeration(typeName.substring(1));
-            }
-            // other simple type
-        } else if (DomainNeutralTypes.exists(typeName)) {
+//        // enum
+//        if (this.isTypeEnum(typeName)) {
+//            if (!this.model.getEnumerationNames().contains(typeName.substring(1))) {
+//                String errorMessage = "The enumeration " + typeName.substring(1) + " does not exist";
+//                this.logger.error(errorMessage);
+//                throw new EntityParserException(errorMessage);
+//            } else {
+//                type = this.model.getEnumeration(typeName.substring(1));
+//            }
+//            // other simple type
+//        } else if (DomainNeutralTypes.exists(typeName)) {
+//            type = DomainNeutralTypes.getType(typeName);
+//
+//            // from other entity
+//        } else {
+//            if (!model.getEntityNames().contains(typeName)) {
+//                String errorMessage = "The type of the field is incorrect "+typeName;
+//                this.logger.error(errorMessage);
+//                throw new EntityParserException(errorMessage);
+//            } else {
+//                type = model.getEntity(typeName);
+//            }
+//        }
+
+        if (DomainNeutralTypes.exists(typeName)) { // Simple type ( string, int, date, etc )
             type = DomainNeutralTypes.getType(typeName);
 
-            // from other entity
-        } else {
+        } else { // Entity (entity name is supposed to be known )
             if (!model.getEntityNames().contains(typeName)) {
-                String errorMessage = "The type of the field is incorrect "+typeName;
+            	// Reference to an unknown entity => ERROR
+                String errorMessage = "Invalid type '" + typeName  + "' for field '" + name + "' (file '" + filename+"')";
                 this.logger.error(errorMessage);
                 throw new EntityParserException(errorMessage);
             } else {
+            	// Reference to a valid entity : OK
                 type = model.getEntity(typeName);
             }
         }
@@ -154,15 +169,15 @@ public class FieldParser {
         return field;
     }
 
-    /**
-     * Check if the given param is an enum with the specific char
-     *
-     * @param type The type of the field
-     * @return bool - true if it's an enum
-     */
-    private boolean isTypeEnum(String type) {
-        return type.startsWith("#");
-    }
+//    /**
+//     * Check if the given param is an enum with the specific char
+//     *
+//     * @param type The type of the field
+//     * @return bool - true if it's an enum
+//     */
+//    private boolean isTypeEnum(String type) {
+//        return type.startsWith("#");
+//    }
 
     /**
      * Check if the given param is an array of oject

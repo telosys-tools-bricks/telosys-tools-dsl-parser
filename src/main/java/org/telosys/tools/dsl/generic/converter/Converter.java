@@ -81,12 +81,12 @@ public class Converter {
                     genericAttribute.setFullType(convertNeutralTypeToFullType(domainNeutralType, EMPTY_STRING));
                 }
 
-                // Enumeration
-                if (domainFieldType.isEnumeration()) {
-                    DomainEnumeration<?> domainEnumeration = (DomainEnumeration<?>) domainFieldType;
-                    // TODO Add Enumerations
-                }
-
+//                // Enumeration
+//                if (domainFieldType.isEnumeration()) {
+//                    DomainEnumeration<?> domainEnumeration = (DomainEnumeration<?>) domainFieldType;
+//                    // NOT YET AVAILABLE : Add Enumerations
+//                }
+//
                 // Annotation
                 if(domainEntityField.getAnnotations() != null) {
                     for(DomainEntityFieldAnnotation annotation : domainEntityField.getAnnotations().values()) {

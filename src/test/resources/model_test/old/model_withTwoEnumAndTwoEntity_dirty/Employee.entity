@@ -1,0 +1,29 @@
+ // Test // Test
+Employee
+ // Test
+ { // Test
+// Test
+	id  // Test
+	: // Test
+	 integer  // Test
+	 { // Test
+	 @Id,  // Test
+	@NotNull // Test
+	} // Test
+	; // the id
+	// Test
+	poste  // Test
+	:  // Test
+	string  // Test
+	// Test
+	[ // Test
+	// Test
+	] // Test
+	{ // Test
+	@NotNull
+	 // Test
+	 } // Test
+	 ; // Test
+} // Test
+// Test
+ // Test

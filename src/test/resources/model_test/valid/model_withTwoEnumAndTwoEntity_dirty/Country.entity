@@ -1,0 +1,18 @@
+//xxxx
+Country //xxx
+//xxx
+ { //xxx
+	id //xxx
+	 : 
+	 integer 
+	 {@Id};
+	 
+	 //xxxx
+name //xx
+//xx
+	: // xxx
+string;// xxx
+} //xx
+//xxx
+		//xxx
+//xxx

@@ -84,14 +84,17 @@ public class DomainModelParser {
 
         File folder = file.getParentFile();
         Map<String, List<String>> files = getMapFiles(folder);
+        
         DomainModel model = new DomainModel(modelName);
-        List<String> enumerations = files.get(DOT_ENUM);
+        
+//        // ENUMERATIONS ( .enum files )
+//        List<String> enumerations = files.get(DOT_ENUM);
+//        EnumerationParser enumParser = new EnumerationParser();
+//        for (String enumeration : enumerations) {
+//            model.addEnumeration(enumParser.parse(new File(enumeration)));
+//        }
 
-        EnumerationParser enumParser = new EnumerationParser();
-        for (String enumeration : enumerations) {
-            model.addEnumeration(enumParser.parse(new File(enumeration)));
-        }
-
+        // ENTITIES ( .entity files )
         List<String> entities = files.get(DOT_ENTITY);
         for (String entity : entities) {
             File entityFile = new File(entity);
@@ -130,7 +133,7 @@ public class DomainModelParser {
     }
 
     /**
-     * Get all files name and their associate class from a foledr
+     * Get all files name and their associate class from a folder
      *
      * @param folder
      * @return

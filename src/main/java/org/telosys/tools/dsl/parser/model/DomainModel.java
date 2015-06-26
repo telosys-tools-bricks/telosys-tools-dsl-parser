@@ -31,7 +31,7 @@ public class DomainModel {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((entities == null) ? 0 : entities.hashCode());
-        result = prime * result + ((enumerations == null) ? 0 : enumerations.hashCode());
+        //result = prime * result + ((enumerations == null) ? 0 : enumerations.hashCode());
         result = prime * result + ((modelName == null) ? 0 : modelName.hashCode());
         return result;
     }
@@ -55,13 +55,13 @@ public class DomainModel {
         } else if (!entities.equals(other.entities)) {
             return false;
         }
-        if (enumerations == null) {
-            if (other.enumerations != null) {
-                return false;
-            }
-        } else if (!enumerations.equals(other.enumerations)) {
-            return false;
-        }
+//        if (enumerations == null) {
+//            if (other.enumerations != null) {
+//                return false;
+//            }
+//        } else if (!enumerations.equals(other.enumerations)) {
+//            return false;
+//        }
         if (modelName == null) {
             if (other.modelName != null) {
                 return false;
@@ -85,7 +85,7 @@ private final String modelDescription ;
      */
     private final Map<String, DomainEntity> entities = new Hashtable<String, DomainEntity>();
 
-    private final Map<String, DomainEnumeration<?>> enumerations = new Hashtable<String, DomainEnumeration<?>>();
+//    private final Map<String, DomainEnumeration<?>> enumerations = new Hashtable<String, DomainEnumeration<?>>();
 
 
     /**
@@ -118,9 +118,9 @@ private final String modelDescription ;
         if (entities.get(name) != null) {
             throw new EntityParserException("An entity already exists with name '" + name + "'");
         }
-        if (enumerations.get(name) != null) {
-            throw new EntityParserException("An enumeration already exists with name '" + name + "'");
-        }
+//        if (enumerations.get(name) != null) {
+//            throw new EntityParserException("An enumeration already exists with name '" + name + "'");
+//        }
     }
 
     /*------------------------------------------------------------------------------------------
@@ -176,50 +176,50 @@ private final String modelDescription ;
         return names;
     }
 
-    /*------------------------------------------------------------------------------------------
-     ENUMERATION
-    ------------------------------------------------------------------------------------------*/
-
-    /**
-     * Stores a new enumeration <br>
-     * Supposed to be called once for each enumeration
-     *
-     * @param enumeration
-     */
-    public final void addEnumeration(DomainEnumeration<?> enumeration) {
-        checkName(enumeration.getName());
-        enumerations.put(enumeration.getName(), enumeration);
-    }
-
-    /**
-     * Returns an enumeration for the given name (or null if not found)
-     *
-     * @param enumerationName
-     * @return
-     */
-    public final DomainEnumeration<?> getEnumeration(String enumerationName) {
-        return enumerations.get(enumerationName);
-    }
-
-    /**
-     * Returns the number of enumerations currently defined in the model
-     *
-     * @return
-     */
-    public final int getNumberOfEnumerations() {
-        return enumerations.size();
-    }
-
-    /**
-     * Returns all the enumeration names (in alphabetical order)
-     *
-     * @return
-     */
-    public final List<String> getEnumerationNames() {
-        List<String> names = new LinkedList<String>(enumerations.keySet());
-        Collections.sort(names);
-        return names;
-    }
+//    /*------------------------------------------------------------------------------------------
+//     ENUMERATION
+//    ------------------------------------------------------------------------------------------*/
+//
+//    /**
+//     * Stores a new enumeration <br>
+//     * Supposed to be called once for each enumeration
+//     *
+//     * @param enumeration
+//     */
+//    public final void addEnumeration(DomainEnumeration<?> enumeration) {
+//        checkName(enumeration.getName());
+//        enumerations.put(enumeration.getName(), enumeration);
+//    }
+//
+//    /**
+//     * Returns an enumeration for the given name (or null if not found)
+//     *
+//     * @param enumerationName
+//     * @return
+//     */
+//    public final DomainEnumeration<?> getEnumeration(String enumerationName) {
+//        return enumerations.get(enumerationName);
+//    }
+//
+//    /**
+//     * Returns the number of enumerations currently defined in the model
+//     *
+//     * @return
+//     */
+//    public final int getNumberOfEnumerations() {
+//        return enumerations.size();
+//    }
+//
+//    /**
+//     * Returns all the enumeration names (in alphabetical order)
+//     *
+//     * @return
+//     */
+//    public final List<String> getEnumerationNames() {
+//        List<String> names = new LinkedList<String>(enumerations.keySet());
+//        Collections.sort(names);
+//        return names;
+//    }
 
     /*------------------------------------------------------------------------------------------
      ALL
@@ -238,9 +238,9 @@ private final String modelDescription ;
     public String toString() {
     	String enumerationsString= "";
     	
-    	for (String mapKey : enumerations.keySet()) {
-    		enumerationsString += "\n\t "+mapKey + enumerations.get(mapKey);
-    	}
+//    	for (String mapKey : enumerations.keySet()) {
+//    		enumerationsString += "\n\t "+mapKey + enumerations.get(mapKey);
+//    	}
     	
     	String entitiesString= "";
     	

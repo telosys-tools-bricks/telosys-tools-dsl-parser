@@ -205,38 +205,38 @@ public class ConverterTest {
 		assertTrue(entity_2.getAttributes().isEmpty());
 	}
 
-	// @Test
-	public void testAttributeWithEnumeration() {
-		// Given
-		DomainModel domainModel = new DomainModel("domainModel");
-		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
-
-		domainModel.addEntity(domainEntity_1);
-		DomainEntityField domainEntityField_1_1 = new DomainEntityField("field_1_1", new DomainEnumerationForString("enum_string"));
-		DomainEntityField domainEntityField_1_2 = new DomainEntityField("field_1_2", new DomainEnumerationForInteger("enum_integer"));
-		DomainEntityField domainEntityField_1_3 = new DomainEntityField("field_1_3", new DomainEnumerationForDecimal("enum_decimal"));
-		domainEntity_1.addField(domainEntityField_1_1);
-		domainEntity_1.addField(domainEntityField_1_2);
-		domainEntity_1.addField(domainEntityField_1_3);
-		
-		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
-		domainModel.addEntity(domainEntity_2);
-		
-		// When
-		Model model = converter.convertToGenericModel(domainModel);
-		
-		// Then
-		assertEquals("domainModel", model.getName());
-		assertEquals(2, model.getEntities().size());
-		
-		// entity 1
-		Entity entity_1 = getEntityByClassName(model, "domainEntity_1");
-		assertEquals("domainEntity_1", entity_1.getClassName());
-		
-		// TODO
-		fail("TODO : Enumerations");
-
-	}
+//	// @Test
+//	public void testAttributeWithEnumeration() {
+//		// Given
+//		DomainModel domainModel = new DomainModel("domainModel");
+//		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
+//
+//		domainModel.addEntity(domainEntity_1);
+//		DomainEntityField domainEntityField_1_1 = new DomainEntityField("field_1_1", new DomainEnumerationForString("enum_string"));
+//		DomainEntityField domainEntityField_1_2 = new DomainEntityField("field_1_2", new DomainEnumerationForInteger("enum_integer"));
+//		DomainEntityField domainEntityField_1_3 = new DomainEntityField("field_1_3", new DomainEnumerationForDecimal("enum_decimal"));
+//		domainEntity_1.addField(domainEntityField_1_1);
+//		domainEntity_1.addField(domainEntityField_1_2);
+//		domainEntity_1.addField(domainEntityField_1_3);
+//		
+//		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
+//		domainModel.addEntity(domainEntity_2);
+//		
+//		// When
+//		Model model = converter.convertToGenericModel(domainModel);
+//		
+//		// Then
+//		assertEquals("domainModel", model.getName());
+//		assertEquals(2, model.getEntities().size());
+//		
+//		// entity 1
+//		Entity entity_1 = getEntityByClassName(model, "domainEntity_1");
+//		assertEquals("domainEntity_1", entity_1.getClassName());
+//		
+//		// TODO
+//		fail("TODO : Enumerations");
+//
+//	}
 	
 	@Test
 	public void testAttributeWithLink() {

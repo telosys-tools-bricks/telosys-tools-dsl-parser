@@ -153,9 +153,9 @@ public class EntityParser {
 
         String entityName = flattenContent.substring(0, bodyStart).trim();
 
-        // the filename must de equal to entity name
+        // the filename must be equal to entity name
         if (!entityName.equals(filename)) {
-            String errorMessage = "The name of the file does not match with the entity name";
+            String errorMessage = "The name of the file does not match with the entity name '" + filename +"' ";
             this.logger.error(errorMessage);
             throw new EntityParserException(errorMessage);
         }
@@ -189,7 +189,7 @@ public class EntityParser {
 
         // extract fields
         for (String field : fieldList) {
-            DomainEntityField f = fieldParser.parseField(field.trim());
+            DomainEntityField f = fieldParser.parseField(filename, field.trim());
             table.addField(f);
         }
         verifyEntityStructure(table);

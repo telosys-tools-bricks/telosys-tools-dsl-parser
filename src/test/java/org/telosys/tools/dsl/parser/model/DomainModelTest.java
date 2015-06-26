@@ -51,55 +51,55 @@ public class DomainModelTest {
 		model.addEntity( new DomainEntity("string") ); // ERROR expected
 	}
 
-	@Test
-	public void testEnumeration() {
-		DomainModel model = new DomainModel("mymodel");
-		assertTrue( model.getNumberOfEnumerations() == 0 ) ;
-		
-		model.addEnumeration( new DomainEnumerationForInteger("BookType") );
-		assertTrue( model.getNumberOfEnumerations() == 1 ) ;
+//	@Test
+//	public void testEnumeration() {
+//		DomainModel model = new DomainModel("mymodel");
+//		assertTrue( model.getNumberOfEnumerations() == 0 ) ;
+//		
+//		model.addEnumeration( new DomainEnumerationForInteger("BookType") );
+//		assertTrue( model.getNumberOfEnumerations() == 1 ) ;
+//
+//		model.addEnumeration( new DomainEnumerationForString("Country") );
+//		assertTrue( model.getNumberOfEnumerations() == 2 ) ;
+//
+//		model.addEnumeration( new DomainEnumerationForString("String") ); // "string" neutral type is case sensitive => No error
+//
+//		DomainEnumeration<?> country = model.getEnumeration("Country");
+//		assertNotNull(country);
+//
+//		DomainEnumeration<?> bookType = model.getEnumeration("BookType");
+//		assertNotNull(bookType);
+//
+//		DomainEnumeration<?> tmp = model.getEnumeration("NotDefined");
+//		assertNull(tmp);
+//		
+//		List<String> enumerationNames = model.getEnumerationNames();
+//		assertTrue(enumerationNames.size() == 3 ) ;		
+//		System.out.println("Enumeration names : ");
+//		for ( String name : enumerationNames ) {
+//			System.out.println(" . " + name);
+//		}
+//		
+//	}
 
-		model.addEnumeration( new DomainEnumerationForString("Country") );
-		assertTrue( model.getNumberOfEnumerations() == 2 ) ;
+//	@Test ( expected = EntityParserException.class )
+//	public void testEnumerationDuplicated() {
+//		DomainModel model = new DomainModel("mymodel");		
+//		model.addEnumeration( new DomainEnumerationForInteger("BookType") );
+//		model.addEnumeration( new DomainEnumerationForInteger("BookType") ); // ERROR expected
+//	}
 
-		model.addEnumeration( new DomainEnumerationForString("String") ); // "string" neutral type is case sensitive => No error
-
-		DomainEnumeration<?> country = model.getEnumeration("Country");
-		assertNotNull(country);
-
-		DomainEnumeration<?> bookType = model.getEnumeration("BookType");
-		assertNotNull(bookType);
-
-		DomainEnumeration<?> tmp = model.getEnumeration("NotDefined");
-		assertNull(tmp);
-		
-		List<String> enumerationNames = model.getEnumerationNames();
-		assertTrue(enumerationNames.size() == 3 ) ;		
-		System.out.println("Enumeration names : ");
-		for ( String name : enumerationNames ) {
-			System.out.println(" . " + name);
-		}
-		
-	}
-
-	@Test ( expected = EntityParserException.class )
-	public void testEnumerationDuplicated() {
-		DomainModel model = new DomainModel("mymodel");		
-		model.addEnumeration( new DomainEnumerationForInteger("BookType") );
-		model.addEnumeration( new DomainEnumerationForInteger("BookType") ); // ERROR expected
-	}
-
-	@Test ( expected = EntityParserException.class )
-	public void testEnumerationWithNeutralTypeName() {
-		DomainModel model = new DomainModel("mymodel");		
-		model.addEnumeration( new DomainEnumerationForString("string") ); // ERROR expected
-	}
+//	@Test ( expected = EntityParserException.class )
+//	public void testEnumerationWithNeutralTypeName() {
+//		DomainModel model = new DomainModel("mymodel");		
+//		model.addEnumeration( new DomainEnumerationForString("string") ); // ERROR expected
+//	}
 	
-	@Test ( expected = EntityParserException.class )
-	public void testEntityAndEnumerationDuplicated() {
-		DomainModel model = new DomainModel("mymodel");
-		model.addEntity( new DomainEntity("Book") );
-		model.addEnumeration( new DomainEnumerationForString("Book") ); // ERROR expected
-	}
+//	@Test ( expected = EntityParserException.class )
+//	public void testEntityAndEnumerationDuplicated() {
+//		DomainModel model = new DomainModel("mymodel");
+//		model.addEntity( new DomainEntity("Book") );
+//		model.addEnumeration( new DomainEnumerationForString("Book") ); // ERROR expected
+//	}
 
 }

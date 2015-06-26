@@ -68,20 +68,20 @@ public class DomainEntityTest {
 		assertFalse ( field.isNeutralType() );
 	}
 	
-	@Test
-	public void testFieldEnumerationReference() {
-		
-		DomainEntity student = new DomainEntity("Student") ;
-		assertTrue ( student.getNumberOfFields() == 0 ) ;
-		
-		student.addField( new DomainEntityField("studentType", new DomainEnumerationForString("StudentType") ) );
-		assertTrue ( student.getNumberOfFields() == 1 ) ;
-		
-		DomainEntityField field = student.getField("studentType");
-		assertTrue ( field.isEnumeration() );
-		assertFalse ( field.isEntity() );
-		assertFalse ( field.isNeutralType() );
-	}
+//	@Test
+//	public void testFieldEnumerationReference() {
+//		
+//		DomainEntity student = new DomainEntity("Student") ;
+//		assertTrue ( student.getNumberOfFields() == 0 ) ;
+//		
+//		student.addField( new DomainEntityField("studentType", new DomainEnumerationForString("StudentType") ) );
+//		assertTrue ( student.getNumberOfFields() == 1 ) ;
+//		
+//		DomainEntityField field = student.getField("studentType");
+//		assertTrue ( field.isEnumeration() );
+//		assertFalse ( field.isEntity() );
+//		assertFalse ( field.isNeutralType() );
+//	}
 	
 	@Test ( expected = EntityParserException.class )
 	public void testFieldDuplicated1() {
@@ -100,8 +100,10 @@ public class DomainEntityTest {
 	@Test ( expected = EntityParserException.class )
 	public void testFieldDuplicated3() {
 		DomainEntity entity = new DomainEntity("Student") ;
-		entity.addField( new DomainEntityField("studentType", new DomainEnumerationForString("StudentType") ) );
-		entity.addField( new DomainEntityField("studentType", new DomainEnumerationForString("StudentType") ) );
+//		entity.addField( new DomainEntityField("studentType", new DomainEnumerationForString("StudentType") ) );
+//		entity.addField( new DomainEntityField("studentType", new DomainEnumerationForString("StudentType") ) );
+		entity.addField( new DomainEntityField("studentType", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER) ) );
+		entity.addField( new DomainEntityField("studentType", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
 	}
 	
 }

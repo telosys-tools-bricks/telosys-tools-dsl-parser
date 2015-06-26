@@ -1,0 +1,4 @@
+Gender { 
+	id : string{@Id};
+	name : string;
+}
