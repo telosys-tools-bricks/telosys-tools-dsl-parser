@@ -1,19 +1,11 @@
 package org.telosys.tools.dsl.parser;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.easymock.EasyMock;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.telosys.tools.dsl.EntityParserException;
-import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainEntityField;
-import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainModel;
-import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 
 public class EntityParserTest {
 	@Before

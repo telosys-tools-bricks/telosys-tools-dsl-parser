@@ -1,20 +1,20 @@
 package org.telosys.tools.dsl.generic.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.telosys.tools.dsl.generic.model.GenericEntity;
-import org.telosys.tools.dsl.parser.model.*;
+import org.telosys.tools.dsl.parser.model.DomainEntity;
+import org.telosys.tools.dsl.parser.model.DomainEntityField;
+import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainModel;
+import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
-
-import java.util.Map;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ConverterTest {
@@ -52,14 +52,16 @@ public class ConverterTest {
 		assertEquals(2, model.getEntities().size());
 		
 		// entity 1
-		Entity entity_1 = getEntityByClassName(model, "domainEntity_1");
+		//Entity entity_1 = getEntityByClassName(model, "domainEntity_1");
+		Entity entity_1 = model.getEntityByClassName("domainEntity_1");
 		assertEquals("domainEntity_1", entity_1.getClassName());
 		
 		// attributes of entity 1
 		assertTrue(entity_1.getAttributes().isEmpty());
 		
 		// entity 2
-		Entity entity_2 = getEntityByClassName(model, "domainEntity_2");
+		//Entity entity_2 = getEntityByClassName(model, "domainEntity_2");
+		Entity entity_2 = model.getEntityByClassName("domainEntity_2");
 		assertEquals("domainEntity_2", entity_2.getClassName());
 		
 		// attributes of entity 2
@@ -99,7 +101,8 @@ public class ConverterTest {
 		assertEquals(2, model.getEntities().size());
 		
 		// entity 1
-		Entity entity_1 = getEntityByClassName(model, "domainEntity_1");
+//		Entity entity_1 = getEntityByClassName(model, "domainEntity_1");
+		Entity entity_1 = model.getEntityByClassName("domainEntity_1");
 		assertEquals("domainEntity_1", entity_1.getClassName());
 		
 		// attributes of entity 1
@@ -122,7 +125,8 @@ public class ConverterTest {
 		assertEquals("java.util.Date", getAttributeByName(entity_1, "field_1_9").getFullType());
 
 		// entity 2
-		Entity entity_2 = getEntityByClassName(model, "domainEntity_2");
+//		Entity entity_2 = getEntityByClassName(model, "domainEntity_2");
+		Entity entity_2 = model.getEntityByClassName("domainEntity_2");
 		assertEquals("domainEntity_2", entity_2.getClassName());
 		
 		// attributes of entity 2
@@ -172,7 +176,8 @@ public class ConverterTest {
 		assertEquals(2, model.getEntities().size());
 
 		// entity 1
-		Entity entity_1 = getEntityByClassName(model, "domainEntity_1");
+		//Entity entity_1 = getEntityByClassName(model, "domainEntity_1");
+		Entity entity_1 = model.getEntityByClassName("domainEntity_1");
 		assertEquals("domainEntity_1", entity_1.getClassName());
 
 		// attributes of entity 1
@@ -198,7 +203,8 @@ public class ConverterTest {
 		assertTrue(attribute_1_8.isDateFuture());
 
 		// entity 2
-		Entity entity_2 = getEntityByClassName(model, "domainEntity_2");
+//		Entity entity_2 = getEntityByClassName(model, "domainEntity_2");
+		Entity entity_2 = model.getEntityByClassName("domainEntity_2");
 		assertEquals("domainEntity_2", entity_2.getClassName());
 
 		// attributes of entity 2
@@ -259,23 +265,17 @@ public class ConverterTest {
 		assertEquals(2, model.getEntities().size());
 		
 		// entity 1
-		GenericEntity entity_1 = (GenericEntity) getEntityByClassName(model, "domainEntity_1");
+//		GenericEntity entity_1 = (GenericEntity) getEntityByClassName(model, "domainEntity_1");
+		GenericEntity entity_1 = (GenericEntity) model.getEntityByClassName("domainEntity_1");
 		assertEquals("domainEntity_1", entity_1.getClassName());
 
-		GenericEntity entity_2 = (GenericEntity) getEntityByClassName(model, "domainEntity_2");
-
+//		GenericEntity entity_2 = (GenericEntity) getEntityByClassName(model, "domainEntity_2");
+		GenericEntity entity_2 = (GenericEntity) model.getEntityByClassName("domainEntity_2");
+		assertNull( entity_2.getDatabaseTable());
 		assertEquals("domainEntity_2", entity_1.getLinks().get(0).getTargetEntityClassName());
 		
 	}
 	
-	private Entity getEntityByClassName(Model model, String name) {
-		for(Entity entity : model.getEntities()) {
-			if(name.equals(entity.getClassName())) {
-				return entity;
-			}
-		}
-		return null;
-	}
 
 	private Attribute getAttributeByName(Entity entity, String name) {
 		for(Attribute attribute : entity.getAttributes()) {
