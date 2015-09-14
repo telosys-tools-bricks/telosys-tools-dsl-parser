@@ -229,14 +229,17 @@ public class EntityParser {
         for (DomainEntityField tmp : entity.getFields()) {
             if (tmp.getAnnotationNames().contains("Id")) {
                 if (fieldWithId != null) {
-                    throw new EntityParserException("The Id is defined more than once in the entity " + entity.getName());
+                    throw new EntityParserException("The Id is defined more than once"
+                    			+ " (entity " + entity.getName() + ")" );
                 }
                 if (tmp.getCardinality() != 1) {
-                    throw new EntityParserException("The Id can't be in an array in the entity " + entity.getName());
+                    throw new EntityParserException("The Id can't be an array"
+                    			+ " (entity " + entity.getName() + ")" );
                 }
                 if (tmp.isNeutralType()) {
-                    if (tmp.getTypeName().equals(DomainNeutralTypes.BLOB) || tmp.getTypeName().equals(DomainNeutralTypes.CLOB)) {
-                        throw new EntityParserException("The Id can't be a blob ou a clob in the entity " + entity.getName());
+                    if (tmp.getTypeName().equals(DomainNeutralTypes.BINARY_BLOB) || tmp.getTypeName().equals(DomainNeutralTypes.LONGTEXT_CLOB)) {
+                        throw new EntityParserException("The Id can't be a binary (BLOB) ou a longtext (CLOB)"
+                    			+ " (entity " + entity.getName() + ")" );
                     }
                 }
                 fieldWithId = tmp;

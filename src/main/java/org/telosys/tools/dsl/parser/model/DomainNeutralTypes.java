@@ -25,17 +25,20 @@ public final class DomainNeutralTypes {
 
     // Neutral type list of predefined names
     public static final String STRING    = "string";
+    
     public static final String INTEGER   = "integer";
     public static final String DECIMAL   = "decimal";
     public static final String BOOLEAN   = "boolean";
+    
     public static final String DATE      = "date";
     public static final String TIME      = "time";
     public static final String TIMESTAMP = "timestamp";
-    public static final String BLOB      = "blob";
-    public static final String CLOB      = "clob";
+    
+    public static final String BINARY_BLOB   = "binary"; // BLOB
+    public static final String LONGTEXT_CLOB = "longtext"; // CLOB
 
 
-    private static final String[] NAMES = {STRING, INTEGER, DECIMAL, BOOLEAN, DATE, TIME, TIMESTAMP, BLOB, CLOB};
+    private static final String[] NAMES = {STRING, INTEGER, DECIMAL, BOOLEAN, DATE, TIME, TIMESTAMP, BINARY_BLOB, LONGTEXT_CLOB};
 
     private static final Map<String, DomainNeutralType> NEUTRAL_TYPES = new Hashtable<String, DomainNeutralType>();
 
