@@ -15,9 +15,15 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
-import org.telosys.tools.dsl.EntityParserException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
-import java.util.*;
+import org.telosys.tools.dsl.EntityParserException;
 
 /**
  * Root class for a Domain Model built after Domain Specific Language text file parsing
@@ -26,58 +32,9 @@ import java.util.*;
  */
 public class DomainModel {
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((entities == null) ? 0 : entities.hashCode());
-        //result = prime * result + ((enumerations == null) ? 0 : enumerations.hashCode());
-        result = prime * result + ((modelName == null) ? 0 : modelName.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        DomainModel other = (DomainModel) obj;
-        if (entities == null) {
-            if (other.entities != null) {
-                return false;
-            }
-        } else if (!entities.equals(other.entities)) {
-            return false;
-        }
-//        if (enumerations == null) {
-//            if (other.enumerations != null) {
-//                return false;
-//            }
-//        } else if (!enumerations.equals(other.enumerations)) {
-//            return false;
-//        }
-        if (modelName == null) {
-            if (other.modelName != null) {
-                return false;
-            }
-        } else if (!modelName.equals(other.modelName)) {
-            return false;
-        }
-        return true;
-    }
-
     private final String modelName;
-
-/*
-private final String modelVersion ;
-private final String modelDescription ;
-*/
+    private final String modelVersion;
+    private final String modelDescription;
 
     /*
     NB :
@@ -95,8 +52,16 @@ private final String modelDescription ;
      */
     public DomainModel(String modelName) {
         super();
-        // Just store the name of the folder containing the DSL files (.entity and .enum)
         this.modelName = modelName;
+        this.modelVersion = "" ;
+        this.modelDescription = "" ;
+    }
+
+    public DomainModel(String modelName, Properties properties) {
+        super();
+        this.modelName = modelName;
+        this.modelVersion = properties.getProperty("version", "");
+        this.modelDescription = properties.getProperty("description", "");
     }
 
     /**
@@ -108,7 +73,24 @@ private final String modelDescription ;
         return modelName;
     }
 
-    private final void checkName(String name) {
+    
+    /**
+     * Returns the model version
+     * @return
+     */
+    public String getVersion() {
+		return modelVersion;
+	}
+
+	/**
+     * Returns the model description
+	 * @return
+	 */
+	public String getDescription() {
+		return modelDescription;
+	}
+
+	private final void checkName(String name) {
         // Do not accept an entity/enumeration with a "neutral type" name
         if (DomainNeutralTypes.exists(name)) {
             throw new EntityParserException("Reserved name '" + name + "' (neutral type)");
@@ -252,5 +234,50 @@ private final String modelDescription ;
         						+ "\n enumerations=" + enumerationsString + "]";
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((entities == null) ? 0 : entities.hashCode());
+        //result = prime * result + ((enumerations == null) ? 0 : enumerations.hashCode());
+        result = prime * result + ((modelName == null) ? 0 : modelName.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        DomainModel other = (DomainModel) obj;
+        if (entities == null) {
+            if (other.entities != null) {
+                return false;
+            }
+        } else if (!entities.equals(other.entities)) {
+            return false;
+        }
+//        if (enumerations == null) {
+//            if (other.enumerations != null) {
+//                return false;
+//            }
+//        } else if (!enumerations.equals(other.enumerations)) {
+//            return false;
+//        }
+        if (modelName == null) {
+            if (other.modelName != null) {
+                return false;
+            }
+        } else if (!modelName.equals(other.modelName)) {
+            return false;
+        }
+        return true;
+    }
 
 }

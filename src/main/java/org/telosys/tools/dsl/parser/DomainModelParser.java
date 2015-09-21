@@ -119,7 +119,7 @@ public class DomainModelParser {
     
     private final DomainModel parseModelFile(File file, String modelName) {
 
-        Properties p = loadProperties(file);
+        Properties properties = loadProperties(file);
 //        String modelName = p.getProperty("name");
 //        if (modelName == null || modelName.trim().length() == 0) {
 //            // use the file name as default name
@@ -131,7 +131,7 @@ public class DomainModelParser {
 //        File folder = file.getParentFile();
 //        Map<String, List<String>> files = getMapFiles(folder);
         
-        DomainModel model = new DomainModel(modelName);
+        DomainModel model = new DomainModel(modelName, properties);
         
 //        // ENUMERATIONS ( .enum files )
 //        List<String> enumerations = files.get(DOT_ENUM);

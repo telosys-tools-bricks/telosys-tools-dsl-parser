@@ -53,6 +53,11 @@
 			<artifactId>telosys-tools-generic-model</artifactId>
 			<version>3.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.telosys.tools</groupId>
+			<artifactId>telosys-tools-commons</artifactId>
+			<version>3.0.0</version>
+		</dependency>
 		
 		<dependency>
 			<groupId>org.slf4j</groupId>

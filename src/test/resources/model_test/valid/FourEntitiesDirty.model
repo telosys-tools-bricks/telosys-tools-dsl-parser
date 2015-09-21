@@ -1,3 +1,2 @@
 name = ModelWithTwoEnumAndTwoEntityDirty
-version = 1.0
 description = A model with an enumeration and an entity

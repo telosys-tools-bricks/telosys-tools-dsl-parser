@@ -15,10 +15,14 @@ public class ModelParserTest {
 	}
 
 	@Test
-	public void testParseModelWithOneEntity() throws Exception {
+	public void testParseModel_OneEntity() throws Exception {
 		File modelFile = new File("src/test/resources/model_test/valid/OneEntity.model");
 		DomainModelParser parser = new DomainModelParser();
 		DomainModel model = parser.parse(modelFile);
+		
+		assertEquals("OneEntity", model.getName());
+		assertEquals("1.0", model.getVersion() );
+
 		
 		DomainModel modelToCompare = new DomainModel("OneEntity");
 		DomainEntity employee = new DomainEntity("Employee");
@@ -33,13 +37,16 @@ public class ModelParserTest {
 	}
 	
 	@Test
-	public void testParseModelWithTwoEntities() throws Exception {
+	public void testParseModel_TwoEntities() throws Exception {
 		File modelFile = new File("src/test/resources/model_test/valid/TwoEntities.model");
 		DomainModelParser parser = new DomainModelParser();
 		DomainModel model = parser.parse(modelFile);
 		
 		DomainModel modelToCompare = new DomainModel("TwoEntities");
 		
+		assertEquals("TwoEntities", model.getName());
+		assertEquals("2.1", model.getVersion() );
+
 //		DomainEntity country = new DomainEntity("Country");
 //		DomainEntityField idCountry = new DomainEntityField("id", DomainNeutralTypes.getType("integer"));
 //		idCountry.addAnnotation(new DomainEntityFieldAnnotation("Id"));		
@@ -63,7 +70,7 @@ public class ModelParserTest {
 	}
 
     @Test
-    public void testParseModelWithTwoEntitiesAndEmbedded() throws Exception {
+    public void testParseModel_TwoEntitiesWithEmbedded() throws Exception {
         File modelFile = new File("src/test/resources/model_test/valid/TwoEntitiesWithEmbedded.model");
         DomainModelParser parser = new DomainModelParser();
         DomainModel model = parser.parse(modelFile);
@@ -135,10 +142,13 @@ public class ModelParserTest {
 //	}
 	
 	@Test
-	public void testParseModelWithSpaces() throws Exception {
+	public void testParseModel_TwoEntitiesWithSpaces() throws Exception {
 		File modelFile = new File("src/test/resources/model_test/valid/TwoEntitiesWithSpaces.model");
 		DomainModelParser parser = new DomainModelParser();
 		DomainModel model = parser.parse(modelFile);
+		
+		assertEquals("TwoEntitiesWithSpaces", model.getName());
+		assertEquals("1.0", model.getVersion() );
 		
 		DomainModel modelToCompare = new DomainModel("TwoEntitiesWithSpaces");
 		
@@ -208,11 +218,14 @@ public class ModelParserTest {
 //	}
 
 	@Test
-	public void testParseModelWithTwoEnumAndTwoEntityDirty() throws Exception {
+	public void testParseModel_FourEntitiesDirty() throws Exception {
 		File modelFile = new File("src/test/resources/model_test/valid/FourEntitiesDirty.model");
 		DomainModelParser parser = new DomainModelParser();
 		DomainModel model = parser.parse(modelFile);
 		
+		assertEquals("FourEntitiesDirty", model.getName());
+		assertEquals("", model.getVersion() );
+
 		DomainModel modelToCompare = new DomainModel("FourEntitiesDirty");
 		
 //		DomainEnumeration<String> country = new DomainEnumerationForString("Country");
@@ -259,10 +272,13 @@ public class ModelParserTest {
 	
 	
 	@Test
-    public void testParseModelWithTwoEnumAndTwoEntitySpaces() throws Exception {
+    public void testParseModel_FourEntities() throws Exception {
         File modelFile = new File("src/test/resources/model_test/valid/FourEntities.model");
         DomainModelParser parser = new DomainModelParser();
         DomainModel model = parser.parse(modelFile);
+        
+		assertEquals("FourEntities", model.getName());
+		assertEquals("", model.getVersion() );
         
         DomainModel modelToCompare = new DomainModel("FourEntities");
         
