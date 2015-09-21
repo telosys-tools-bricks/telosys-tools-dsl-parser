@@ -15,7 +15,7 @@ public class ApplicationTest {
     @Test
     public void test() {
         // Given
-        String dslFolder = "src/test/resources/model_test/valid/model_withAnEntity";
+        String dslFolder = "src/test/resources/model_test/valid/OneEntity.model";
         ModelLoader modelLoader = new ModelLoader();
 
         // When

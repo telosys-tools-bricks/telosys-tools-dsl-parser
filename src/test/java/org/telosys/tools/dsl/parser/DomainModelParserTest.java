@@ -25,7 +25,7 @@ public class DomainModelParserTest {
 //			throw new RuntimeException("File '" + fileName + "' not found");
 //		}
 ////		return new File(url.toURI());
-		return TestFileProvider.getFileByClassPath(fileName);
+		return TestFileProvider.getTestFile(fileName);
 	}
 
 	@Test
@@ -37,7 +37,7 @@ public class DomainModelParserTest {
 		System.out.println("File : " + file );
 		DomainModel model = parser.parse(file);
 		System.out.println("Parsed : model name = " + model.getName());
-		assertEquals( "MyModel", model.getName() ) ;
+		assertEquals( "toto", model.getName() ) ;
 	}
 
 	@Test
@@ -52,28 +52,28 @@ public class DomainModelParserTest {
 		assertEquals( "toto", model.getName() ) ;
 	}
 
-	@Test
-	public void testFolderWithFileWithData() {
-		String modelLocation = "/models/test1-model/" ;  // works with or without "/" at the end
-		System.out.println("Parsing model : " + modelLocation );
-		DomainModelParser parser = new DomainModelParser();
-		File file = getFileByClassPath(modelLocation);
-		System.out.println("File : " + file );
-		DomainModel model = parser.parse(file);
-		System.out.println("Parsed : model name = " + model.getName());
-		assertEquals( "MyModel", model.getName() ) ;
-	}
+//	@Test
+//	public void testFolderWithFileWithData() {
+//		String modelLocation = "/models/test1-model/" ;  // works with or without "/" at the end
+//		System.out.println("Parsing model : " + modelLocation );
+//		DomainModelParser parser = new DomainModelParser();
+//		File file = getFileByClassPath(modelLocation);
+//		System.out.println("File : " + file );
+//		DomainModel model = parser.parse(file);
+//		System.out.println("Parsed : model name = " + model.getName());
+//		assertEquals( "MyModel", model.getName() ) ;
+//	}
 
-	@Test
-	public void testFolderWithFileWithoutData() {
-		String modelLocation = "/models/test2-model/" ;  // works with or without "/" at the end
-		System.out.println("Parsing model : " + modelLocation );
-		DomainModelParser parser = new DomainModelParser();
-		File file = getFileByClassPath(modelLocation);
-		System.out.println("File : " + file );
-		DomainModel model = parser.parse(file);
-		System.out.println("Parsed : model name = " + model.getName());
-		assertEquals( "toto", model.getName() ) ;
-	}
+//	@Test
+//	public void testFolderWithFileWithoutData() {
+//		String modelLocation = "/models/test2-model/" ;  // works with or without "/" at the end
+//		System.out.println("Parsing model : " + modelLocation );
+//		DomainModelParser parser = new DomainModelParser();
+//		File file = getFileByClassPath(modelLocation);
+//		System.out.println("File : " + file );
+//		DomainModel model = parser.parse(file);
+//		System.out.println("Parsed : model name = " + model.getName());
+//		assertEquals( "toto", model.getName() ) ;
+//	}
 
 }
