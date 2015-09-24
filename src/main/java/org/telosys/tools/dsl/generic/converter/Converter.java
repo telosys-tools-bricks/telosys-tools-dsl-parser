@@ -35,9 +35,10 @@ public class Converter {
 	 */
 	public Model convertToGenericModel(DomainModel domainModel) {
 		GenericModel genericModel = new GenericModel();
-		genericModel.setName(convert(domainModel.getName(), EMPTY_STRING));
-		genericModel.setType(ModelType.DOMAIN_SPECIFIC_LANGUAGE);
-		genericModel.setVersion(GenericModelVersion.VERSION);
+		genericModel.setType( ModelType.DOMAIN_SPECIFIC_LANGUAGE );
+		genericModel.setName( convert(domainModel.getName(), EMPTY_STRING) );
+		genericModel.setVersion( GenericModelVersion.VERSION );
+		genericModel.setDescription( convert(domainModel.getDescription(), EMPTY_STRING) );
 
 		// convert all entities
 		convertEntities(domainModel, genericModel);

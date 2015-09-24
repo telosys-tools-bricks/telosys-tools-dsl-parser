@@ -26,7 +26,7 @@ public class GenericModel implements Model {
 	
 	private String name = "";
 	private String version = "";
-	private String description;
+	private String description = "";
 	private ModelType type;
 	private Integer databaseId;
 	private String databaseProductName	;
