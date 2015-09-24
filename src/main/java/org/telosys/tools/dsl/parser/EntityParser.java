@@ -37,10 +37,10 @@ import org.telosys.tools.dsl.parser.utils.StringUtils;
  */
 public class EntityParser {
 
-    /**
-     * Content of the File
-     */
-    private String formattedContent;
+//    /**
+//     * Content of the File
+//     */
+//    private String formattedContent;
 
     /**
      * Flatten Content of the File
@@ -55,19 +55,19 @@ public class EntityParser {
     private Logger logger;
 
     public EntityParser(DomainModel model) {
-        this.formattedContent = "";
+//        this.formattedContent = "";
         this.flattenContent = "";
         this.fieldParser = new FieldParser(model);
         this.logger = LoggerFactory.getLogger(EntityParser.class);
     }
 
-    public EntityParser(String formattedContent, DomainModel model) {
-        this.formattedContent = formattedContent;
-        this.flattenContent = "";
-        this.fieldParser = new FieldParser(model);
-        this.logger = LoggerFactory.getLogger(EntityParser.class);
-    }
-
+//    public EntityParser(String formattedContent, DomainModel model) {
+//        this.formattedContent = formattedContent;
+//        this.flattenContent = "";
+//        this.fieldParser = new FieldParser(model);
+//        this.logger = LoggerFactory.getLogger(EntityParser.class);
+//    }
+//
     /**
      * @param fileName
      */
@@ -78,7 +78,7 @@ public class EntityParser {
     /**
      * @param file
      */
-    public DomainEntity parse(File file) {
+    protected DomainEntity parse(File file) {
         try {
             if (!file.exists()) {
                 throw new FileNotFoundException();
@@ -94,11 +94,13 @@ public class EntityParser {
     /**
      * @param is
      */
-    public DomainEntity parse(InputStream is, String path) {
+    private DomainEntity parse(InputStream is, String path) {
         File file = new File(path);
 
-        formattedContent = StringUtils.readStream(is);
-        flattenContent = computeFlattenContent();
+//        formattedContent = StringUtils.readStream(is);
+        String originalContent = StringUtils.readStream(is);
+//        flattenContent = computeFlattenContent();
+        flattenContent = ParserUtil.preprocessText(originalContent);
         int indexPoint = file.getName().lastIndexOf('.');
         if (indexPoint >= 0) {
             return parseFlattenContent(file.getName().substring(0, indexPoint));
@@ -107,6 +109,7 @@ public class EntityParser {
         }
     }
 
+/***
 //    public String computeFlattenContent() {
     private String computeFlattenContent() {
 //        StringTokenizer content = new StringTokenizer(formattedContent, "\r\n");
@@ -129,13 +132,13 @@ public class EntityParser {
 //        return stringBuilder.toString();
     	return ParserUtil.preprocessText(formattedContent);
     }
-
+***/
 
     /**
      * @param filename The filename to check the content
      * @return An entity wich contain the name of the entity, and all its fields
      */
-    public DomainEntity parseFlattenContent(String filename) {
+    protected DomainEntity parseFlattenContent(String filename) {
         this.logger.info("Parsing of the file " + filename);
 
         // get index of first and last open brackets
@@ -224,7 +227,7 @@ public class EntityParser {
      * @param entity
      * @throws EntityParserException
      */
-    public void verifyEntityStructure(DomainEntity entity) throws EntityParserException {
+    private void verifyEntityStructure(DomainEntity entity) throws EntityParserException {
         DomainEntityField fieldWithId = null;
         for (DomainEntityField tmp : entity.getFields()) {
             if (tmp.getAnnotationNames().contains("Id")) {
@@ -251,11 +254,15 @@ public class EntityParser {
 //        return formattedContent;
 //    }
 
-    public String getFlattenContent() {
+    protected String getFlattenContent() {
         return flattenContent;
     }
 
-    public void setFlattenContent(String flattenContent) {
+    /**
+     * For unit tests only
+     * @param flattenContent
+     */
+    protected void setFlattenContent(String flattenContent) {
         this.flattenContent = flattenContent;
     }
 }

@@ -142,16 +142,16 @@ public class DomainModelParser {
 
         // ENTITIES ( .entity files )
 //        List<String> entities = files.get(DOT_ENTITY);
-        List<String> entities = getEntitiesNames(file, modelName);
-        for (String entity : entities) {
+        List<String> entitiesFileNames = getEntitiesNames(file, modelName);
+        for (String entityFileName : entitiesFileNames) {
             //File entityFile = new File(entity);
-            String entityName = getEntityName(new File(entity));
+            String entityName = getEntityName(new File(entityFileName));
             model.addEntity(new DomainEntity(entityName));
         }
 
         EntityParser entityParser = new EntityParser(model);
-        for (String entity : entities) {
-            model.putEntity(entityParser.parse(entity));
+        for (String entityFileName : entitiesFileNames) {
+            model.putEntity(entityParser.parse(entityFileName));
         }
         return model;
     }
@@ -203,6 +203,12 @@ public class DomainModelParser {
 //        return files;
 //    }
 
+    /**
+     * Returns a list of entities absolute file names
+     * @param modelFile
+     * @param modelName
+     * @return
+     */
     private List<String> getEntitiesNames(File modelFile, String modelName) {
     	String modelFolderAbsolutePath = modelFile.getParentFile().getAbsolutePath() 
     			+ "/" + modelName + MODEL_FOLDER_SUFFIX ;

@@ -26,7 +26,7 @@ public class ParserUtil {
      * @param initialText
      * @return
      */
-    public static String removeComments (String initialText) {
+    private static String removeComments (String initialText) {
     	return initialText.replaceAll(COMMENT_REGEXP,"");
     }
     
@@ -38,7 +38,7 @@ public class ParserUtil {
      * @param initialText
      * @return
      */
-    public static String flattenText (String initialText) {
+    private static String flattenText (String initialText) {
         StringTokenizer tokenizer = new StringTokenizer(initialText, "\r\n");
         StringBuilder stringBuilder = new StringBuilder();
         while (tokenizer.hasMoreElements()) {
