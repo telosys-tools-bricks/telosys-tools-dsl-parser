@@ -38,8 +38,8 @@ import java.util.*;
  */
 public class DomainModelParser {
 
-    private static final String DOT_MODEL = ".model";
-    private static final String DOT_ENTITY = ".entity";
+//    private static final String DOT_MODEL = ".model";
+//    private static final String DOT_ENTITY = ".entity";
     private static final String MODEL_FOLDER_SUFFIX = "_model" ;
     
 //    private static final String DOT_ENUM = ".enum";
@@ -66,7 +66,7 @@ public class DomainModelParser {
 //                logger.error(textError);
 //                throw new EntityParserException(textError);
 //            }
-        	String modelName = getModelName(file) ;
+        	String modelName = ParserUtil.getModelName(file) ;
             return parseModelFile(file, modelName);
 //        } else if (file.isDirectory()) {
 //            File[] files = file.listFiles();
@@ -86,36 +86,36 @@ public class DomainModelParser {
         }
     }
 
-    /**
-     * Returns the model name for the given file name
-     * @param file eg 'aaa/bbb/foo.model' 
-     * @return 'foo' for 'aaa/bbb/foo.model' 
-     */
-    private final String getModelName(File file) {
-    	return getFileNameWithoutExtension(file, DOT_MODEL) ;
-    }
-    
-    /**
-     * Returns the entity name for the given file name
-     * @param file eg 'aaa/bbb/Car.entity' 
-     * @return 'Car' for 'aaa/bbb/Car.entity' 
-     */
-    private final String getEntityName(File file) {
-    	return getFileNameWithoutExtension(file, DOT_ENTITY) ;
-    }
+//    /**
+//     * Returns the model name for the given file name
+//     * @param file eg 'aaa/bbb/foo.model' 
+//     * @return 'foo' for 'aaa/bbb/foo.model' 
+//     */
+//    private final String getModelName(File file) {
+//    	return getFileNameWithoutExtension(file, DOT_MODEL) ;
+//    }
+//    
+//    /**
+//     * Returns the entity name for the given file name
+//     * @param file eg 'aaa/bbb/Car.entity' 
+//     * @return 'Car' for 'aaa/bbb/Car.entity' 
+//     */
+//    private final String getEntityName(File file) {
+//    	return getFileNameWithoutExtension(file, DOT_ENTITY) ;
+//    }
 
-    private final String getFileNameWithoutExtension(File file, String extension) {
-    	String fileName = file.getName();
-    	int i = fileName.lastIndexOf(extension);
-    	if ( i > 0 ) {
-    		return fileName.substring(0, i);
-    	}
-    	else {
-            String textError = "Invalid file name '" + fileName + "' (doesn't end with '" + extension + "')";
-            logger.error(textError);
-    		throw new EntityParserException(textError);
-    	}
-    }
+//    private final String getFileNameWithoutExtension(File file, String extension) {
+//    	String fileName = file.getName();
+//    	int i = fileName.lastIndexOf(extension);
+//    	if ( i > 0 ) {
+//    		return fileName.substring(0, i);
+//    	}
+//    	else {
+//            String textError = "Invalid file name '" + fileName + "' (doesn't end with '" + extension + "')";
+//            logger.error(textError);
+//    		throw new EntityParserException(textError);
+//    	}
+//    }
     
     private final DomainModel parseModelFile(File file, String modelName) {
 
@@ -140,12 +140,11 @@ public class DomainModelParser {
 //            model.addEnumeration(enumParser.parse(new File(enumeration)));
 //        }
 
-        // ENTITIES ( .entity files )
-//        List<String> entities = files.get(DOT_ENTITY);
-        List<String> entitiesFileNames = getEntitiesNames(file, modelName);
+        // ENTITIES ( all the ".entity" files located in the model folder)
+        List<String> entitiesFileNames = getEntitiesAbsoluteFileNames(file, modelName);
         for (String entityFileName : entitiesFileNames) {
             //File entityFile = new File(entity);
-            String entityName = getEntityName(new File(entityFileName));
+            String entityName = ParserUtil.getEntityName(new File(entityFileName));
             model.addEntity(new DomainEntity(entityName));
         }
 
@@ -209,7 +208,7 @@ public class DomainModelParser {
      * @param modelName
      * @return
      */
-    private List<String> getEntitiesNames(File modelFile, String modelName) {
+    private List<String> getEntitiesAbsoluteFileNames(File modelFile, String modelName) {
     	String modelFolderAbsolutePath = modelFile.getParentFile().getAbsolutePath() 
     			+ "/" + modelName + MODEL_FOLDER_SUFFIX ;
     	File folder = new File(modelFolderAbsolutePath);
@@ -218,7 +217,7 @@ public class DomainModelParser {
 
             String[] allFiles = folder.list();
             for (String fileName : allFiles) {
-            	if ( fileName.endsWith(DOT_ENTITY)) {
+            	if ( fileName.endsWith(ParserUtil.DOT_ENTITY)) {
             		entities.add( folder.getAbsolutePath() + "/" + fileName ) ;
             	}
             }

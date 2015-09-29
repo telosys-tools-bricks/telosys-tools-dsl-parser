@@ -15,7 +15,10 @@
  */
 package org.telosys.tools.dsl.parser;
 
+import java.io.File;
 import java.util.StringTokenizer;
+
+import org.telosys.tools.dsl.EntityParserException;
 
 public class ParserUtil {
 	
@@ -64,4 +67,42 @@ public class ParserUtil {
         return flattenText( removeComments(initialText) );
     }
 
+    //-------------------------------------------------------------------------------------------------
+    // Names from file name
+    //-------------------------------------------------------------------------------------------------
+    public static final String DOT_MODEL = ".model";
+    public static final String DOT_ENTITY = ".entity";
+    
+
+    /**
+     * Returns the model name for the given file name
+     * @param file eg 'aaa/bbb/foo.model' 
+     * @return 'foo' for 'aaa/bbb/foo.model' 
+     */
+    public static String getModelName(File file) {
+    	return getFileNameWithoutExtension(file, DOT_MODEL) ;
+    }
+    
+    /**
+     * Returns the entity name for the given file name
+     * @param file eg 'aaa/bbb/Car.entity' 
+     * @return 'Car' for 'aaa/bbb/Car.entity' 
+     */
+    public static String getEntityName(File file) {
+    	return getFileNameWithoutExtension(file, DOT_ENTITY) ;
+    }
+
+    private static String getFileNameWithoutExtension(File file, String extension) {
+    	String fileName = file.getName();
+    	int i = fileName.lastIndexOf(extension);
+    	if ( i > 0 ) {
+    		return fileName.substring(0, i);
+    	}
+    	else {
+            String textError = "Invalid file name '" + fileName + "' (doesn't end with '" + extension + "')";
+    		throw new EntityParserException(textError);
+    	}
+    }
+    
+    
 }

@@ -42,10 +42,12 @@ public class EntityParser {
 //     */
 //    private String formattedContent;
 
+//	private String entityFileName = "" ;
+	
     /**
      * Flatten Content of the File
      */
-    private String flattenContent;
+    //private String flattenContent;
 
     /**
      * fieldParser used to parse fields
@@ -56,7 +58,7 @@ public class EntityParser {
 
     public EntityParser(DomainModel model) {
 //        this.formattedContent = "";
-        this.flattenContent = "";
+//        this.flattenContent = "";
         this.fieldParser = new FieldParser(model);
         this.logger = LoggerFactory.getLogger(EntityParser.class);
     }
@@ -72,41 +74,48 @@ public class EntityParser {
      * @param fileName
      */
     public DomainEntity parse(String fileName) {
-        return this.parse(new File(fileName));
+        File entityFile = new File(fileName);
+        logger.info("--- fileName = " + fileName);
+//        this.entityFileName = entityFile.getName();
+//        logger.info("--- this.entityFileName = " + this.entityFileName);
+        return this.parse(entityFile);
     }
 
     /**
      * @param file
      */
     protected DomainEntity parse(File file) {
+    	InputStream is ;
         try {
-            if (!file.exists()) {
-                throw new FileNotFoundException();
-            }
-            InputStream io = new FileInputStream(file);
-            return this.parse(io, file.getAbsolutePath());
+//            if (!file.exists()) {
+//                throw new FileNotFoundException();
+//            }
+            is = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            throw new EntityParserException("File Not found : "+ file.getAbsolutePath() + "\n Documentation : " + e);
+            throw new EntityParserException( "File Not found : "+ file.getAbsolutePath() );
         }
-
+        String entityNameFromFileName = ParserUtil.getEntityName(file);
+        return this.parse(is, entityNameFromFileName);
     }
 
     /**
      * @param is
      */
-    private DomainEntity parse(InputStream is, String path) {
-        File file = new File(path);
+    private DomainEntity parse(InputStream is, String entityNameFromFileName) {
+//        File file = new File(path);
 
 //        formattedContent = StringUtils.readStream(is);
         String originalContent = StringUtils.readStream(is);
 //        flattenContent = computeFlattenContent();
-        flattenContent = ParserUtil.preprocessText(originalContent);
-        int indexPoint = file.getName().lastIndexOf('.');
-        if (indexPoint >= 0) {
-            return parseFlattenContent(file.getName().substring(0, indexPoint));
-        } else {
-            throw new EntityParserException("The filename has no extension");
-        }
+        String flattenContent = ParserUtil.preprocessText(originalContent);
+//        int indexPoint = file.getName().lastIndexOf('.');
+//        if (indexPoint >= 0) {
+//            return parseFlattenContent(file.getName().substring(0, indexPoint));
+//        } else {
+//            throw new EntityParserException(this.entityFileName + " : The filename has no extension");
+//        }
+        
+        return parseFlattenContent(flattenContent, entityNameFromFileName) ;
     }
 
 /***
@@ -135,55 +144,56 @@ public class EntityParser {
 ***/
 
     /**
-     * @param filename The filename to check the content
-     * @return An entity wich contain the name of the entity, and all its fields
+     * @param flattenContent the file content after flatten
+     * @param entityNameFromFileName
+     * @return
      */
-    protected DomainEntity parseFlattenContent(String filename) {
-        this.logger.info("Parsing of the file " + filename);
+    protected DomainEntity parseFlattenContent(String flattenContent, String entityNameFromFileName) {
+        this.logger.info("Parsing entity " + entityNameFromFileName);
 
         // get index of first and last open brackets
         int bodyStart = flattenContent.indexOf('{');
         int bodyEnd = flattenContent.lastIndexOf('}');
 
-        checkStructure(bodyStart, bodyEnd);
+        checkStructure(entityNameFromFileName, bodyStart, bodyEnd);
 
         // body required
         if (bodyEnd - bodyStart == 1) {
-            String errorMessage = "A field is required";
+            String errorMessage = entityNameFromFileName + " : A field is required";
             this.logger.error(errorMessage);
             throw new EntityParserException(errorMessage);
         }
 
-        String entityName = flattenContent.substring(0, bodyStart).trim();
+        String entityNameInFile = flattenContent.substring(0, bodyStart).trim();
 
         // the filename must be equal to entity name
-        if (!entityName.equals(filename)) {
-            String errorMessage = "The name of the file does not match with the entity name '" + filename +"' ";
+        if (!entityNameInFile.equals(entityNameFromFileName)) {
+            String errorMessage = entityNameFromFileName + " : The name of the file does not match with the entity name '" + entityNameInFile +"' ";
             this.logger.error(errorMessage);
             throw new EntityParserException(errorMessage);
         }
 
         // the first later of an entity must be upper case
         if (!Character.isUpperCase(flattenContent.charAt(0))) {
-            String errorMessage = "The name of the entity must start with an upper case";
+            String errorMessage = entityNameFromFileName + " : The name of the entity must start with an upper case";
             this.logger.error(errorMessage);
             throw new EntityParserException(errorMessage);
         }
 
         // only simple chars are allowed
-        if (!entityName.matches("^[A-Z][\\w]*$")) {
-            String errorMessage = "The name must not contains special char " + entityName;
+        if (!entityNameInFile.matches("^[A-Z][\\w]*$")) {
+            String errorMessage = entityNameFromFileName + " : The name must not contains special char " + entityNameInFile;
             this.logger.error(errorMessage);
             throw new EntityParserException(errorMessage);
         }
 
         // create object
-        DomainEntity table = new DomainEntity(entityName);
+        DomainEntity domainEntity = new DomainEntity(entityNameInFile);
 
         // find all fields
         String body = flattenContent.substring(bodyStart + 1, bodyEnd).trim();
         if (body.lastIndexOf(';') != body.length() - 1) {
-            String errorMessage = "A semilicon is missing";
+            String errorMessage = entityNameFromFileName + " : A semilicon is missing";
             this.logger.error(errorMessage);
             throw new EntityParserException(errorMessage);
         }
@@ -192,11 +202,11 @@ public class EntityParser {
 
         // extract fields
         for (String field : fieldList) {
-            DomainEntityField f = fieldParser.parseField(filename, field.trim());
-            table.addField(f);
+            DomainEntityField f = fieldParser.parseField(entityNameFromFileName, field.trim());
+            domainEntity.addField(f);
         }
-        verifyEntityStructure(table);
-        return table;
+        verifyEntityStructure(domainEntity, entityNameFromFileName);
+        return domainEntity;
     }
 
     /**
@@ -205,17 +215,17 @@ public class EntityParser {
      * @param bodyStart first bracket index
      * @param bodyEnd   last bracket index
      */
-    private void checkStructure(int bodyStart, int bodyEnd) {
+    private void checkStructure(String entityNameFromFileName, int bodyStart, int bodyEnd) {
         // name required before body
         if (bodyStart < 0) {
-            String errorMessage = "There's something wrong with the beginning of the body";
+            String errorMessage = entityNameFromFileName + " : There's something wrong at the beginning of the body";
             this.logger.error(errorMessage);
             throw new EntityParserException(errorMessage);
         }
 
         // end of body required
         if (bodyEnd < 1) {
-            String errorMessage = "There's something wrong with the end of the body";
+            String errorMessage = entityNameFromFileName + " : There's something wrong at the end of the body";
             this.logger.error(errorMessage);
             throw new EntityParserException(errorMessage);
         }
@@ -223,25 +233,25 @@ public class EntityParser {
 
     /**
      * Verify the sructure of an entity
-     *
      * @param entity
+     * @param entityNameFromFileName
      * @throws EntityParserException
      */
-    private void verifyEntityStructure(DomainEntity entity) throws EntityParserException {
+    private void verifyEntityStructure(DomainEntity entity, String entityNameFromFileName) throws EntityParserException {
         DomainEntityField fieldWithId = null;
         for (DomainEntityField tmp : entity.getFields()) {
             if (tmp.getAnnotationNames().contains("Id")) {
                 if (fieldWithId != null) {
-                    throw new EntityParserException("The Id is defined more than once"
+                    throw new EntityParserException(entityNameFromFileName + " : The Id is defined more than once"
                     			+ " (entity " + entity.getName() + ")" );
                 }
                 if (tmp.getCardinality() != 1) {
-                    throw new EntityParserException("The Id can't be an array"
+                    throw new EntityParserException(entityNameFromFileName + " : The Id can't be an array"
                     			+ " (entity " + entity.getName() + ")" );
                 }
                 if (tmp.isNeutralType()) {
                     if (tmp.getTypeName().equals(DomainNeutralTypes.BINARY_BLOB) || tmp.getTypeName().equals(DomainNeutralTypes.LONGTEXT_CLOB)) {
-                        throw new EntityParserException("The Id can't be a binary (BLOB) ou a longtext (CLOB)"
+                        throw new EntityParserException(entityNameFromFileName + " : The Id can't be a binary (BLOB) ou a longtext (CLOB)"
                     			+ " (entity " + entity.getName() + ")" );
                     }
                 }
@@ -254,15 +264,15 @@ public class EntityParser {
 //        return formattedContent;
 //    }
 
-    protected String getFlattenContent() {
-        return flattenContent;
-    }
-
-    /**
-     * For unit tests only
-     * @param flattenContent
-     */
-    protected void setFlattenContent(String flattenContent) {
-        this.flattenContent = flattenContent;
-    }
+//    protected String getFlattenContent() {
+//        return flattenContent;
+//    }
+//
+//    /**
+//     * For unit tests only
+//     * @param flattenContent
+//     */
+//    protected void setFlattenContent(String flattenContent) {
+//        this.flattenContent = flattenContent;
+//    }
 }

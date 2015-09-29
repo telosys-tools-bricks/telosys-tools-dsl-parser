@@ -56,11 +56,11 @@ public class FieldParser {
 
     /**
      * Parse a single field with its own informations
-     * @param filename
+     * @param entityNameFromFileName
      * @param fieldInfo
      * @return The parsed field
      */
-    DomainEntityField parseField(String  filename, String fieldInfo) {
+    DomainEntityField parseField(String  entityNameFromFileName, String fieldInfo) {
         int startDescription = fieldInfo.indexOf(':');
         if (startDescription == -1) {
             String errorMessage = "You must specify the type of the field. The separator between the name of the field and its type is ':'";
@@ -71,12 +71,12 @@ public class FieldParser {
 
         // description and field is required
         if (!name.matches("^[\\w]*$")) {
-            String errorMessage = "The name of the fields must not contains special char " + name + " (file '" + filename+"')";
+            String errorMessage = "The name of the fields must not contains special char " + name + " (entity '" + entityNameFromFileName+"')";
             this.logger.error(errorMessage);
             throw new EntityParserException(errorMessage);
         }
         if (name.length() == 0) {
-            String errorMessage = "The name of the field is missing (file '" + filename+"')";
+            String errorMessage = "The name of the field is missing (entity '" + entityNameFromFileName+"')";
             this.logger.error(errorMessage);
             throw new EntityParserException(errorMessage);
         }
@@ -107,7 +107,7 @@ public class FieldParser {
                     cardinality = Integer.parseInt(figure.trim());
                     typeName = typeName.substring(0, startArray).trim();
                 } catch (Exception e) {
-                    String errorMessage = "Invalid cardinality for " + typeName + " (file '" + filename+"')";
+                    String errorMessage = "Invalid cardinality for " + typeName + " (entity '" + entityNameFromFileName+"')";
                     this.logger.error(errorMessage);
                     throw new EntityParserException(errorMessage + "\n Documentation : " + e);
                 }
@@ -152,7 +152,7 @@ public class FieldParser {
         } else { // Entity (entity name is supposed to be known )
             if (!model.getEntityNames().contains(typeName)) {
             	// Reference to an unknown entity => ERROR
-                String errorMessage = "Invalid type '" + typeName  + "' for field '" + name + "' (file '" + filename+"')";
+                String errorMessage = "Invalid type '" + typeName  + "' for field '" + name + "' (entity '" + entityNameFromFileName+"')";
                 this.logger.error(errorMessage);
                 throw new EntityParserException(errorMessage);
             } else {
