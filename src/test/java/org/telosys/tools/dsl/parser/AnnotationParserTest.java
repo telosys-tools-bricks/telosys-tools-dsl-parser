@@ -18,7 +18,7 @@ public class AnnotationParserTest {
         List<DomainEntityFieldAnnotation> annotationList = new ArrayList<DomainEntityFieldAnnotation>();
         annotationList.add(new DomainEntityFieldAnnotation("Id"));
 
-        Assert.assertEquals(annotationList, annotationParser.parseAnnotations(field));
+        Assert.assertEquals(annotationList, annotationParser.parseAnnotations("EntityForTest", field));
     }
 
     @Test
@@ -29,7 +29,7 @@ public class AnnotationParserTest {
 
         List<DomainEntityFieldAnnotation> annotationList = new ArrayList<DomainEntityFieldAnnotation>();
 
-        Assert.assertEquals(annotationList, annotationParser.parseAnnotations(field));
+        Assert.assertEquals(annotationList, annotationParser.parseAnnotations("EntityForTest", field));
     }
 
     @Test(expected = EntityParserException.class)
@@ -37,7 +37,7 @@ public class AnnotationParserTest {
         AnnotationParser annotationParser = new AnnotationParser();
 
         String field = "id:integer{@FalseAnnotation};";
-        annotationParser.parseAnnotations(field);
+        annotationParser.parseAnnotations("EntityForTest", field);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class AnnotationParserTest {
         List<DomainEntityFieldAnnotation> annotationList = new ArrayList<DomainEntityFieldAnnotation>();
         annotationList.add(new DomainEntityFieldAnnotation("Max", "3"));
 
-        Assert.assertEquals(annotationList, annotationParser.parseAnnotations(field));
+        Assert.assertEquals(annotationList, annotationParser.parseAnnotations("EntityForTest", field));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class AnnotationParserTest {
         annotationList.add(new DomainEntityFieldAnnotation("Id"));
         annotationList.add(new DomainEntityFieldAnnotation("Max", "3"));
 
-        Assert.assertEquals(annotationList, annotationParser.parseAnnotations(field));
+        Assert.assertEquals(annotationList, annotationParser.parseAnnotations("EntityForTest", field));
     }
 
     @Test(expected = EntityParserException.class)
@@ -70,7 +70,7 @@ public class AnnotationParserTest {
         AnnotationParser annotationParser = new AnnotationParser();
 
         String field = "id:integer{@Id;@Max(3)};";
-        annotationParser.parseAnnotations(field);
+        annotationParser.parseAnnotations("EntityForTest", field);
     }
 
     @Test(expected = EntityParserException.class)
@@ -79,7 +79,7 @@ public class AnnotationParserTest {
 
         String field = "id:integer{@Max};";
 
-        annotationParser.parseAnnotations(field);
+        annotationParser.parseAnnotations("EntityForTest", field);
     }
 
     @Test(expected = EntityParserException.class)
@@ -88,7 +88,7 @@ public class AnnotationParserTest {
 
         String field = "id:integer{@Max()};";
 
-        annotationParser.parseAnnotations(field);
+        annotationParser.parseAnnotations("EntityForTest", field);
     }
 
     @Test(expected = EntityParserException.class)
@@ -97,7 +97,7 @@ public class AnnotationParserTest {
 
         String field = "id:integer{@Max(3};";
 
-        annotationParser.parseAnnotations(field);
+        annotationParser.parseAnnotations("EntityForTest", field);
     }
 
     @Test(expected = EntityParserException.class)
@@ -106,7 +106,7 @@ public class AnnotationParserTest {
 
         String field = "id:integer{@Id;";
 
-        annotationParser.parseAnnotations(field);
+        annotationParser.parseAnnotations("EntityForTest", field);
     }
 
     @Test(expected = EntityParserException.class)
@@ -115,7 +115,7 @@ public class AnnotationParserTest {
 
         String field = "id:integer@Id;}";
 
-        annotationParser.parseAnnotations(field);
+        annotationParser.parseAnnotations("EntityForTest", field);
     }
 
     @Test(expected = EntityParserException.class)
@@ -124,7 +124,7 @@ public class AnnotationParserTest {
 
         String field = "id:integer{@Id,@Max3)};";
 
-        annotationParser.parseAnnotations(field);
+        annotationParser.parseAnnotations("EntityForTest", field);
     }
 
     @Test(expected = EntityParserException.class)
@@ -133,7 +133,7 @@ public class AnnotationParserTest {
 
         String field = "id:integer{@Id,@Max(3};";
 
-        annotationParser.parseAnnotations(field);
+        annotationParser.parseAnnotations("EntityForTest", field);
 	}
 
     @Test(expected = EntityParserException.class)
@@ -142,6 +142,6 @@ public class AnnotationParserTest {
 
         String field = "id:integer{#Id};";
 
-        annotationParser.parseAnnotations(field);
+        annotationParser.parseAnnotations("EntityForTest", field);
     }
 }

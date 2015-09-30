@@ -18,30 +18,30 @@ package org.telosys.tools.dsl.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.telosys.tools.dsl.EntityParserException;
 import org.telosys.tools.dsl.KeyWords;
 import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
 
 /**
- * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre
+ * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre, Laurent Guerin
  * @version 1.0
  */
-public class AnnotationParser {
-    private Logger logger;
+public class AnnotationParser extends AbstractParser  {
+//    private Logger logger;
 
     public AnnotationParser() {
-        this.logger = LoggerFactory.getLogger(AnnotationParser.class);
+    	super(LoggerFactory.getLogger(EntityParser.class));
+
+//        this.logger = LoggerFactory.getLogger(AnnotationParser.class);
     }
 
     /**
-     * Parse content of brackets for annotations
-     *
-     * @param fieldInfo String
-     * @return list of annotations found
+     * Parse field annotations located between brackets : '{ @xxx, @xxx }'
+     * @param entityNameFromFileName
+     * @param fieldInfo
+     * @return
      */
-    List<DomainEntityFieldAnnotation> parseAnnotations(String fieldInfo) {
+    List<DomainEntityFieldAnnotation> parseAnnotations(String entityNameFromFileName, String fieldInfo) {
 
         // get index of first and last open brackets
         int bodyStart = fieldInfo.indexOf('{');
@@ -51,26 +51,29 @@ public class AnnotationParser {
 
         // no annotation found
         if ((bodyEnd < 0 && bodyStart >= 0) || (bodyEnd >= 0 && bodyStart < 0)) {
-            String errorMessage = "There is a problem with the bracket. There's one missing in the field : "+fieldInfo;
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = "There is a problem with the bracket. There's one missing in the field : "+fieldInfo;
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "Invalid bracket usage : " + fieldInfo);
         }
 
         if (bodyEnd < 0 && bodyStart < 0) {
             if(fieldInfo.indexOf("]") > 0 && fieldInfo.indexOf("]")!= fieldInfo.length()-1 ) {
                 if(!fieldInfo.substring(fieldInfo.indexOf("]")+1).trim().equals("")){
-                    String errorMessage = "There is a problem with the semilicon : "+fieldInfo;
-                    this.logger.error(errorMessage);
-                    throw new EntityParserException(errorMessage);
+//                    String errorMessage = "There is a problem with the semilicon : "+fieldInfo;
+//                    this.logger.error(errorMessage);
+//                    throw new EntityParserException(errorMessage);
+                    throwParsingError(entityNameFromFileName, "There is a problem with the semilicon : "+ fieldInfo); 
                 }
             }
             return list;
         } else {
             
             if(!fieldInfo.substring(bodyEnd+1).trim().equals("") &&  !fieldInfo.substring(bodyEnd+1).trim().equals(";")) {
-                String errorMessage = "There is a problem with the semilicon : "+fieldInfo;
-                this.logger.error(errorMessage);
-                throw new EntityParserException(errorMessage);
+//                String errorMessage = "There is a problem with the semilicon : "+fieldInfo;
+//                this.logger.error(errorMessage);
+//                throw new EntityParserException(errorMessage);
+                throwParsingError(entityNameFromFileName, "There is a problem with the semilicon : "+ fieldInfo); 
             }
         }
         bodyStart++;
@@ -80,14 +83,15 @@ public class AnnotationParser {
         String[] annotationList = fieldInfo.split(",");
         // at least 1 annotation is required, if there are brackets
         if (annotationList.length < 1) {
-            String errorMessage = "There is no annotation in the given information";
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = "There is no annotation in the given information";
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "No annotation between brackets "+ fieldInfo); 
         }
 
         // extract annotations
         for (String annotationString : annotationList) {
-            DomainEntityFieldAnnotation annotation = this.parseSingleAnnotation(annotationString.trim());
+            DomainEntityFieldAnnotation annotation = this.parseSingleAnnotation(entityNameFromFileName, annotationString.trim());
             list.add(annotation);
         }
 
@@ -95,15 +99,17 @@ public class AnnotationParser {
     }
 
     /**
-     * @param annotationString String
-     * @return Annotation created by the parser
+     * @param entityNameFromFileName
+     * @param annotationString
+     * @return
      */
-    private DomainEntityFieldAnnotation parseSingleAnnotation(String annotationString) {
+    private DomainEntityFieldAnnotation parseSingleAnnotation(String entityNameFromFileName, String annotationString) {
         // start with a @
         if (annotationString.charAt(0) != '@') {
-            String errorMessage = "An annotation must start with a '@' ";
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = "An annotation must start with a '@' ";
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "An annotation must start with '@' "); 
         }
 
         // find the name of the annotation
@@ -118,9 +124,10 @@ public class AnnotationParser {
             int endMore = annotationString.length() - 1 ;
             param = annotationString.substring(endLess, endMore).trim();
             if (param.equals("")) {
-                String errorMessage = "A parameter is required for this annotation : " + annotationString;
-                this.logger.error(errorMessage);
-                throw new EntityParserException(errorMessage);
+//                String errorMessage = "A parameter is required for this annotation : " + annotationString;
+//                this.logger.error(errorMessage);
+//                throw new EntityParserException(errorMessage);
+                throwParsingError(entityNameFromFileName, "Parameter required for annotation : " + annotationString); 
             }
             containsParam = true;
         }
@@ -137,14 +144,16 @@ public class AnnotationParser {
         for (String allowed : listAllowed) {
             if (allowed.contains(givenAnnotation)) {
                 if (allowed.contains("#") && !containsParam) {
-                    String errorMessage = "A parameter is required for this annotation : " + givenAnnotation;
-                    this.logger.error(errorMessage);
-                    throw new EntityParserException(errorMessage);
+//                    String errorMessage = "A parameter is required for this annotation : " + givenAnnotation;
+//                    this.logger.error(errorMessage);
+//                    throw new EntityParserException(errorMessage);
+                    throwParsingError(entityNameFromFileName, "Parameter required for annotation : " + givenAnnotation); 
                 }
                 if (!allowed.contains("#") && containsParam) {
-                    String errorMessage = "There is a not required parameter for this annotation : " + annotationString;
-                    this.logger.error(errorMessage);
-                    throw new EntityParserException(errorMessage);
+//                    String errorMessage = "There is a not required parameter for this annotation : " + annotationString;
+//                    this.logger.error(errorMessage);
+//                    throw new EntityParserException(errorMessage);
+                    throwParsingError(entityNameFromFileName, "Parameter not supported for annotation : " + givenAnnotation); 
                 }
 
                 if (containsParam) {
@@ -155,9 +164,12 @@ public class AnnotationParser {
             }
         }
 
-        String errorMessage = "No annotation has been configured yet ";
-        this.logger.error(errorMessage);
-        throw new EntityParserException(errorMessage);
+//        String errorMessage = "No annotation has been configured yet ";
+//        this.logger.error(errorMessage);
+//        throw new EntityParserException(errorMessage);
+
+        throwParsingError(entityNameFromFileName, "Parameter not supported for annotation : " + givenAnnotation); 
+        return null ; // never reached
     }
 
 }

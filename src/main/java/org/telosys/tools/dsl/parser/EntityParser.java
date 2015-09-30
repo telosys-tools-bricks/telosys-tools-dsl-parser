@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telosys.tools.dsl.EntityParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
@@ -32,10 +31,11 @@ import org.telosys.tools.dsl.parser.utils.StringUtils;
 /**
  * First entry point for the telosys entity parser
  *
- * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre
+ * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre, Laurent Guerin
+ * 
  * @version 1.0
  */
-public class EntityParser {
+public class EntityParser extends AbstractParser {
 
 //    /**
 //     * Content of the File
@@ -54,13 +54,14 @@ public class EntityParser {
      */
     private FieldParser fieldParser;
 
-    private Logger logger;
+//    private Logger logger;
 
     public EntityParser(DomainModel model) {
+    	super(LoggerFactory.getLogger(EntityParser.class));
 //        this.formattedContent = "";
 //        this.flattenContent = "";
         this.fieldParser = new FieldParser(model);
-        this.logger = LoggerFactory.getLogger(EntityParser.class);
+//        this.logger = LoggerFactory.getLogger(EntityParser.class);
     }
 
 //    public EntityParser(String formattedContent, DomainModel model) {
@@ -75,7 +76,7 @@ public class EntityParser {
      */
     public DomainEntity parse(String fileName) {
         File entityFile = new File(fileName);
-        logger.info("--- fileName = " + fileName);
+        logInfo("--- fileName = " + fileName);
 //        this.entityFileName = entityFile.getName();
 //        logger.info("--- this.entityFileName = " + this.entityFileName);
         return this.parse(entityFile);
@@ -149,7 +150,7 @@ public class EntityParser {
      * @return
      */
     protected DomainEntity parseFlattenContent(String flattenContent, String entityNameFromFileName) {
-        this.logger.info("Parsing entity " + entityNameFromFileName);
+    	logInfo("Parsing entity " + entityNameFromFileName);
 
         // get index of first and last open brackets
         int bodyStart = flattenContent.indexOf('{');
@@ -159,32 +160,36 @@ public class EntityParser {
 
         // body required
         if (bodyEnd - bodyStart == 1) {
-            String errorMessage = entityNameFromFileName + " : A field is required";
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = entityNameFromFileName + " : A field is required";
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "An entity must contains at least one field");
         }
 
         String entityNameInFile = flattenContent.substring(0, bodyStart).trim();
 
         // the filename must be equal to entity name
         if (!entityNameInFile.equals(entityNameFromFileName)) {
-            String errorMessage = entityNameFromFileName + " : The name of the file does not match with the entity name '" + entityNameInFile +"' ";
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = entityNameFromFileName + " : The name of the file does not match with the entity name '" + entityNameInFile +"' ";
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "Entity name '" + entityNameInFile +"' doesn't match with file name ");
         }
 
         // the first later of an entity must be upper case
         if (!Character.isUpperCase(flattenContent.charAt(0))) {
-            String errorMessage = entityNameFromFileName + " : The name of the entity must start with an upper case";
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = entityNameFromFileName + " : The name of the entity must start with an upper case";
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "Entity name must start with an upper case");
         }
 
         // only simple chars are allowed
         if (!entityNameInFile.matches("^[A-Z][\\w]*$")) {
-            String errorMessage = entityNameFromFileName + " : The name must not contains special char " + entityNameInFile;
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = entityNameFromFileName + " : The name must not contains special char " + entityNameInFile;
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "Entity name '" + entityNameInFile +"' must not contains special char ");
         }
 
         // create object
@@ -193,9 +198,10 @@ public class EntityParser {
         // find all fields
         String body = flattenContent.substring(bodyStart + 1, bodyEnd).trim();
         if (body.lastIndexOf(';') != body.length() - 1) {
-            String errorMessage = entityNameFromFileName + " : A semilicon is missing";
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = entityNameFromFileName + " : A semilicon is missing";
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "Semicolon is missing");
         }
 
         String[] fieldList = body.split(";");
@@ -218,16 +224,18 @@ public class EntityParser {
     private void checkStructure(String entityNameFromFileName, int bodyStart, int bodyEnd) {
         // name required before body
         if (bodyStart < 0) {
-            String errorMessage = entityNameFromFileName + " : There's something wrong at the beginning of the body";
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = entityNameFromFileName + " : There's something wrong at the beginning of the body";
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "There's something wrong at the beginning of the body");
         }
 
         // end of body required
         if (bodyEnd < 1) {
-            String errorMessage = entityNameFromFileName + " : There's something wrong at the end of the body";
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = entityNameFromFileName + " : There's something wrong at the end of the body";
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "There's something wrong at the end of the body");
         }
     }
 

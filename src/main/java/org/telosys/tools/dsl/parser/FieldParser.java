@@ -15,29 +15,31 @@
  */
 package org.telosys.tools.dsl.parser;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.telosys.tools.dsl.EntityParserException;
-import org.telosys.tools.dsl.parser.model.*;
-
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
+import org.telosys.tools.dsl.parser.model.DomainEntityField;
+import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainModel;
+import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
+import org.telosys.tools.dsl.parser.model.DomainType;
+
 /**
- * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre
+ * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre, Laurent Guerin
  * @version 1.0
  */
-public class FieldParser {
+public class FieldParser  extends AbstractParser  {
 
     /**
      * Single parser for all annotations
      */
     private AnnotationParser annotationParser;
 
-    /**
-     * Logger for tracing all events
-     */
-    private Logger logger;
-
+//    /**
+//     * Logger for tracing all events
+//     */
+//    private Logger logger;
+//
     /**
      * Curent Model
      */
@@ -49,8 +51,9 @@ public class FieldParser {
      * @param model Context of the current field to parse
      */
     public FieldParser(DomainModel model) {
+    	super(LoggerFactory.getLogger(EntityParser.class));
         this.annotationParser = new AnnotationParser();
-        this.logger = LoggerFactory.getLogger(FieldParser.class);
+//        this.logger = LoggerFactory.getLogger(FieldParser.class);
         this.model = model;
     }
 
@@ -63,22 +66,25 @@ public class FieldParser {
     DomainEntityField parseField(String  entityNameFromFileName, String fieldInfo) {
         int startDescription = fieldInfo.indexOf(':');
         if (startDescription == -1) {
-            String errorMessage = "You must specify the type of the field. The separator between the name of the field and its type is ':'";
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = "You must specify the type of the field. The separator between the name of the field and its type is ':'";
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "Field description is missing ( ' : type { @xxx } ' )");
         }
         String name = fieldInfo.substring(0, startDescription).trim();
 
         // description and field is required
         if (!name.matches("^[\\w]*$")) {
-            String errorMessage = "The name of the fields must not contains special char " + name + " (entity '" + entityNameFromFileName+"')";
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = "The name of the fields must not contains special char " + name + " (entity '" + entityNameFromFileName+"')";
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "Fields name '" + name + "' must not contains special char");
         }
         if (name.length() == 0) {
-            String errorMessage = "The name of the field is missing (entity '" + entityNameFromFileName+"')";
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = "The name of the field is missing (entity '" + entityNameFromFileName+"')";
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "Fields name (before ':') is missing");
         }
 
         // find end of descritpion
@@ -107,21 +113,23 @@ public class FieldParser {
                     cardinality = Integer.parseInt(figure.trim());
                     typeName = typeName.substring(0, startArray).trim();
                 } catch (Exception e) {
-                    String errorMessage = "Invalid cardinality for " + typeName + " (entity '" + entityNameFromFileName+"')";
-                    this.logger.error(errorMessage);
-                    throw new EntityParserException(errorMessage + "\n Documentation : " + e);
+//                    String errorMessage = "Invalid cardinality for " + typeName + " (entity '" + entityNameFromFileName+"')";
+//                    this.logger.error(errorMessage);
+//                    throw new EntityParserException(errorMessage + "\n Documentation : " + e);
+                    throwParsingError(entityNameFromFileName, "Invalid cardinality for '" + typeName + "' ");
                 }
             }
         }
 
         // the type is required
         if (typeName.length() == 0) {
-            String errorMessage = "The type of the field is missing";
-            this.logger.error(errorMessage);
-            throw new EntityParserException(errorMessage);
+//            String errorMessage = "The type of the field is missing";
+//            this.logger.error(errorMessage);
+//            throw new EntityParserException(errorMessage);
+            throwParsingError(entityNameFromFileName, "Field type is missing");
         }
 
-        DomainType type;
+        DomainType type = null ;
 //        // enum
 //        if (this.isTypeEnum(typeName)) {
 //            if (!this.model.getEnumerationNames().contains(typeName.substring(1))) {
@@ -152,9 +160,10 @@ public class FieldParser {
         } else { // Entity (entity name is supposed to be known )
             if (!model.getEntityNames().contains(typeName)) {
             	// Reference to an unknown entity => ERROR
-                String errorMessage = "Invalid type '" + typeName  + "' for field '" + name + "' (entity '" + entityNameFromFileName+"')";
-                this.logger.error(errorMessage);
-                throw new EntityParserException(errorMessage);
+//                String errorMessage = "Invalid type '" + typeName  + "' for field '" + name + "' (entity '" + entityNameFromFileName+"')";
+//                this.logger.error(errorMessage);
+//                throw new EntityParserException(errorMessage);
+                throwParsingError(entityNameFromFileName, "Invalid type '" + typeName  + "' for field '" + name + "'" );
             } else {
             	// Reference to a valid entity : OK
                 type = model.getEntity(typeName);
@@ -163,7 +172,7 @@ public class FieldParser {
 
         // create with previous informations
         DomainEntityField field = new DomainEntityField(name, type, cardinality);
-        List<DomainEntityFieldAnnotation> annotations = this.annotationParser.parseAnnotations(fieldInfo);
+        List<DomainEntityFieldAnnotation> annotations = this.annotationParser.parseAnnotations(entityNameFromFileName, fieldInfo);
         field.setAnnotationList(annotations);
 
         return field;

@@ -43,22 +43,23 @@ public class FieldParserTest {
     @Test()
     public void testParseFieldWithAnnotation() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         String fieldInfo = "id:integer{@Id}";
-        DomainEntityField compareTo = new DomainEntityField("id", DomainNeutralTypes.getType("integer"));
+        
+        DomainEntityField expectedField = new DomainEntityField("id", DomainNeutralTypes.getType("integer"));
         List<DomainEntityFieldAnnotation> annotationList = new ArrayList<DomainEntityFieldAnnotation>();
         annotationList.add(new DomainEntityFieldAnnotation("Id"));
-        compareTo.setAnnotationList(annotationList);
+        expectedField.setAnnotationList(annotationList);
 
         FieldParser fieldParser = new FieldParser(new DomainModel("model"));
 
         //mock annotationParser
         AnnotationParser mockAnnotationParser = EasyMock.createMock(AnnotationParser.class);
-        EasyMock.expect(mockAnnotationParser.parseAnnotations("id:integer{@Id}")).andReturn(annotationList);
+        EasyMock.expect(mockAnnotationParser.parseAnnotations("EntityForTest", "id:integer{@Id}")).andReturn(annotationList);
         java.lang.reflect.Field field = fieldParser.getClass().getDeclaredField("annotationParser");
         field.setAccessible(true);
         field.set(fieldParser, mockAnnotationParser);
         EasyMock.replay(mockAnnotationParser);
 
-        Assert.assertEquals(compareTo, fieldParser.parseField("NoRealFile", fieldInfo));
+        Assert.assertEquals(expectedField, fieldParser.parseField("EntityForTest", fieldInfo));
         EasyMock.verify(mockAnnotationParser);
     }
 
