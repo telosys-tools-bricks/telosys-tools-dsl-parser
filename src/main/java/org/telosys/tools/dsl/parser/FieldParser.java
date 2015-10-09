@@ -25,6 +25,8 @@ import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.dsl.parser.model.DomainType;
 
 /**
+ * Field description parsing
+ * 
  * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre, Laurent Guerin
  * @version 1.0
  */
@@ -35,11 +37,6 @@ public class FieldParser  extends AbstractParser  {
      */
     private AnnotationParser annotationParser;
 
-//    /**
-//     * Logger for tracing all events
-//     */
-//    private Logger logger;
-//
     /**
      * Curent Model
      */
@@ -53,49 +50,46 @@ public class FieldParser  extends AbstractParser  {
     public FieldParser(DomainModel model) {
     	super(LoggerFactory.getLogger(EntityParser.class));
         this.annotationParser = new AnnotationParser();
-//        this.logger = LoggerFactory.getLogger(FieldParser.class);
         this.model = model;
     }
 
     /**
+     * Throws a field parsing exception
+     * @param entityNameFromFileName
+     * @param fieldDescription
+     * @param message
+     */
+    private void throwFieldParsingError(String entityNameFromFileName, String fieldDescription, String message) {
+    	throwParsingError(entityNameFromFileName, "Field error '"+fieldDescription+"' (" + message+")");
+    }
+    
+    /**
      * Parse a single field with its own informations
      * @param entityNameFromFileName
-     * @param fieldInfo
+     * @param fieldInfo field definition including annotations, eg 'id:integer', 'id:Country', 'name : integer { @Max(3) }'
      * @return The parsed field
      */
     DomainEntityField parseField(String  entityNameFromFileName, String fieldInfo) {
-        int startDescription = fieldInfo.indexOf(':');
-        if (startDescription == -1) {
-//            String errorMessage = "You must specify the type of the field. The separator between the name of the field and its type is ':'";
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
-            throwParsingError(entityNameFromFileName, "Field description is missing ( ' : type { @xxx } ' )");
+    	// search colon (':') position
+        int colonPosition = fieldInfo.indexOf(':');
+        if (colonPosition == -1) {
+        	throwFieldParsingError(entityNameFromFileName, fieldInfo, "':' not found");
         }
-        String name = fieldInfo.substring(0, startDescription).trim();
-
-        // description and field is required
-        if (!name.matches("^[\\w]*$")) {
-//            String errorMessage = "The name of the fields must not contains special char " + name + " (entity '" + entityNameFromFileName+"')";
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
-            throwParsingError(entityNameFromFileName, "Fields name '" + name + "' must not contains special char");
-        }
-        if (name.length() == 0) {
-//            String errorMessage = "The name of the field is missing (entity '" + entityNameFromFileName+"')";
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
-            throwParsingError(entityNameFromFileName, "Fields name (before ':') is missing");
-        }
-
-        // find end of descritpion
-        int end;
+        
+        // field name ( before ':' )
+        String fieldName = fieldInfo.substring(0, colonPosition).trim();
+        
+        // find end of field type
+        int end = fieldInfo.length();
         if (fieldInfo.contains("{")) {
             end = fieldInfo.indexOf('{');
-        } else {
-            end = fieldInfo.length();
         }
+        String fieldType = getFieldType(entityNameFromFileName, fieldInfo);
+        
+        checkFieldName(entityNameFromFileName, fieldInfo, fieldName);
+        
 
-        String typeName = fieldInfo.substring(startDescription + 1, end).trim();
+        String typeName = fieldInfo.substring(colonPosition + 1, end).trim();
         int cardinality = 1;
 
         // if multiple cardinality is allowed
@@ -113,81 +107,159 @@ public class FieldParser  extends AbstractParser  {
                     cardinality = Integer.parseInt(figure.trim());
                     typeName = typeName.substring(0, startArray).trim();
                 } catch (Exception e) {
-//                    String errorMessage = "Invalid cardinality for " + typeName + " (entity '" + entityNameFromFileName+"')";
-//                    this.logger.error(errorMessage);
-//                    throw new EntityParserException(errorMessage + "\n Documentation : " + e);
-                    throwParsingError(entityNameFromFileName, "Invalid cardinality for '" + typeName + "' ");
+                    throwFieldParsingError(entityNameFromFileName, fieldInfo, "invalid cardinality");
+                }
+                if ( cardinality <= 0 ) {
+                    throwFieldParsingError(entityNameFromFileName, fieldInfo, "invalid cardinality");
                 }
             }
         }
 
         // the type is required
         if (typeName.length() == 0) {
-//            String errorMessage = "The type of the field is missing";
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
-            throwParsingError(entityNameFromFileName, "Field type is missing");
+            throwFieldParsingError(entityNameFromFileName, fieldInfo, "field type is missing");
         }
 
-        DomainType type = null ;
-//        // enum
-//        if (this.isTypeEnum(typeName)) {
-//            if (!this.model.getEnumerationNames().contains(typeName.substring(1))) {
-//                String errorMessage = "The enumeration " + typeName.substring(1) + " does not exist";
-//                this.logger.error(errorMessage);
-//                throw new EntityParserException(errorMessage);
-//            } else {
-//                type = this.model.getEnumeration(typeName.substring(1));
-//            }
-//            // other simple type
-//        } else if (DomainNeutralTypes.exists(typeName)) {
+//        DomainType type = null ;
+//
+//        if (DomainNeutralTypes.exists(typeName)) { // Simple type ( string, int, date, etc )
 //            type = DomainNeutralTypes.getType(typeName);
 //
-//            // from other entity
-//        } else {
+//        } else { // Entity (entity name is supposed to be known )
 //            if (!model.getEntityNames().contains(typeName)) {
-//                String errorMessage = "The type of the field is incorrect "+typeName;
-//                this.logger.error(errorMessage);
-//                throw new EntityParserException(errorMessage);
+//            	// Reference to an unknown entity => ERROR
+//                throwFieldParsingError(entityNameFromFileName, fieldInfo, "invalid type '" + typeName  + "'" );
 //            } else {
+//            	// Reference to a valid entity : OK
 //                type = model.getEntity(typeName);
 //            }
 //        }
-
-        if (DomainNeutralTypes.exists(typeName)) { // Simple type ( string, int, date, etc )
-            type = DomainNeutralTypes.getType(typeName);
-
-        } else { // Entity (entity name is supposed to be known )
-            if (!model.getEntityNames().contains(typeName)) {
-            	// Reference to an unknown entity => ERROR
-//                String errorMessage = "Invalid type '" + typeName  + "' for field '" + name + "' (entity '" + entityNameFromFileName+"')";
-//                this.logger.error(errorMessage);
-//                throw new EntityParserException(errorMessage);
-                throwParsingError(entityNameFromFileName, "Invalid type '" + typeName  + "' for field '" + name + "'" );
-            } else {
-            	// Reference to a valid entity : OK
-                type = model.getEntity(typeName);
-            }
-        }
-
+        DomainType domainType = getFieldDomainType(entityNameFromFileName, fieldInfo, typeName) ;
+        
         // create with previous informations
-        DomainEntityField field = new DomainEntityField(name, type, cardinality);
+        DomainEntityField field = new DomainEntityField(fieldName, domainType, cardinality);
         List<DomainEntityFieldAnnotation> annotations = this.annotationParser.parseAnnotations(entityNameFromFileName, fieldInfo);
         field.setAnnotationList(annotations);
 
         return field;
     }
 
-//    /**
-//     * Check if the given param is an enum with the specific char
-//     *
-//     * @param type The type of the field
-//     * @return bool - true if it's an enum
-//     */
-//    private boolean isTypeEnum(String type) {
-//        return type.startsWith("#");
-//    }
+    private void checkFieldName(String entityNameFromFileName, String fieldInfo, String fieldName) {
+        if (fieldName.length() == 0) {
+        	throwFieldParsingError(entityNameFromFileName, fieldInfo, "field name is missing");
+        }
+        if (!fieldName.matches("^[\\w]*$")) {
+        	throwFieldParsingError(entityNameFromFileName, fieldInfo, "field name must not contains special char");
+        }
+    }
 
+    /* private */ void checkSyntax(String entityNameFromFileName, String fieldInfo) {
+    	int colonIndex = -1 ;
+    	int cardinalityOpen = -1 ;
+    	int cardinalityClose = -1 ;
+    	int annotationsOpen = -1 ;
+    	int annotationsClose = -1 ;
+        for ( int i = 0 ; i < fieldInfo.length() ; i++ ) {
+        	char c = fieldInfo.charAt(i);
+        	switch (c) {
+        	case ':' :
+        		if ( colonIndex >= 0 ) {
+        			throwFieldParsingError(entityNameFromFileName, fieldInfo, "multiple ':'");
+        		}
+        		colonIndex = i ;
+        		break;
+        	case '[' :
+        		if ( cardinalityOpen >= 0 ) {
+        			throwFieldParsingError(entityNameFromFileName, fieldInfo, "multiple '['");
+        		}
+        		cardinalityOpen = i ;
+        		break;
+        	case ']' :
+        		if ( cardinalityClose >= 0 ) {
+        			throwFieldParsingError(entityNameFromFileName, fieldInfo, "multiple ']'");
+        		}
+        		cardinalityClose = i ;
+        		break;
+        	case '{' :
+        		if ( annotationsOpen >= 0 ) {
+        			throwFieldParsingError(entityNameFromFileName, fieldInfo, "multiple '{'");
+        		}
+        		annotationsOpen = i ;
+        		break;
+        	case '}' :
+        		if ( annotationsClose >= 0 ) {
+        			throwFieldParsingError(entityNameFromFileName, fieldInfo, "multiple '}'");
+        		}
+        		annotationsClose = i ;
+        		break;
+        	}
+        }
+        if ( colonIndex < 0 ) {
+			throwFieldParsingError(entityNameFromFileName, fieldInfo, "':' missing");
+        }
+        if (   ( cardinalityOpen < 0 ) &&  ! ( cardinalityClose < 0 ) ) {
+			throwFieldParsingError(entityNameFromFileName, fieldInfo, "']' without '['");
+        }
+        if ( ! ( cardinalityOpen < 0 ) &&    ( cardinalityClose < 0 ) ) {
+			throwFieldParsingError(entityNameFromFileName, fieldInfo, "'[' without ']'");
+        }
+        if ( cardinalityOpen > cardinalityClose ) {
+			throwFieldParsingError(entityNameFromFileName, fieldInfo, "'[' and ']' inversion");
+        }
+    }
+    
+    /* private */ String getFieldType(String entityNameFromFileName, String fieldInfo) {
+    	boolean inCardinality = false ;
+    	StringBuffer sb = new StringBuffer();
+        int start = fieldInfo.indexOf(':') + 1;
+        int end = fieldInfo.length() - 1 ;
+        for ( int i = start ; i <= end ; i++ ) {
+        	char c = fieldInfo.charAt(i);
+        	if ( Character.isLetterOrDigit(c) || c == '[' || c == ']' || c == ' ' || c == '\t' ) {
+        		if ( c == '[') {
+        			inCardinality = true ;
+        		}
+        		if ( c == ']') {
+        			inCardinality = false ;
+        		}
+        		sb.append(c);
+        	}
+        	else {
+        		if ( inCardinality ) {
+        			sb.append(c);
+        		}
+        		else {
+        			break ;
+        		}
+        	}
+        }
+        return sb.toString().trim();
+    }
+    
+    /**
+     * Returns the DomainType for the given field type name
+     * @param entityNameFromFileName
+     * @param fieldInfo
+     * @param typeName eg 'string', 'date', 'Book', 'Country', etc
+     * @return
+     */
+    private DomainType getFieldDomainType(String entityNameFromFileName, String fieldInfo, String typeName) {
+    	DomainType type = null ;
+        if (DomainNeutralTypes.exists(typeName)) { // Simple type ( string, int, date, etc )
+            type = DomainNeutralTypes.getType(typeName);
+
+        } else { // Entity name (it is supposed to be known ) eg : 'Book', 'Car', etc
+            if (!model.getEntityNames().contains(typeName)) {
+            	// Reference to an unknown entity => ERROR
+                throwFieldParsingError(entityNameFromFileName, fieldInfo, "invalid type '" + typeName  + "'" );
+            } else {
+            	// Reference to a valid entity : OK
+                type = model.getEntity(typeName);
+            }
+        }
+        return type ;
+    }
+    
     /**
      * Check if the given param is an array of oject
      *

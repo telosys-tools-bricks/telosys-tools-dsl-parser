@@ -38,14 +38,14 @@ public class AnnotationParser extends AbstractParser  {
     /**
      * Parse field annotations located between brackets : '{ @xxx, @xxx }'
      * @param entityNameFromFileName
-     * @param fieldInfo
+     * @param annotations
      * @return
      */
-    List<DomainEntityFieldAnnotation> parseAnnotations(String entityNameFromFileName, String fieldInfo) {
+    List<DomainEntityFieldAnnotation> parseAnnotations(String entityNameFromFileName, String annotations) {
 
         // get index of first and last open brackets
-        int bodyStart = fieldInfo.indexOf('{');
-        int bodyEnd = fieldInfo.lastIndexOf('}');
+        int bodyStart = annotations.indexOf('{');
+        int bodyEnd = annotations.lastIndexOf('}');
 
         List<DomainEntityFieldAnnotation> list = new ArrayList<DomainEntityFieldAnnotation>();
 
@@ -54,39 +54,39 @@ public class AnnotationParser extends AbstractParser  {
 //            String errorMessage = "There is a problem with the bracket. There's one missing in the field : "+fieldInfo;
 //            this.logger.error(errorMessage);
 //            throw new EntityParserException(errorMessage);
-            throwParsingError(entityNameFromFileName, "Invalid bracket usage : " + fieldInfo);
+            throwParsingError(entityNameFromFileName, "Invalid bracket usage : " + annotations);
         }
 
         if (bodyEnd < 0 && bodyStart < 0) {
-            if(fieldInfo.indexOf("]") > 0 && fieldInfo.indexOf("]")!= fieldInfo.length()-1 ) {
-                if(!fieldInfo.substring(fieldInfo.indexOf("]")+1).trim().equals("")){
+            if(annotations.indexOf("]") > 0 && annotations.indexOf("]")!= annotations.length()-1 ) {
+                if(!annotations.substring(annotations.indexOf("]")+1).trim().equals("")){
 //                    String errorMessage = "There is a problem with the semilicon : "+fieldInfo;
 //                    this.logger.error(errorMessage);
 //                    throw new EntityParserException(errorMessage);
-                    throwParsingError(entityNameFromFileName, "There is a problem with the semilicon : "+ fieldInfo); 
+                    throwParsingError(entityNameFromFileName, "There is a problem with the semilicon : "+ annotations); 
                 }
             }
             return list;
         } else {
             
-            if(!fieldInfo.substring(bodyEnd+1).trim().equals("") &&  !fieldInfo.substring(bodyEnd+1).trim().equals(";")) {
+            if(!annotations.substring(bodyEnd+1).trim().equals("") &&  !annotations.substring(bodyEnd+1).trim().equals(";")) {
 //                String errorMessage = "There is a problem with the semilicon : "+fieldInfo;
 //                this.logger.error(errorMessage);
 //                throw new EntityParserException(errorMessage);
-                throwParsingError(entityNameFromFileName, "There is a problem with the semilicon : "+ fieldInfo); 
+                throwParsingError(entityNameFromFileName, "There is a problem with the semilicon : "+ annotations); 
             }
         }
         bodyStart++;
-        fieldInfo = fieldInfo.substring(bodyStart, bodyEnd).trim();
+        annotations = annotations.substring(bodyStart, bodyEnd).trim();
 
         // list of annotation found
-        String[] annotationList = fieldInfo.split(",");
+        String[] annotationList = annotations.split(",");
         // at least 1 annotation is required, if there are brackets
         if (annotationList.length < 1) {
 //            String errorMessage = "There is no annotation in the given information";
 //            this.logger.error(errorMessage);
 //            throw new EntityParserException(errorMessage);
-            throwParsingError(entityNameFromFileName, "No annotation between brackets "+ fieldInfo); 
+            throwParsingError(entityNameFromFileName, "No annotation between brackets "+ annotations); 
         }
 
         // extract annotations
