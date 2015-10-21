@@ -18,6 +18,12 @@ package org.telosys.tools.dsl.parser;
 import org.slf4j.Logger;
 import org.telosys.tools.dsl.EntityParserException;
 
+/**
+ * Generic ancestor class for parser classes
+ * 
+ * @author Laurent Guerin
+ *
+ */
 public abstract class AbstractParser {
 
     private final Logger logger;

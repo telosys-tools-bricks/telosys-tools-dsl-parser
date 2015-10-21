@@ -29,7 +29,7 @@ public class KeyWords {
 	private final static String SINGLE_LINE_COMMENT = "//" ;
 	
 	/**
-	 * List annoations names (# means 1 parameter)
+	 * List annotations names (# means numeric parameter required)
 	 */
 	private final static String[] annotations = { 
 		"Id",

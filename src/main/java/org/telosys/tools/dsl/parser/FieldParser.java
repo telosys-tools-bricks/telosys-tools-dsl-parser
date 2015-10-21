@@ -48,7 +48,7 @@ public class FieldParser  extends AbstractParser  {
      * @param model Context of the current field to parse
      */
     public FieldParser(DomainModel model) {
-    	super(LoggerFactory.getLogger(EntityParser.class));
+    	super(LoggerFactory.getLogger(FieldParser.class));
         this.annotationParser = new AnnotationParser();
         this.model = model;
     }
@@ -81,11 +81,14 @@ public class FieldParser  extends AbstractParser  {
         
         DomainType domainType = getFieldDomainType(entityNameFromFileName, fieldInfo, fieldType) ;
         
-        List<DomainEntityFieldAnnotation> annotations = this.annotationParser.parseAnnotations(entityNameFromFileName, fieldInfo);
+        String annotationsString = getAnnotations(entityNameFromFileName, fieldInfo);
+        
+        List<DomainEntityFieldAnnotation> annotationsList = 
+        		this.annotationParser.parseAnnotations(entityNameFromFileName, fieldName, annotationsString);
 
         // create with previous informations
         DomainEntityField field = new DomainEntityField(fieldName, domainType, fieldCardinality);
-        field.setAnnotationList(annotations);
+        field.setAnnotationList(annotationsList);
 
         return field;
     }
@@ -253,6 +256,22 @@ public class FieldParser  extends AbstractParser  {
     	else {
     		return 1 ;
     	}
+    }
+    
+    /**
+     * Returns the field annotations string without '{' and '}' (or a void string if none)
+     * @param entityNameFromFileName
+     * @param fieldInfo
+     * @return
+     */
+    /* package */ String getAnnotations(String entityNameFromFileName, String fieldInfo) {
+        // get index of first and last open brackets
+        int openIndex = fieldInfo.indexOf('{');
+        int closeIndex = fieldInfo.lastIndexOf('}');
+		if ( openIndex >= 0 ) { // field has annotations
+			return fieldInfo.substring(openIndex+1, closeIndex).trim();
+		}
+		return "";
     }
     
     /**

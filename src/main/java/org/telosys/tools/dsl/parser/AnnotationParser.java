@@ -15,6 +15,7 @@
  */
 package org.telosys.tools.dsl.parser;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,75 +24,58 @@ import org.telosys.tools.dsl.KeyWords;
 import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
 
 /**
+ * Field annotations parsing
+ * 
  * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre, Laurent Guerin
  * @version 1.0
  */
 public class AnnotationParser extends AbstractParser  {
-//    private Logger logger;
-
-    public AnnotationParser() {
-    	super(LoggerFactory.getLogger(EntityParser.class));
-
-//        this.logger = LoggerFactory.getLogger(AnnotationParser.class);
-    }
 
     /**
+     * Constructor
+     */
+    public AnnotationParser() {
+    	super(LoggerFactory.getLogger(AnnotationParser.class));
+    }
+    
+    /**
+     * Throws an annotation parsing exception
+     * @param entityName
+     * @param fieldName
+     * @param annotationString
+     * @param message
+     */
+    private void throwAnnotationParsingError(String entityName, String fieldName, String annotationString, String message) {
+    	throwParsingError(entityName + "." + fieldName, "Annotation error '" + annotationString + "' (" + message + ")");
+    }
+    
+    /**
      * Parse field annotations located between brackets : '{ @xxx, @xxx }'
-     * @param entityNameFromFileName
-     * @param annotations
+     * @param entityName
+     * @param fieldName
+     * @param annotations the annotations string without '{' and '}'
      * @return
      */
-    List<DomainEntityFieldAnnotation> parseAnnotations(String entityNameFromFileName, String annotations) {
+    List<DomainEntityFieldAnnotation> parseAnnotations(String entityName, String fieldName, String annotations) {
 
-        // get index of first and last open brackets
-        int bodyStart = annotations.indexOf('{');
-        int bodyEnd = annotations.lastIndexOf('}');
-
-        List<DomainEntityFieldAnnotation> list = new ArrayList<DomainEntityFieldAnnotation>();
-
-        // no annotation found
-        if ((bodyEnd < 0 && bodyStart >= 0) || (bodyEnd >= 0 && bodyStart < 0)) {
-//            String errorMessage = "There is a problem with the bracket. There's one missing in the field : "+fieldInfo;
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
-            throwParsingError(entityNameFromFileName, "Invalid bracket usage : " + annotations);
-        }
-
-        if (bodyEnd < 0 && bodyStart < 0) {
-            if(annotations.indexOf("]") > 0 && annotations.indexOf("]")!= annotations.length()-1 ) {
-                if(!annotations.substring(annotations.indexOf("]")+1).trim().equals("")){
-//                    String errorMessage = "There is a problem with the semilicon : "+fieldInfo;
-//                    this.logger.error(errorMessage);
-//                    throw new EntityParserException(errorMessage);
-                    throwParsingError(entityNameFromFileName, "There is a problem with the semilicon : "+ annotations); 
-                }
-            }
-            return list;
-        } else {
-            
-            if(!annotations.substring(bodyEnd+1).trim().equals("") &&  !annotations.substring(bodyEnd+1).trim().equals(";")) {
-//                String errorMessage = "There is a problem with the semilicon : "+fieldInfo;
-//                this.logger.error(errorMessage);
-//                throw new EntityParserException(errorMessage);
-                throwParsingError(entityNameFromFileName, "There is a problem with the semilicon : "+ annotations); 
-            }
-        }
-        bodyStart++;
-        annotations = annotations.substring(bodyStart, bodyEnd).trim();
+    	if ( annotations == null || "".equals(annotations) ) {
+    		// return void list
+    		return new ArrayList<DomainEntityFieldAnnotation>();
+    	}
 
         // list of annotation found
         String[] annotationList = annotations.split(",");
         // at least 1 annotation is required, if there are brackets
-        if (annotationList.length < 1) {
-//            String errorMessage = "There is no annotation in the given information";
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
-            throwParsingError(entityNameFromFileName, "No annotation between brackets "+ annotations); 
+        if (annotationList.length == 0 ) {
+        	// example : "," or ",," (only commas)
+        	// not an error => return void list
+        	return new ArrayList<DomainEntityFieldAnnotation>();
         }
 
+        List<DomainEntityFieldAnnotation> list = new ArrayList<DomainEntityFieldAnnotation>();
         // extract annotations
         for (String annotationString : annotationList) {
-            DomainEntityFieldAnnotation annotation = this.parseSingleAnnotation(entityNameFromFileName, annotationString.trim());
+            DomainEntityFieldAnnotation annotation = this.parseSingleAnnotation(entityName, fieldName, annotationString.trim());
             list.add(annotation);
         }
 
@@ -99,77 +83,145 @@ public class AnnotationParser extends AbstractParser  {
     }
 
     /**
-     * @param entityNameFromFileName
-     * @param annotationString
+     * Parse a single annotation 
+     * @param entityName
+     * @param fieldName
+     * @param annotationString e.g. "@Id", "@Max(12)", etc
      * @return
      */
-    private DomainEntityFieldAnnotation parseSingleAnnotation(String entityNameFromFileName, String annotationString) {
-        // start with a @
+    private DomainEntityFieldAnnotation parseSingleAnnotation(String entityName, String fieldName, String annotationString) {
+    	
+        // must start with a '@'
         if (annotationString.charAt(0) != '@') {
-//            String errorMessage = "An annotation must start with a '@' ";
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
-            throwParsingError(entityNameFromFileName, "An annotation must start with '@' "); 
+            throwAnnotationParsingError( entityName, fieldName, annotationString, "must start with '@'");
         }
 
-        // find the name of the annotation
-        int end = annotationString.length();
-
-        // check if annotation has a parameter
-        boolean containsParam = false;
-        String param = "";
-        if (annotationString.contains("(")) {
-            end = annotationString.indexOf('(');
-            int endLess = end + 1 ;
-            int endMore = annotationString.length() - 1 ;
-            param = annotationString.substring(endLess, endMore).trim();
-            if (param.equals("")) {
-//                String errorMessage = "A parameter is required for this annotation : " + annotationString;
-//                this.logger.error(errorMessage);
-//                throw new EntityParserException(errorMessage);
-                throwParsingError(entityNameFromFileName, "Parameter required for annotation : " + annotationString); 
-            }
-            containsParam = true;
+        // get the annotation name 
+        String annotationName = getAnnotationName(annotationString);
+        if ( ! annotationName.equals( getAnnotationWithoutParameter(annotationString)) ) {
+    		throwAnnotationParsingError( entityName, fieldName, annotationString, "invalid syntax" );
         }
-
-
-        String givenAnnotation = annotationString.substring(1, end).trim();
-
+        // get the parameter value if any 
+    	String parameterValue = null ;
+    	try {
+			parameterValue = getParameterValue(annotationString, '(', ')' ) ;
+		} catch (Exception e) {
+			// invalid syntax in the parameter 
+    		throwAnnotationParsingError( entityName, fieldName, annotationString, e.getMessage() );
+		}
+        
         // check annotation exist
-//        String annotationAllowed = TelosysDSLProperties.getProperties().getProperty("annotations");
-//        String[] listAllowed = annotationAllowed.split(",");
-        List<String> listAllowed = KeyWords.getAnnotations();
+        List<String> definedAnnotations = KeyWords.getAnnotations();
 
-        // find annotation
-        for (String allowed : listAllowed) {
-            if (allowed.contains(givenAnnotation)) {
-                if (allowed.contains("#") && !containsParam) {
-//                    String errorMessage = "A parameter is required for this annotation : " + givenAnnotation;
-//                    this.logger.error(errorMessage);
-//                    throw new EntityParserException(errorMessage);
-                    throwParsingError(entityNameFromFileName, "Parameter required for annotation : " + givenAnnotation); 
+        // is it a known annotation ?
+        for (String annotationDefinition : definedAnnotations) { // "Id", "Max#", "Min#", ...
+            if ( annotationDefinition.startsWith(annotationName) ) {
+                // Annotation name found in defined annotations
+                if ( annotationDefinition.endsWith("#") ) {
+                	// this annotation must have a numeric parameter between ( and )
+                	if ( parameterValue == null || parameterValue.length() == 0 ) {
+                		throwAnnotationParsingError( entityName, fieldName, annotationString, "parameter required ");
+                	}
+                	// check parameter is numeric
+                	try {
+						new BigDecimal(parameterValue) ;
+					} catch (NumberFormatException e) {
+                		throwAnnotationParsingError( entityName, fieldName, annotationString, "numeric parameter required ");
+					}
+                	return new DomainEntityFieldAnnotation(annotationName, parameterValue);
                 }
-                if (!allowed.contains("#") && containsParam) {
-//                    String errorMessage = "There is a not required parameter for this annotation : " + annotationString;
-//                    this.logger.error(errorMessage);
-//                    throw new EntityParserException(errorMessage);
-                    throwParsingError(entityNameFromFileName, "Parameter not supported for annotation : " + givenAnnotation); 
-                }
-
-                if (containsParam) {
-                    return new DomainEntityFieldAnnotation(givenAnnotation, param);
-                } else {
-                    return new DomainEntityFieldAnnotation(givenAnnotation);
+                else {
+                	// annotation without parameter
+                	if ( parameterValue != null ) {
+                		throwAnnotationParsingError( entityName, fieldName, annotationString, "unexpected parameter");
+                	}
+                	return new DomainEntityFieldAnnotation(annotationName);
                 }
             }
         }
 
-//        String errorMessage = "No annotation has been configured yet ";
-//        this.logger.error(errorMessage);
-//        throw new EntityParserException(errorMessage);
-
-        throwParsingError(entityNameFromFileName, "Parameter not supported for annotation : " + givenAnnotation); 
+        throwAnnotationParsingError( entityName, fieldName, annotationString, "unknown annotation");
         return null ; // never reached
     }
 
+    /**
+     * @param annotation e.g. "@Id", "@Max(12)", etc
+     * @return "Id", "Max", etc
+     */
+    /* package */ String getAnnotationName (String annotation) {
+    	StringBuffer sb = new StringBuffer();
+    	// skip the first char (supposed to be @)
+    	for ( int i = 1 ; i < annotation.length() ; i++ ) {
+    		char c = annotation.charAt(i);
+//        	if ( ( c >=  'a' && c <= 'z' ) || ( c >=  'A' && c <= 'Z' ) ) {
+            if ( Character.isLetter(c) ) {
+        		sb.append(c);
+        	}
+        	else {
+        		break;
+        	}
+//        	if ( c == '(' ) {
+//        		break;
+//        	}
+    	}
+    	return sb.toString();
+    }
+
+    /**
+     * @param annotation e.g. "@Id ", "@Max xx (12)", etc
+     * @return "Id", "Max xx ", etc
+     */
+    /* package */ String getAnnotationWithoutParameter (String annotation) {
+    	StringBuffer sb = new StringBuffer();
+    	// skip the first char (supposed to be @)
+    	for ( int i = 1 ; i < annotation.length() ; i++ ) {
+    		char c = annotation.charAt(i);
+            if ( c == '(' ) {
+        		break;
+        	}
+            if ( c >= ' ' ) {
+        		sb.append(c);
+            }
+    	}
+    	return sb.toString().trim();
+    }
+    
+    /**
+     * @param s
+     * @param openChar
+     * @param closeChar
+     * @return the parameter value or null if none
+     * @throws Exception
+     */
+    /* package */ String getParameterValue(String s, char openChar, char closeChar) throws Exception {
+        int openIndex  = s.lastIndexOf(openChar);
+        int closeIndex = s.lastIndexOf(closeChar);
+    	if ( openIndex < 0 && closeIndex < 0 ) {
+    		// no open nor close char
+    		return null ;
+    	}
+    	else {
+    		// 1 or 2 chars found
+        	if ( openIndex >= 0 && closeIndex >= 0 ) {
+        		// open and close char found
+        		if ( openIndex < closeIndex ) {
+        			// valid order eg "(aa)"
+        			return s.substring(openIndex + 1, closeIndex).trim();
+        		}
+        		else {
+        			// unbalanced ( and ) eg ")aa("
+        	        throw new Exception("unbalanced " + openChar + " and " + closeChar );
+        		}
+        	}
+        	else {
+    			// unbalanced ( and ) eg "(aa" or "aa)"
+            	if ( openIndex < 0 ) {
+	    	        throw new Exception(" '" + openChar + "' missing");
+            	}
+            	else {
+	    	        throw new Exception(" '" + closeChar + "' missing");
+            	}
+        	}
+    	}
+    }
 }

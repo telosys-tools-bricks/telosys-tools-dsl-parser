@@ -1,15 +1,10 @@
 package org.telosys.tools.dsl.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.telosys.tools.dsl.EntityParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntityField;
-import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 
@@ -45,7 +40,7 @@ public class FieldParserTest {
 	}
 	
 	@Test
-    public void testGetFieldType() throws Exception {
+    public void testGetFieldType()  {
     	FieldParser fieldParser = new FieldParser(getDomainModel());
     	Assert.assertEquals("string",fieldParser.getFieldType(ENTITY_NAME, "aa:string"));
     	Assert.assertEquals("string",fieldParser.getFieldType(ENTITY_NAME, "aa: string"));
@@ -68,13 +63,28 @@ public class FieldParserTest {
     }
 	
 	@Test
-    public void testGetCardinality() throws Exception {
+    public void testGetCardinality() {
     	FieldParser fieldParser = new FieldParser(getDomainModel());
     	Assert.assertEquals(1,fieldParser.getCardinality(ENTITY_NAME, "aa:string") );
     	Assert.assertEquals(2,fieldParser.getCardinality(ENTITY_NAME, "aa:string [2]") );
     	Assert.assertEquals(2,fieldParser.getCardinality(ENTITY_NAME, "aa:string [ 2 ]") );
     	Assert.assertEquals(2,fieldParser.getCardinality(ENTITY_NAME, "aa:string \t [ \t 2 ]") );
     	Assert.assertEquals(-1,fieldParser.getCardinality(ENTITY_NAME, "aa:string []") );
+	}
+
+	@Test
+    public void testGetAnnotations() {
+    	FieldParser fieldParser = new FieldParser(getDomainModel());
+    	Assert.assertEquals("", fieldParser.getAnnotations(ENTITY_NAME, "aa:string") );
+    	Assert.assertEquals("", fieldParser.getAnnotations(ENTITY_NAME, "aa:string [2]") );
+    	Assert.assertEquals("", fieldParser.getAnnotations(ENTITY_NAME, "aa:string [ 2 ]") );
+    	Assert.assertEquals("", fieldParser.getAnnotations(ENTITY_NAME, "aa:string \t [ \t 2 ]") );
+    	
+    	Assert.assertEquals("@Id", fieldParser.getAnnotations(ENTITY_NAME, "aa:string { @Id } ") );
+    	Assert.assertEquals("@Id, @Max(12)", fieldParser.getAnnotations(ENTITY_NAME, "aa:string { @Id, @Max(12) } ") );
+
+    	Assert.assertEquals("@Id", fieldParser.getAnnotations(ENTITY_NAME, "aa:string[] { @Id } ") );
+    	Assert.assertEquals("@Id, @Max(12)", fieldParser.getAnnotations(ENTITY_NAME, "aa:string[2] { @Id, @Max(12) } ") );
 	}
 
     @Test(expected = EntityParserException.class)
@@ -132,25 +142,21 @@ public class FieldParserTest {
     
     @Test()
     public void testParseFieldWithAnnotation() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-        String fieldInfo = "id:integer{@Id}";
+//        String fieldInfo = "id:integer{@Id}";
         
-        DomainEntityField expectedField = new DomainEntityField("id", DomainNeutralTypes.getType("integer"));
-        List<DomainEntityFieldAnnotation> annotationList = new ArrayList<DomainEntityFieldAnnotation>();
-        annotationList.add(new DomainEntityFieldAnnotation("Id"));
-        expectedField.setAnnotationList(annotationList);
+//        DomainEntityField expectedField = new DomainEntityField("id", DomainNeutralTypes.getType("integer"));
+//        List<DomainEntityFieldAnnotation> annotationList = new ArrayList<DomainEntityFieldAnnotation>();
+//        annotationList.add(new DomainEntityFieldAnnotation("Id"));
+//        expectedField.setAnnotationList(annotationList);
 
         FieldParser fieldParser = new FieldParser(getDomainModel());
-
-        //mock annotationParser
-        AnnotationParser mockAnnotationParser = EasyMock.createMock(AnnotationParser.class);
-        EasyMock.expect(mockAnnotationParser.parseAnnotations("EntityForTest", "id:integer{@Id}")).andReturn(annotationList);
-        java.lang.reflect.Field field = fieldParser.getClass().getDeclaredField("annotationParser");
-        field.setAccessible(true);
-        field.set(fieldParser, mockAnnotationParser);
-        EasyMock.replay(mockAnnotationParser);
-
-        Assert.assertEquals(expectedField, fieldParser.parseField("EntityForTest", fieldInfo));
-        EasyMock.verify(mockAnnotationParser);
+        DomainEntityField domainEntityField = fieldParser.parseField(ENTITY_NAME, "id:integer{@Id}" ) ;
+        
+        Assert.assertEquals("id",      domainEntityField.getName() );
+        Assert.assertEquals("integer", domainEntityField.getType().getName() );
+        Assert.assertEquals(1,         domainEntityField.getCardinality() );
+        Assert.assertEquals(1,         domainEntityField.getAnnotations().size() );
+        
     }
 
     @Test

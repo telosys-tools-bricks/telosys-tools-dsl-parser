@@ -29,7 +29,7 @@ import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.dsl.parser.utils.StringUtils;
 
 /**
- * First entry point for the telosys entity parser
+ * First entry point for the Telosys entity parser
  *
  * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre, Laurent Guerin
  * 
@@ -37,48 +37,22 @@ import org.telosys.tools.dsl.parser.utils.StringUtils;
  */
 public class EntityParser extends AbstractParser {
 
-//    /**
-//     * Content of the File
-//     */
-//    private String formattedContent;
-
-//	private String entityFileName = "" ;
-	
-    /**
-     * Flatten Content of the File
-     */
-    //private String flattenContent;
-
     /**
      * fieldParser used to parse fields
      */
     private FieldParser fieldParser;
 
-//    private Logger logger;
-
     public EntityParser(DomainModel model) {
     	super(LoggerFactory.getLogger(EntityParser.class));
-//        this.formattedContent = "";
-//        this.flattenContent = "";
         this.fieldParser = new FieldParser(model);
-//        this.logger = LoggerFactory.getLogger(EntityParser.class);
     }
 
-//    public EntityParser(String formattedContent, DomainModel model) {
-//        this.formattedContent = formattedContent;
-//        this.flattenContent = "";
-//        this.fieldParser = new FieldParser(model);
-//        this.logger = LoggerFactory.getLogger(EntityParser.class);
-//    }
-//
     /**
      * @param fileName
      */
     public DomainEntity parse(String fileName) {
         File entityFile = new File(fileName);
         logInfo("--- fileName = " + fileName);
-//        this.entityFileName = entityFile.getName();
-//        logger.info("--- this.entityFileName = " + this.entityFileName);
         return this.parse(entityFile);
     }
 
@@ -88,9 +62,6 @@ public class EntityParser extends AbstractParser {
     protected DomainEntity parse(File file) {
     	InputStream is ;
         try {
-//            if (!file.exists()) {
-//                throw new FileNotFoundException();
-//            }
             is = new FileInputStream(file);
         } catch (FileNotFoundException e) {
             throw new EntityParserException( "File Not found : "+ file.getAbsolutePath() );
@@ -103,46 +74,12 @@ public class EntityParser extends AbstractParser {
      * @param is
      */
     private DomainEntity parse(InputStream is, String entityNameFromFileName) {
-//        File file = new File(path);
 
-//        formattedContent = StringUtils.readStream(is);
         String originalContent = StringUtils.readStream(is);
-//        flattenContent = computeFlattenContent();
         String flattenContent = ParserUtil.preprocessText(originalContent);
-//        int indexPoint = file.getName().lastIndexOf('.');
-//        if (indexPoint >= 0) {
-//            return parseFlattenContent(file.getName().substring(0, indexPoint));
-//        } else {
-//            throw new EntityParserException(this.entityFileName + " : The filename has no extension");
-//        }
         
         return parseFlattenContent(flattenContent, entityNameFromFileName) ;
     }
-
-/***
-//    public String computeFlattenContent() {
-    private String computeFlattenContent() {
-//        StringTokenizer content = new StringTokenizer(formattedContent, "\r\n");
-//        StringBuilder stringBuilder = new StringBuilder();
-//        while (content.hasMoreElements()) {
-//            String line = content.nextElement().toString();
-//
-////            if (line.contains(TelosysDSLProperties.getProperties().getProperty("start_comment"))) {
-////                line = line.substring(0,
-////                        line.indexOf(TelosysDSLProperties.getProperties().getProperty("start_comment")));
-////            }
-//            if (line.contains(KeyWords.getSingleLineComment())) {
-//                line = line.substring(0, line.indexOf(KeyWords.getSingleLineComment() ) );
-//            }
-//
-//            if (line.length() > 0) {
-//                stringBuilder.append(line.trim());
-//            }
-//        }
-//        return stringBuilder.toString();
-    	return ParserUtil.preprocessText(formattedContent);
-    }
-***/
 
     /**
      * @param flattenContent the file content after flatten
@@ -158,37 +95,24 @@ public class EntityParser extends AbstractParser {
 
         checkStructure(entityNameFromFileName, bodyStart, bodyEnd);
 
-        // body required
         if (bodyEnd - bodyStart == 1) {
-//            String errorMessage = entityNameFromFileName + " : A field is required";
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
-            throwParsingError(entityNameFromFileName, "An entity must contains at least one field");
+            throwParsingError(entityNameFromFileName, "An entity must contain at least one field");
         }
 
         String entityNameInFile = flattenContent.substring(0, bodyStart).trim();
 
         // the filename must be equal to entity name
         if (!entityNameInFile.equals(entityNameFromFileName)) {
-//            String errorMessage = entityNameFromFileName + " : The name of the file does not match with the entity name '" + entityNameInFile +"' ";
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
             throwParsingError(entityNameFromFileName, "Entity name '" + entityNameInFile +"' doesn't match with file name ");
         }
 
         // the first later of an entity must be upper case
         if (!Character.isUpperCase(flattenContent.charAt(0))) {
-//            String errorMessage = entityNameFromFileName + " : The name of the entity must start with an upper case";
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
             throwParsingError(entityNameFromFileName, "Entity name must start with an upper case");
         }
 
         // only simple chars are allowed
         if (!entityNameInFile.matches("^[A-Z][\\w]*$")) {
-//            String errorMessage = entityNameFromFileName + " : The name must not contains special char " + entityNameInFile;
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
             throwParsingError(entityNameFromFileName, "Entity name '" + entityNameInFile +"' must not contains special char ");
         }
 
@@ -198,9 +122,6 @@ public class EntityParser extends AbstractParser {
         // find all fields
         String body = flattenContent.substring(bodyStart + 1, bodyEnd).trim();
         if (body.lastIndexOf(';') != body.length() - 1) {
-//            String errorMessage = entityNameFromFileName + " : A semilicon is missing";
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
             throwParsingError(entityNameFromFileName, "Semicolon is missing");
         }
 
@@ -224,23 +145,17 @@ public class EntityParser extends AbstractParser {
     private void checkStructure(String entityNameFromFileName, int bodyStart, int bodyEnd) {
         // name required before body
         if (bodyStart < 0) {
-//            String errorMessage = entityNameFromFileName + " : There's something wrong at the beginning of the body";
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
             throwParsingError(entityNameFromFileName, "There's something wrong at the beginning of the body");
         }
 
         // end of body required
         if (bodyEnd < 1) {
-//            String errorMessage = entityNameFromFileName + " : There's something wrong at the end of the body";
-//            this.logger.error(errorMessage);
-//            throw new EntityParserException(errorMessage);
             throwParsingError(entityNameFromFileName, "There's something wrong at the end of the body");
         }
     }
 
     /**
-     * Verify the sructure of an entity
+     * Verify the structure of an entity
      * @param entity
      * @param entityNameFromFileName
      * @throws EntityParserException
@@ -254,12 +169,12 @@ public class EntityParser extends AbstractParser {
                     			+ " (entity " + entity.getName() + ")" );
                 }
                 if (tmp.getCardinality() != 1) {
-                    throw new EntityParserException(entityNameFromFileName + " : The Id can't be an array"
+                    throw new EntityParserException(entityNameFromFileName + " : The Id cannot be an array"
                     			+ " (entity " + entity.getName() + ")" );
                 }
                 if (tmp.isNeutralType()) {
                     if (tmp.getTypeName().equals(DomainNeutralTypes.BINARY_BLOB) || tmp.getTypeName().equals(DomainNeutralTypes.LONGTEXT_CLOB)) {
-                        throw new EntityParserException(entityNameFromFileName + " : The Id can't be a binary (BLOB) ou a longtext (CLOB)"
+                        throw new EntityParserException(entityNameFromFileName + " : The Id cannot be a binary (BLOB) or a longtext (CLOB)"
                     			+ " (entity " + entity.getName() + ")" );
                     }
                 }
@@ -268,19 +183,4 @@ public class EntityParser extends AbstractParser {
         }
     }
 
-//    public String getFormattedContent() {
-//        return formattedContent;
-//    }
-
-//    protected String getFlattenContent() {
-//        return flattenContent;
-//    }
-//
-//    /**
-//     * For unit tests only
-//     * @param flattenContent
-//     */
-//    protected void setFlattenContent(String flattenContent) {
-//        this.flattenContent = flattenContent;
-//    }
 }

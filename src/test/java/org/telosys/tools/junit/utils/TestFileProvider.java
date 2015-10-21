@@ -1,9 +1,6 @@
 package org.telosys.tools.junit.utils;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 public class TestFileProvider {
 	
