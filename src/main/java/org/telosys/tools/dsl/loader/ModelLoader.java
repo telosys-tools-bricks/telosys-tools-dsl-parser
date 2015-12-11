@@ -28,16 +28,29 @@ public class ModelLoader {
 
     static Logger logger = LoggerFactory.getLogger(ModelLoader.class);
 
-    public Model loadModel(String modelFolderAbsolutePath) {
-    	return loadModel( new File(modelFolderAbsolutePath) );
+    /**
+     * Loads (parse) the given model file
+     * 
+     * @param modelFileAbsolutePath the ".model" absolute file name 
+     * @return
+     */
+    public Model loadModel(String modelFileAbsolutePath) {
+    	return loadModel( new File(modelFileAbsolutePath) );
     }
     
-    public Model loadModel(File modelFolder) {
+    
+    /**
+     * Loads (parse) the given model file
+     *
+     * @param file the ".model" file 
+     * @return
+     */
+    public Model loadModel(File modelFile) {
     	
         //--- 1) Parse the model 
         DomainModelParser domainModelParser = new DomainModelParser();
-        logger.info("\nParse folder : " + modelFolder.getAbsolutePath() );
-        DomainModel domainModel = domainModelParser.parse(modelFolder);
+        logger.info("\nParse model : " + modelFile.getAbsolutePath() );
+        DomainModel domainModel = domainModelParser.parse(modelFile);
         logger.info("\n"+domainModel.toString());
 
         //--- 2) Convert the "domain model" to "generic model" 

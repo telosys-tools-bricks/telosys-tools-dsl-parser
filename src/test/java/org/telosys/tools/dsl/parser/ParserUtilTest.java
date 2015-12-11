@@ -1,7 +1,11 @@
 package org.telosys.tools.dsl.parser;
 
+import java.io.File;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
+import org.telosys.tools.dsl.EntityParserException;
 
 public class ParserUtilTest {
 	
@@ -123,4 +127,37 @@ public class ParserUtilTest {
     	String filteredText = text.replaceAll(COMMENT_REGEXP,"");
     	System.out.println("Result : \n" + filteredText );
     }
+
+    @Test
+    public void testGetModelName() {
+    	String modelName = ParserUtil.getModelName(new File("C:/foo/bar/toto.model"));
+    	Assert.assertEquals("toto", modelName);
+    }
+    
+    @Test(expected=EntityParserException.class)
+    public void testGetModelNameInvalid() {
+    	ParserUtil.getModelName(new File("C:/foo/bar/toto.foo"));
+    }
+    
+    @Test
+    public void testGetEntityName() {
+    	String modelName = ParserUtil.getEntityName(new File("C:/foo/bar/Toto.entity"));
+    	Assert.assertEquals("Toto", modelName);
+    }
+    
+    @Test(expected=EntityParserException.class)
+    public void testGetEntityNameInvalid() {
+    	ParserUtil.getEntityName(new File("C:/foo/bar/Toto.txt"));
+    }
+    
+    @Test
+    public void testGetEntitiesAbsoluteFileNames() {
+    	File modelFile = new File("src/test/resources/model_test/valid/FourEntities.model");
+    	List<String> list = ParserUtil.getEntitiesAbsoluteFileNames(modelFile);
+    	for ( String s : list ) {
+    		System.out.println(" . " + s );
+    	}
+    	Assert.assertEquals(4, list.size());
+    }
+    
 }

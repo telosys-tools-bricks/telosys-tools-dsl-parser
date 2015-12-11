@@ -123,5 +123,10 @@ public class GenericEntity implements Entity {
 	public void setViewType(Boolean viewType) {
 		this.viewType = viewType;
 	}
+
+	@Override
+	public List<String> getWarnings() {
+		return null; // no warnings for this kind of model
+	}
 	
 }

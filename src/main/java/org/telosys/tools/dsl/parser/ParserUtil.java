@@ -16,6 +16,8 @@
 package org.telosys.tools.dsl.parser;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.telosys.tools.dsl.EntityParserException;
@@ -70,9 +72,9 @@ public class ParserUtil {
     //-------------------------------------------------------------------------------------------------
     // Names from file name
     //-------------------------------------------------------------------------------------------------
-    public static final String DOT_MODEL = ".model";
-    public static final String DOT_ENTITY = ".entity";
-    
+    private static final String DOT_MODEL           = ".model"  ;
+    private static final String DOT_ENTITY          = ".entity" ;
+    private static final String MODEL_FOLDER_SUFFIX = "_model"  ;
 
     /**
      * Returns the model name for the given file name
@@ -85,7 +87,7 @@ public class ParserUtil {
     
     /**
      * Returns the entity name for the given file name
-     * @param file eg 'aaa/bbb/Car.entity' 
+     * @param file an entity file, e.g. 'aaa/bbb/Car.entity' 
      * @return 'Car' for 'aaa/bbb/Car.entity' 
      */
     public static String getEntityName(File file) {
@@ -104,5 +106,54 @@ public class ParserUtil {
     	}
     }
     
+    public static void checkModelFile(File file) {
+        if ( ! file.exists() ) {
+            String textError = "File '" + file.toString() + "' not found";
+            //logger.error(textError);
+            throw new EntityParserException(textError);
+        }
+        if ( ! file.isFile() ) {
+            String textError = "'" + file.toString() + "' is not a file";
+            //logger.error(textError);
+            throw new EntityParserException(textError);
+        }
+        if ( ! file.getName().endsWith(DOT_MODEL)) {
+            String textError = "File '" + file.toString() + "' doesn't end with '" + DOT_MODEL + "'";
+            //logger.error(textError);
+            throw new EntityParserException(textError);
+        }
+    }
+    
+    /**
+     * Returns a list of entities absolute file names <br>
+     * List of all the files located in the model folder and ending with ".entity" <br>
+     * 
+     * @param modelFile
+     * @return
+     */
+    public static List<String> getEntitiesAbsoluteFileNames(File modelFile) {
+
+    	String modelName = getModelName(modelFile) ;
+
+    	String modelFolderAbsolutePath = modelFile.getParentFile().getAbsolutePath() 
+    			+ "/" + modelName + MODEL_FOLDER_SUFFIX ;
+    	File folder = new File(modelFolderAbsolutePath);
+    	if ( folder.exists() ) {
+            List<String> entities = new LinkedList<String>();
+
+            String[] allFiles = folder.list();
+            for (String fileName : allFiles) {
+            	if ( fileName.endsWith(ParserUtil.DOT_ENTITY)) {
+            		entities.add( folder.getAbsolutePath() + "/" + fileName ) ;
+            	}
+            }
+            return entities;
+    	}
+    	else {
+            String textError = "Model folder '"+ modelFolderAbsolutePath + "' not found";
+//            logger.error(textError);
+            throw new EntityParserException(textError);
+    	}
+    }
     
 }
