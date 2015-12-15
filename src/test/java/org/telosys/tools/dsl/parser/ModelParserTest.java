@@ -7,6 +7,7 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.telosys.tools.dsl.EntityParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntityField;
 import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
@@ -317,7 +318,8 @@ public class ModelParserTest {
         
 		assertEquals("FourEntities", model.getName());
 		assertEquals("", model.getVersion() );
-        
+		assertEquals(0, parser.getErrors().size() );
+		
         DomainModel modelToCompare = new DomainModel("FourEntities");
         
 //        DomainEnumeration<String> country = new DomainEnumerationForString("Country");
@@ -364,6 +366,29 @@ public class ModelParserTest {
 
 //        assertEquals(modelToCompare,model);
 		compareModels(model, modelToCompare) ;
+    }
+	
+	@Test
+    public void testParseModel_FourEntities_Invalid() throws Exception {
+        File modelFile = new File("src/test/resources/model_test/invalid/FourEntities.model");
+        DomainModelParser parser = new DomainModelParser();
+        DomainModel model = null ;
+        Exception exception = null ;
+		try {
+			model = parser.parse(modelFile);
+		} catch (EntityParserException e) {
+			exception = e ;
+			e.printStackTrace();
+		}
+        
+		assertEquals(null, model);
+		assertNotNull(exception );
+		assertEquals(2, parser.getErrors().size() );
+		System.out.println("Entities with errors : ");
+		System.out.println(" Country : " + parser.getErrors().get("Country.entity") );
+		System.out.println(" Gender  : " + parser.getErrors().get("Gender.entity") );
+		assertNotNull(parser.getErrors().get("Country.entity"));
+		assertNotNull(parser.getErrors().get("Gender.entity"));
     }
 	
 	private DomainEntity buildCountryEntity() {

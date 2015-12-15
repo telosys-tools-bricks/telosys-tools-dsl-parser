@@ -1,0 +1,4 @@
+Countryyyyy { // Bad name
+	id : integer {@Id};
+	name : string;
+}

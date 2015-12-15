@@ -16,9 +16,11 @@
 package org.telosys.tools.dsl.parser;
 
 import java.io.File;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
+import org.telosys.tools.dsl.EntityParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 
@@ -34,54 +36,13 @@ import org.telosys.tools.dsl.parser.model.DomainModel;
  */
 public class DomainModelParser {
 
-//    private static final String DOT_MODEL = ".model";
-//    private static final String DOT_ENTITY = ".entity";
-//    private static final String MODEL_FOLDER_SUFFIX = "_model" ;
-    
-//    private static final String DOT_ENUM = ".enum";
-//    private Logger logger = LoggerFactory.getLogger(DomainModelParser.class);
-
-//    /**
-//     * Parse the given model
-//     *
-//     * @param file the ".model" file 
-//     * @return
-//     */
-//    public final DomainModel parse(File file) {
-//
-//        if (!file.exists()) {
-//            String textError = "Cannot parse model : file '" + file.toString() + "' doesn't exist";
-//            logger.error(textError);
-//            throw new EntityParserException(textError);
-//        }
-//        if (file.isFile()) {
-////            if (file.getName().endsWith(DOT_MODEL)) {
-////                return parseModelFile(file);
-////            } else {
-////                String textError = "Cannot parse model : file '" + file.toString() + "' is not a model";
-////                logger.error(textError);
-////                throw new EntityParserException(textError);
-////            }
-//        	String modelName = ParserUtil.getModelName(file) ;
-//            return parseModelFile(file, modelName);
-////        } else if (file.isDirectory()) {
-////            File[] files = file.listFiles();
-////            for (File f : files) {
-////                if (f.isFile() && f.getName().endsWith(DOT_MODEL)) {
-////                    return parseModelFile(f);
-////                }
-////            }
-////            String textError = "Cannot parse model : no model file in '" + file.toString() + "'";
-////            logger.error(textError);
-////            throw new EntityParserException(textError);
-//        } else {
-////            String textError = "Cannot parse model : '" + file.toString() + "' is not a file or directory";
-//            String textError = "Cannot parse model : '" + file.toString() + "' is not a file";
-//            logger.error(textError);
-//            throw new EntityParserException(textError);
-//        }
-//    }
-    
+	/*
+	 * Entities files with errors 
+	 * Key   : entity absolute file name 
+	 * Value : parsing error
+	 */
+	private final Hashtable<String,String> entitiesErrors = new Hashtable<String,String>();
+	
     /**
      * Parse the given model file
      *
@@ -93,54 +54,9 @@ public class DomainModelParser {
     	return parseModelFile(file);
     }
     
-//    private void checkModelFile(File file) {
-//        if ( ! file.exists() ) {
-//            String textError = "File '" + file.toString() + "' not found";
-//            logger.error(textError);
-//            throw new EntityParserException(textError);
-//        }
-//        if ( ! file.isFile() ) {
-//            String textError = "'" + file.toString() + "' is not a file";
-//            logger.error(textError);
-//            throw new EntityParserException(textError);
-//        }
-//        if ( ! file.getName().endsWith(DOT_MODEL)) {
-//            String textError = "File '" + file.toString() + "' doesn't end with '" + DOT_MODEL + "'";
-//            logger.error(textError);
-//            throw new EntityParserException(textError);
-//        }
-//    }
-    
-//    /**
-//     * Returns the model name for the given file name
-//     * @param file eg 'aaa/bbb/foo.model' 
-//     * @return 'foo' for 'aaa/bbb/foo.model' 
-//     */
-//    private final String getModelName(File file) {
-//    	return getFileNameWithoutExtension(file, DOT_MODEL) ;
-//    }
-//    
-//    /**
-//     * Returns the entity name for the given file name
-//     * @param file eg 'aaa/bbb/Car.entity' 
-//     * @return 'Car' for 'aaa/bbb/Car.entity' 
-//     */
-//    private final String getEntityName(File file) {
-//    	return getFileNameWithoutExtension(file, DOT_ENTITY) ;
-//    }
-
-//    private final String getFileNameWithoutExtension(File file, String extension) {
-//    	String fileName = file.getName();
-//    	int i = fileName.lastIndexOf(extension);
-//    	if ( i > 0 ) {
-//    		return fileName.substring(0, i);
-//    	}
-//    	else {
-//            String textError = "Invalid file name '" + fileName + "' (doesn't end with '" + extension + "')";
-//            logger.error(textError);
-//    		throw new EntityParserException(textError);
-//    	}
-//    }
+    public Hashtable<String,String> getErrors() {
+    	return entitiesErrors ;
+    }
     
 //    private final DomainModel parseModelFile(File file, String modelName) {
     private final DomainModel parseModelFile(File file) {
@@ -149,16 +65,6 @@ public class DomainModelParser {
     	
         //Properties properties = loadProperties(file);
         Properties properties = ParserUtil.loadModelProperties(file);
-//        String modelName = p.getProperty("name");
-//        if (modelName == null || modelName.trim().length() == 0) {
-//            // use the file name as default name
-//            String fileName = file.getName();
-//            int i = fileName.indexOf(DOT_MODEL);
-//            modelName = fileName.substring(0, i);
-//        }
-
-//        File folder = file.getParentFile();
-//        Map<String, List<String>> files = getMapFiles(folder);
         
 //        DomainModel model = new DomainModel(modelName, properties);
         DomainModel model = new DomainModel(properties);
@@ -174,93 +80,36 @@ public class DomainModelParser {
 //        List<String> entitiesFileNames = getEntitiesAbsoluteFileNames(file, modelName);
         List<String> entitiesFileNames = ParserUtil.getEntitiesAbsoluteFileNames(file);
         
+        //--- Step 1 : build void entities in the model
         for (String entityFileName : entitiesFileNames) {
             //File entityFile = new File(entity);
             String entityName = ParserUtil.getEntityName(new File(entityFileName));
             model.addEntity(new DomainEntity(entityName));
         }
 
+        //--- Step 2 : parse each entity and populate it in the model
+        int errorsCount = 0 ;
         EntityParser entityParser = new EntityParser(model);
         for (String entityFileName : entitiesFileNames) {
-            model.putEntity(entityParser.parse(entityFileName));
+        	//--- Parse
+        	DomainEntity domainEntity;
+			try {
+				domainEntity = entityParser.parse(entityFileName);
+	        	//--- Populate
+	            model.putEntity(domainEntity);
+			} catch (EntityParserException parsingException) {
+				errorsCount++ ;
+				File entityFile = new File(entityFileName);
+				entitiesErrors.put(entityFile.getName(), parsingException.getMessage() );
+			}
         }
-        return model;
+        if ( errorsCount == 0 ) {
+            return model;
+        }
+        else {
+        	throw new EntityParserException( "Parsing error(s) : " + errorsCount + " invalid entity(ies) ") ;
+        }
     }
-
-//    private Properties loadProperties(File propFile) {
-//        Properties props = new Properties();
-//        FileInputStream fis = null;
-//
-//        try {
-//            fis = new FileInputStream(propFile);
-//            props.load(fis);
-//        } catch (IOException ioe) {
-//            String textError = "Cannot load properties from file "+ propFile;
-//            logger.error(textError);
-//            throw new EntityParserException(textError + "\n Documentation : " +ioe);
-//        } finally {
-//
-//            try {
-//                if (fis != null) {
-//                    fis.close();
-//                }
-//            } catch (IOException e) {
-//                // NOTHING TO DO
-//            }
-//        }
-//        return props;
-//    }
-
-//    /**
-//     * Get all files name and their associate class from a folder
-//     *
-//     * @param folder
-//     * @return
-//     */
-//    private Map<String, List<String>> getMapFiles(File folder) {
-//        Map<String, List<String>> files = new HashMap<String, List<String>>();
-//        files.put(DOT_ENTITY, new ArrayList<String>());
-////        files.put(DOT_ENUM, new ArrayList<String>());
-//
-//        String[] allFiles = folder.list();
-//        for (String fileName : allFiles) {
-//            String extension = fileName.substring(fileName.lastIndexOf('.'));
-//            if (files.containsKey(extension)) {
-//                List<String> current = files.get(extension);
-//                current.add(folder.getAbsolutePath() + "/" + fileName);
-//                files.put(extension, current);
-//            }
-//        }
-//        return files;
-//    }
-
-//    /**
-//     * Returns a list of entities absolute file names
-//     * @param modelFile
-//     * @param modelName
-//     * @return
-//     */
-//    private List<String> getEntitiesAbsoluteFileNames(File modelFile, String modelName) {
-//    	String modelFolderAbsolutePath = modelFile.getParentFile().getAbsolutePath() 
-//    			+ "/" + modelName + MODEL_FOLDER_SUFFIX ;
-//    	File folder = new File(modelFolderAbsolutePath);
-//    	if ( folder.exists() ) {
-//            List<String> entities = new LinkedList<String>();
-//
-//            String[] allFiles = folder.list();
-//            for (String fileName : allFiles) {
-//            	if ( fileName.endsWith(ParserUtil.DOT_ENTITY)) {
-//            		entities.add( folder.getAbsolutePath() + "/" + fileName ) ;
-//            	}
-//            }
-//            return entities;
-//    	}
-//    	else {
-//            String textError = "Cannot parse model, folder "+ modelFolderAbsolutePath + " not found";
-//            logger.error(textError);
-//            throw new EntityParserException(textError);
-//    	}
-//    }
 
     public List<String> getEntitiesAbsoluteFileNames(File modelFile) {
     	ParserUtil.checkModelFile(modelFile);
