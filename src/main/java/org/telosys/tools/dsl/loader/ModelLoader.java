@@ -16,12 +16,15 @@
 package org.telosys.tools.dsl.loader;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telosys.tools.dsl.generic.converter.Converter;
 import org.telosys.tools.dsl.parser.DomainModelParser;
+import org.telosys.tools.dsl.parser.ParserUtil;
 import org.telosys.tools.dsl.parser.model.DomainModel;
+import org.telosys.tools.dsl.parser.model.DomainModelInfo;
 import org.telosys.tools.generic.model.Model;
 
 public class ModelLoader {
@@ -42,7 +45,7 @@ public class ModelLoader {
     /**
      * Loads (parse) the given model file
      *
-     * @param file the ".model" file 
+     * @param modelFile the ".model" file 
      * @return
      */
     public Model loadModel(File modelFile) {
@@ -61,4 +64,14 @@ public class ModelLoader {
         return model;
     }
 
+    /**
+     * Loads the model information from the model file 
+     * 
+     * @param modelFile the ".model" file 
+     * @return
+     */
+    public DomainModelInfo loadModelInformation(File modelFile) {
+    	Properties properties = ParserUtil.loadModelProperties(modelFile);
+    	return new DomainModelInfo(properties);
+    }
 }

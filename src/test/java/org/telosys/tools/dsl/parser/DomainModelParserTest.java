@@ -38,6 +38,7 @@ public class DomainModelParserTest {
 		DomainModel model = parser.parse(file);
 		System.out.println("Parsed : model name = " + model.getName());
 		assertEquals( "toto", model.getName() ) ;
+		assertEquals( "1.2", model.getVersion() ) ;
 	}
 
 	@Test
@@ -49,7 +50,9 @@ public class DomainModelParserTest {
 		System.out.println("File : " + file );
 		DomainModel model = parser.parse(file);
 		System.out.println("Parsed : model name = " + model.getName());
-		assertEquals( "toto", model.getName() ) ;
+		assertEquals( "", model.getName() ) ;
+		assertEquals( "", model.getVersion() ) ;
+		assertEquals( "", model.getDescription() ) ;
 	}
 
 //	@Test

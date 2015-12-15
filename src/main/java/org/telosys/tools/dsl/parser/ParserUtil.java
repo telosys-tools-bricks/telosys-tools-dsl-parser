@@ -16,8 +16,11 @@
 package org.telosys.tools.dsl.parser;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.telosys.tools.dsl.EntityParserException;
@@ -156,4 +159,33 @@ public class ParserUtil {
     	}
     }
     
+    /**
+     * Loads the model properties ( model information ) 
+     * @param modelFile
+     * @return
+     */
+    public static Properties loadModelProperties(File modelFile) {
+        Properties props = new Properties();
+        FileInputStream fis = null;
+
+        try {
+            fis = new FileInputStream(modelFile);
+            props.load(fis);
+        } catch (IOException ioe) {
+            String textError = "Cannot load properties from file "+ modelFile;
+            //logger.error(textError);
+            throw new EntityParserException(textError + " (IOException : " + ioe.getMessage() + ")");
+        } finally {
+
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+            } catch (IOException e) {
+                // NOTHING TO DO
+            }
+        }
+        return props;
+    }
+
 }

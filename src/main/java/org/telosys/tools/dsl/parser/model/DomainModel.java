@@ -32,9 +32,10 @@ import org.telosys.tools.dsl.EntityParserException;
  */
 public class DomainModel {
 
-    private final String modelName;
-    private final String modelVersion;
-    private final String modelDescription;
+//    private final String modelName;
+//    private final String modelVersion;
+//    private final String modelDescription;
+	private final DomainModelInfo domainModelInfo ;
 
     /*
     NB :
@@ -52,16 +53,19 @@ public class DomainModel {
      */
     public DomainModel(String modelName) {
         super();
-        this.modelName = modelName;
-        this.modelVersion = "" ;
-        this.modelDescription = "" ;
+//        this.modelName = modelName;
+//        this.modelVersion = "" ;
+//        this.modelDescription = "" ;
+        domainModelInfo = new DomainModelInfo();
     }
 
-    public DomainModel(String modelName, Properties properties) {
-        super();
-        this.modelName = modelName;
-        this.modelVersion = properties.getProperty("version", "");
-        this.modelDescription = properties.getProperty("description", "");
+//    public DomainModel(String modelName, Properties properties) {
+    public DomainModel(Properties properties) {
+    	super();
+//        this.modelName = modelName;
+//        this.modelVersion = properties.getProperty("version", "");
+//        this.modelDescription = properties.getProperty("description", "");
+        domainModelInfo = new DomainModelInfo(properties);
     }
 
     /**
@@ -70,7 +74,8 @@ public class DomainModel {
      * @return
      */
     public final String getName() {
-        return modelName;
+//        return modelName;
+        return domainModelInfo.getName();
     }
 
     
@@ -79,7 +84,8 @@ public class DomainModel {
      * @return
      */
     public String getVersion() {
-		return modelVersion;
+//		return modelVersion;
+		return domainModelInfo.getVersion();
 	}
 
 	/**
@@ -87,7 +93,8 @@ public class DomainModel {
 	 * @return
 	 */
 	public String getDescription() {
-		return modelDescription;
+//		return modelDescription;
+		return domainModelInfo.getDescription();
 	}
 
 	private final void checkName(String name) {
@@ -229,13 +236,14 @@ public class DomainModel {
     	for (String mapKey : entities.keySet()) {
     		entitiesString += "\n\t" + entities.get(mapKey);
     	}
-        return modelName+"[\n"
+        return this.getName()+"[\n"
         				+ "entities=" + entitiesString + ","
         						+ "\n enumerations=" + enumerationsString + "]";
     }
 
     @Override
     public int hashCode() {
+    	String modelName = this.getName();
         final int prime = 31;
         int result = 1;
         result = prime * result + ((entities == null) ? 0 : entities.hashCode());
@@ -270,11 +278,13 @@ public class DomainModel {
 //        } else if (!enumerations.equals(other.enumerations)) {
 //            return false;
 //        }
-        if (modelName == null) {
-            if (other.modelName != null) {
+        String thisModelName = this.getName();
+        String otherModelName = other.getName();
+        if (thisModelName == null) {
+            if (otherModelName != null) {
                 return false;
             }
-        } else if (!modelName.equals(other.modelName)) {
+        } else if (!thisModelName.equals(otherModelName)) {
             return false;
         }
         return true;

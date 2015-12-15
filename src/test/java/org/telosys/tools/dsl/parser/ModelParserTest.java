@@ -1,15 +1,44 @@
 package org.telosys.tools.dsl.parser;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.model.*;
+import org.telosys.tools.dsl.parser.model.DomainEntity;
+import org.telosys.tools.dsl.parser.model.DomainEntityField;
+import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainModel;
+import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
+import org.telosys.tools.dsl.parser.model.DomainTypeNature;
 
 public class ModelParserTest {
 
+	private final void compareModels(DomainModel model1, DomainModel model2) {
+		assertEquals ( model1.getNumberOfEntities(), model2.getNumberOfEntities() ) ;
+		for ( DomainEntity e1 : model1.getEntities() ) {
+			DomainEntity e2 = model2.getEntity(e1.getName());
+			assertNotNull(e2);
+//			System.out.println("Compare entities : ");
+//			System.out.println(" " + e1.toString());
+//			System.out.println(" " + e2.toString());
+			compareEntities(e1, e2);
+		}
+	}
+	private final void compareEntities(DomainEntity e1, DomainEntity e2) {
+		assertEquals ( e1.getNumberOfFields(), e2.getNumberOfFields()) ;
+		for ( DomainEntityField field1 : e1.getFields() ) {
+			DomainEntityField field2 = e2.getField(field1.getName());
+			assertNotNull(field2);
+			System.out.println("Compare fields : ");
+			System.out.println(" " + field1.toString());
+			System.out.println(" " + field2.toString());
+			assertEquals(field1.toString(), field2.toString());
+		}
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 	}
@@ -33,7 +62,9 @@ public class ModelParserTest {
 		employee.addField(new DomainEntityField("birthDate", DomainNeutralTypes.getType("date")));
 		modelToCompare.addEntity(employee);
 		
-		assertEquals(modelToCompare,model);
+		//assertEquals(modelToCompare,model);
+		compareModels(model, modelToCompare) ;
+
 	}
 	
 	@Test
@@ -44,7 +75,7 @@ public class ModelParserTest {
 		
 		DomainModel modelToCompare = new DomainModel("TwoEntities");
 		
-		assertEquals("TwoEntities", model.getName());
+		assertEquals("ModelWithTwoEntities", model.getName());
 		assertEquals("2.1", model.getVersion() );
 
 //		DomainEntity country = new DomainEntity("Country");
@@ -66,7 +97,9 @@ public class ModelParserTest {
 		countryField.addAnnotation(new DomainEntityFieldAnnotation("Max", "3"));
 		employee.addField(countryField);
 		modelToCompare.addEntity(employee);
-		assertEquals(modelToCompare,model);
+		
+		//assertEquals(modelToCompare,model);
+		compareModels(model, modelToCompare) ;
 	}
 
     @Test
@@ -98,7 +131,8 @@ public class ModelParserTest {
         employee.addField(countryField);
         modelToCompare.addEntity(employee);
         
-        assertEquals(modelToCompare,model);
+//        assertEquals(modelToCompare,model);
+		compareModels(model, modelToCompare) ;
         assertEquals(DomainTypeNature.ENTITY, model.getEntity("Employee").getField("country").getType().getNature());
     }
 
@@ -171,7 +205,9 @@ public class ModelParserTest {
 		modelToCompare.addEntity(employee);
 //		modelToCompare.addEnumeration(enumeration);
 		modelToCompare.addEntity(country);
-		assertEquals(modelToCompare,model);
+		
+//		assertEquals(modelToCompare,model);
+		compareModels(model, modelToCompare);
 	}
 //	@Test
 //	public void testParseModelWithTwoEnumAndTwoEntity() throws Exception {
@@ -267,7 +303,9 @@ public class ModelParserTest {
 		modelToCompare.addEntity(country);
 //		modelToCompare.addEnumeration(gender);
 		modelToCompare.addEntity(gender);
-		assertEquals(modelToCompare,model);
+		
+//		assertEquals(modelToCompare,model);
+		compareModels(model, modelToCompare);
 	}
 	
 	
@@ -323,7 +361,9 @@ public class ModelParserTest {
 //        modelToCompare.addEnumeration(gender);
         modelToCompare.addEntity(country);
         modelToCompare.addEntity(gender);
-        assertEquals(modelToCompare,model);
+
+//        assertEquals(modelToCompare,model);
+		compareModels(model, modelToCompare) ;
     }
 	
 	private DomainEntity buildCountryEntity() {

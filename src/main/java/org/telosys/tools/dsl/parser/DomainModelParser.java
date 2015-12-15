@@ -15,24 +15,20 @@
  */
 package org.telosys.tools.dsl.parser;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.telosys.tools.dsl.EntityParserException;
+import java.io.File;
+import java.util.List;
+import java.util.Properties;
+
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainModel;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * DSL model parser <br>
  * The model structure is : <br>
- * . foo.model (the model file) <br>
- * . foo_model ( the model folder containing all the entities ) <br>
+ * . foo.model : the model file (properties file) <br>
+ * . foo_model : the model folder containing all the entities  <br>
  * . foo_model/Country.entity <br>
- * . foo_model/Company.entity <br>
+ * . foo_model/Employee.entity <br>
  * . etc <br>
  *
  */
@@ -43,7 +39,7 @@ public class DomainModelParser {
 //    private static final String MODEL_FOLDER_SUFFIX = "_model" ;
     
 //    private static final String DOT_ENUM = ".enum";
-    private Logger logger = LoggerFactory.getLogger(DomainModelParser.class);
+//    private Logger logger = LoggerFactory.getLogger(DomainModelParser.class);
 
 //    /**
 //     * Parse the given model
@@ -149,9 +145,10 @@ public class DomainModelParser {
 //    private final DomainModel parseModelFile(File file, String modelName) {
     private final DomainModel parseModelFile(File file) {
 
-    	String modelName = ParserUtil.getModelName(file) ;
+    	//String modelName = ParserUtil.getModelName(file) ;
     	
-        Properties properties = loadProperties(file);
+        //Properties properties = loadProperties(file);
+        Properties properties = ParserUtil.loadModelProperties(file);
 //        String modelName = p.getProperty("name");
 //        if (modelName == null || modelName.trim().length() == 0) {
 //            // use the file name as default name
@@ -163,7 +160,8 @@ public class DomainModelParser {
 //        File folder = file.getParentFile();
 //        Map<String, List<String>> files = getMapFiles(folder);
         
-        DomainModel model = new DomainModel(modelName, properties);
+//        DomainModel model = new DomainModel(modelName, properties);
+        DomainModel model = new DomainModel(properties);
         
 //        // ENUMERATIONS ( .enum files )
 //        List<String> enumerations = files.get(DOT_ENUM);
@@ -189,29 +187,29 @@ public class DomainModelParser {
         return model;
     }
 
-    private Properties loadProperties(File propFile) {
-        Properties props = new Properties();
-        FileInputStream fis = null;
-
-        try {
-            fis = new FileInputStream(propFile);
-            props.load(fis);
-        } catch (IOException ioe) {
-            String textError = "Cannot load properties from file "+ propFile;
-            logger.error(textError);
-            throw new EntityParserException(textError + "\n Documentation : " +ioe);
-        } finally {
-
-            try {
-                if (fis != null) {
-                    fis.close();
-                }
-            } catch (IOException e) {
-                // NOTHING TO DO
-            }
-        }
-        return props;
-    }
+//    private Properties loadProperties(File propFile) {
+//        Properties props = new Properties();
+//        FileInputStream fis = null;
+//
+//        try {
+//            fis = new FileInputStream(propFile);
+//            props.load(fis);
+//        } catch (IOException ioe) {
+//            String textError = "Cannot load properties from file "+ propFile;
+//            logger.error(textError);
+//            throw new EntityParserException(textError + "\n Documentation : " +ioe);
+//        } finally {
+//
+//            try {
+//                if (fis != null) {
+//                    fis.close();
+//                }
+//            } catch (IOException e) {
+//                // NOTHING TO DO
+//            }
+//        }
+//        return props;
+//    }
 
 //    /**
 //     * Get all files name and their associate class from a folder

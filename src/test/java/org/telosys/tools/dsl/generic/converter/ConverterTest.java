@@ -3,9 +3,9 @@ package org.telosys.tools.dsl.generic.converter;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.runners.MockitoJUnitRunner;
+//import org.junit.runner.RunWith;
+//import org.mockito.InjectMocks;
+//import org.mockito.runners.MockitoJUnitRunner;
 import org.telosys.tools.dsl.generic.model.GenericEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntityField;
@@ -16,16 +16,17 @@ import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
 
-@RunWith(MockitoJUnitRunner.class)
+//@RunWith(MockitoJUnitRunner.class)
 public class ConverterTest {
 
-	@InjectMocks
-	Converter converter;
+//	@InjectMocks
+//	Converter converter;
+	Converter converter = new Converter();
 
 	@Test
 	public void testEmptyModel() {
 		// Given
-		DomainModel domainModel = new DomainModel(null);
+		DomainModel domainModel = new DomainModel("test-model");
 		
 		// When
 		Model model = converter.convertToGenericModel(domainModel);
@@ -48,7 +49,6 @@ public class ConverterTest {
 		Model model = converter.convertToGenericModel(domainModel);
 		
 		// Then
-		assertEquals("domainModel", model.getName());
 		assertEquals(2, model.getEntities().size());
 		
 		// entity 1
@@ -97,7 +97,6 @@ public class ConverterTest {
 		Model model = converter.convertToGenericModel(domainModel);
 		
 		// Then
-		assertEquals("domainModel", model.getName());
 		assertEquals(2, model.getEntities().size());
 		
 		// entity 1
@@ -172,7 +171,6 @@ public class ConverterTest {
 		Model model = converter.convertToGenericModel(domainModel);
 
 		// Then
-		assertEquals("domainModel", model.getName());
 		assertEquals(2, model.getEntities().size());
 
 		// entity 1
@@ -261,7 +259,6 @@ public class ConverterTest {
 		Model model = converter.convertToGenericModel(domainModel);
 		
 		// Then
-		assertEquals("domainModel", model.getName());
 		assertEquals(2, model.getEntities().size());
 		
 		// entity 1
