@@ -16,10 +16,12 @@
 package org.telosys.tools.dsl.loader;
 
 import java.io.File;
+import java.util.Hashtable;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.telosys.tools.dsl.EntityParserException;
 import org.telosys.tools.dsl.generic.converter.Converter;
 import org.telosys.tools.dsl.parser.DomainModelParser;
 import org.telosys.tools.dsl.parser.ParserUtil;
@@ -31,7 +33,20 @@ public class ModelLoader {
 
     static Logger logger = LoggerFactory.getLogger(ModelLoader.class);
 
-    /**
+    private Hashtable<String,String> parsingErrors = null ;
+    private String parsingErrorMessage = null ;
+
+    
+    public Hashtable<String, String> getParsingErrors() {
+		return parsingErrors;
+	}
+
+	public String getErrorMessage() {
+		return parsingErrorMessage;
+	}
+
+
+	/**
      * Loads (parse) the given model file
      * 
      * @param modelFileAbsolutePath the ".model" absolute file name 
@@ -46,22 +61,44 @@ public class ModelLoader {
      * Loads (parse) the given model file
      *
      * @param modelFile the ".model" file 
-     * @return
+     * 
+     * @return the model or null if errors during parsing 
      */
     public Model loadModel(File modelFile) {
     	
+//        //--- 1) Parse the model 
+//        DomainModelParser domainModelParser = new DomainModelParser();
+//        logger.info("\nParse model : " + modelFile.getAbsolutePath() );
+//        DomainModel domainModel = domainModelParser.parse(modelFile);
+//        logger.info("\n"+domainModel.toString());
+//        //--- 2) Convert the "domain model" to "generic model" 
+//        Converter converter = new Converter();
+//        Model model = converter.convertToGenericModel(domainModel);
+//        logger.info(model.toString());
+
         //--- 1) Parse the model 
         DomainModelParser domainModelParser = new DomainModelParser();
-        logger.info("\nParse model : " + modelFile.getAbsolutePath() );
-        DomainModel domainModel = domainModelParser.parse(modelFile);
-        logger.info("\n"+domainModel.toString());
-
-        //--- 2) Convert the "domain model" to "generic model" 
-        Converter converter = new Converter();
-        Model model = converter.convertToGenericModel(domainModel);
-        logger.info(model.toString());
-
-        return model;
+        DomainModel domainModel = null ;
+        Exception parsingException = null ;
+		try {
+			domainModel = domainModelParser.parse(modelFile);
+		} catch (EntityParserException e) {
+			parsingException = e ;
+		}
+		
+        if ( parsingException != null ) {
+        	//--- 2) Keep error information
+        	parsingErrorMessage   = parsingException.getMessage();
+        	parsingErrors = domainModelParser.getErrors();
+            return null;
+        }
+        else {
+            //--- 2) Convert the "domain model" to "generic model" 
+            Converter converter = new Converter();
+            Model model = converter.convertToGenericModel(domainModel);
+            logger.info(model.toString());
+            return model;
+        }
     }
 
     /**
