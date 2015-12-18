@@ -20,6 +20,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
+import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.EntityParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainModel;
@@ -64,7 +65,7 @@ public class DomainModelParser {
     	//String modelName = ParserUtil.getModelName(file) ;
     	
         //Properties properties = loadProperties(file);
-        Properties properties = ParserUtil.loadModelProperties(file);
+        Properties properties = DslModelUtil.loadModelProperties(file);
         
 //        DomainModel model = new DomainModel(modelName, properties);
         DomainModel model = new DomainModel(properties);
@@ -78,12 +79,12 @@ public class DomainModelParser {
 
         // ENTITIES ( all the ".entity" files located in the model folder)
 //        List<String> entitiesFileNames = getEntitiesAbsoluteFileNames(file, modelName);
-        List<String> entitiesFileNames = ParserUtil.getEntitiesAbsoluteFileNames(file);
+        List<String> entitiesFileNames = DslModelUtil.getEntitiesAbsoluteFileNames(file);
         
         //--- Step 1 : build void entities in the model
         for (String entityFileName : entitiesFileNames) {
             //File entityFile = new File(entity);
-            String entityName = ParserUtil.getEntityName(new File(entityFileName));
+            String entityName = DslModelUtil.getEntityName(new File(entityFileName));
             model.addEntity(new DomainEntity(entityName));
         }
 
@@ -113,6 +114,6 @@ public class DomainModelParser {
 
     public List<String> getEntitiesAbsoluteFileNames(File modelFile) {
     	ParserUtil.checkModelFile(modelFile);
-    	return ParserUtil.getEntitiesAbsoluteFileNames(modelFile);
+    	return DslModelUtil.getEntitiesAbsoluteFileNames(modelFile);
     }
 }

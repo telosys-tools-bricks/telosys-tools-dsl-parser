@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import org.slf4j.LoggerFactory;
+import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.EntityParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntityField;
@@ -66,7 +67,7 @@ public class EntityParser extends AbstractParser {
         } catch (FileNotFoundException e) {
             throw new EntityParserException( "File Not found : "+ file.getAbsolutePath() );
         }
-        String entityNameFromFileName = ParserUtil.getEntityName(file);
+        String entityNameFromFileName = DslModelUtil.getEntityName(file);
         return this.parse(is, entityNameFromFileName);
     }
 

@@ -16,11 +16,11 @@ public class IntegrationParserTest {
         File folder = new File("src/test/resources/entity_test/invalid/");
         for (final File fileEntry : folder.listFiles()) {
             if (!fileEntry.isDirectory()) {
-                EntityParserException errorDetected = null ;
+            	Exception errorDetected = null ;
                 try {
                 	EntityParser parser = new EntityParser(new DomainModel("model"));
                     parser.parse(fileEntry);
-                } catch (EntityParserException e) {
+                } catch (Exception e) {
                     errorDetected = e ;
                 }
                 Assert.assertNotNull(errorDetected);

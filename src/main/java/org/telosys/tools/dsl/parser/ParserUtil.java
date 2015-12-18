@@ -16,11 +16,6 @@
 package org.telosys.tools.dsl.parser;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.telosys.tools.dsl.EntityParserException;
@@ -76,39 +71,7 @@ public class ParserUtil {
     // Names from file name
     //-------------------------------------------------------------------------------------------------
     private static final String DOT_MODEL           = ".model"  ;
-    private static final String DOT_ENTITY          = ".entity" ;
-    private static final String MODEL_FOLDER_SUFFIX = "_model"  ;
 
-    /**
-     * Returns the model name for the given file name
-     * @param file eg 'aaa/bbb/foo.model' 
-     * @return 'foo' for 'aaa/bbb/foo.model' 
-     */
-    public static String getModelName(File file) {
-    	return getFileNameWithoutExtension(file, DOT_MODEL) ;
-    }
-    
-    /**
-     * Returns the entity name for the given file name
-     * @param file an entity file, e.g. 'aaa/bbb/Car.entity' 
-     * @return 'Car' for 'aaa/bbb/Car.entity' 
-     */
-    public static String getEntityName(File file) {
-    	return getFileNameWithoutExtension(file, DOT_ENTITY) ;
-    }
-
-    private static String getFileNameWithoutExtension(File file, String extension) {
-    	String fileName = file.getName();
-    	int i = fileName.lastIndexOf(extension);
-    	if ( i > 0 ) {
-    		return fileName.substring(0, i);
-    	}
-    	else {
-            String textError = "Invalid file name '" + fileName + "' (doesn't end with '" + extension + "')";
-    		throw new EntityParserException(textError);
-    	}
-    }
-    
     public static void checkModelFile(File file) {
         if ( ! file.exists() ) {
             String textError = "File '" + file.toString() + "' not found";
@@ -125,67 +88,6 @@ public class ParserUtil {
             //logger.error(textError);
             throw new EntityParserException(textError);
         }
-    }
-    
-    /**
-     * Returns a list of entities absolute file names <br>
-     * List of all the files located in the model folder and ending with ".entity" <br>
-     * 
-     * @param modelFile
-     * @return
-     */
-    public static List<String> getEntitiesAbsoluteFileNames(File modelFile) {
-
-    	String modelName = getModelName(modelFile) ;
-
-    	String modelFolderAbsolutePath = modelFile.getParentFile().getAbsolutePath() 
-    			+ "/" + modelName + MODEL_FOLDER_SUFFIX ;
-    	File folder = new File(modelFolderAbsolutePath);
-    	if ( folder.exists() ) {
-            List<String> entities = new LinkedList<String>();
-
-            String[] allFiles = folder.list();
-            for (String fileName : allFiles) {
-            	if ( fileName.endsWith(ParserUtil.DOT_ENTITY)) {
-            		entities.add( folder.getAbsolutePath() + "/" + fileName ) ;
-            	}
-            }
-            return entities;
-    	}
-    	else {
-            String textError = "Model folder '"+ modelFolderAbsolutePath + "' not found";
-//            logger.error(textError);
-            throw new EntityParserException(textError);
-    	}
-    }
-    
-    /**
-     * Loads the model properties ( model information ) 
-     * @param modelFile
-     * @return
-     */
-    public static Properties loadModelProperties(File modelFile) {
-        Properties props = new Properties();
-        FileInputStream fis = null;
-
-        try {
-            fis = new FileInputStream(modelFile);
-            props.load(fis);
-        } catch (IOException ioe) {
-            String textError = "Cannot load properties from file "+ modelFile;
-            //logger.error(textError);
-            throw new EntityParserException(textError + " (IOException : " + ioe.getMessage() + ")");
-        } finally {
-
-            try {
-                if (fis != null) {
-                    fis.close();
-                }
-            } catch (IOException e) {
-                // NOTHING TO DO
-            }
-        }
-        return props;
     }
 
 }
