@@ -63,7 +63,7 @@ public class ParserUtil {
         return stringBuilder.toString();
     }
 
-    public static String preprocessText (String initialText) {
+    protected static String preprocessText (String initialText) {
         return flattenText( removeComments(initialText) );
     }
 
@@ -72,7 +72,7 @@ public class ParserUtil {
     //-------------------------------------------------------------------------------------------------
     private static final String DOT_MODEL           = ".model"  ;
 
-    public static void checkModelFile(File file) {
+    protected static void checkModelFile(File file) {
         if ( ! file.exists() ) {
             String textError = "File '" + file.toString() + "' not found";
             //logger.error(textError);

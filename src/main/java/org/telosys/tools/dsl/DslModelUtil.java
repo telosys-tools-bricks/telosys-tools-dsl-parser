@@ -126,6 +126,12 @@ public class DslModelUtil {
         return props;
     }
 
+    /**
+     * Builds the file for the given entity name and the model file it belongs to
+     * @param modelFile
+     * @param entityName the entity name without the file extension ( e.g. 'Book' or 'Car' ) 
+     * @return
+     */
     public static File buildEntityFile(File modelFile, String entityName) {
     	File modelFolder = getModelFolder(modelFile);
     	if ( modelFolder.exists() && modelFolder.isDirectory() ) {
@@ -137,21 +143,41 @@ public class DslModelUtil {
     	}
     }
     
-    public static void createNewEntity(File modelFile, String entityName) {
+    /**
+     * Creates a new entity file 
+     * @param modelFile the model file defining the model for the entity to be created
+     * @param entityName the entity name ( e.g. 'Book' or 'Car' )
+     * @return the entity file 
+     */
+    public static File createNewEntity(File modelFile, String entityName) {
     	StringBuffer sb = new StringBuffer();
     	sb.append("// Entity "); sb.append(entityName); sb.append("\n");
     	sb.append("\n");
     	sb.append(entityName); sb.append(" {\n");
+    	sb.append("  myfield : string ; // field example \n" );
     	sb.append("}\n");
     	String content = sb.toString() ;
     	
     	File entityFile = buildEntityFile(modelFile, entityName);
     	if ( ! entityFile.exists() ) {
-    		// TODO
-        	// FileUtil.copy(content, entityFile, false);
+        	try {
+				FileUtil.copy(content, entityFile, true);
+	        	return entityFile ;
+			} catch (Exception e) {
+				throw new RuntimeException("Cannot create new entity '" + entityName + "'", e);
+			}
     	}
     	else {
     		throw new RuntimeException("File '" + entityFile.getName() + "' already exists");
+    	}
+    }
+
+    public static void renameEntity(File currentEntityFile, String newEntityName) {
+    	String newEntityFileName = currentEntityFile.getParentFile().getAbsolutePath() + "/" + newEntityName + DOT_ENTITY ;
+    	File newEntityFile = new File(newEntityFileName) ;
+    	boolean renamed = currentEntityFile.renameTo( newEntityFile );
+    	if ( ! renamed ) {
+    		throw new RuntimeException("Cannot rename " + currentEntityFile.getName() + " to " + newEntityFile.getName());
     	}
     }
 }
