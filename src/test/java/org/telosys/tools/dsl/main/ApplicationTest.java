@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
-import org.telosys.tools.dsl.loader.ModelLoader;
+import org.telosys.tools.dsl.DslModelManager;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
 
@@ -16,7 +16,7 @@ public class ApplicationTest {
     public void test() {
         // Given
         String dslFolder = "src/test/resources/model_test/valid/OneEntity.model";
-        ModelLoader modelLoader = new ModelLoader();
+        DslModelManager modelLoader = new DslModelManager();
 
         // When
         Model model = modelLoader.loadModel(dslFolder);

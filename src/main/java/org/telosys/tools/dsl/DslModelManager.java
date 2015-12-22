@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.loader;
+package org.telosys.tools.dsl;
 
 import java.io.File;
 import java.util.Hashtable;
@@ -21,17 +21,16 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.telosys.tools.dsl.DslModelUtil;
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.generic.converter.Converter;
 import org.telosys.tools.dsl.parser.DomainModelParser;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainModelInfo;
 import org.telosys.tools.generic.model.Model;
 
-public class ModelLoader {
+public class DslModelManager {
 
-    static Logger logger = LoggerFactory.getLogger(ModelLoader.class);
+    static Logger logger = LoggerFactory.getLogger(DslModelManager.class);
 
     private Hashtable<String,String> parsingErrors = null ;
     private String parsingErrorMessage = null ;
@@ -108,7 +107,15 @@ public class ModelLoader {
      * @return
      */
     public DomainModelInfo loadModelInformation(File modelFile) {
-    	Properties properties = DslModelUtil.loadModelProperties(modelFile);
+//    	Properties properties = DslModelUtil.loadModelProperties(modelFile);
+    	PropertiesManager propertiesManager = new PropertiesManager(modelFile);
+    	Properties properties = propertiesManager.load();
+    	
     	return new DomainModelInfo(properties);
+    }
+
+    public void saveModelInformation(File modelFile, DomainModelInfo domainModelInfo) {
+    	PropertiesManager propertiesManager = new PropertiesManager(modelFile);
+    	propertiesManager.save( domainModelInfo.getProperties() );
     }
 }

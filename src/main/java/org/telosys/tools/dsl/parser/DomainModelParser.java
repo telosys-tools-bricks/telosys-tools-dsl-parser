@@ -20,6 +20,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
+import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.EntityParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
@@ -64,8 +65,10 @@ public class DomainModelParser {
 
     	//String modelName = ParserUtil.getModelName(file) ;
     	
-        //Properties properties = loadProperties(file);
-        Properties properties = DslModelUtil.loadModelProperties(file);
+//        //Properties properties = loadProperties(file);
+//        Properties properties = DslModelUtil.loadModelProperties(file);
+        PropertiesManager propertiesManager = new PropertiesManager(file);
+        Properties properties = propertiesManager.load();
         
 //        DomainModel model = new DomainModel(modelName, properties);
         DomainModel model = new DomainModel(properties);

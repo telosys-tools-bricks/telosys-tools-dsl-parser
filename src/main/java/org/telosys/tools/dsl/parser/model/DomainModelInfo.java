@@ -25,21 +25,13 @@ import java.util.Properties;
  */
 public class DomainModelInfo {
 
-    private final String modelName;
-    private final String modelVersion;
-    private final String modelDescription;
-
-    /**
-     * Constructor
-     *
-     * @param properties
-     */
-    public DomainModelInfo(Properties properties) {
-        super();
-        this.modelName = properties.getProperty("name", "");
-        this.modelVersion = properties.getProperty("version", "");
-        this.modelDescription = properties.getProperty("description", "");
-    }
+	private final static String NAME        = "name" ;
+	private final static String VERSION     = "version" ;
+	private final static String DESCRIPTION = "description" ;
+	
+    private String modelName;
+    private String modelVersion;
+    private String modelDescription;
 
     /**
      * Default constructor
@@ -51,11 +43,31 @@ public class DomainModelInfo {
         this.modelDescription = "" ;
     }
 
+    /**
+     * Constructor
+     *
+     * @param properties
+     */
+    public DomainModelInfo(Properties properties) {
+        super();
+        this.modelName = properties.getProperty(NAME, "");
+        this.modelVersion = properties.getProperty(VERSION, "");
+        this.modelDescription = properties.getProperty(DESCRIPTION, "");
+    }
+
+    /**
+     * Returns the set of properties representing the current model information
+     * @return
+     */
     public Properties getProperties() {
-    	// TODO
-    	return null ;
+    	Properties properties = new Properties();
+    	properties.put(NAME, modelName);
+    	properties.put(VERSION, modelVersion);
+    	properties.put(DESCRIPTION, modelDescription);
+    	return properties ;
     }
     
+    //-----------------------------------------------------------------------------
     /**
      * Returns the model name
      *
@@ -66,13 +78,31 @@ public class DomainModelInfo {
     }
 
     /**
+     * Set the model name
+     * @param modelName
+     */
+    public final void setName(String modelName) {
+        this.modelName = modelName ;
+    }
+
+    //-----------------------------------------------------------------------------
+    /**
      * Returns the model version
      * @return
      */
     public String getVersion() {
 		return modelVersion;
 	}
+    
+    /**
+     * Set the model version
+     * @param modelVersion
+     */
+    public final void setVersion(String modelVersion) {
+    	this.modelVersion = modelVersion ;
+    }
 
+    //-----------------------------------------------------------------------------
 	/**
      * Returns the model description
 	 * @return
@@ -80,7 +110,16 @@ public class DomainModelInfo {
 	public String getDescription() {
 		return modelDescription;
 	}
-
+	
+    /**
+     * Set the model description
+     * @param modelDescription
+     */
+    public final void setDescription(String modelDescription) {
+    	this.modelDescription = modelDescription ;
+    }
+    
+    //-----------------------------------------------------------------------------
     @Override
     public String toString() {
         return "modelName='" + this.modelName 

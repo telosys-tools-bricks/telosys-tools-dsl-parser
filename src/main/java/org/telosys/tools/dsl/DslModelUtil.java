@@ -16,11 +16,8 @@
 package org.telosys.tools.dsl;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
 import org.telosys.tools.commons.FileUtil;
 
@@ -97,34 +94,34 @@ public class DslModelUtil {
     	}
     }
     
-    /**
-     * Loads the model file properties ( model information ) 
-     * @param modelFile
-     * @return
-     */
-    public static Properties loadModelProperties(File modelFile) {
-        Properties props = new Properties();
-        FileInputStream fis = null;
-
-        try {
-            fis = new FileInputStream(modelFile);
-            props.load(fis);
-        } catch (IOException ioe) {
-            String textError = "Cannot load properties from file "+ modelFile;
-            //logger.error(textError);
-            throw new RuntimeException(textError + " (IOException : " + ioe.getMessage() + ")");
-        } finally {
-
-            try {
-                if (fis != null) {
-                    fis.close();
-                }
-            } catch (IOException e) {
-                // NOTHING TO DO
-            }
-        }
-        return props;
-    }
+//    /**
+//     * Loads the model file properties ( model information ) 
+//     * @param modelFile
+//     * @return
+//     */
+//    public static Properties loadModelProperties(File modelFile) {
+//        Properties props = new Properties();
+//        FileInputStream fis = null;
+//
+//        try {
+//            fis = new FileInputStream(modelFile);
+//            props.load(fis);
+//        } catch (IOException ioe) {
+//            String textError = "Cannot load properties from file "+ modelFile;
+//            //logger.error(textError);
+//            throw new RuntimeException(textError + " (IOException : " + ioe.getMessage() + ")");
+//        } finally {
+//
+//            try {
+//                if (fis != null) {
+//                    fis.close();
+//                }
+//            } catch (IOException e) {
+//                // NOTHING TO DO
+//            }
+//        }
+//        return props;
+//    }
 
     /**
      * Builds the file for the given entity name and the model file it belongs to
