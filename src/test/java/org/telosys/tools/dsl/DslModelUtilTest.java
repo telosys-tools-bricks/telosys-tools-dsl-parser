@@ -12,6 +12,12 @@ import org.telosys.tools.junit.utils.TestFileProvider;
 public class DslModelUtilTest {
 	
     @Test
+    public void testGetModelShortFileName() {
+    	assertEquals("foo.model", DslModelUtil.getModelShortFileName("foo") );
+    	assertEquals("foo.model", DslModelUtil.getModelShortFileName(" foo ") );
+    }
+    
+    @Test
     public void testGetModelName() {
     	String modelName = DslModelUtil.getModelName(new File("C:/foo/bar/toto.model"));
     	assertEquals("toto", modelName);

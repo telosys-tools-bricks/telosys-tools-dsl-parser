@@ -19,7 +19,9 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.telosys.tools.commons.DirUtil;
 import org.telosys.tools.commons.FileUtil;
+import org.telosys.tools.dsl.parser.model.DomainModelInfo;
 
 public class DslModelUtil {
 	
@@ -30,6 +32,13 @@ public class DslModelUtil {
     private static final String DOT_ENTITY          = ".entity" ;
     private static final String MODEL_FOLDER_SUFFIX = "_model"  ;
 
+    public static String getModelShortFileName(String modelName) {
+    	if ( modelName == null ) {
+    		throw new IllegalArgumentException("model name is null");
+    	}
+    	return modelName.trim() + DOT_MODEL ;
+    }
+    
     /**
      * Returns the model name for the given file name
      * @param file eg 'aaa/bbb/foo.model' 
@@ -94,35 +103,6 @@ public class DslModelUtil {
     	}
     }
     
-//    /**
-//     * Loads the model file properties ( model information ) 
-//     * @param modelFile
-//     * @return
-//     */
-//    public static Properties loadModelProperties(File modelFile) {
-//        Properties props = new Properties();
-//        FileInputStream fis = null;
-//
-//        try {
-//            fis = new FileInputStream(modelFile);
-//            props.load(fis);
-//        } catch (IOException ioe) {
-//            String textError = "Cannot load properties from file "+ modelFile;
-//            //logger.error(textError);
-//            throw new RuntimeException(textError + " (IOException : " + ioe.getMessage() + ")");
-//        } finally {
-//
-//            try {
-//                if (fis != null) {
-//                    fis.close();
-//                }
-//            } catch (IOException e) {
-//                // NOTHING TO DO
-//            }
-//        }
-//        return props;
-//    }
-
     /**
      * Builds the file for the given entity name and the model file it belongs to
      * @param modelFile
@@ -140,6 +120,34 @@ public class DslModelUtil {
     	}
     }
     
+    //-----------------------------------------------------------------------------------------------------------
+    // MODEL MANAGEMENT
+    //-----------------------------------------------------------------------------------------------------------
+    public static void createNewModel(File modelFile) {
+		if ( modelFile.exists() ) {
+			throw new RuntimeException("Model file '"+modelFile.getName()+"' already exists");
+		}
+		File modelFolder = DslModelUtil.getModelFolder(modelFile);
+		if ( modelFolder.exists() ) {
+			throw new RuntimeException("Model folder '"+modelFolder.getName()+"' already exists");
+		}
+		
+		//--- Folder creation
+		DirUtil.createDirectory(modelFolder);
+		
+		//--- File creation
+		DomainModelInfo domainModelInfo = new DomainModelInfo();
+		domainModelInfo.setName(getModelName(modelFile));
+		domainModelInfo.setVersion("1.0");
+		domainModelInfo.setDescription("");
+		DslModelManager modelManager = new DslModelManager();
+		modelManager.saveModelInformation(modelFile, domainModelInfo);
+		
+    }
+    
+    //-----------------------------------------------------------------------------------------------------------
+    // ENTITY MANAGEMENT
+    //-----------------------------------------------------------------------------------------------------------
     /**
      * Creates a new entity file 
      * @param modelFile the model file defining the model for the entity to be created
