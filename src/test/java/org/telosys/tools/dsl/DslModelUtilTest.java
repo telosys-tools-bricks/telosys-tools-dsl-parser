@@ -2,11 +2,13 @@ package org.telosys.tools.dsl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.util.List;
 
 import org.junit.Test;
+import org.telosys.tools.commons.env.TelosysToolsEnv;
 import org.telosys.tools.junit.utils.TestFileProvider;
 
 public class DslModelUtilTest {
@@ -65,4 +67,25 @@ public class DslModelUtilTest {
     	assertTrue( newFile.exists() );
     }
     
+    private File getFile(String fileFullPath) {
+    	File file = new File(fileFullPath) ;
+    	System.out.println("File getAbsolutePath() : " + file.getAbsolutePath() );
+    	System.out.println("File getName() : " + file.getName() );
+    	System.out.println("File getParent() : " + file.getParent() );
+    	System.out.println("File getParent().getName() : " + file.getParentFile().getName() );
+    	return file ;
+    }
+    @Test
+    public void testIsValidModelFile() {
+		TelosysToolsEnv telosysToolsEnv = TelosysToolsEnv.getInstance() ;
+		System.out.println("TelosysToolsEnv.getModelsFolder() : " +  telosysToolsEnv.getModelsFolder() ) ;
+		
+		// check only file path (without folder existence)
+    	assertTrue(DslModelUtil.isValidModelFile( getFile("/foo/bar/TelosysTools/aaaa.model"), false )) ;
+    	assertFalse(DslModelUtil.isValidModelFile( getFile("/foo/bar/aaaa.model"), false )) ;
+    	assertFalse(DslModelUtil.isValidModelFile( getFile("/foo/bar/TelosysTools/aaaa.txt"), false )) ;
+
+		// check folder existence
+    	assertFalse(DslModelUtil.isValidModelFile( getFile("/foo/bar/TelosysTools/aaaa.model"), true )) ; // No parent folder
+    }
 }

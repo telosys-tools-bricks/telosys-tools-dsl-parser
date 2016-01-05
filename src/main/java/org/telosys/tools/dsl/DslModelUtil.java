@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.telosys.tools.commons.DirUtil;
 import org.telosys.tools.commons.FileUtil;
+import org.telosys.tools.commons.env.TelosysToolsEnv;
 import org.telosys.tools.dsl.parser.model.DomainModelInfo;
 
 public class DslModelUtil {
@@ -123,6 +124,38 @@ public class DslModelUtil {
     //-----------------------------------------------------------------------------------------------------------
     // MODEL MANAGEMENT
     //-----------------------------------------------------------------------------------------------------------
+    /**
+     * Returns true if the given file is a valid "model file" : <br>
+     * - the file name ends with ".model" <br>
+     * - the file folder (parent) is the models folder ( eg "TelosysTools" ) <br>
+     * - the file folder (parent) exists (if checkParentFolderExistence is true)
+     * @param file the file to be checked
+     * @param checkParentFolderExistence 
+     * @return
+     */
+    public static boolean isValidModelFile(File file, boolean checkParentFolderExistence) {
+    	if ( ! file.getName().endsWith(DOT_MODEL) ) {
+        	return false ;
+    	}
+    	
+    	File parentFile = file.getParentFile() ;
+		TelosysToolsEnv telosysToolsEnv = TelosysToolsEnv.getInstance() ;
+		if ( ! parentFile.getName().equals( telosysToolsEnv.getModelsFolder() ) ) {
+			return false;
+		}
+
+		if ( checkParentFolderExistence ) {
+			if ( ! parentFile.exists() ) {
+				return false ;
+        	}
+		}
+		return true;
+    }
+    
+    /**
+     * Creates a new DSL model : the ".model" file (with default values) and the "_model" folder
+     * @param modelFile
+     */
     public static void createNewModel(File modelFile) {
 		if ( modelFile.exists() ) {
 			throw new RuntimeException("Model file '"+modelFile.getName()+"' already exists");
@@ -143,6 +176,22 @@ public class DslModelUtil {
 		DslModelManager modelManager = new DslModelManager();
 		modelManager.saveModelInformation(modelFile, domainModelInfo);
 		
+    }
+    
+    /**
+     * Delete the DSL model identified by the given model file ( "xxxx.model" )
+     * @param modelFile
+     */
+    public static void deleteModel(File modelFile) {
+
+    	// 1) delete the model folder
+    	File modelFolder = DslModelUtil.getModelFolder(modelFile);
+		if ( modelFolder.exists() ) {
+			DirUtil.deleteDirectory(modelFolder);
+		}
+    	
+		// 2) delete the model file 
+		modelFile.delete() ;
     }
     
     //-----------------------------------------------------------------------------------------------------------
