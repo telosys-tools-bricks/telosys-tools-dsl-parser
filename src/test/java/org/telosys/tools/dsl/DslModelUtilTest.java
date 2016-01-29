@@ -3,6 +3,7 @@ package org.telosys.tools.dsl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.util.List;
@@ -72,9 +73,9 @@ public class DslModelUtilTest {
     	System.out.println("File getAbsolutePath() : " + file.getAbsolutePath() );
     	System.out.println("File getName() : " + file.getName() );
     	System.out.println("File getParent() : " + file.getParent() );
-    	System.out.println("File getParent().getName() : " + file.getParentFile().getName() );
     	return file ;
     }
+    
     @Test
     public void testIsValidModelFile() {
 		TelosysToolsEnv telosysToolsEnv = TelosysToolsEnv.getInstance() ;
@@ -82,10 +83,49 @@ public class DslModelUtilTest {
 		
 		// check only file path (without folder existence)
     	assertTrue(DslModelUtil.isValidModelFile( getFile("/foo/bar/TelosysTools/aaaa.model"), false )) ;
+    	
     	assertFalse(DslModelUtil.isValidModelFile( getFile("/foo/bar/aaaa.model"), false )) ;
     	assertFalse(DslModelUtil.isValidModelFile( getFile("/foo/bar/TelosysTools/aaaa.txt"), false )) ;
+    	assertFalse(DslModelUtil.isValidModelFile( getFile("/aaaa.model"), false )) ;
+    	assertFalse(DslModelUtil.isValidModelFile( getFile("aaaa.model"), false )) ;
 
 		// check folder existence
     	assertFalse(DslModelUtil.isValidModelFile( getFile("/foo/bar/TelosysTools/aaaa.model"), true )) ; // No parent folder
+    }
+
+    @Test
+    public void testIsValidEntityFile() {
+		TelosysToolsEnv telosysToolsEnv = TelosysToolsEnv.getInstance() ;
+		System.out.println("TelosysToolsEnv.getModelsFolder() : " +  telosysToolsEnv.getModelsFolder() ) ;
+		
+		// check only file path (without folder existence)
+    	assertTrue(DslModelUtil.isValidEntityFile( getFile("/foo/bar/TelosysTools/foo_model/aaaa.entity"), false )) ;
+    	assertTrue(DslModelUtil.isValidEntityFile( getFile("/foo/bar/TelosysTools/foo_model/Book.entity"), false )) ;
+    	assertTrue(DslModelUtil.isValidEntityFile( getFile("/foo/bar/TelosysTools/demo_model/Book.entity"), false )) ;
+    	
+    	assertFalse(DslModelUtil.isValidEntityFile( getFile("/foo/bar/TelosysTools/demo_model/Book.txt"), false )) ;
+    	assertFalse(DslModelUtil.isValidEntityFile( getFile("/foo/bar/TelosysTools/demo_model/Book"), false )) ;
+    	assertFalse(DslModelUtil.isValidEntityFile( getFile("/foo/bar/aaaa.entity"), false )) ;
+    	assertFalse(DslModelUtil.isValidEntityFile( getFile("/foo/bar/TelosysTools/aaaa.entity"), false )) ;
+    	assertFalse(DslModelUtil.isValidEntityFile( getFile("/aaaa.entity"), false )) ;
+    	assertFalse(DslModelUtil.isValidEntityFile( getFile("aaaa.entity"), false )) ;
+    	assertFalse(DslModelUtil.isValidEntityFile( getFile("demo_model/aaaa.entity"), false )) ;
+
+		// check folder existence
+    	assertFalse(DslModelUtil.isValidEntityFile( getFile("/foo/bar/TelosysTools/foo_model/aaaa.entity"), true )) ; // No parent folder
+    }
+    
+    private boolean samePath(File file, String path) {
+    	File file2 = new File(path);
+    	System.out.println("Compare : " + file.getAbsolutePath() + " :: " + file2.getAbsolutePath() );
+    	return file.getAbsolutePath().equals(file2.getAbsolutePath()) ;
+    }
+    @Test
+    public void testGetModelFileForEntityFile() {
+    	File file ;
+		file = DslModelUtil.getModelFileForEntityFile( getFile("/foo/bar/TelosysTools/foo_model/aaaa.entity") ) ;
+		assertTrue( samePath(file, "/foo/bar/TelosysTools/foo.model") );
+		file = DslModelUtil.getModelFileForEntityFile( getFile("/foo/bar/TelosysTools/foo_model/aaaa.txt") ) ;
+		assertNull( file ) ;
     }
 }

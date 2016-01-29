@@ -21,18 +21,20 @@ import java.util.List;
 
 import org.telosys.tools.commons.DirUtil;
 import org.telosys.tools.commons.FileUtil;
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.env.TelosysToolsEnv;
 import org.telosys.tools.dsl.parser.model.DomainModelInfo;
 
 public class DslModelUtil {
 	
-    //-------------------------------------------------------------------------------------------------
-    // Names from file name
-    //-------------------------------------------------------------------------------------------------
+	private static final String MODELS_FOLDER_NAME  = TelosysToolsEnv.getInstance().getModelsFolder() ;
     private static final String DOT_MODEL           = ".model"  ;
     private static final String DOT_ENTITY          = ".entity" ;
     private static final String MODEL_FOLDER_SUFFIX = "_model"  ;
 
+    //-------------------------------------------------------------------------------------------------
+    // Names from file name
+    //-------------------------------------------------------------------------------------------------
     public static String getModelShortFileName(String modelName) {
     	if ( modelName == null ) {
     		throw new IllegalArgumentException("model name is null");
@@ -41,21 +43,21 @@ public class DslModelUtil {
     }
     
     /**
-     * Returns the model name for the given file name
-     * @param file eg 'aaa/bbb/foo.model' 
-     * @return 'foo' for 'aaa/bbb/foo.model' 
+     * Returns the model name for the given model file name
+     * @param modelFile a model file ( e.g. 'aaa/bbb/foo.model' ) 
+     * @return the model name ( e.g. 'foo' for 'aaa/bbb/foo.model' )
      */
-    public static String getModelName(File file) {
-    	return getFileNameWithoutExtension(file, DOT_MODEL) ;
+    public static String getModelName(File modelFile) {
+    	return getFileNameWithoutExtension(modelFile, DOT_MODEL) ;
     }
     
     /**
-     * Returns the entity name for the given file name
-     * @param file an entity file, e.g. 'aaa/bbb/Car.entity' 
-     * @return 'Car' for 'aaa/bbb/Car.entity' 
+     * Returns the entity name for the given entity file name
+     * @param entityFile an entity file ( e.g. 'aaa/bbb/Car.entity' ) 
+     * @return the entity name ( e.g. 'Car' for 'aaa/bbb/Car.entity' )
      */
-    public static String getEntityName(File file) {
-    	return getFileNameWithoutExtension(file, DOT_ENTITY) ;
+    public static String getEntityName(File entityFile) {
+    	return getFileNameWithoutExtension(entityFile, DOT_ENTITY) ;
     }
 
     private static String getFileNameWithoutExtension(File file, String extension) {
@@ -70,6 +72,11 @@ public class DslModelUtil {
     	}
     }
 
+    /**
+     * Returns the model folder "xxx_model" for the given model file "xxx.model"
+     * @param modelFile
+     * @return
+     */
     public static File getModelFolder(File modelFile) {
     	String modelName = getModelName(modelFile) ;
     	String modelFolderAbsolutePath = modelFile.getParentFile().getAbsolutePath() 
@@ -139,8 +146,10 @@ public class DslModelUtil {
     	}
     	
     	File parentFile = file.getParentFile() ;
-		TelosysToolsEnv telosysToolsEnv = TelosysToolsEnv.getInstance() ;
-		if ( ! parentFile.getName().equals( telosysToolsEnv.getModelsFolder() ) ) {
+    	if ( parentFile == null ) {
+			return false ;
+    	}    	
+		if ( ! parentFile.getName().equals( MODELS_FOLDER_NAME ) ) {
 			return false;
 		}
 
@@ -234,4 +243,52 @@ public class DslModelUtil {
     		throw new RuntimeException("Cannot rename " + currentEntityFile.getName() + " to " + newEntityFile.getName());
     	}
     }
+    
+    public static File getModelFileForEntityFile(File entityFile ) {
+    	if ( isValidEntityFile(entityFile, false) ) {
+    		String modelFolderPath = entityFile.getParentFile().getAbsolutePath() ;
+    		String modelFilePath = StrUtil.removeEnd( modelFolderPath, MODEL_FOLDER_SUFFIX ) + DOT_MODEL ;
+    		return new File(modelFilePath);
+    	}
+    	else {
+    		//throw new IllegalArgumentException("Invalid entity file");
+    		return null ;
+    	}
+    }
+    
+    public static boolean isValidEntityFile(File file, boolean checkParentFolderExistence) {
+    	
+    	// check ends with ".entity"
+    	if ( ! file.getName().endsWith(DOT_ENTITY) ) {
+        	return false ;
+    	}
+    	
+    	// check parent folder ends with "_model"
+    	File parentFile = file.getParentFile() ;
+    	if ( parentFile == null ) {
+			return false ;
+    	}    	
+    	if ( ! parentFile.getName().endsWith(MODEL_FOLDER_SUFFIX) ) {
+        	return false ;
+    	}
+    	
+		if ( checkParentFolderExistence ) {
+	    	// check parent folder "xxxx_model" exists
+			if ( ! parentFile.exists() ) {
+				return false ;
+        	}
+		}
+
+		// check models folder is matching the TelosysTools models folder
+    	File modelsFolder = parentFile.getParentFile() ;
+    	if ( modelsFolder == null ) {
+			return false ;
+    	}    	
+		if ( ! modelsFolder.getName().equals( MODELS_FOLDER_NAME ) ) {
+			return false;
+		}
+
+		return true;
+    }
+
 }
