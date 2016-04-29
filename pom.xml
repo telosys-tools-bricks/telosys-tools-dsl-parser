@@ -2,17 +2,18 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<name>telosys-tools-dsl-parser</name>
-	<artifactId>telosys-tools-dsl-parser</artifactId>
-	
-	<packaging>jar</packaging>
 
     <parent>
-        <groupId>org.telosys.tools</groupId>
+        <groupId>org.telosys</groupId>
         <artifactId>telosys-tools-parent</artifactId>
         <version>3.0.0</version>
         <relativePath>../telosys-tools-parent/pom.xml</relativePath>
     </parent>
+
+	<name>telosys-tools-dsl-parser</name>
+	<artifactId>telosys-tools-dsl-parser</artifactId>
+	
+	<packaging>jar</packaging>
 
 <!-- 
 	<build>
@@ -49,14 +50,14 @@
 	<dependencies>
 		<!-- For compilation -->
 		<dependency>
-			<groupId>org.telosys.tools</groupId>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>telosys-tools-generic-model</artifactId>
-			<version>3.0.0</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.telosys.tools</groupId>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>telosys-tools-commons</artifactId>
-			<version>3.0.0</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		
 		<dependency>
@@ -71,38 +72,7 @@
 		</dependency>
 		
 		<!-- For tests -->
-<!-- 		
-		<dependency>
-			<groupId>org.easymock</groupId>
-			<artifactId>easymock</artifactId>
-			<version>3.2</version>
-			<scope>test</scope>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.10.8</version>
-			<scope>test</scope>
-		</dependency>
-		
- -->		<!--  in parent
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-		 -->
 		 
-		<!-- not used
-		<dependency>
-			<groupId>org.easytesting</groupId>
-			<artifactId>fest-assert-core</artifactId>
-			<version>2.0M10</version>
-			<scope>test</scope>
-		</dependency>
-		 -->
 	</dependencies>
 	
 </project>
