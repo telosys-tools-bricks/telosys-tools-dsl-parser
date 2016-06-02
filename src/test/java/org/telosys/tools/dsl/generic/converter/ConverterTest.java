@@ -15,6 +15,7 @@ import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
+import org.telosys.tools.generic.model.ModelType;
 
 //@RunWith(MockitoJUnitRunner.class)
 public class ConverterTest {
@@ -34,21 +35,24 @@ public class ConverterTest {
 		// Then
 		assertEquals("", model.getName());
 		assertTrue(model.getEntities().isEmpty());
+		
+		assertEquals(ModelType.DOMAIN_SPECIFIC_LANGUAGE, model.getType() );
 	}
 	
-	@Test
-	public void testEmptyEntity() {
-		// Given
+	private Model buildModelWithTwoEmptyEntities() {
 		DomainModel domainModel = new DomainModel("domainModel");
 		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
 		domainModel.addEntity(domainEntity_1);
 		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
-		domainModel.addEntity(domainEntity_2);
-		
-		// When
-		Model model = converter.convertToGenericModel(domainModel);
-		
-		// Then
+		domainModel.addEntity(domainEntity_2);		
+		//--- Convert 
+		return converter.convertToGenericModel(domainModel);	
+	}
+	
+	@Test
+	public void testEmptyEntity() {
+		Model model = buildModelWithTwoEmptyEntities();
+
 		assertEquals(2, model.getEntities().size());
 		
 		// entity 1
@@ -66,6 +70,15 @@ public class ConverterTest {
 		
 		// attributes of entity 2
 		assertTrue(entity_2.getAttributes().isEmpty());
+		
+		Entity e = model.getEntityByClassName("domainEntity_1");
+		assertEquals("", e.getDatabaseCatalog());
+		assertEquals("", e.getDatabaseSchema());
+		assertEquals("TABLE", e.getDatabaseType());
+		assertEquals(0, e.getDatabaseForeignKeys().size());
+
+		Entity e2 = model.getEntityByTableName("domainEntity_1");
+		assertEquals("domainEntity_1", e2.getClassName());
 	}
 	
 	@Test
@@ -268,8 +281,17 @@ public class ConverterTest {
 
 //		GenericEntity entity_2 = (GenericEntity) getEntityByClassName(model, "domainEntity_2");
 		GenericEntity entity_2 = (GenericEntity) model.getEntityByClassName("domainEntity_2");
-		assertNull( entity_2.getDatabaseTable());
+		//assertNull( entity_2.getDatabaseTable());
+		assertEquals("domainEntity_2", entity_2.getDatabaseTable() );
 		assertEquals("domainEntity_2", entity_1.getLinks().get(0).getTargetEntityClassName());
+		
+		//--- Get by class name
+		assertNotNull(model.getEntityByClassName("domainEntity_1"));
+		assertNotNull(model.getEntityByClassName("domainEntity_2"));
+		
+		//--- Get by table name ( table name = class name )
+		assertNotNull(model.getEntityByTableName("domainEntity_1"));
+		assertNotNull(model.getEntityByTableName("domainEntity_2"));
 		
 	}
 	

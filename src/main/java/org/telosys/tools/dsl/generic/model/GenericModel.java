@@ -33,18 +33,19 @@ public class GenericModel implements Model {
 	private List<Entity> entities = new ArrayList<Entity>();
 
 	@Override
-	public Entity getEntityByClassName(String name) {
+	public Entity getEntityByClassName(String entityClassName) {
 		for(Entity entity : getEntities()) {
-			if(name.equals(entity.getClassName())) {
+			if ( entityClassName.equals(entity.getClassName()) ) {
 				return entity;
 			}
 		}
 		return null;
 	}
 	@Override
-	public Entity getEntityByTableName(String name) {
+	public Entity getEntityByTableName(String entityTableName) {
 		for(Entity entity : getEntities()) {
-			if(name.equals(entity.getFullName())) {
+//			if ( entityTableName.equals(entity.getFullName()) ) {
+			if ( entityTableName.equals(entity.getDatabaseTable() ) ) {
 				return entity;
 			}
 		}
