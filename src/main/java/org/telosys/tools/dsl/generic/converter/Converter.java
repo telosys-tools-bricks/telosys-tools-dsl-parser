@@ -36,6 +36,7 @@ import org.telosys.tools.dsl.parser.model.DomainNeutralType;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.dsl.parser.model.DomainType;
 import org.telosys.tools.generic.model.Cardinality;
+import org.telosys.tools.generic.model.CascadeOptions;
 import org.telosys.tools.generic.model.FetchType;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.Model;
@@ -116,7 +117,7 @@ public class Converter {
 		genericEntity.setFullName(notNull(domainEntity.getName()));
 		
 		//--- NB : Database Table must be set in order to be able do "getEntityByTableName()"
-		genericEntity.setDatabaseTable(notNull(domainEntity.getName())); // Same as "className" (unique)
+		genericEntity.setDatabaseTable(determineTableName(domainEntity)); // Same as "className" (unique)
 		genericEntity.setDatabaseType("TABLE"); // Type is "TABLE" by default
 		genericEntity.setDatabaseCatalog("");
 		genericEntity.setDatabaseSchema("");
@@ -140,6 +141,7 @@ public class Converter {
 
             DomainType domainFieldType = domainEntityField.getType();
             if (domainFieldType.isNeutralType() ) {
+            	// STANDARD NEUTRAL TYPE
         		log("convertEntityAttributes() : " + domainEntityField.getName() + " : neutral type");
             	// Simple type attribute
             	GenericAttribute genericAttribute = convertAttributeNeutralType( domainEntityField );
@@ -149,6 +151,7 @@ public class Converter {
                 }
             }
             else if (domainFieldType.isEntity() ) {
+            	// REFERENCE TO AN ENTITY = LINK
         		log("convertEntityAttributes() : " + domainEntityField.getName() + " : entity type (link)");
             	// Link type attribute (reference to 1 or N other entity )
         		linkIdCounter++;
@@ -157,123 +160,6 @@ public class Converter {
                 	genericEntity.getLinks().add(genericLink);
                 }
             }
-/*****
-            // Is link ?
-            if (!domainFieldType.isEntity() ) {
-
-                GenericAttribute genericAttribute = new GenericAttribute();
-                genericEntity.getAttributes().add(genericAttribute);
-//                genericAttribute.setName(notNullOrVoidValue(domainEntityField.getName(), EMPTY_STRING));
-                genericAttribute.setName( voidIfNull(domainEntityField.getName()) );
-
-                // Java type
-                if (domainFieldType.isNeutralType()) {
-                    DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
-                    genericAttribute.setSimpleType(convertNeutralTypeToSimpleType(domainNeutralType, EMPTY_STRING));
-                    genericAttribute.setFullType(convertNeutralTypeToFullType(domainNeutralType, EMPTY_STRING));
-                }
-
-//                // Enumeration
-//                if (domainFieldType.isEnumeration()) {
-//                    DomainEnumeration<?> domainEnumeration = (DomainEnumeration<?>) domainFieldType;
-//                    // NOT YET AVAILABLE : Add Enumerations
-//                }
-//
-                // Annotation
-                if(domainEntityField.getAnnotations() != null) {
-                    for(DomainEntityFieldAnnotation annotation : domainEntityField.getAnnotations().values()) {
-                        if("@Id".equals(annotation.getName())) {
-                            genericAttribute.setKeyElement(true);
-                        }
-                        if("@NotNull".equals(annotation.getName())) {
-                            genericAttribute.setNotNull(true);
-                        }
-                        if("@Min".equals(annotation.getName())) {
-                            Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-                            if(parameterValue != null) {
-                                genericAttribute.setMinValue(parameterValue);
-                            }
-                        }
-                        if("@Max".equals(annotation.getName())) {
-                            Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-                            if(parameterValue != null) {
-                                genericAttribute.setMaxValue(parameterValue);
-                            }
-                        }
-                        if("@SizeMin".equals(annotation.getName())) {
-                            Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-                            if(parameterValue != null) {
-                                genericAttribute.setMinLength(parameterValue);
-                            }
-                        }
-                        if("@SizeMax".equals(annotation.getName())) {
-                            Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-                            if(parameterValue != null) {
-                                genericAttribute.setMaxLength(parameterValue);
-                            }
-                        }
-                        if("@Past".equals(annotation.getName())) {
-                            genericAttribute.setDatePast(true);
-                        }
-                        if("@Future".equals(annotation.getName())) {
-                            genericAttribute.setDateFuture(true);
-                        }
-                    }
-                }
-
-            } else {
-                // Link
-
-				DomainEntity domainEntityTarget = (DomainEntity) domainFieldType;
-				GenericEntity genericEntityTarget =
-						(GenericEntity) genericModel.getEntityByClassName(domainEntityTarget.getName());
-				if(genericEntityTarget != null) {
-					GenericLink genericLink = new GenericLink();
-					genericEntity.getLinks().add(genericLink);
-					genericLink.setTargetEntityClassName(domainEntityTarget.getName());
-					Cardinality cardinality;
-					if(domainEntityField.getCardinality() == 1) {
-						cardinality = Cardinality.MANY_TO_ONE;
-					} else {
-						cardinality = Cardinality.ONE_TO_MANY;
-					}
-					genericLink.setCardinality(cardinality);
-					genericLink.setFieldName(domainEntityField.getName());
-					if(domainEntityField.getCardinality() == 1) {
-						genericLink.setFieldType(domainEntityField.getType().getName());
-					} else {
-						genericLink.setFieldType("java.util.List");
-					}
-					genericLink.setTargetEntityClassName(domainEntityField.getType().getName());
-					genericLink.setBasedOnForeignKey(false);
-					genericLink.setBasedOnJoinTable(false);
-					genericLink.setCascadeOptions(null);
-					genericLink.setComparableString("");
-					genericLink.setFetchType(FetchType.DEFAULT);
-					genericLink.setForeignKeyName("");
-					genericLink.setInverseSide(false);
-					genericLink.setInverseSideLinkId(null);
-					genericLink.setJoinColumns(null);
-					genericLink.setJoinTable(null);
-					genericLink.setJoinTableName(null);
-					genericLink.setMappedBy(null);
-					genericLink.setOptional(Optional.UNDEFINED);
-					genericLink.setOwningSide(false);
-					genericLink.setSelected(false);
-					genericLink.setSourceTableName(null);
-					genericLink.setTargetTableName(null);
-
-                    // Annotation
-                    if(domainEntityField.getAnnotations() != null) {
-                        for(DomainEntityFieldAnnotation annotation : domainEntityField.getAnnotations().values()) {
-                            if("@Embedded".equals(annotation.getName())) {
-                                genericLink.setIsEmbedded(true);
-                            }
-                        }
-                    }
-				}
-			}
-*****/
 		}
 	}
 	
@@ -290,10 +176,46 @@ public class Converter {
         DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
 		
         GenericAttribute genericAttribute = new GenericAttribute();
-        genericAttribute.setName( voidIfNull(domainEntityField.getName()) );
-        genericAttribute.setSimpleType(convertNeutralTypeToSimpleType(domainNeutralType, EMPTY_STRING));
-        genericAttribute.setFullType(convertNeutralTypeToFullType(domainNeutralType, EMPTY_STRING));
-
+        genericAttribute.setName( notNull(domainEntityField.getName()) );
+        genericAttribute.setSimpleType(convertNeutralTypeToSimpleType(domainNeutralType) );
+        genericAttribute.setFullType(convertNeutralTypeToFullType(domainNeutralType) );
+        
+        // If the attribute has a "longtext" type
+        if ( domainEntityField.getType() == DomainNeutralTypes.getType(DomainNeutralTypes.LONGTEXT_CLOB) ) {
+            genericAttribute.setLongText(true);
+        }
+        else {
+            genericAttribute.setLongText(false);
+        }
+        
+        // If the attribute has a "binary" type 
+        if ( domainEntityField.getType() == DomainNeutralTypes.getType(DomainNeutralTypes.BINARY_BLOB) ) {
+        	// TODO
+            //genericAttribute.setBinary(true);
+        }
+        
+        genericAttribute.setAutoIncremented(false); // TODO
+        // 
+        //genericAttribute.setBooleanFalseValue(booleanFalseValue);
+        //genericAttribute.setBooleanTrueValue(booleanTrueValue);
+        genericAttribute.setDatabaseComment("");  // TODO
+        genericAttribute.setDatabaseName(domainEntityField.getName()); // TODO
+        genericAttribute.setDatabaseDefaultValue(null); // TODO
+        // genericAttribute.setDatabaseType(databaseType);
+        // genericAttribute.setDateAfter(isDateAfter);
+        // genericAttribute.setDateAfterValue(dateAfterValue);
+        // genericAttribute.setDateBefore(isDateBefore);
+        // genericAttribute.setDateBeforeValue(dateBeforeValue);
+        // genericAttribute.setDateType(dateType);
+        // genericAttribute.setDefaultValue(defaultValue); // TODO
+        genericAttribute.setLabel(domainEntityField.getName()); // TODO
+        // genericAttribute.setInputType(inputType); // TODO ???
+        // genericAttribute.setNotBlank(notBlank);  // TODO
+        // genericAttribute.setNotEmpty(notEmpty); // TODO
+        genericAttribute.setSelected(true);
+        // genericAttribute.setPattern(pattern); // TODO
+        
+        
         // Populate field from annotations if any
         if(domainEntityField.getAnnotations() != null) {
             for(DomainEntityFieldAnnotation annotation : domainEntityField.getAnnotations().values()) {
@@ -302,6 +224,7 @@ public class Converter {
                 }
                 if("@NotNull".equals(annotation.getName())) {
                     genericAttribute.setNotNull(true);
+                    genericAttribute.setDatabaseNotNull(true);
                 }
                 if("@Min".equals(annotation.getName())) {
                     Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
@@ -325,6 +248,7 @@ public class Converter {
                     Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
                     if(parameterValue != null) {
                         genericAttribute.setMaxLength(parameterValue);
+                        genericAttribute.setDatabaseSize(parameterValue);
                     }
                 }
                 if("@Past".equals(annotation.getName())) {
@@ -333,6 +257,20 @@ public class Converter {
                 if("@Future".equals(annotation.getName())) {
                     genericAttribute.setDateFuture(true);
                 }
+                // TODO 
+                // @DefaultValue(xxx)
+                // @Comment(xxx) --> used as DbComment ?
+                // @AutoIncremented
+                // @After(DateISO)
+                // @Before(DateISO)
+                //
+                // @Label(xxx)
+                // @InputType(xxx) or config ???
+                // @Pattern(xxx) ???
+                //
+                // @DbColumn(xxx)
+                // @DbType(xxx)
+                // @DbDefaultValue(xxx)
             }
         }
         return genericAttribute;
@@ -365,8 +303,10 @@ public class Converter {
 		genericLink.setId("Link"+linkIdCounter); // Link ID : generated (just to ensure not null )
 		genericLink.setSelected(true); // nothing for link selection => selected by default
 		
-		//genericEntity.getLinks().add(genericLink);
-		genericLink.setTargetEntityClassName(domainEntityTarget.getName());
+		// Set target entity info
+		//genericLink.setTargetEntityClassName(notNull(domainEntityTarget.getName()));
+		genericLink.setTargetEntityClassName(domainEntityField.getType().getName());
+		genericLink.setTargetTableName(determineTableName(domainEntityTarget));
 		
 		//--- Cardinality
 		Cardinality cardinality;
@@ -392,11 +332,10 @@ public class Converter {
 			genericLink.setInverseSide(true);
 			genericLink.setInverseSideLinkId(null);
 		}
+		genericLink.setCascadeOptions(new CascadeOptions()); // Void cascade otions (default values)
 		
-		genericLink.setTargetEntityClassName(domainEntityField.getType().getName());
 		genericLink.setBasedOnForeignKey(false);
 		genericLink.setBasedOnJoinTable(false);
-		genericLink.setCascadeOptions(null);
 		genericLink.setComparableString("");
 		genericLink.setFetchType(FetchType.DEFAULT);
 		genericLink.setForeignKeyName("");
@@ -406,7 +345,6 @@ public class Converter {
 		genericLink.setMappedBy(null);
 		genericLink.setOptional(Optional.UNDEFINED);
 		genericLink.setSourceTableName(null);
-		genericLink.setTargetTableName(null);
 
         // Annotation
         if(domainEntityField.getAnnotations() != null) {
@@ -423,54 +361,92 @@ public class Converter {
 	/**
 	 * Conversion des types
 	 */
-	private static final Map<String, String> mapFullTypeConversion = new HashMap<String, String>();
-	private static final Map<String, String> mapSimpleTypeConversion = new HashMap<String, String>();
+//	private static final Map<String, String> mapFullTypeConversion = new HashMap<String, String>();
+//	private static final Map<String, String> mapSimpleTypeConversion = new HashMap<String, String>();
+	private static final Map<String, Class<?>> typeMapping = new HashMap<String, Class<?>>();
 	static {
-		mapFullTypeConversion.put(DomainNeutralTypes.BOOLEAN,   Boolean.class.getCanonicalName());
-		mapFullTypeConversion.put(DomainNeutralTypes.DATE,      Date.class.getCanonicalName());
-		mapFullTypeConversion.put(DomainNeutralTypes.DECIMAL,   BigDecimal.class.getCanonicalName());
-		mapFullTypeConversion.put(DomainNeutralTypes.INTEGER,   Integer.class.getCanonicalName());
-		mapFullTypeConversion.put(DomainNeutralTypes.STRING,    String.class.getCanonicalName());
-		mapFullTypeConversion.put(DomainNeutralTypes.TIME,      Date.class.getCanonicalName());
-		mapFullTypeConversion.put(DomainNeutralTypes.TIMESTAMP, Date.class.getCanonicalName());
+//		//--- Full type
+//		mapFullTypeConversion.put(DomainNeutralTypes.BOOLEAN,   Boolean.class.getCanonicalName());
+//		
+//		mapFullTypeConversion.put(DomainNeutralTypes.DECIMAL,   BigDecimal.class.getCanonicalName());
+//		mapFullTypeConversion.put(DomainNeutralTypes.INTEGER,   Integer.class.getCanonicalName());
+//		
+//		mapFullTypeConversion.put(DomainNeutralTypes.STRING,    String.class.getCanonicalName());
+//		
+//		mapFullTypeConversion.put(DomainNeutralTypes.DATE,      Date.class.getCanonicalName());
+//		mapFullTypeConversion.put(DomainNeutralTypes.TIME,      Date.class.getCanonicalName());
+//		mapFullTypeConversion.put(DomainNeutralTypes.TIMESTAMP, Date.class.getCanonicalName());
+//		
+//		
+//		//--- Simple type
+//		mapSimpleTypeConversion.put(DomainNeutralTypes.BOOLEAN,   Boolean.class.getSimpleName());
+//		
+//		
+//		mapSimpleTypeConversion.put(DomainNeutralTypes.DECIMAL,   BigDecimal.class.getSimpleName());
+//		mapSimpleTypeConversion.put(DomainNeutralTypes.INTEGER,   Integer.class.getSimpleName());
+//		
+//		mapSimpleTypeConversion.put(DomainNeutralTypes.STRING,    String.class.getSimpleName());
+//		
+//		mapSimpleTypeConversion.put(DomainNeutralTypes.DATE,      Date.class.getSimpleName());
+//		mapSimpleTypeConversion.put(DomainNeutralTypes.TIME,      Date.class.getSimpleName());
+//		mapSimpleTypeConversion.put(DomainNeutralTypes.TIMESTAMP, Date.class.getSimpleName());
+
+		typeMapping.put(DomainNeutralTypes.BOOLEAN,   Boolean.class );
 		
-		mapSimpleTypeConversion.put(DomainNeutralTypes.BOOLEAN,   Boolean.class.getSimpleName());
-		mapSimpleTypeConversion.put(DomainNeutralTypes.DATE,      Date.class.getSimpleName());
-		mapSimpleTypeConversion.put(DomainNeutralTypes.DECIMAL,   BigDecimal.class.getSimpleName());
-		mapSimpleTypeConversion.put(DomainNeutralTypes.INTEGER,   Integer.class.getSimpleName());
-		mapSimpleTypeConversion.put(DomainNeutralTypes.STRING,    String.class.getSimpleName());
-		mapSimpleTypeConversion.put(DomainNeutralTypes.TIME,      Date.class.getSimpleName());
-		mapSimpleTypeConversion.put(DomainNeutralTypes.TIMESTAMP, Date.class.getSimpleName());
+		typeMapping.put(DomainNeutralTypes.DECIMAL,   BigDecimal.class );
+		typeMapping.put(DomainNeutralTypes.INTEGER,   Integer.class );
+		
+		typeMapping.put(DomainNeutralTypes.STRING,        String.class );
+		typeMapping.put(DomainNeutralTypes.LONGTEXT_CLOB, String.class );
+		
+		typeMapping.put(DomainNeutralTypes.DATE,      Date.class );
+		typeMapping.put(DomainNeutralTypes.TIME,      Date.class );
+		typeMapping.put(DomainNeutralTypes.TIMESTAMP, Date.class );
+
+		typeMapping.put(DomainNeutralTypes.BINARY_BLOB, byte[].class ); 
+	}
+
+	private Class<?> getJavaTypeClass(DomainNeutralType domainNeutralType) {
+		if (domainNeutralType == null) {
+			throw new IllegalStateException("Neutral type is null");
+		}
+		Class<?> javaClass = typeMapping.get(domainNeutralType.getName());
+		if (javaClass == null) {
+			throw new IllegalStateException("Unknown type '" + domainNeutralType.getName() +"'");
+		}
+		return javaClass;
+	}
+	
+	/**
+	 * Convert DSL types (string, integer, etc.) to Generic model types.
+	 * @param domainNeutralType DSL type
+	 * @return Generic model type
+	 */
+	private String convertNeutralTypeToSimpleType(DomainNeutralType domainNeutralType) {
+//		if (domainNeutralType == null) {
+//			throw new IllegalStateException("Neutral type is null");
+//		}
+//		String genericModelType = mapSimpleTypeConversion.get(domainNeutralType.getName());
+//		if (genericModelType == null) {
+//			throw new IllegalStateException("Unknown type '" + domainNeutralType.getName() +"'");
+//		}		
+//		return genericModelType;
+		return getJavaTypeClass(domainNeutralType).getSimpleName();
 	}
 
 	/**
 	 * Convert DSL types (string, integer, etc.) to Generic model types.
-	 * @param domainNeutralType DSL type
-	 * @param defaultValue Default generic model type
+	 * @param domainNeutralType
 	 * @return Generic model type
 	 */
-	private String convertNeutralTypeToSimpleType(DomainNeutralType domainNeutralType, String defaultValue) {
-		if(domainNeutralType == null) {
-			//return defaultValue;
-			throw new IllegalStateException("Neutral type is null");
-		}
-		String genericModelType = mapSimpleTypeConversion.get(domainNeutralType.getName());
-		return genericModelType;
-	}
-
-	/**
-	 * Convert DSL types (string, integer, etc.) to Generic model types.
-	 * @param domainNeutralType DSL type
-	 * @param defaultValue Default generic model type
-	 * @return Generic model type
-	 */
-	private String convertNeutralTypeToFullType(DomainNeutralType domainNeutralType, String defaultValue) {
-		if(domainNeutralType == null) {
-			//return defaultValue;
-			throw new IllegalStateException("Neutral type is null");
-		}
-		String genericModelType = mapFullTypeConversion.get(domainNeutralType.getName());
-		return genericModelType;
+	private String convertNeutralTypeToFullType(DomainNeutralType domainNeutralType) {
+//		if(domainNeutralType == null) {
+//			//return defaultValue;
+//			throw new IllegalStateException("Neutral type is null");
+//		}
+//		String genericModelType = mapFullTypeConversion.get(domainNeutralType.getName());
+//		return genericModelType;
+		return getJavaTypeClass(domainNeutralType).getCanonicalName();
 	}
 
 //	/**
@@ -485,7 +461,22 @@ public class Converter {
 //		}
 //		return defaultValue;
 //	}
-
+	
+	/**
+	 * Conversion rule to determine the table name for a given entity
+	 * @param domainEntity
+	 * @return
+	 */
+	private String determineTableName(DomainEntity domainEntity) {
+		if ( domainEntity == null ) {
+			throw new IllegalStateException("DomainEntity is null");
+		}
+		if ( domainEntity.getName() == null ) {
+			throw new IllegalStateException("DomainEntity name is null");
+		}
+		return domainEntity.getName();
+	}
+	
 	private String notNull(String value) {
 		if ( value == null ) {
 			throw new IllegalStateException("Unexpected null value");
