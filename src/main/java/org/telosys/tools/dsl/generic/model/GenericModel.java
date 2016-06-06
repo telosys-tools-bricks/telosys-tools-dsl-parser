@@ -16,18 +16,21 @@
 package org.telosys.tools.dsl.generic.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
 import org.telosys.tools.generic.model.ModelType;
+import org.telosys.tools.generic.model.util.EntityClassNameComparator;
 
 public class GenericModel implements Model {
 	
+	private final ModelType type    = ModelType.DOMAIN_SPECIFIC_LANGUAGE ;
+	private final String    version = GenericModelVersion.VERSION ;
+
 	private String name = "";
-	private String version = "";
 	private String description = "";
-	private ModelType type;
 	private Integer databaseId;
 	private String databaseProductName	;
 	private List<Entity> entities = new ArrayList<Entity>();
@@ -51,47 +54,65 @@ public class GenericModel implements Model {
 		}
 		return null;
 	}
+
+	@Override
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	@Override
 	public String getVersion() {
 		return version;
 	}
-	public void setVersion(String version) {
-		this.version = version;
-	}
+//	public void setVersion(String version) {
+//		this.version = version;
+//	}
+
+	@Override
 	public String getDescription() {
 		return description;
 	}
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	@Override
 	public ModelType getType() {
 		return type;
 	}
-	public void setType(ModelType type) {
-		this.type = type;
-	}
+//	public void setType(ModelType type) {
+//		this.type = type;
+//	}
+	
+	@Override
 	public Integer getDatabaseId() {
 		return databaseId;
 	}
 	public void setDatabaseId(Integer databaseId) {
 		this.databaseId = databaseId;
 	}
+
+	@Override
 	public String getDatabaseProductName() {
 		return databaseProductName;
 	}
 	public void setDatabaseProductName(String databaseProductName) {
 		this.databaseProductName = databaseProductName;
 	}
+
+	@Override
 	public List<Entity> getEntities() {
 		return entities;
 	}
-	public void setEntities(List<Entity> entities) {
-		this.entities = entities;
+//	public void setEntities(List<Entity> entities) {
+//		this.entities = entities;
+//	}
+
+	public void sortEntitiesByClassName() {
+		Collections.sort(entities, new EntityClassNameComparator() ) ;
 	}
 	
 }

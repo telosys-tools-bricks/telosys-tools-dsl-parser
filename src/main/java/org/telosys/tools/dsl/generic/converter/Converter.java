@@ -28,7 +28,6 @@ import org.telosys.tools.dsl.generic.model.GenericAttribute;
 import org.telosys.tools.dsl.generic.model.GenericEntity;
 import org.telosys.tools.dsl.generic.model.GenericLink;
 import org.telosys.tools.dsl.generic.model.GenericModel;
-import org.telosys.tools.dsl.generic.model.GenericModelVersion;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntityField;
 import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
@@ -41,7 +40,6 @@ import org.telosys.tools.generic.model.CascadeOptions;
 import org.telosys.tools.generic.model.FetchType;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.Model;
-import org.telosys.tools.generic.model.ModelType;
 import org.telosys.tools.generic.model.Optional;
 
 public class Converter {
@@ -63,13 +61,16 @@ public class Converter {
 	 */
 	public Model convertToGenericModel(DomainModel domainModel) {
 		GenericModel genericModel = new GenericModel();
-		genericModel.setType( ModelType.DOMAIN_SPECIFIC_LANGUAGE );
+//		genericModel.setType( ModelType.DOMAIN_SPECIFIC_LANGUAGE );
 		genericModel.setName( voidIfNull(domainModel.getName()) );
-		genericModel.setVersion( GenericModelVersion.VERSION );
+//		genericModel.setVersion( GenericModelVersion.VERSION );
 		genericModel.setDescription( voidIfNull(domainModel.getDescription() ) );
 
 		// convert all entities
 		convertEntities(domainModel, genericModel);
+		
+		// Finally sort the entities by class name 
+		genericModel.sortEntitiesByClassName();
 		
 		return genericModel;
 	}
