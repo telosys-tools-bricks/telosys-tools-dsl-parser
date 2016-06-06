@@ -52,6 +52,21 @@ public class DomainEntityFieldAnnotation {
         return parameter;
     }
 
+    public int getParameterAsInt() {
+    	if ( hasParameter ) {
+            try {
+                return Integer.parseInt(parameter);
+            }
+            catch (NumberFormatException ex) {
+            	throw new IllegalStateException("Annotation '"+name+"' : invalid integer parameter " + parameter);
+            }
+    	}
+    	else {
+    		throw new IllegalStateException("Annotation '"+name+"' : No parameter for this annotation");
+    	}
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -83,9 +98,18 @@ public class DomainEntityFieldAnnotation {
 
     @Override
     public String toString() {
-        return "@{" +
-                "name='" + name + '\'' +
-                ", parameter='" + parameter + '\'' +
-                '}';
+//        return "@{" +
+//                "name='" + name + '\'' +
+//                ", parameter='" + parameter + '\'' +
+//                '}';
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("@");
+    	sb.append(name);
+    	if ( this.hasParameter ) {
+        	sb.append("(");
+        	sb.append(parameter);
+        	sb.append(")");
+    	}
+    	return sb.toString();
     }
 }

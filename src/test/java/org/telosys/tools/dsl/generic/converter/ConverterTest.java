@@ -3,6 +3,7 @@ package org.telosys.tools.dsl.generic.converter;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.telosys.tools.dsl.AnnotationName;
 //import org.junit.runner.RunWith;
 //import org.mockito.InjectMocks;
 //import org.mockito.runners.MockitoJUnitRunner;
@@ -185,14 +186,22 @@ public class ConverterTest {
 		domainEntity_1.addField(domainEntityField_1_6);
 		domainEntity_1.addField(domainEntityField_1_7);
 		domainEntity_1.addField(domainEntityField_1_8);
-		domainEntityField_1_1.addAnnotation(new DomainEntityFieldAnnotation("@Id"));
-		domainEntityField_1_2.addAnnotation(new DomainEntityFieldAnnotation("@NotNull"));
-		domainEntityField_1_3.addAnnotation(new DomainEntityFieldAnnotation("@Min", "1"));
-		domainEntityField_1_4.addAnnotation(new DomainEntityFieldAnnotation("@Max", "2"));
-		domainEntityField_1_5.addAnnotation(new DomainEntityFieldAnnotation("@SizeMin", "3"));
-		domainEntityField_1_6.addAnnotation(new DomainEntityFieldAnnotation("@SizeMax", "4"));
-		domainEntityField_1_7.addAnnotation(new DomainEntityFieldAnnotation("@Past"));
-		domainEntityField_1_8.addAnnotation(new DomainEntityFieldAnnotation("@Future"));
+//		domainEntityField_1_1.addAnnotation(new DomainEntityFieldAnnotation("@Id"));
+//		domainEntityField_1_2.addAnnotation(new DomainEntityFieldAnnotation("@NotNull"));
+		domainEntityField_1_1.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.ID));
+		domainEntityField_1_2.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.NOT_NULL));
+//		domainEntityField_1_3.addAnnotation(new DomainEntityFieldAnnotation("@Min", "1"));
+//		domainEntityField_1_4.addAnnotation(new DomainEntityFieldAnnotation("@Max", "2"));
+		domainEntityField_1_3.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.MIN, "1"));
+		domainEntityField_1_4.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.MAX, "2"));
+//		domainEntityField_1_5.addAnnotation(new DomainEntityFieldAnnotation("@SizeMin", "3"));
+//		domainEntityField_1_6.addAnnotation(new DomainEntityFieldAnnotation("@SizeMax", "4"));
+		domainEntityField_1_5.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.SIZE_MIN, "3"));
+		domainEntityField_1_6.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.SIZE_MAX, "4"));
+//		domainEntityField_1_7.addAnnotation(new DomainEntityFieldAnnotation("@Past"));
+//		domainEntityField_1_8.addAnnotation(new DomainEntityFieldAnnotation("@Future"));
+		domainEntityField_1_7.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.PAST));
+		domainEntityField_1_8.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.FUTURE));
 
 		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
 		domainModel.addEntity(domainEntity_2);

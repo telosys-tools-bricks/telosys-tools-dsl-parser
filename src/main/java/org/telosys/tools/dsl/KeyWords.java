@@ -61,7 +61,7 @@ public class KeyWords {
 	}
 	
 	/**
-	 * Return the list of annotations keywords <br>
+	 * Return the list of annotations keywords with specific ending character if any<br>
 	 * e.g. 'Id', 'NotNull', 'Min#', 'Max#', etc
 	 * @return
 	 */

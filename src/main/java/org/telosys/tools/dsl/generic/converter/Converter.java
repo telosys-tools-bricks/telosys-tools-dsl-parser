@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.telosys.tools.commons.ConsoleLogger;
 import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.generic.model.GenericAttribute;
 import org.telosys.tools.dsl.generic.model.GenericEntity;
 import org.telosys.tools.dsl.generic.model.GenericLink;
@@ -53,7 +54,6 @@ public class Converter {
 		}
 	}
 
-	private static String EMPTY_STRING = ""; 
 	private int linkIdCounter = 0 ;
 
 	/**
@@ -91,7 +91,7 @@ public class Converter {
 			return;
 		}
 
-		// Define all the existing entities
+		// STEP 1 : Convert all the existing entities
 		for(DomainEntity domainEntity : domainModel.getEntities()) {
 //			GenericEntity genericEntity = new GenericEntity();
 ////			genericEntity.setClassName(notNullOrVoidValue(domainEntity.getName(), EMPTY_STRING));
@@ -103,11 +103,18 @@ public class Converter {
 			genericModel.getEntities().add(genericEntity);
 		}
 		
-		// Links resolution
+		// STEP 2 : Convert the attributes ( basic attributes and link attributes ) 
 		for(DomainEntity domainEntity : domainModel.getEntities()) {
 			GenericEntity genericEntity = (GenericEntity) genericModel.getEntityByClassName(domainEntity.getName());
 			convertAttributes(domainEntity, genericEntity, genericModel);
 		}
+		
+//		// STEP 3 : Build "keyAttributes"
+//		for(DomainEntity domainEntity : domainModel.getEntities()) {
+//			GenericEntity genericEntity = (GenericEntity) genericModel.getEntityByClassName(domainEntity.getName());
+//			// TODO 
+//		}
+		
 	}
 	
 	private GenericEntity convertEntity( DomainEntity domainEntity ) {
@@ -141,7 +148,7 @@ public class Converter {
 
             DomainType domainFieldType = domainEntityField.getType();
             if (domainFieldType.isNeutralType() ) {
-            	// STANDARD NEUTRAL TYPE
+            	// STANDARD NEUTRAL TYPE = BASIC ATTRIBUTE
         		log("convertEntityAttributes() : " + domainEntityField.getName() + " : neutral type");
             	// Simple type attribute
             	GenericAttribute genericAttribute = convertAttributeNeutralType( domainEntityField );
@@ -170,7 +177,8 @@ public class Converter {
 	 * @return
 	 */
 	private GenericAttribute convertAttributeNeutralType( DomainEntityField domainEntityField ) {
-		
+		log("convertAttributeNeutralType() : name = " + domainEntityField.getName() );
+
 		DomainType domainFieldType = domainEntityField.getType();
 		check(domainFieldType.isNeutralType(), "Invalid field type. Neutral type expected");
         DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
@@ -218,43 +226,61 @@ public class Converter {
         
         // Populate field from annotations if any
         if(domainEntityField.getAnnotations() != null) {
+    		log("convertAttributeNeutralType() : annotations found" );
             for(DomainEntityFieldAnnotation annotation : domainEntityField.getAnnotations().values()) {
-                if("@Id".equals(annotation.getName())) {
+        		log("convertAttributeNeutralType() : annotation '"+ annotation.getName() + "'");
+        		// The annotation name is like "Id", "NotNull", "Max", etc
+        		// without "@" at the beginning and without "#" at the end
+                if(AnnotationName.ID.equals(annotation.getName())) {
+            		log("convertAttributeNeutralType() : @Id => setKeyElement(true)" );
                     genericAttribute.setKeyElement(true);
                 }
-                if("@NotNull".equals(annotation.getName())) {
+                if(AnnotationName.NOT_NULL.equals(annotation.getName())) {
+            		log("convertAttributeNeutralType() : @NotNull " );
                     genericAttribute.setNotNull(true);
                     genericAttribute.setDatabaseNotNull(true);
                 }
-                if("@Min".equals(annotation.getName())) {
-                    Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-                    if(parameterValue != null) {
-                        genericAttribute.setMinValue(parameterValue);
-                    }
+                if(AnnotationName.MIN.equals(annotation.getName())) {
+            		log("convertAttributeNeutralType() : @Min " );
+//                    Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
+//                    if(parameterValue != null) {
+//                        genericAttribute.setMinValue(parameterValue);
+//                    }
+                    genericAttribute.setMinValue(annotation.getParameterAsInt());
                 }
-                if("@Max".equals(annotation.getName())) {
-                    Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-                    if(parameterValue != null) {
-                        genericAttribute.setMaxValue(parameterValue);
-                    }
+                if(AnnotationName.MAX.equals(annotation.getName())) {
+            		log("convertAttributeNeutralType() : @Max " );
+//                    Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
+//                    if(parameterValue != null) {
+//                        genericAttribute.setMaxValue(parameterValue);
+//                    }
+                    genericAttribute.setMaxValue(annotation.getParameterAsInt());
                 }
-                if("@SizeMin".equals(annotation.getName())) {
-                    Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-                    if(parameterValue != null) {
-                        genericAttribute.setMinLength(parameterValue);
-                    }
+                if(AnnotationName.SIZE_MIN.equals(annotation.getName())) {
+            		log("convertAttributeNeutralType() : @SizeMin " );
+//                    Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
+//                    if(parameterValue != null) {
+//                        genericAttribute.setMinLength(parameterValue);
+//                    }
+                    genericAttribute.setMinLength(annotation.getParameterAsInt());
                 }
-                if("@SizeMax".equals(annotation.getName())) {
-                    Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-                    if(parameterValue != null) {
-                        genericAttribute.setMaxLength(parameterValue);
-                        genericAttribute.setDatabaseSize(parameterValue);
-                    }
+                if(AnnotationName.SIZE_MAX.equals(annotation.getName())) {
+            		log("convertAttributeNeutralType() : @SizeMax " );
+//                    Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
+//                    if(parameterValue != null) {
+//                        genericAttribute.setMaxLength(parameterValue);
+//                        genericAttribute.setDatabaseSize(parameterValue);
+//                    }
+                    int parameterValue = annotation.getParameterAsInt();
+                    genericAttribute.setMaxLength(parameterValue);
+                    genericAttribute.setDatabaseSize(parameterValue);
                 }
-                if("@Past".equals(annotation.getName())) {
+                if(AnnotationName.PAST.equals(annotation.getName())) {
+            		log("convertAttributeNeutralType() : @Past " );
                     genericAttribute.setDatePast(true);
                 }
-                if("@Future".equals(annotation.getName())) {
+                if(AnnotationName.FUTURE.equals(annotation.getName())) {
+            		log("convertAttributeNeutralType() : @Future " );
                     genericAttribute.setDateFuture(true);
                 }
                 // TODO 
@@ -272,6 +298,9 @@ public class Converter {
                 // @DbType(xxx)
                 // @DbDefaultValue(xxx)
             }
+        }
+        else {
+    		log("convertAttributeNeutralType() : no annotation" );
         }
         return genericAttribute;
 	}
@@ -496,38 +525,38 @@ public class Converter {
 		return value;
 	}
 
-	/**
-	 * Convert String value to Integer
-	 * @param value String value
-	 * @param defaultValue Default Integer value
-	 * @return Integer value
-	 */
-	private Integer convertStringToInteger(String value, Integer defaultValue) {
-		if(!isDefined(value)) {
-			return defaultValue;
-		}
-		Integer integerValue;
-		try {
-			integerValue = Integer.valueOf(value);
-		} catch(NumberFormatException e) {
-			integerValue = defaultValue;
-		}
-		return integerValue;
-	}
+//	/**
+//	 * Convert String value to Integer
+//	 * @param value String value
+//	 * @param defaultValue Default Integer value
+//	 * @return Integer value
+//	 */
+//	private Integer convertStringToInteger(String value, Integer defaultValue) {
+//		if(!isDefined(value)) {
+//			return defaultValue;
+//		}
+//		Integer integerValue;
+//		try {
+//			integerValue = Integer.valueOf(value);
+//		} catch(NumberFormatException e) {
+//			integerValue = defaultValue;
+//		}
+//		return integerValue;
+//	}
 	
-	/**
-	 * Check if the String value is defined
-	 * @param value String value
-	 * @return is defined
-	 */
-	private boolean isDefined(String value) {
-		if(value == null) {
-			return false;
-		}
-		if(value.trim().equals(EMPTY_STRING)) {
-			return false;
-		}
-		return true;
-	}
+//	/**
+//	 * Check if the String value is defined
+//	 * @param value String value
+//	 * @return is defined
+//	 */
+//	private boolean isDefined(String value) {
+//		if(value == null) {
+//			return false;
+//		}
+//		if(value.trim().equals(EMPTY_STRING)) {
+//			return false;
+//		}
+//		return true;
+//	}
 	
 }
