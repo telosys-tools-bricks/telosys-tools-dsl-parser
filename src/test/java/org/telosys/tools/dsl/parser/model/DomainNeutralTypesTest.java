@@ -13,7 +13,7 @@ public class DomainNeutralTypesTest {
 	@Test
 	public void testExist() {
 		assertTrue(DomainNeutralTypes.exists("string"));
-		assertTrue(DomainNeutralTypes.exists("integer"));
+		assertTrue(DomainNeutralTypes.exists("int"));
 	}
 
 	@Test

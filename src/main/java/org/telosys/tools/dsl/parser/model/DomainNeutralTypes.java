@@ -26,8 +26,16 @@ public final class DomainNeutralTypes {
     // Neutral type list of predefined names
     public static final String STRING    = "string";
     
-    public static final String INTEGER   = "integer";
+    public static final String BYTE      = "byte"; // Added
+    public static final String SHORT     = "short"; // Added
+//    public static final String INTEGER   = "integer"; 
+    public static final String INTEGER   = "int"; // Changed
+    public static final String LONG      = "long"; // Added
+    
     public static final String DECIMAL   = "decimal";
+    public static final String FLOAT     = "float";
+    public static final String DOUBLE    = "double";
+    
     public static final String BOOLEAN   = "boolean";
     
     public static final String DATE      = "date";
@@ -38,7 +46,13 @@ public final class DomainNeutralTypes {
     public static final String LONGTEXT_CLOB = "longtext"; // CLOB
 
 
-    private static final String[] NAMES = {STRING, INTEGER, DECIMAL, BOOLEAN, DATE, TIME, TIMESTAMP, BINARY_BLOB, LONGTEXT_CLOB};
+    private static final String[] NAMES = {
+    	STRING, 
+    	BYTE, SHORT, INTEGER, LONG,
+    	DECIMAL, FLOAT, DOUBLE,
+    	BOOLEAN, 
+    	DATE, TIME, TIMESTAMP, 
+    	BINARY_BLOB, LONGTEXT_CLOB};
 
     private static final Map<String, DomainNeutralType> NEUTRAL_TYPES = new Hashtable<String, DomainNeutralType>();
 

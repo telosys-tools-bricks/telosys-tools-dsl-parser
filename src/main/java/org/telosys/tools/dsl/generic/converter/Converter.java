@@ -55,11 +55,16 @@ public class Converter {
 	private int linkIdCounter = 0 ;
 
 	/**
-	 * Converts the DSL model to the Generic model
+	 * Converts the DSL model to the Generic model <br>
+	 * 
 	 * @param domainModel DSL model
 	 * @return Generic model
+	 * @throws IllegalStateException if an error occurs
 	 */
 	public Model convertToGenericModel(DomainModel domainModel) {
+		
+		checkTypeMapping();
+		
 		GenericModel genericModel = new GenericModel();
 //		genericModel.setType( ModelType.DOMAIN_SPECIFIC_LANGUAGE );
 		genericModel.setName( voidIfNull(domainModel.getName()) );
@@ -74,7 +79,15 @@ public class Converter {
 		
 		return genericModel;
 	}
-
+	
+	private void checkTypeMapping() {
+		
+		if ( typeMapping.size() != DomainNeutralTypes.getNames().size() ) {
+			throw new IllegalStateException("Inconsistant type mapping in converter ("+
+					typeMapping.size() + " entries, " + DomainNeutralTypes.getNames().size() + " expected)");
+		}
+	}
+	
 	private void check(boolean expr, String errorMessage ) {
 		if ( ! expr ) {
 			throw new IllegalStateException(errorMessage);
@@ -423,8 +436,14 @@ public class Converter {
 
 		typeMapping.put(DomainNeutralTypes.BOOLEAN,   Boolean.class );
 		
-		typeMapping.put(DomainNeutralTypes.DECIMAL,   BigDecimal.class );
+		typeMapping.put(DomainNeutralTypes.BYTE,      Byte.class );
+		typeMapping.put(DomainNeutralTypes.SHORT,     Short.class );
 		typeMapping.put(DomainNeutralTypes.INTEGER,   Integer.class );
+		typeMapping.put(DomainNeutralTypes.LONG,      Long.class );
+
+		typeMapping.put(DomainNeutralTypes.FLOAT,     Float.class );
+		typeMapping.put(DomainNeutralTypes.DOUBLE,    Double.class );
+		typeMapping.put(DomainNeutralTypes.DECIMAL,   BigDecimal.class );
 		
 		typeMapping.put(DomainNeutralTypes.STRING,        String.class );
 		typeMapping.put(DomainNeutralTypes.LONGTEXT_CLOB, String.class );

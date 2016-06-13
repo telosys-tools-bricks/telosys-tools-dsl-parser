@@ -1,4 +1,4 @@
 Countryyyyy { // Bad name
-	id : integer {@Id};
+	id : int {@Id};
 	name : string;
 }

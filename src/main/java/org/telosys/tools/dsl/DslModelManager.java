@@ -94,9 +94,16 @@ public class DslModelManager {
         else {
             //--- 2) Convert the "domain model" to "generic model" 
             Converter converter = new Converter();
-            Model model = converter.convertToGenericModel(domainModel);
-            logger.info(model.toString());
-            return model;
+			try {
+				return converter.convertToGenericModel(domainModel);
+			} catch (Exception e) {
+				parsingErrorMessage = "Converter error : " + e.getMessage() ;
+				parsingErrors = new Hashtable<String,String>();
+				parsingErrors.put("", parsingErrorMessage );
+				return null ;
+			}
+            //logger.info(model.toString());
+            //return model;
         }
     }
 

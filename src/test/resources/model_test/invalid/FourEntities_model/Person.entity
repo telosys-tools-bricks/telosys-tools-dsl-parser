@@ -1,5 +1,5 @@
 Person {
-	id : integer {@Id}; // the id
+	id : int {@Id}; // the id
 	firstName : string {@SizeMax( 3)} ;
 	lastName : string;
 	birthDate : date ;

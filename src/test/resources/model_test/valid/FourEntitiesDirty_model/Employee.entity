@@ -5,7 +5,7 @@ Employee
 // Test
 	id  // Test
 	: // Test
-	 integer  // Test
+	 int // Test
 	 { // Test
 	 @Id,  // Test
 	@NotNull // Test
