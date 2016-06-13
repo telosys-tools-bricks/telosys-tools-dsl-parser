@@ -100,7 +100,7 @@ public class DomainModelParser {
 			try {
 				domainEntity = entityParser.parse(entityFileName);
 	        	//--- Populate
-	            model.putEntity(domainEntity);
+	            model.populateEntityFileds(domainEntity.getName(), domainEntity.getFields() );
 			} catch (EntityParserException parsingException) {
 				errorsCount++ ;
 				File entityFile = new File(entityFileName);

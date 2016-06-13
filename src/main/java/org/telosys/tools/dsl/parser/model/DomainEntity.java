@@ -26,36 +26,72 @@ import java.util.*;
  */
 public class DomainEntity extends DomainType {
 
-    private final Map<String, DomainEntityField> fields;
-    public static final int THIRTY_ONE_HASH_CODE = 31; // TODO rename
+    public static final int THIRTY_ONE_HASH_CODE = 31; 
 
+    /**
+     * Map of fields used for direct access by field name and to check uniqueness 
+     */
+    private final Map<String, DomainEntityField> fieldsMap;
+    
+
+    /**
+     * Constructor
+     * @param name
+     */
     public DomainEntity(String name) {
         super(name, DomainTypeNature.ENTITY);
-        this.fields = new Hashtable<String, DomainEntityField>();
+        //this.fieldsMap = new Hashtable<String, DomainEntityField>();
+        // LinkedHashMap to keep the original order
+        this.fieldsMap = new LinkedHashMap<String, DomainEntityField>(); 
     }
 
     public void addField(DomainEntityField field) {
-        if (fields.containsKey(field.getName())) {
+        if (fieldsMap.containsKey(field.getName())) {
             throw new EntityParserException("Field '" + field.getName() + "' already defined");
         }
-        fields.put(field.getName(), field);
+        fieldsMap.put(field.getName(), field);
     }
 
+    /**
+     * Returns a list containing all the fields
+     * @return
+     */
     public List<DomainEntityField> getFields() {
-        return new LinkedList<DomainEntityField>(fields.values());
+        return new LinkedList<DomainEntityField>(fieldsMap.values());
     }
 
+    /**
+     * Returns the field identified by the given name
+     * @param fieldName
+     * @return the field found (or null if not found)
+     */
     public DomainEntityField getField(String fieldName) {
-        return fields.get(fieldName);
+        return fieldsMap.get(fieldName);
     }
 
+    /**
+     * Returns the number of fields
+     * @return
+     */
     public int getNumberOfFields() {
-        return fields.size();
+        return fieldsMap.size();
     }
 
+//    /**
+//     * Adds all the fields into another entity
+//     *
+//     * @param destination the destination
+//     */
+//    public void addAllFields(DomainEntity destination) {
+//        Collection<DomainEntityField> e = fieldsMap.values();
+//        for (DomainEntityField entity : e) {
+//            destination.addField(entity);
+//        }
+//    }
+    //-------------------------------------------------------------------------------------
     public String toString() {
         String fieldRet = "";
-        for (DomainEntityField f : fields.values()) {
+        for (DomainEntityField f : fieldsMap.values()) {
             fieldRet += "\n\t\t"+f.toString();
         }
         return this.getName() + " {" + fieldRet + "}";
@@ -76,10 +112,10 @@ public class DomainEntity extends DomainType {
         if (!otherEntity.getName().equals(this.getName())) {
             return false;
         }
-        if (otherEntity.fields.size() != fields.size()) {
+        if (otherEntity.fieldsMap.size() != fieldsMap.size()) {
             return false;
         }
-        if (!otherEntity.fields.equals(fields)) {
+        if (!otherEntity.fieldsMap.equals(fieldsMap)) {
             return false;
         }
         return true;
@@ -88,19 +124,8 @@ public class DomainEntity extends DomainType {
     @Override
     public int hashCode() {
         int result = this.getName() != null ? this.getName().hashCode() : 0;
-        result = THIRTY_ONE_HASH_CODE * result + (fields != null ? fields.hashCode() : 0);
+        result = THIRTY_ONE_HASH_CODE * result + (fieldsMap != null ? fieldsMap.hashCode() : 0);
         return result;
     }
 
-    /**
-     * Copy the field of the entity into another entity
-     *
-     * @param intoCopy the destination
-     */
-    public void copyIn(DomainEntity intoCopy) {
-        Collection<DomainEntityField> e = fields.values();
-        for (DomainEntityField entity : e) {
-            intoCopy.addField(entity);
-        }
-    }
 }

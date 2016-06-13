@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -417,5 +418,34 @@ public class ModelParserTest {
 		country.addField(new DomainEntityField("name", DomainNeutralTypes.getType("string")));
 		
 		return country ;
+	}
+	
+	@Test
+    public void testParseModel_AttributesOrder() throws Exception {
+        File modelFile = new File("src/test/resources/model_test/valid/FourEntities.model");
+        DomainModelParser parser = new DomainModelParser();
+        DomainModel model = parser.parse(modelFile);
+        
+		assertEquals("FourEntities", model.getName());
+		assertEquals("", model.getVersion() );
+		assertEquals(0, parser.getErrors().size() );
+		
+		DomainEntity entity = model.getEntity("Person");
+		assertNotNull(entity);
+		System.out.println("Entity '" + entity.getName()+"' ready.");
+		List<DomainEntityField> fields = entity.getFields();
+		System.out.println(fields.size() + " field(s) : ");
+		for ( DomainEntityField field : fields ) {
+			System.out.println(" . " + field.getName() + " ( type = " + field.getTypeName() + " )");
+		}
+		assertEquals(6, fields.size());
+		int i = 0 ;
+		assertEquals("id",        fields.get(i++).getName() );
+		assertEquals("firstName", fields.get(i++).getName() );
+		assertEquals("lastName",  fields.get(i++).getName() );
+		assertEquals("birthDate", fields.get(i++).getName() );
+		assertEquals("country",   fields.get(i++).getName() );
+		assertEquals("gender",    fields.get(i++).getName() );
+		
 	}
 }

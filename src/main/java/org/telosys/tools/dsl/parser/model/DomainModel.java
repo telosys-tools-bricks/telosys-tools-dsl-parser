@@ -215,12 +215,21 @@ public class DomainModel {
     ------------------------------------------------------------------------------------------*/
 
     /**
-     * Put all the fields of the entity into an entity from the list of the fields of the model which has the same name
+     * Init the entity fields from the given list
      *
      * @param entity
      */
-    public void putEntity(DomainEntity entity) {
-        entity.copyIn(getEntity(entity.getName()));
+    public void populateEntityFileds(String entityName, List<DomainEntityField> fields) {
+    	DomainEntity destinationEntity = getEntity(entityName);
+        //entity.addAllFields(getEntity(entity.getName()));
+        if (destinationEntity != null) {
+            for (DomainEntityField field : fields) {
+            	destinationEntity.addField(field);
+            }
+        }
+        else {
+            throw new EntityParserException("Cannot popumate entity '" + entityName + "' (not found in model).");
+        }
     }
 
     @Override
