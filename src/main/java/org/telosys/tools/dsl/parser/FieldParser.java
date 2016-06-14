@@ -17,7 +17,6 @@ package org.telosys.tools.dsl.parser;
 
 import java.util.List;
 
-import org.slf4j.LoggerFactory;
 import org.telosys.tools.dsl.parser.model.DomainEntityField;
 import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainModel;
@@ -48,7 +47,7 @@ public class FieldParser  extends AbstractParser  {
      * @param model Context of the current field to parse
      */
     public FieldParser(DomainModel model) {
-    	super(LoggerFactory.getLogger(FieldParser.class));
+    	//super(LoggerFactory.getLogger(FieldParser.class));
         this.annotationParser = new AnnotationParser();
         this.model = model;
     }

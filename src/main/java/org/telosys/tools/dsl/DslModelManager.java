@@ -19,8 +19,6 @@ import java.io.File;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.generic.converter.Converter;
 import org.telosys.tools.dsl.parser.DomainModelParser;
@@ -30,7 +28,7 @@ import org.telosys.tools.generic.model.Model;
 
 public class DslModelManager {
 
-    static Logger logger = LoggerFactory.getLogger(DslModelManager.class);
+    //static Logger logger = LoggerFactory.getLogger(DslModelManager.class);
 
     private Hashtable<String,String> parsingErrors = null ;
     private String parsingErrorMessage = null ;

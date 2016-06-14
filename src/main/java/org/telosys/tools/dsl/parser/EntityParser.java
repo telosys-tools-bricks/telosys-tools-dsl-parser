@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import org.slf4j.LoggerFactory;
 import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.EntityParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
@@ -44,7 +43,7 @@ public class EntityParser extends AbstractParser {
     private FieldParser fieldParser;
 
     public EntityParser(DomainModel model) {
-    	super(LoggerFactory.getLogger(EntityParser.class));
+    	//super(LoggerFactory.getLogger(EntityParser.class));
         this.fieldParser = new FieldParser(model);
     }
 
@@ -53,7 +52,6 @@ public class EntityParser extends AbstractParser {
      */
     public DomainEntity parse(String fileName) {
         File entityFile = new File(fileName);
-        logInfo("--- fileName = " + fileName);
         return this.parse(entityFile);
     }
 
@@ -88,7 +86,6 @@ public class EntityParser extends AbstractParser {
      * @return
      */
     protected DomainEntity parseFlattenContent(String flattenContent, String entityNameFromFileName) {
-    	logInfo("Parsing entity " + entityNameFromFileName);
 
         // get index of first and last open brackets
         int bodyStart = flattenContent.indexOf('{');

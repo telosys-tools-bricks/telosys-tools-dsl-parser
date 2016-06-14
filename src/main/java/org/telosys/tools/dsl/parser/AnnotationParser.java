@@ -19,7 +19,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.LoggerFactory;
 import org.telosys.tools.dsl.KeyWords;
 import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
 
@@ -35,7 +34,7 @@ public class AnnotationParser extends AbstractParser  {
      * Constructor
      */
     public AnnotationParser() {
-    	super(LoggerFactory.getLogger(AnnotationParser.class));
+    	//super(LoggerFactory.getLogger(AnnotationParser.class));
     }
     
     /**
