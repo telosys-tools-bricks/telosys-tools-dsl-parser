@@ -34,13 +34,17 @@ public class KeyWords {
 	private final static String[] annotations = { 
 		"Id",
 		"NotNull",
-		"Min#",
-		"Max#",
-		"SizeMin#",
-		"SizeMax#",
+		"Min#",      // # means decimal parameter
+		"Max#",      // # means decimal parameter
+		"SizeMin%",  // % means integer parameter
+		"SizeMax%",  // % means integer parameter
 		"Past",
 		"Future",
 		"Embedded"
+		// In the future 
+		// "DbColumn$" // $ means string parameter
+		// "DbTable$"  // $ means string parameter
+		// etc
 	} ;
 	
 	/**

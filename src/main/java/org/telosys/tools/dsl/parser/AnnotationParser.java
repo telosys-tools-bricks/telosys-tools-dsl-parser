@@ -96,12 +96,20 @@ public class AnnotationParser extends AbstractParser  {
             throwAnnotationParsingError( entityName, fieldName, annotationString, "must start with '@'");
         }
 
-        // get the annotation name 
-        String annotationName = getAnnotationName(annotationString);
-        if ( ! annotationName.equals( getAnnotationWithoutParameter(annotationString)) ) {
-    		throwAnnotationParsingError( entityName, fieldName, annotationString, "invalid syntax" );
-        }
-        // get the parameter value if any 
+        //--- get the annotation name 
+//        String annotationName = getAnnotationName(annotationString);
+//        if ( ! annotationName.equals( getAnnotationWithoutParameter(annotationString)) ) {
+//    		throwAnnotationParsingError( entityName, fieldName, annotationString, "invalid syntax" );
+//        }
+        String annotationName = null;
+		try {
+			annotationName = getAnnotationName(annotationString);
+		} catch (Exception e) {
+			// invalid syntax in the annotation name  
+    		throwAnnotationParsingError( entityName, fieldName, annotationString, e.getMessage() );
+		}
+
+        //--- get the parameter value if any 
     	String parameterValue = null ;
     	try {
 			parameterValue = getParameterValue(annotationString, '(', ')' ) ;
@@ -114,21 +122,33 @@ public class AnnotationParser extends AbstractParser  {
         List<String> definedAnnotations = KeyWords.getAnnotations();
 
         // is it a known annotation ?
-        for (String annotationDefinition : definedAnnotations) { // "Id", "Max#", "Min#", ...
+        for (String annotationDefinition : definedAnnotations) { // "Id", "SizeMin%", "SizeMax%", "Max#", "Min#", ""...
             if ( annotationDefinition.startsWith(annotationName) ) {
                 // Annotation name found in defined annotations
-                if ( annotationDefinition.endsWith("#") ) {
-                	// this annotation must have a numeric parameter between ( and )
-                	if ( parameterValue == null || parameterValue.length() == 0 ) {
-                		throwAnnotationParsingError( entityName, fieldName, annotationString, "parameter required ");
-                	}
-                	// check parameter is numeric
+                if ( annotationDefinition.endsWith("%") ) {
+                	// this annotation must have an integer parameter between ( and )
+//                	if ( parameterValue == null || parameterValue.length() == 0 ) {
+//                		throwAnnotationParsingError( entityName, fieldName, annotationString, "parameter required ");
+//                	}
+                	// Integer parameter required
+                	Integer numberValue = null ;
                 	try {
-						new BigDecimal(parameterValue) ;
-					} catch (NumberFormatException e) {
+                		numberValue = getParameterValueAsInteger(parameterValue);
+						//new BigDecimal(parameterValue) ;
+					} catch (Exception e) {
+                		throwAnnotationParsingError( entityName, fieldName, annotationString, "integer parameter required ");
+					}
+                	return new DomainEntityFieldAnnotation(annotationName, numberValue);
+                }
+                else if ( annotationDefinition.endsWith("#") ) {
+                	// Decimal parameter required
+                	BigDecimal numberValue = null ;
+                	try {
+                		numberValue = getParameterValueAsBigDecimal(parameterValue);
+					} catch (Exception e) {
                 		throwAnnotationParsingError( entityName, fieldName, annotationString, "numeric parameter required ");
 					}
-                	return new DomainEntityFieldAnnotation(annotationName, parameterValue);
+                	return new DomainEntityFieldAnnotation(annotationName, numberValue);
                 }
                 else {
                 	// annotation without parameter
@@ -145,57 +165,72 @@ public class AnnotationParser extends AbstractParser  {
     }
 
     /**
+     * Returns the annotation name <br>
+     * 
      * @param annotation e.g. "@Id", "@Max(12)", etc
      * @return "Id", "Max", etc
+     * @throws Exception
      */
-    /* package */ String getAnnotationName (String annotation) {
+    /* package */ String getAnnotationName (String annotation) throws Exception {
+    	boolean blankCharFound = false ;
     	StringBuffer sb = new StringBuffer();
     	// skip the first char (supposed to be @)
     	for ( int i = 1 ; i < annotation.length() ; i++ ) {
     		char c = annotation.charAt(i);
-//        	if ( ( c >=  'a' && c <= 'z' ) || ( c >=  'A' && c <= 'Z' ) ) {
             if ( Character.isLetter(c) ) {
+            	if ( blankCharFound ) { 
+            		// Case letter after a blank char : "Id xxx" or "aaa bbb" 
+            		throw new Exception("Invalid annotation name '" + annotation + "'");
+            	}
         		sb.append(c);
         	}
-        	else {
+            else if ( Character.isWhitespace(c) ) {
+            	blankCharFound = true ;
+            }
+        	else if ( c == '(' ) {
         		break;
         	}
-//        	if ( c == '(' ) {
-//        		break;
-//        	}
+        	else {
+        		// Unexpected ending character 
+        		throw new Exception("Invalid annotation syntaxe '" + annotation + "'");
+        	}
     	}
     	return sb.toString();
     }
 
-    /**
-     * @param annotation e.g. "@Id ", "@Max xx (12)", etc
-     * @return "Id", "Max xx ", etc
-     */
-    /* package */ String getAnnotationWithoutParameter (String annotation) {
-    	StringBuffer sb = new StringBuffer();
-    	// skip the first char (supposed to be @)
-    	for ( int i = 1 ; i < annotation.length() ; i++ ) {
-    		char c = annotation.charAt(i);
-            if ( c == '(' ) {
-        		break;
-        	}
-            if ( c >= ' ' ) {
-        		sb.append(c);
-            }
-    	}
-    	return sb.toString().trim();
-    }
+//    /**
+//     * @param annotation e.g. "@Id ", "@Max xx (12)", etc
+//     * @return "Id", "Max xx ", etc
+//     */
+//    /* package */ String getAnnotationWithoutParameter (String annotation) {
+//    	StringBuffer sb = new StringBuffer();
+//    	// skip the first char (supposed to be @)
+//    	for ( int i = 1 ; i < annotation.length() ; i++ ) {
+//    		char c = annotation.charAt(i);
+//            if ( c == '(' ) {
+//        		break;
+//        	}
+//            if ( c >= ' ' ) {
+//        		sb.append(c);
+//            }
+//    	}
+//    	return sb.toString().trim();
+//    }
     
     /**
-     * @param s
-     * @param openChar
-     * @param closeChar
+     * Returns the parameter value if any.<br>
+     * The value located between the given open/close char.<br>
+     * The returned value is trimed.<br>
+     *  
+     * @param annotation e.g. "@Id", "@Max(12)", etc
+     * @param openChar  typically '('
+     * @param closeChar typically ')'
      * @return the parameter value or null if none
      * @throws Exception
      */
-    /* package */ String getParameterValue(String s, char openChar, char closeChar) throws Exception {
-        int openIndex  = s.lastIndexOf(openChar);
-        int closeIndex = s.lastIndexOf(closeChar);
+    /* package */ String getParameterValue(String annotation, char openChar, char closeChar) throws Exception {
+        int openIndex  = annotation.lastIndexOf(openChar);
+        int closeIndex = annotation.lastIndexOf(closeChar);
     	if ( openIndex < 0 && closeIndex < 0 ) {
     		// no open nor close char
     		return null ;
@@ -206,7 +241,10 @@ public class AnnotationParser extends AbstractParser  {
         		// open and close char found
         		if ( openIndex < closeIndex ) {
         			// valid order eg "(aa)"
-        			return s.substring(openIndex + 1, closeIndex).trim();
+        			// get string between ( and )
+        			String paramValue = annotation.substring(openIndex + 1, closeIndex); 
+        			// trim
+        			return paramValue.trim();
         		}
         		else {
         			// unbalanced ( and ) eg ")aa("
@@ -223,5 +261,31 @@ public class AnnotationParser extends AbstractParser  {
             	}
         	}
     	}
+    }
+
+    private void checkParameterExistence(String parameterValue) throws Exception {
+    	if ( parameterValue == null || parameterValue.length() == 0 ) {
+    		throw new Exception("Parameter required");
+    	}
+    }
+    
+    /* package */ Integer getParameterValueAsInteger(String parameterValue) throws Exception {
+		// Integer value
+    	checkParameterExistence(parameterValue);
+		try {
+			return new Integer(parameterValue) ;
+		} catch (NumberFormatException e) {
+			throw new Exception("Invalid integer parameter '" + parameterValue + "'");
+		}
+    }
+
+    /* package */ BigDecimal getParameterValueAsBigDecimal(String parameterValue) throws Exception {
+		// Decimal value
+    	checkParameterExistence(parameterValue);
+    	try {
+			return new BigDecimal(parameterValue) ;
+		} catch (NumberFormatException e) {
+			throw new Exception("Invalid decimal parameter '" + parameterValue + "'");
+		}
     }
 }

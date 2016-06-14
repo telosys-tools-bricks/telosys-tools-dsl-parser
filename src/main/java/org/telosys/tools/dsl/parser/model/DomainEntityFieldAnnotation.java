@@ -15,58 +15,121 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
+import java.math.BigDecimal;
+
 /**
- * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre
+ * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre, Laurent Guerin
  * @version 1.0
  * @date 2014-05-22
  */
 public class DomainEntityFieldAnnotation {
 
-    private String name;
-    private String parameter;
-    private boolean hasParameter;
-    public static final int THIRTY_ONE = 31; // TODO rename
+    private final String  name;
+    private final String  stringParameter;
+    private final Number  numberParameter;
+    private final boolean hasParameter;
+//    public static final int THIRTY_ONE = 31;
 
+    /**
+     * Constructor for annotation without parameter
+     * @param name
+     */
     public DomainEntityFieldAnnotation(String name) {
         this.name = name;
-        this.parameter = "";
+        this.stringParameter = null;
+        this.numberParameter = null;
         this.hasParameter = false;
     }
 
+    /**
+     * Constructor for annotation with string parameter
+     * @param name
+     * @param param
+     */
     public DomainEntityFieldAnnotation(String name, String param) {
         this.name = name;
-        this.parameter = param;
+        this.stringParameter = param;
+        this.numberParameter = null;
         this.hasParameter = true;
     }
 
-    boolean hasParameter() {
-        return this.hasParameter;
+    /**
+     * Constructor for annotation with number parameter
+     * @param name
+     * @param param
+     */
+    public DomainEntityFieldAnnotation(String name, Number param) {
+        this.name = name;
+        this.stringParameter = null;
+        this.numberParameter = param;
+        this.hasParameter = true;
     }
 
-
+    /**
+     * Returns the annotation name ( without '@' )
+     * @return
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns true if the annotation has a parameter
+     * @return
+     */
+    boolean hasParameter() {
+        return this.hasParameter;
+    }
+
+    /**
+     * Returns the annotation string parameter <br>
+     * or null if none
+     * @return
+     */
     public String getParameter() {
-        return parameter;
+        return stringParameter;
     }
 
-    public int getParameterAsInt() {
-    	if ( hasParameter ) {
-            try {
-                return Integer.parseInt(parameter);
-            }
-            catch (NumberFormatException ex) {
-            	throw new IllegalStateException("Annotation '"+name+"' : invalid integer parameter " + parameter);
-            }
+    /**
+     * Returns the annotation decimal parameter <br>
+     * or null if none
+     * @return
+     */
+    public BigDecimal getParameterAsBigDecimal() {
+    	if ( numberParameter != null && numberParameter instanceof BigDecimal ) {
+            return (BigDecimal) numberParameter;
     	}
-    	else {
-    		throw new IllegalStateException("Annotation '"+name+"' : No parameter for this annotation");
-    	}
+    	return null ;
     }
 
+    /**
+     * Returns the annotation integer parameter <br>
+     * or null if none
+     * @return
+     */
+    public Integer getParameterAsInteger() {
+    	if ( numberParameter != null && numberParameter instanceof Integer ) {
+            return (Integer) numberParameter;
+    	}
+    	return null ;
+    }
 
+    
+//    public int getParameterAsInt() {
+//    	if ( hasParameter ) {
+//            try {
+//                return Integer.parseInt(stringParameter);
+//            }
+//            catch (NumberFormatException ex) {
+//            	throw new IllegalStateException("Annotation '"+name+"' : invalid integer parameter " + stringParameter);
+//            }
+//    	}
+//    	else {
+//    		throw new IllegalStateException("Annotation '"+name+"' : No parameter for this annotation");
+//    	}
+//    }
+
+/***
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -95,19 +158,21 @@ public class DomainEntityFieldAnnotation {
         result = THIRTY_ONE * result + (hasParameter ? 1 : 0);
         return result;
     }
-
+***/
+    
     @Override
     public String toString() {
-//        return "@{" +
-//                "name='" + name + '\'' +
-//                ", parameter='" + parameter + '\'' +
-//                '}';
     	StringBuilder sb = new StringBuilder();
     	sb.append("@");
     	sb.append(name);
     	if ( this.hasParameter ) {
         	sb.append("(");
-        	sb.append(parameter);
+        	if ( numberParameter != null ) {
+            	sb.append(numberParameter);
+        	}
+        	else {
+            	sb.append(stringParameter);
+        	}
         	sb.append(")");
     	}
     	return sb.toString();

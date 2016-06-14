@@ -1,6 +1,10 @@
 package org.telosys.tools.dsl.generic.converter;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.AnnotationName;
@@ -192,12 +196,12 @@ public class ConverterTest {
 		domainEntityField_1_2.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.NOT_NULL));
 //		domainEntityField_1_3.addAnnotation(new DomainEntityFieldAnnotation("@Min", "1"));
 //		domainEntityField_1_4.addAnnotation(new DomainEntityFieldAnnotation("@Max", "2"));
-		domainEntityField_1_3.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.MIN, "1"));
-		domainEntityField_1_4.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.MAX, "25"));
+		domainEntityField_1_3.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.MIN, new BigDecimal(1) ));
+		domainEntityField_1_4.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.MAX, new BigDecimal(25) ));
 //		domainEntityField_1_5.addAnnotation(new DomainEntityFieldAnnotation("@SizeMin", "3"));
 //		domainEntityField_1_6.addAnnotation(new DomainEntityFieldAnnotation("@SizeMax", "4"));
-		domainEntityField_1_5.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.SIZE_MIN, "3"));
-		domainEntityField_1_6.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.SIZE_MAX, "4"));
+		domainEntityField_1_5.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.SIZE_MIN, new Integer(3)  ));
+		domainEntityField_1_6.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.SIZE_MAX, new Integer(4)  ));
 //		domainEntityField_1_7.addAnnotation(new DomainEntityFieldAnnotation("@Past"));
 //		domainEntityField_1_8.addAnnotation(new DomainEntityFieldAnnotation("@Future"));
 		domainEntityField_1_7.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.PAST));
@@ -232,8 +236,8 @@ public class ConverterTest {
 		Attribute attribute_1_8 = getAttributeByName(entity_1, "field_1_8");
 		assertTrue(attribute_1_1.isKeyElement());
 		assertTrue(attribute_1_2.isNotNull());
-		assertEquals(Integer.valueOf(1), attribute_1_3.getMinValue());
-		assertEquals(Integer.valueOf(25), attribute_1_4.getMaxValue());
+		assertEquals(new BigDecimal( 1), attribute_1_3.getMinValue());
+		assertEquals(new BigDecimal(25), attribute_1_4.getMaxValue());
 		assertEquals(Integer.valueOf(3), attribute_1_5.getMinLength());
 		assertEquals(Integer.valueOf(4), attribute_1_6.getMaxLength());
 		assertTrue(attribute_1_7.isDatePast());

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.Before;
@@ -96,7 +97,7 @@ public class ModelParserTest {
 		employee.addField(new DomainEntityField("firstName", DomainNeutralTypes.getType("string")));
 		employee.addField(new DomainEntityField("birthDate", DomainNeutralTypes.getType("date")));
 		DomainEntityField countryField = new DomainEntityField("country", country);
-		countryField.addAnnotation(new DomainEntityFieldAnnotation("Max", "3"));
+		countryField.addAnnotation(new DomainEntityFieldAnnotation("Max", new BigDecimal("3")));
 		employee.addField(countryField);
 		modelToCompare.addEntity(employee);
 		
@@ -128,7 +129,7 @@ public class ModelParserTest {
         employee.addField(new DomainEntityField("firstName", DomainNeutralTypes.getType("string")));
         employee.addField(new DomainEntityField("birthDate", DomainNeutralTypes.getType("date")));
         DomainEntityField countryField = new DomainEntityField("country", country);
-        countryField.addAnnotation(new DomainEntityFieldAnnotation("Max", "3"));
+        countryField.addAnnotation(new DomainEntityFieldAnnotation("Max", new BigDecimal("3")));
         countryField.addAnnotation(new DomainEntityFieldAnnotation("Embedded"));
         employee.addField(countryField);
         modelToCompare.addEntity(employee);
@@ -349,7 +350,7 @@ public class ModelParserTest {
         personId.addAnnotation(new DomainEntityFieldAnnotation("Id"));
         person.addField(personId);
         DomainEntityField firstName =new DomainEntityField("firstName", DomainNeutralTypes.getType("string"));
-        firstName.addAnnotation(new DomainEntityFieldAnnotation("SizeMax", "3"));
+        firstName.addAnnotation(new DomainEntityFieldAnnotation("SizeMax", new BigDecimal("3") ));
         person.addField(firstName);
         person.addField(new DomainEntityField("lastName", DomainNeutralTypes.getType("string")));
         person.addField(new DomainEntityField("birthDate", DomainNeutralTypes.getType("date")));

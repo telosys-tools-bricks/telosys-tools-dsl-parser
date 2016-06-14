@@ -260,7 +260,8 @@ public class Converter {
 //                    if(parameterValue != null) {
 //                        genericAttribute.setMinValue(parameterValue);
 //                    }
-                    genericAttribute.setMinValue(annotation.getParameterAsInt());
+                    //genericAttribute.setMinValue(annotation.getParameterAsInt());
+                    genericAttribute.setMinValue(annotation.getParameterAsBigDecimal() ); 
                 }
                 if(AnnotationName.MAX.equals(annotation.getName())) {
             		log("convertAttributeNeutralType() : @Max " );
@@ -268,7 +269,8 @@ public class Converter {
 //                    if(parameterValue != null) {
 //                        genericAttribute.setMaxValue(parameterValue);
 //                    }
-                    genericAttribute.setMaxValue(annotation.getParameterAsInt());
+                    //genericAttribute.setMaxValue(annotation.getParameterAsInt());
+                    genericAttribute.setMaxValue(annotation.getParameterAsBigDecimal());
                 }
                 if(AnnotationName.SIZE_MIN.equals(annotation.getName())) {
             		log("convertAttributeNeutralType() : @SizeMin " );
@@ -276,7 +278,8 @@ public class Converter {
 //                    if(parameterValue != null) {
 //                        genericAttribute.setMinLength(parameterValue);
 //                    }
-                    genericAttribute.setMinLength(annotation.getParameterAsInt());
+                    //genericAttribute.setMinLength(annotation.getParameterAsInt());
+                    genericAttribute.setMinLength(annotation.getParameterAsInteger() );
                 }
                 if(AnnotationName.SIZE_MAX.equals(annotation.getName())) {
             		log("convertAttributeNeutralType() : @SizeMax " );
@@ -285,7 +288,8 @@ public class Converter {
 //                        genericAttribute.setMaxLength(parameterValue);
 //                        genericAttribute.setDatabaseSize(parameterValue);
 //                    }
-                    int parameterValue = annotation.getParameterAsInt();
+                    //int parameterValue = annotation.getParameterAsInt();
+                    Integer parameterValue = annotation.getParameterAsInteger();
                     genericAttribute.setMaxLength(parameterValue);
                     genericAttribute.setDatabaseSize(parameterValue);
                 }

@@ -15,6 +15,8 @@
  */
 package org.telosys.tools.dsl.generic.model;
 
+import java.math.BigDecimal;
+
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.DateType;
 import org.telosys.tools.generic.model.Entity;
@@ -43,9 +45,9 @@ public class GenericAttribute implements Attribute {
 	private String jdbcTypeName;
 	private String label;
 	private Integer maxLength;
-	private Integer maxValue;
 	private Integer minLength;
-	private Integer minValue;
+	private BigDecimal maxValue;
+	private BigDecimal minValue;
 	private String pattern;
 	private Integer sequenceGeneratorAllocationSize;
 	private String sequenceGeneratorName;
@@ -198,17 +200,12 @@ public class GenericAttribute implements Attribute {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+	//--- Min / Max Length ( int )
 	public Integer getMaxLength() {
 		return maxLength;
 	}
 	public void setMaxLength(Integer maxLength) {
 		this.maxLength = maxLength;
-	}
-	public Integer getMaxValue() {
-		return maxValue;
-	}
-	public void setMaxValue(Integer maxValue) {
-		this.maxValue = maxValue;
 	}
 	public Integer getMinLength() {
 		return minLength;
@@ -216,12 +213,21 @@ public class GenericAttribute implements Attribute {
 	public void setMinLength(Integer minLength) {
 		this.minLength = minLength;
 	}
-	public Integer getMinValue() {
+	
+	//--- Min / Max value ( BigDecimal )
+	public BigDecimal getMaxValue() {
+		return maxValue;
+	}
+	public void setMaxValue(BigDecimal maxValue) {
+		this.maxValue = maxValue;
+	}
+	public BigDecimal getMinValue() {
 		return minValue;
 	}
-	public void setMinValue(Integer minValue) {
+	public void setMinValue(BigDecimal minValue) {
 		this.minValue = minValue;
 	}
+	
 	public String getPattern() {
 		return pattern;
 	}
