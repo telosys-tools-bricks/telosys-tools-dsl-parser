@@ -114,7 +114,6 @@ public class ConverterTest {
 		domainEntity_1.addField( new DomainEntityField("myInteger", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER)) );
 		
 		domainEntity_1.addField( new DomainEntityField("myString", DomainNeutralTypes.getType(DomainNeutralTypes.STRING)) );
-		domainEntity_1.addField( new DomainEntityField("myLongText", DomainNeutralTypes.getType(DomainNeutralTypes.LONGTEXT_CLOB)) );
 		
 		domainEntity_1.addField( new DomainEntityField("myDate", DomainNeutralTypes.getType(DomainNeutralTypes.DATE)) );
 		domainEntity_1.addField( new DomainEntityField("myTime", DomainNeutralTypes.getType(DomainNeutralTypes.TIME))  );
@@ -137,26 +136,27 @@ public class ConverterTest {
 		assertEquals("domainEntity_1", entity_1.getClassName());
 		
 		// attributes of entity 1
-		assertEquals(9, entity_1.getAttributes().size());
+		assertEquals(8, entity_1.getAttributes().size());
 		
+		// Check simple type
 		assertEquals("Boolean",    getAttributeByName(entity_1, "myBoolean").getSimpleType());
 		assertEquals("BigDecimal", getAttributeByName(entity_1, "myDecimal").getSimpleType());
 		assertEquals("Integer",    getAttributeByName(entity_1, "myInteger").getSimpleType());
-		assertEquals("String", getAttributeByName(entity_1, "myString").getSimpleType());
-		assertEquals("String", getAttributeByName(entity_1, "myLongText").getSimpleType());
+		assertEquals("String",     getAttributeByName(entity_1, "myString").getSimpleType());
 		assertEquals("Date",       getAttributeByName(entity_1, "myDate").getSimpleType());
-		assertEquals("Date", getAttributeByName(entity_1, "myTime").getSimpleType());
-		assertEquals("Date", getAttributeByName(entity_1, "myTimestamp").getSimpleType());
-		assertEquals("byte[]", getAttributeByName(entity_1, "myBinary").getSimpleType());
+		assertEquals("Date",       getAttributeByName(entity_1, "myTime").getSimpleType());
+		assertEquals("Date",       getAttributeByName(entity_1, "myTimestamp").getSimpleType());
+		assertEquals("byte[]",     getAttributeByName(entity_1, "myBinary").getSimpleType());
 
-		assertEquals("java.lang.Boolean", getAttributeByName(entity_1, "myBoolean").getFullType());
-		assertEquals("java.util.Date", getAttributeByName(entity_1, "myDate").getFullType());
+		// Check full type
+		assertEquals("java.lang.Boolean",    getAttributeByName(entity_1, "myBoolean").getFullType());
 		assertEquals("java.math.BigDecimal", getAttributeByName(entity_1, "myDecimal").getFullType());
-		assertEquals("java.lang.Integer", getAttributeByName(entity_1, "myInteger").getFullType());
-		assertEquals("java.lang.String", getAttributeByName(entity_1, "myString").getFullType());
-		assertEquals("java.util.Date", getAttributeByName(entity_1, "myTime").getFullType());
-		assertEquals("java.util.Date", getAttributeByName(entity_1, "myTimestamp").getFullType());
-		assertEquals("byte[]", getAttributeByName(entity_1, "myBinary").getFullType());
+		assertEquals("java.lang.Integer",    getAttributeByName(entity_1, "myInteger").getFullType());
+		assertEquals("java.lang.String",     getAttributeByName(entity_1, "myString").getFullType());
+		assertEquals("java.util.Date",       getAttributeByName(entity_1, "myDate").getFullType());
+		assertEquals("java.util.Date",       getAttributeByName(entity_1, "myTime").getFullType());
+		assertEquals("java.util.Date",       getAttributeByName(entity_1, "myTimestamp").getFullType());
+		assertEquals("byte[]",               getAttributeByName(entity_1, "myBinary").getFullType());
 
 		// entity 2
 //		Entity entity_2 = getEntityByClassName(model, "domainEntity_2");
@@ -224,7 +224,6 @@ public class ConverterTest {
 		// attributes of entity 1
 		assertEquals(8, entity_1.getAttributes().size());
 
-		assertEquals("java.lang.Boolean", getAttributeByName(entity_1, "field_1_2").getFullType());
 
 		Attribute attribute_1_1 = getAttributeByName(entity_1, "field_1_1");
 		Attribute attribute_1_2 = getAttributeByName(entity_1, "field_1_2");
@@ -234,11 +233,25 @@ public class ConverterTest {
 		Attribute attribute_1_6 = getAttributeByName(entity_1, "field_1_6");
 		Attribute attribute_1_7 = getAttributeByName(entity_1, "field_1_7");
 		Attribute attribute_1_8 = getAttributeByName(entity_1, "field_1_8");
+		
+		// boolean @Id 
 		assertTrue(attribute_1_1.isKeyElement());
+		//assertEquals("java.lang.Boolean", getAttributeByName(entity_1, "field_1_2").getFullType());
+		assertEquals("java.lang.Boolean", attribute_1_1.getFullType() );
+		assertEquals("Boolean", attribute_1_1.getSimpleType() );
+		
+		// boolean @NotNull => primitive type
 		assertTrue(attribute_1_2.isNotNull());
+		assertEquals("boolean", attribute_1_2.getFullType());
+		assertEquals("boolean", attribute_1_2.getSimpleType());
+
+		
 		assertEquals(new BigDecimal( 1), attribute_1_3.getMinValue());
+		
 		assertEquals(new BigDecimal(25), attribute_1_4.getMaxValue());
+		
 		assertEquals(Integer.valueOf(3), attribute_1_5.getMinLength());
+		
 		assertEquals(Integer.valueOf(4), attribute_1_6.getMaxLength());
 		assertTrue(attribute_1_7.isDatePast());
 		assertTrue(attribute_1_8.isDateFuture());

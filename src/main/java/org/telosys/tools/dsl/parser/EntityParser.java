@@ -171,8 +171,8 @@ public class EntityParser extends AbstractParser {
                     			+ " (entity " + entity.getName() + ")" );
                 }
                 if (tmp.isNeutralType()) {
-                    if (tmp.getTypeName().equals(DomainNeutralTypes.BINARY_BLOB) || tmp.getTypeName().equals(DomainNeutralTypes.LONGTEXT_CLOB)) {
-                        throw new EntityParserException(entityNameFromFileName + " : The Id cannot be a binary (BLOB) or a longtext (CLOB)"
+                    if (tmp.getTypeName().equals(DomainNeutralTypes.BINARY_BLOB) ) {
+                        throw new EntityParserException(entityNameFromFileName + " : The Id cannot be a binary"
                     			+ " (entity " + entity.getName() + ")" );
                     }
                 }

@@ -15,11 +15,7 @@
  */
 package org.telosys.tools.dsl.generic.converter;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import org.telosys.tools.commons.ConsoleLogger;
 import org.telosys.tools.commons.TelosysToolsLogger;
@@ -63,7 +59,7 @@ public class Converter {
 	 */
 	public Model convertToGenericModel(DomainModel domainModel) {
 		
-		checkTypeMapping();
+//		checkTypeMapping();
 		
 		GenericModel genericModel = new GenericModel();
 //		genericModel.setType( ModelType.DOMAIN_SPECIFIC_LANGUAGE );
@@ -80,13 +76,13 @@ public class Converter {
 		return genericModel;
 	}
 	
-	private void checkTypeMapping() {
-		
-		if ( typeMapping.size() != DomainNeutralTypes.getNames().size() ) {
-			throw new IllegalStateException("Inconsistant type mapping in converter ("+
-					typeMapping.size() + " entries, " + DomainNeutralTypes.getNames().size() + " expected)");
-		}
-	}
+//	private void checkTypeMapping() {
+//		
+//		if ( typeMapping.size() != DomainNeutralTypes.getNames().size() ) {
+//			throw new IllegalStateException("Inconsistant type mapping in converter ("+
+//					typeMapping.size() + " entries, " + DomainNeutralTypes.getNames().size() + " expected)");
+//		}
+//	}
 	
 	private void check(boolean expr, String errorMessage ) {
 		if ( ! expr ) {
@@ -199,16 +195,20 @@ public class Converter {
 		
         GenericAttribute genericAttribute = new GenericAttribute();
         genericAttribute.setName( notNull(domainEntityField.getName()) );
-        genericAttribute.setSimpleType(convertNeutralTypeToSimpleType(domainNeutralType) );
-        genericAttribute.setFullType(convertNeutralTypeToFullType(domainNeutralType) );
+        
+        // the "neutral type" is now the only type managed at this level
+//        genericAttribute.setSimpleType(convertNeutralTypeToSimpleType(domainNeutralType) );
+//        genericAttribute.setFullType(convertNeutralTypeToFullType(domainNeutralType) );
+        genericAttribute.setNeutralType( domainNeutralType.getName() );
         
         // If the attribute has a "longtext" type
-        if ( domainEntityField.getType() == DomainNeutralTypes.getType(DomainNeutralTypes.LONGTEXT_CLOB) ) {
-            genericAttribute.setLongText(true);
-        }
-        else {
-            genericAttribute.setLongText(false);
-        }
+//        if ( domainEntityField.getType() == DomainNeutralTypes.getType(DomainNeutralTypes.LONGTEXT_CLOB) ) {
+//            genericAttribute.setLongText(true);
+//        }
+//        else {
+//            genericAttribute.setLongText(false);
+//        }
+        genericAttribute.setLongText(false); // TODO with @LongText
         
         // If the attribute has a "binary" type 
         if ( domainEntityField.getType() == DomainNeutralTypes.getType(DomainNeutralTypes.BINARY_BLOB) ) {
@@ -216,13 +216,13 @@ public class Converter {
             //genericAttribute.setBinary(true);
         }
         
-        genericAttribute.setAutoIncremented(false); // TODO
+        genericAttribute.setAutoIncremented(false); // TODO with @AutoIncremented
         // 
         //genericAttribute.setBooleanFalseValue(booleanFalseValue);
         //genericAttribute.setBooleanTrueValue(booleanTrueValue);
-        genericAttribute.setDatabaseComment("");  // TODO
-        genericAttribute.setDatabaseName(domainEntityField.getName()); // TODO
-        genericAttribute.setDatabaseDefaultValue(null); // TODO
+        genericAttribute.setDatabaseComment("");                       // TODO with @DbComment(xxx)
+        genericAttribute.setDatabaseName(domainEntityField.getName()); // TODO with @DbColumn(xxx)
+        genericAttribute.setDatabaseDefaultValue(null);                // TODO with @DbDefaultValue(xxx)
         // genericAttribute.setDatabaseType(databaseType);
         // genericAttribute.setDateAfter(isDateAfter);
         // genericAttribute.setDateAfterValue(dateAfterValue);
@@ -230,7 +230,7 @@ public class Converter {
         // genericAttribute.setDateBeforeValue(dateBeforeValue);
         // genericAttribute.setDateType(dateType);
         // genericAttribute.setDefaultValue(defaultValue); // TODO
-        genericAttribute.setLabel(domainEntityField.getName()); // TODO
+        genericAttribute.setLabel(domainEntityField.getName()); // TODO with @Label(xxx)
         // genericAttribute.setInputType(inputType); // TODO ???
         // genericAttribute.setNotBlank(notBlank);  // TODO
         // genericAttribute.setNotEmpty(notEmpty); // TODO
@@ -256,39 +256,18 @@ public class Converter {
                 }
                 if(AnnotationName.MIN.equals(annotation.getName())) {
             		log("convertAttributeNeutralType() : @Min " );
-//                    Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-//                    if(parameterValue != null) {
-//                        genericAttribute.setMinValue(parameterValue);
-//                    }
-                    //genericAttribute.setMinValue(annotation.getParameterAsInt());
                     genericAttribute.setMinValue(annotation.getParameterAsBigDecimal() ); 
                 }
                 if(AnnotationName.MAX.equals(annotation.getName())) {
             		log("convertAttributeNeutralType() : @Max " );
-//                    Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-//                    if(parameterValue != null) {
-//                        genericAttribute.setMaxValue(parameterValue);
-//                    }
-                    //genericAttribute.setMaxValue(annotation.getParameterAsInt());
                     genericAttribute.setMaxValue(annotation.getParameterAsBigDecimal());
                 }
                 if(AnnotationName.SIZE_MIN.equals(annotation.getName())) {
             		log("convertAttributeNeutralType() : @SizeMin " );
-//                    Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-//                    if(parameterValue != null) {
-//                        genericAttribute.setMinLength(parameterValue);
-//                    }
-                    //genericAttribute.setMinLength(annotation.getParameterAsInt());
                     genericAttribute.setMinLength(annotation.getParameterAsInteger() );
                 }
                 if(AnnotationName.SIZE_MAX.equals(annotation.getName())) {
             		log("convertAttributeNeutralType() : @SizeMax " );
-//                    Integer parameterValue = this.convertStringToInteger(annotation.getParameter(), null);
-//                    if(parameterValue != null) {
-//                        genericAttribute.setMaxLength(parameterValue);
-//                        genericAttribute.setDatabaseSize(parameterValue);
-//                    }
-                    //int parameterValue = annotation.getParameterAsInt();
                     Integer parameterValue = annotation.getParameterAsInteger();
                     genericAttribute.setMaxLength(parameterValue);
                     genericAttribute.setDatabaseSize(parameterValue);
@@ -310,7 +289,7 @@ public class Converter {
                 //
                 // @Label(xxx)
                 // @InputType(xxx) or config ???
-                // @Pattern(xxx) ???
+                // @Pattern(xxx) or @RegExp ???
                 //
                 // @DbColumn(xxx)
                 // @DbType(xxx)
@@ -408,6 +387,7 @@ public class Converter {
 	/**
 	 * Conversion des types
 	 */
+/*****
 //	private static final Map<String, String> mapFullTypeConversion = new HashMap<String, String>();
 //	private static final Map<String, String> mapSimpleTypeConversion = new HashMap<String, String>();
 	private static final Map<String, Class<?>> typeMapping = new HashMap<String, Class<?>>();
@@ -458,49 +438,49 @@ public class Converter {
 
 		typeMapping.put(DomainNeutralTypes.BINARY_BLOB, byte[].class ); 
 	}
-
-	private Class<?> getJavaTypeClass(DomainNeutralType domainNeutralType) {
-		if (domainNeutralType == null) {
-			throw new IllegalStateException("Neutral type is null");
-		}
-		Class<?> javaClass = typeMapping.get(domainNeutralType.getName());
-		if (javaClass == null) {
-			throw new IllegalStateException("Unknown type '" + domainNeutralType.getName() +"'");
-		}
-		return javaClass;
-	}
-	
-	/**
-	 * Convert DSL types (string, integer, etc.) to Generic model types.
-	 * @param domainNeutralType DSL type
-	 * @return Generic model type
-	 */
-	private String convertNeutralTypeToSimpleType(DomainNeutralType domainNeutralType) {
+*****/
+//	private Class<?> getJavaTypeClass(DomainNeutralType domainNeutralType) {
 //		if (domainNeutralType == null) {
 //			throw new IllegalStateException("Neutral type is null");
 //		}
-//		String genericModelType = mapSimpleTypeConversion.get(domainNeutralType.getName());
-//		if (genericModelType == null) {
+//		Class<?> javaClass = typeMapping.get(domainNeutralType.getName());
+//		if (javaClass == null) {
 //			throw new IllegalStateException("Unknown type '" + domainNeutralType.getName() +"'");
-//		}		
-//		return genericModelType;
-		return getJavaTypeClass(domainNeutralType).getSimpleName();
-	}
-
-	/**
-	 * Convert DSL types (string, integer, etc.) to Generic model types.
-	 * @param domainNeutralType
-	 * @return Generic model type
-	 */
-	private String convertNeutralTypeToFullType(DomainNeutralType domainNeutralType) {
-//		if(domainNeutralType == null) {
-//			//return defaultValue;
-//			throw new IllegalStateException("Neutral type is null");
 //		}
-//		String genericModelType = mapFullTypeConversion.get(domainNeutralType.getName());
-//		return genericModelType;
-		return getJavaTypeClass(domainNeutralType).getCanonicalName();
-	}
+//		return javaClass;
+//	}
+	
+//	/**
+//	 * Convert DSL types (string, integer, etc.) to Generic model types.
+//	 * @param domainNeutralType DSL type
+//	 * @return Generic model type
+//	 */
+//	private String convertNeutralTypeToSimpleType(DomainNeutralType domainNeutralType) {
+////		if (domainNeutralType == null) {
+////			throw new IllegalStateException("Neutral type is null");
+////		}
+////		String genericModelType = mapSimpleTypeConversion.get(domainNeutralType.getName());
+////		if (genericModelType == null) {
+////			throw new IllegalStateException("Unknown type '" + domainNeutralType.getName() +"'");
+////		}		
+////		return genericModelType;
+//		return getJavaTypeClass(domainNeutralType).getSimpleName();
+//	}
+
+//	/**
+//	 * Convert DSL types (string, integer, etc.) to Generic model types.
+//	 * @param domainNeutralType
+//	 * @return Generic model type
+//	 */
+//	private String convertNeutralTypeToFullType(DomainNeutralType domainNeutralType) {
+////		if(domainNeutralType == null) {
+////			//return defaultValue;
+////			throw new IllegalStateException("Neutral type is null");
+////		}
+////		String genericModelType = mapFullTypeConversion.get(domainNeutralType.getName());
+////		return genericModelType;
+//		return getJavaTypeClass(domainNeutralType).getCanonicalName();
+//	}
 
 //	/**
 //	 * Convert String value

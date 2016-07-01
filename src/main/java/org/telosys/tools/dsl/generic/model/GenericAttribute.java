@@ -17,13 +17,22 @@ package org.telosys.tools.dsl.generic.model;
 
 import java.math.BigDecimal;
 
+import org.telosys.tools.dsl.EntityParserException;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.DateType;
 import org.telosys.tools.generic.model.Entity;
+import org.telosys.tools.generic.model.types.LanguageType;
+import org.telosys.tools.generic.model.types.TypeConverter;
+import org.telosys.tools.generic.model.types.TypeConverterForJava;
 
 public class GenericAttribute implements Attribute {
 	
+	// Use Java type converter by default
+	private final static TypeConverter typeConverter = new TypeConverterForJava() ;
+	
 	private String name = "";
+	private String neutralType = "";
+	
 	private String booleanFalseValue;
 	private String booleanTrueValue;
 	private String databaseComment;
@@ -36,7 +45,7 @@ public class GenericAttribute implements Attribute {
 	private DateType dateType;
 	private String defaultValue;
 	private Entity entity;
-	private String fullType = "";
+//	private String fullType = "";
 	private String generatedValueGenerator;
 	private String generatedValueStrategy;
 	private String initialValue;
@@ -52,7 +61,7 @@ public class GenericAttribute implements Attribute {
 	private Integer sequenceGeneratorAllocationSize;
 	private String sequenceGeneratorName;
 	private String sequenceGeneratorSequenceName;
-	private String simpleType = "";
+//	private String simpleType = "";
 	private String tableGeneratorName;
 	private String tableGeneratorPkColumnName;
 	private String tableGeneratorPkColumnValue;
@@ -77,15 +86,31 @@ public class GenericAttribute implements Attribute {
 	private boolean isDatePast;
 	private boolean isUsedInForeignKey;
 
+	@Override
 	public String getName() {
 		return name;
 	}
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String getNeutralType() {
+		return neutralType;
+	}
+	public void setNeutralType(String neutralType) {
+		this.neutralType = neutralType;
+	}
+
+	@Override
 	public String getBooleanFalseValue() {
 		return booleanFalseValue;
 	}
 	public void setBooleanFalseValue(String booleanFalseValue) {
 		this.booleanFalseValue = booleanFalseValue;
 	}
+
+	@Override
 	public String getBooleanTrueValue() {
 		return booleanTrueValue;
 	}
@@ -153,11 +178,13 @@ public class GenericAttribute implements Attribute {
 		this.entity = entity;
 	}
 	public String getFullType() {
-		return fullType;
+//		return fullType;
+		LanguageType languageType = typeConverter.getType(this);
+		return languageType.getFullType();
 	}
-	public void setFullType(String fullType) {
-		this.fullType = fullType;
-	}
+//	public void setFullType(String fullType) {
+//		this.fullType = fullType;
+//	}
 	public String getGeneratedValueGenerator() {
 		return generatedValueGenerator;
 	}
@@ -255,11 +282,16 @@ public class GenericAttribute implements Attribute {
 		this.sequenceGeneratorSequenceName = sequenceGeneratorSequenceName;
 	}
 	public String getSimpleType() {
-		return simpleType;
+//		return simpleType;
+		LanguageType languageType = typeConverter.getType(this);
+		if ( languageType == null ) {			
+			throw new EntityParserException("Invalid type '" + this.getNeutralType() + "'");
+		}
+		return languageType.getSimpleType();
 	}
-	public void setSimpleType(String simpleType) {
-		this.simpleType = simpleType;
-	}
+//	public void setSimpleType(String simpleType) {
+//		this.simpleType = simpleType;
+//	}
 	public String getTableGeneratorName() {
 		return tableGeneratorName;
 	}
@@ -412,9 +444,6 @@ public class GenericAttribute implements Attribute {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public void setDateAfter(boolean isDateAfter) {

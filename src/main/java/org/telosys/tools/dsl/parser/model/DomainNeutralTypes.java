@@ -43,7 +43,7 @@ public final class DomainNeutralTypes {
     public static final String TIMESTAMP = "timestamp";
     
     public static final String BINARY_BLOB   = "binary"; // BLOB
-    public static final String LONGTEXT_CLOB = "longtext"; // CLOB
+    //public static final String LONGTEXT_CLOB = "longtext"; // CLOB ( removed : string is sufficient )
 
 
     private static final String[] NAMES = {
@@ -52,7 +52,8 @@ public final class DomainNeutralTypes {
     	DECIMAL, FLOAT, DOUBLE,
     	BOOLEAN, 
     	DATE, TIME, TIMESTAMP, 
-    	BINARY_BLOB, LONGTEXT_CLOB};
+    	BINARY_BLOB };
+    	//, LONGTEXT_CLOB};
 
     private static final Map<String, DomainNeutralType> NEUTRAL_TYPES = new Hashtable<String, DomainNeutralType>();
 
