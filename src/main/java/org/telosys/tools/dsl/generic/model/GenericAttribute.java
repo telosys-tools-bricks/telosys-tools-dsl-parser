@@ -67,25 +67,31 @@ public class GenericAttribute implements Attribute {
 	private String tableGeneratorPkColumnValue;
 	private String tableGeneratorTable;
 	private String tableGeneratorValueColumnName;
-	private String type = "";
-	private String wrapperType = "";
-	private boolean autoIncremented;
-	private boolean databaseNotNull;
-	private boolean generatedValue;
-	private boolean keyElement;
-	private boolean longText;
-	private boolean notBlank;
-	private boolean notEmpty;
-	private boolean notNull;
-	private boolean selected = true;
-	private boolean hasSequenceGenerator;
-	private boolean hasTableGenerator;
-	private boolean isDateAfter;
-	private boolean isDateBefore;
-	private boolean isDateFuture;
-	private boolean isDatePast;
-	private boolean isUsedInForeignKey;
+//	private String type = "";
+//	private String wrapperType = "";
+	private boolean autoIncremented = false ;
+	private boolean databaseNotNull = false ;
+	private boolean generatedValue = false;
+	private boolean keyElement = false;
+	private boolean longText = false;
+	private boolean notBlank = false;
+	private boolean notEmpty = false;
+	private boolean notNull = false;
+	private boolean selected = true; // SELECTED BY DEFAULT
+	private boolean hasSequenceGenerator = false;
+	private boolean hasTableGenerator = false;
+	private boolean isDateAfter = false;
+	private boolean isDateBefore = false;
+	private boolean isDateFuture = false;
+	private boolean isDatePast = false;
+	private boolean isUsedInForeignKey = false;
 
+	// Annotations added for types
+	private boolean isPrimitiveTypeExpected = false ;
+	private boolean isUnsignedTypeExpected = false ;
+	private boolean isObjectTypeExpected = false ;
+	private boolean isSqlTypeExpected = false ;
+	
 	@Override
 	public String getName() {
 		return name;
@@ -117,66 +123,87 @@ public class GenericAttribute implements Attribute {
 	public void setBooleanTrueValue(String booleanTrueValue) {
 		this.booleanTrueValue = booleanTrueValue;
 	}
+
+	@Override
 	public String getDatabaseComment() {
 		return databaseComment;
 	}
 	public void setDatabaseComment(String databaseComment) {
 		this.databaseComment = databaseComment;
 	}
+
+	@Override
 	public String getDatabaseDefaultValue() {
 		return databaseDefaultValue;
 	}
 	public void setDatabaseDefaultValue(String databaseDefaultValue) {
 		this.databaseDefaultValue = databaseDefaultValue;
 	}
+	
+	@Override
 	public String getDatabaseName() {
 		return databaseName;
 	}
 	public void setDatabaseName(String databaseName) {
 		this.databaseName = databaseName;
 	}
+
+	@Override
 	public Integer getDatabaseSize() {
 		return databaseSize;
 	}
 	public void setDatabaseSize(Integer databaseSize) {
 		this.databaseSize = databaseSize;
 	}
+
+	@Override
 	public String getDatabaseType() {
 		return databaseType;
 	}
 	public void setDatabaseType(String databaseType) {
 		this.databaseType = databaseType;
 	}
+
+	@Override
 	public String getDateAfterValue() {
 		return dateAfterValue;
 	}
 	public void setDateAfterValue(String dateAfterValue) {
 		this.dateAfterValue = dateAfterValue;
 	}
+
+	@Override
 	public String getDateBeforeValue() {
 		return dateBeforeValue;
 	}
 	public void setDateBeforeValue(String dateBeforeValue) {
 		this.dateBeforeValue = dateBeforeValue;
 	}
+
+	@Override
 	public DateType getDateType() {
 		return dateType;
 	}
 	public void setDateType(DateType dateType) {
 		this.dateType = dateType;
 	}
+
+	@Override
 	public String getDefaultValue() {
 		return defaultValue;
 	}
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
 	}
+
 	public Entity getEntity() {
 		return entity;
 	}
 	public void setEntity(Entity entity) {
 		this.entity = entity;
 	}
+	
+	@Override
 	public String getFullType() {
 //		return fullType;
 		LanguageType languageType = typeConverter.getType(this);
@@ -185,55 +212,72 @@ public class GenericAttribute implements Attribute {
 //	public void setFullType(String fullType) {
 //		this.fullType = fullType;
 //	}
+
+	@Override
 	public String getGeneratedValueGenerator() {
 		return generatedValueGenerator;
 	}
 	public void setGeneratedValueGenerator(String generatedValueGenerator) {
 		this.generatedValueGenerator = generatedValueGenerator;
 	}
+	
+	@Override
 	public String getGeneratedValueStrategy() {
 		return generatedValueStrategy;
 	}
 	public void setGeneratedValueStrategy(String generatedValueStrategy) {
 		this.generatedValueStrategy = generatedValueStrategy;
 	}
+
+	@Override
 	public String getInitialValue() {
 		return initialValue;
 	}
 	public void setInitialValue(String initialValue) {
 		this.initialValue = initialValue;
 	}
+
+	@Override
 	public String getInputType() {
 		return inputType;
 	}
 	public void setInputType(String inputType) {
 		this.inputType = inputType;
 	}
+
+	@Override
 	public Integer getJdbcTypeCode() {
 		return jdbcTypeCode;
 	}
 	public void setJdbcTypeCode(Integer jdbcTypeCode) {
 		this.jdbcTypeCode = jdbcTypeCode;
 	}
+
+	@Override
 	public String getJdbcTypeName() {
 		return jdbcTypeName;
 	}
 	public void setJdbcTypeName(String jdbcTypeName) {
 		this.jdbcTypeName = jdbcTypeName;
 	}
+
+	@Override
 	public String getLabel() {
 		return label;
 	}
 	public void setLabel(String label) {
 		this.label = label;
 	}
+
 	//--- Min / Max Length ( int )
+	@Override
 	public Integer getMaxLength() {
 		return maxLength;
 	}
 	public void setMaxLength(Integer maxLength) {
 		this.maxLength = maxLength;
 	}
+	@Override
 	public Integer getMinLength() {
 		return minLength;
 	}
@@ -242,12 +286,14 @@ public class GenericAttribute implements Attribute {
 	}
 	
 	//--- Min / Max value ( BigDecimal )
+	@Override
 	public BigDecimal getMaxValue() {
 		return maxValue;
 	}
 	public void setMaxValue(BigDecimal maxValue) {
 		this.maxValue = maxValue;
 	}
+	@Override
 	public BigDecimal getMinValue() {
 		return minValue;
 	}
@@ -255,12 +301,15 @@ public class GenericAttribute implements Attribute {
 		this.minValue = minValue;
 	}
 	
+	@Override
 	public String getPattern() {
 		return pattern;
 	}
 	public void setPattern(String pattern) {
 		this.pattern = pattern;
 	}
+
+	@Override
 	public Integer getSequenceGeneratorAllocationSize() {
 		return sequenceGeneratorAllocationSize;
 	}
@@ -268,12 +317,16 @@ public class GenericAttribute implements Attribute {
 			Integer sequenceGeneratorAllocationSize) {
 		this.sequenceGeneratorAllocationSize = sequenceGeneratorAllocationSize;
 	}
+
+	@Override
 	public String getSequenceGeneratorName() {
 		return sequenceGeneratorName;
 	}
 	public void setSequenceGeneratorName(String sequenceGeneratorName) {
 		this.sequenceGeneratorName = sequenceGeneratorName;
 	}
+
+	@Override
 	public String getSequenceGeneratorSequenceName() {
 		return sequenceGeneratorSequenceName;
 	}
@@ -281,6 +334,8 @@ public class GenericAttribute implements Attribute {
 			String sequenceGeneratorSequenceName) {
 		this.sequenceGeneratorSequenceName = sequenceGeneratorSequenceName;
 	}
+
+	@Override
 	public String getSimpleType() {
 //		return simpleType;
 		LanguageType languageType = typeConverter.getType(this);
@@ -292,30 +347,40 @@ public class GenericAttribute implements Attribute {
 //	public void setSimpleType(String simpleType) {
 //		this.simpleType = simpleType;
 //	}
+
+	@Override
 	public String getTableGeneratorName() {
 		return tableGeneratorName;
 	}
 	public void setTableGeneratorName(String tableGeneratorName) {
 		this.tableGeneratorName = tableGeneratorName;
 	}
+
+	@Override
 	public String getTableGeneratorPkColumnName() {
 		return tableGeneratorPkColumnName;
 	}
 	public void setTableGeneratorPkColumnName(String tableGeneratorPkColumnName) {
 		this.tableGeneratorPkColumnName = tableGeneratorPkColumnName;
 	}
+
+	@Override
 	public String getTableGeneratorPkColumnValue() {
 		return tableGeneratorPkColumnValue;
 	}
 	public void setTableGeneratorPkColumnValue(String tableGeneratorPkColumnValue) {
 		this.tableGeneratorPkColumnValue = tableGeneratorPkColumnValue;
 	}
+
+	@Override
 	public String getTableGeneratorTable() {
 		return tableGeneratorTable;
 	}
 	public void setTableGeneratorTable(String tableGeneratorTable) {
 		this.tableGeneratorTable = tableGeneratorTable;
 	}
+
+	@Override
 	public String getTableGeneratorValueColumnName() {
 		return tableGeneratorValueColumnName;
 	}
@@ -323,148 +388,178 @@ public class GenericAttribute implements Attribute {
 			String tableGeneratorValueColumnName) {
 		this.tableGeneratorValueColumnName = tableGeneratorValueColumnName;
 	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public String getWrapperType() {
-		return wrapperType;
-	}
+	
+//	public String getType() {
+//		return type;
+//	}
+//	public void setType(String type) {
+//		this.type = type;
+//	}
+//	public String getWrapperType() {
+//		return wrapperType;
+//	}
+//	public void setWrapperType(String wrapperType) {
+//		this.wrapperType = wrapperType;
+//	}
 
 	@Override
 	public boolean hasSequenceGenerator() {
 		return hasSequenceGenerator;
+	}
+	public void setHasSequenceGenerator(boolean hasSequenceGenerator) {
+		this.hasSequenceGenerator = hasSequenceGenerator;
 	}
 
 	@Override
 	public boolean hasTableGenerator() {
 		return hasTableGenerator;
 	}
-
-	public void setWrapperType(String wrapperType) {
-		this.wrapperType = wrapperType;
+	public void setHasTableGenerator(boolean hasTableGenerator) {
+		this.hasTableGenerator = hasTableGenerator;
 	}
+
+	@Override
 	public boolean isAutoIncremented() {
 		return autoIncremented;
 	}
 	public void setAutoIncremented(boolean autoIncremented) {
 		this.autoIncremented = autoIncremented;
 	}
+
+	@Override
 	public boolean isDatabaseNotNull() {
 		return databaseNotNull;
+	}
+	public void setDatabaseNotNull(boolean databaseNotNull) {
+		this.databaseNotNull = databaseNotNull;
 	}
 
 	@Override
 	public boolean isDateAfter() {
 		return isDateAfter;
 	}
-
-	public boolean isHasTableGenerator() {
-		return hasTableGenerator;
-	}
-
-	public void setHasTableGenerator(boolean hasTableGenerator) {
-		this.hasTableGenerator = hasTableGenerator;
+	public void setDateAfter(boolean isDateAfter) {
+		this.isDateAfter = isDateAfter;
 	}
 
 	@Override
 	public boolean isDateBefore() {
-
 		return isDateBefore;
+	}
+	public void setDateBefore(boolean isDateBefore) {
+		this.isDateBefore = isDateBefore;
 	}
 
 	@Override
 	public boolean isDateFuture() {
 		return isDateFuture;
 	}
+	public void setDateFuture(boolean isDateFuture) {
+		this.isDateFuture = isDateFuture;
+	}
 
 	@Override
 	public boolean isDatePast() {
 		return isDatePast;
 	}
-
-	public void setDatabaseNotNull(boolean databaseNotNull) {
-		this.databaseNotNull = databaseNotNull;
+	public void setDatePast(boolean isDatePast) {
+		this.isDatePast = isDatePast;
 	}
+
+	@Override
 	public boolean isGeneratedValue() {
 		return generatedValue;
 	}
 	public void setGeneratedValue(boolean generatedValue) {
 		this.generatedValue = generatedValue;
 	}
+	
+	@Override
 	public boolean isKeyElement() {
 		return keyElement;
 	}
 	public void setKeyElement(boolean keyElement) {
 		this.keyElement = keyElement;
 	}
+
+	@Override
 	public boolean isLongText() {
 		return longText;
 	}
-
-	public boolean isHasSequenceGenerator() {
-		return hasSequenceGenerator;
-	}
-
-	public void setHasSequenceGenerator(boolean hasSequenceGenerator) {
-		this.hasSequenceGenerator = hasSequenceGenerator;
-	}
-
 	public void setLongText(boolean longText) {
 		this.longText = longText;
 	}
+	
+	@Override
 	public boolean isNotBlank() {
 		return notBlank;
 	}
-	public void setNotBlank(boolean notBlank) {
-		this.notBlank = notBlank;
+	public void setNotBlank(boolean v) {
+		this.notBlank = v;
 	}
+	
+	@Override
 	public boolean isNotEmpty() {
 		return notEmpty;
 	}
-	public void setNotEmpty(boolean notEmpty) {
-		this.notEmpty = notEmpty;
+	public void setNotEmpty(boolean v) {
+		this.notEmpty = v;
 	}
+	
+	@Override
 	public boolean isNotNull() {
 		return notNull;
 	}
-	public void setNotNull(boolean notNull) {
-		this.notNull = notNull;
+	public void setNotNull(boolean v) {
+		this.notNull = v;
 	}
+
+	@Override
 	public boolean isSelected() {
 		return selected;
+	}
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 
 	@Override
 	public boolean isUsedInForeignKey() {
 		return isUsedInForeignKey;
 	}
-
-	public void setSelected(boolean selected) {
-		this.selected = selected;
-	}
-
-	public void setDateAfter(boolean isDateAfter) {
-		this.isDateAfter = isDateAfter;
-	}
-
-	public void setDateBefore(boolean isDateBefore) {
-		this.isDateBefore = isDateBefore;
-	}
-
-	public void setDateFuture(boolean isDateFuture) {
-		this.isDateFuture = isDateFuture;
-	}
-
-	public void setDatePast(boolean isDatePast) {
-		this.isDatePast = isDatePast;
-	}
-
 	public void setUsedInForeignKey(boolean isUsedInForeignKey) {
 		this.isUsedInForeignKey = isUsedInForeignKey;
 	}
-
 	
+	//----------------------------------------------------------------------------------
+	@Override
+	public boolean isObjectTypeExpected() {
+		return isObjectTypeExpected ;
+	}
+	public void setObjectTypeExpected(boolean v) {
+		this.isObjectTypeExpected = v ;
+	}
+	
+	@Override
+	public boolean isPrimitiveTypeExpected() {
+		return isPrimitiveTypeExpected ;
+	}
+	public void setPrimitiveTypeExpected(boolean v) {
+		this.isPrimitiveTypeExpected = v ;
+	}
+	
+	@Override
+	public boolean isSqlTypeExpected() {
+		return isSqlTypeExpected;
+	}
+	public void setSqlTypeExpected(boolean v) {
+		this.isSqlTypeExpected = v ;
+	}
+	
+	@Override
+	public boolean isUnsignedTypeExpected() {
+		return isUnsignedTypeExpected;
+	}
+	public void setUnsignedTypeExpected(boolean v) {
+		this.isUnsignedTypeExpected = v ;
+	}
 }

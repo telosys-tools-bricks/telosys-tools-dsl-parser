@@ -48,6 +48,7 @@ public class EntityParser extends AbstractParser {
     }
 
     /**
+     * Parse the entity defined in the given file name
      * @param fileName
      */
     public DomainEntity parse(String fileName) {
@@ -56,6 +57,7 @@ public class EntityParser extends AbstractParser {
     }
 
     /**
+     * Parse the entity defined in the given File
      * @param file
      */
     protected DomainEntity parse(File file) {
@@ -70,6 +72,7 @@ public class EntityParser extends AbstractParser {
     }
 
     /**
+     * Parse the entity defined in the given InputStream
      * @param is
      */
     private DomainEntity parse(InputStream is, String entityNameFromFileName) {

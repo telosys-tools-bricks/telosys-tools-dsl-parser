@@ -32,15 +32,29 @@ public class KeyWords {
 	 * List annotations names (# means numeric parameter required)
 	 */
 	private final static String[] annotations = { 
-		"Id",
-		"NotNull",
-		"Min#",      // # means decimal parameter
-		"Max#",      // # means decimal parameter
-		"SizeMin%",  // % means integer parameter
-		"SizeMax%",  // % means integer parameter
-		"Past",
-		"Future",
-		"Embedded"
+		
+		AnnotationName.ID, // "Id",
+		AnnotationName.AUTO_INCREMENTED,
+		
+		AnnotationName.NOT_NULL, //"NotNull",
+		AnnotationName.NOT_EMPTY, 
+		AnnotationName.NOT_BLANK, 
+		
+		AnnotationName.MIN + "#", //"Min#",      // # means decimal parameter
+		AnnotationName.MAX + "#", //"Max#",      // # means decimal parameter
+		AnnotationName.SIZE_MIN + "%", // "SizeMin%",  // % means integer parameter
+		AnnotationName.SIZE_MAX + "%", // "SizeMax%",  // % means integer parameter
+		AnnotationName.PAST, // "Past",
+		AnnotationName.FUTURE, // "Future",
+		
+		AnnotationName.PRIMITIVE_TYPE,
+		AnnotationName.UNSIGNED_TYPE,
+		AnnotationName.OBJECT_TYPE,
+		AnnotationName.SQL_TYPE,
+
+		AnnotationName.LONG_TEXT,
+		
+		AnnotationName.EMBEDDED // "Embedded"
 		// In the future 
 		// "DbColumn$" // $ means string parameter
 		// "DbTable$"  // $ means string parameter

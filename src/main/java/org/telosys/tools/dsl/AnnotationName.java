@@ -20,7 +20,9 @@ public class AnnotationName {
 
 	public final static String ID = "Id" ;
 	
-	public final static String NOT_NULL = "NotNull" ;
+	public final static String NOT_NULL  = "NotNull" ;
+	public final static String NOT_EMPTY = "NotEmpty" ;
+	public final static String NOT_BLANK = "NotBlank" ;
 	
 	public final static String MIN = "Min" ;
 	public final static String MAX = "Max" ;
@@ -32,5 +34,29 @@ public class AnnotationName {
 	public final static String FUTURE = "Future" ;
 
 	public final static String EMBEDDED = "Embedded" ;
+
+	public final static String AUTO_INCREMENTED = "AutoIncremented" ;
+	
+	public final static String LONG_TEXT = "LongText" ;
+
+	// Types 
+	public final static String PRIMITIVE_TYPE = "PrimitiveType" ;
+	public final static String OBJECT_TYPE    = "ObjectType" ;
+	public final static String UNSIGNED_TYPE  = "UnsignedType" ;
+	public final static String SQL_TYPE       = "SqlType" ;
+
+	// TODO 
+    // @DefaultValue(xxx) or  @InitValue(xxx)
+    // @Comment(xxx) --> used as DbComment ?
+    // @After(DateISO)
+    // @Before(DateISO)
+    //
+    // @Label(xxx)
+    // @InputType(xxx) or config ???
+    // @Pattern(xxx) or @RegExp(xxx) ???
+    //
+    // @DbColumn(xxx)
+    // @DbType(xxx)
+    // @DbDefaultValue(xxx)
 	
 }

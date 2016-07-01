@@ -216,8 +216,6 @@ public class Converter {
             //genericAttribute.setBinary(true);
         }
         
-        genericAttribute.setAutoIncremented(false); // TODO with @AutoIncremented
-        // 
         //genericAttribute.setBooleanFalseValue(booleanFalseValue);
         //genericAttribute.setBooleanTrueValue(booleanTrueValue);
         genericAttribute.setDatabaseComment("");                       // TODO with @DbComment(xxx)
@@ -232,58 +230,90 @@ public class Converter {
         // genericAttribute.setDefaultValue(defaultValue); // TODO
         genericAttribute.setLabel(domainEntityField.getName()); // TODO with @Label(xxx)
         // genericAttribute.setInputType(inputType); // TODO ???
-        // genericAttribute.setNotBlank(notBlank);  // TODO
-        // genericAttribute.setNotEmpty(notEmpty); // TODO
         genericAttribute.setSelected(true);
         // genericAttribute.setPattern(pattern); // TODO
         
         
         // Populate field from annotations if any
         if(domainEntityField.getAnnotations() != null) {
-    		log("convertAttributeNeutralType() : annotations found" );
+    		log("Converter : annotations found" );
             for(DomainEntityFieldAnnotation annotation : domainEntityField.getAnnotations().values()) {
-        		log("convertAttributeNeutralType() : annotation '"+ annotation.getName() + "'");
+        		log("Converter : annotation '"+ annotation.getName() + "'");
         		// The annotation name is like "Id", "NotNull", "Max", etc
         		// without "@" at the beginning and without "#" at the end
                 if(AnnotationName.ID.equals(annotation.getName())) {
-            		log("convertAttributeNeutralType() : @Id => setKeyElement(true)" );
+            		log("Converter : annotation @Id" );
                     genericAttribute.setKeyElement(true);
                 }
+                if(AnnotationName.AUTO_INCREMENTED.equals(annotation.getName())) {
+            		log("Converter : annotation @AutoIncremented" );
+                    genericAttribute.setAutoIncremented(true);
+                }
                 if(AnnotationName.NOT_NULL.equals(annotation.getName())) {
-            		log("convertAttributeNeutralType() : @NotNull " );
+            		log("Converter : annotation @NotNull " );
                     genericAttribute.setNotNull(true);
                     genericAttribute.setDatabaseNotNull(true);
                 }
+                if(AnnotationName.NOT_EMPTY.equals(annotation.getName())) {
+            		log("Converter : annotation @NotEmpty " );
+                    genericAttribute.setNotEmpty(true);
+                }
+                if(AnnotationName.NOT_BLANK.equals(annotation.getName())) {
+            		log("Converter : annotation @NotBlank " );
+                    genericAttribute.setNotBlank(true);
+                }
                 if(AnnotationName.MIN.equals(annotation.getName())) {
-            		log("convertAttributeNeutralType() : @Min " );
+            		log("Converter : annotation @Min " );
                     genericAttribute.setMinValue(annotation.getParameterAsBigDecimal() ); 
                 }
                 if(AnnotationName.MAX.equals(annotation.getName())) {
-            		log("convertAttributeNeutralType() : @Max " );
+            		log("Converter : annotation @Max " );
                     genericAttribute.setMaxValue(annotation.getParameterAsBigDecimal());
                 }
                 if(AnnotationName.SIZE_MIN.equals(annotation.getName())) {
-            		log("convertAttributeNeutralType() : @SizeMin " );
+            		log("Converter : annotation @SizeMin " );
                     genericAttribute.setMinLength(annotation.getParameterAsInteger() );
                 }
                 if(AnnotationName.SIZE_MAX.equals(annotation.getName())) {
-            		log("convertAttributeNeutralType() : @SizeMax " );
+            		log("Converter : annotation @SizeMax " );
                     Integer parameterValue = annotation.getParameterAsInteger();
                     genericAttribute.setMaxLength(parameterValue);
                     genericAttribute.setDatabaseSize(parameterValue);
                 }
                 if(AnnotationName.PAST.equals(annotation.getName())) {
-            		log("convertAttributeNeutralType() : @Past " );
+            		log("Converter : annotation @Past " );
                     genericAttribute.setDatePast(true);
                 }
                 if(AnnotationName.FUTURE.equals(annotation.getName())) {
-            		log("convertAttributeNeutralType() : @Future " );
+            		log("Converter : annotation @Future " );
                     genericAttribute.setDateFuture(true);
                 }
+                if(AnnotationName.LONG_TEXT.equals(annotation.getName())) {
+            		log("Converter : annotation @LongText" );
+                    genericAttribute.setLongText(true);
+                }
+                
+                //--- Annotations for TYPES
+                if(AnnotationName.PRIMITIVE_TYPE.equals(annotation.getName())) {
+            		log("Converter : annotation @PrimitiveType" );
+                    genericAttribute.setPrimitiveTypeExpected(true);
+                }
+                if(AnnotationName.UNSIGNED_TYPE.equals(annotation.getName())) {
+            		log("Converter : annotation @UnsignedType" );
+                    genericAttribute.setUnsignedTypeExpected(true);
+                }
+                if(AnnotationName.OBJECT_TYPE.equals(annotation.getName())) {
+            		log("Converter : annotation @ObjectType" );
+                    genericAttribute.setObjectTypeExpected(true);
+                }
+                if(AnnotationName.SQL_TYPE.equals(annotation.getName())) {
+            		log("Converter : annotation @SqlType" );
+                    genericAttribute.setSqlTypeExpected(true);
+                }
+                
                 // TODO 
                 // @DefaultValue(xxx)
                 // @Comment(xxx) --> used as DbComment ?
-                // @AutoIncremented
                 // @After(DateISO)
                 // @Before(DateISO)
                 //
@@ -297,7 +327,7 @@ public class Converter {
             }
         }
         else {
-    		log("convertAttributeNeutralType() : no annotation" );
+    		log("Converter : no annotation" );
         }
         return genericAttribute;
 	}
