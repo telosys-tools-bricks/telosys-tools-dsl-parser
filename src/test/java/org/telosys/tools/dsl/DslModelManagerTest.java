@@ -53,22 +53,25 @@ public class DslModelManagerTest {
         
         attrib = employeeEntity.getAttributes().get(i++);
         assertEquals("id", attrib.getName() ) ;
-        assertEquals("Integer", attrib.getSimpleType() ) ;
-        assertEquals("java.lang.Integer", attrib.getFullType() ) ;
+		assertEquals("int", attrib.getNeutralType() ); 
+//        assertEquals("Integer", attrib.getSimpleType() ) ;
+//        assertEquals("java.lang.Integer", attrib.getFullType() ) ;
         assertTrue(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
         
         attrib = employeeEntity.getAttributes().get(i++);
         assertEquals("firstName", attrib.getName() ) ;
-        assertEquals("String", attrib.getSimpleType() ) ;
-        assertEquals("java.lang.String", attrib.getFullType() ) ;
+		assertEquals("string", attrib.getNeutralType() ); 
+//        assertEquals("String", attrib.getSimpleType() ) ;
+//        assertEquals("java.lang.String", attrib.getFullType() ) ;
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
 
         attrib = employeeEntity.getAttributes().get(i++);
         assertEquals("birthDate", attrib.getName() ) ;
-        assertEquals("Date", attrib.getSimpleType() ) ;
-        assertEquals("java.util.Date", attrib.getFullType() ) ;
+		assertEquals("date", attrib.getNeutralType() ); 
+//        assertEquals("Date", attrib.getSimpleType() ) ;
+//        assertEquals("java.util.Date", attrib.getFullType() ) ;
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
 
@@ -89,10 +92,11 @@ public class DslModelManagerTest {
         
         for ( Attribute attribute : entity.getAttributes() ) {
         	System.out.println(" attribute " + attribute.getName() );
-    		System.out.println("  " + attribute.getNeutralType() + " --> " + attribute.getFullType());
+    		System.out.println("  " + attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         	if ( attribute.getName().equals("id") ) {
-        		assertEquals("int", attribute.getSimpleType() ); 
-        		assertEquals("int", attribute.getFullType() ); 
+//        		assertEquals("int", attribute.getSimpleType() ); 
+//        		assertEquals("int", attribute.getFullType() ); 
+        		assertEquals("int", attribute.getNeutralType() ); 
         		assertTrue(attribute.isKeyElement());
         		assertFalse(attribute.isAutoIncremented());
         		
@@ -102,37 +106,37 @@ public class DslModelManagerTest {
         		assertFalse(attribute.isSqlTypeExpected());
         	}
         	else if ( attribute.getName().equals("firstName") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getFullType());
+        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertTrue(attribute.isNotEmpty());
         		assertFalse(attribute.isKeyElement());
         		assertFalse(attribute.isAutoIncremented());
         	}
         	else if ( attribute.getName().equals("lastName") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getFullType());
+        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertTrue(attribute.isNotBlank());
         		assertFalse(attribute.isKeyElement());
         		assertFalse(attribute.isAutoIncremented());
         	}
         	else if ( attribute.getName().equals("counter") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getFullType());
+        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
         		
         		assertTrue(attribute.isAutoIncremented());
 
-        		assertEquals("Short", attribute.getSimpleType() ); 
-        		assertEquals("java.lang.Short", attribute.getFullType() ); 
+//        		assertEquals("Short", attribute.getSimpleType() ); 
+//        		assertEquals("java.lang.Short", attribute.getFullType() ); 
         	}
         	else if ( attribute.getName().equals("counter2") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getFullType());
+        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertTrue(attribute.isAutoIncremented());
         		
-        		assertEquals("short", attribute.getSimpleType() ); 
-        		assertEquals("short", attribute.getFullType() ); 
+//        		assertEquals("short", attribute.getSimpleType() ); 
+//        		assertEquals("short", attribute.getFullType() ); 
         	}
         	else if ( attribute.getName().equals("counter3") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getFullType());
+        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertTrue(attribute.isPrimitiveTypeExpected());
@@ -140,11 +144,11 @@ public class DslModelManagerTest {
         		assertFalse(attribute.isObjectTypeExpected());
         		assertFalse(attribute.isSqlTypeExpected());
 
-        		assertEquals("short", attribute.getSimpleType() ); 
-        		assertEquals("short", attribute.getFullType() ); 
+//        		assertEquals("short", attribute.getSimpleType() ); 
+//        		assertEquals("short", attribute.getFullType() ); 
         	}
         	else if ( attribute.getName().equals("counter4") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getFullType());
+        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertFalse(attribute.isNotNull());
@@ -153,12 +157,12 @@ public class DslModelManagerTest {
         		assertTrue(attribute.isObjectTypeExpected());
         		assertFalse(attribute.isSqlTypeExpected());
 
-        		assertEquals("Short", attribute.getSimpleType() ); 
-        		assertEquals("java.lang.Short", attribute.getFullType() ); 
+//        		assertEquals("Short", attribute.getSimpleType() ); 
+//        		assertEquals("java.lang.Short", attribute.getFullType() ); 
 
         	}
         	else if ( attribute.getName().equals("counter5") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getFullType());
+        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertFalse(attribute.isNotNull());
@@ -167,12 +171,12 @@ public class DslModelManagerTest {
         		//assertTrue(attribute.isObjectTypeExpected());
         		assertTrue(attribute.isSqlTypeExpected());
 
-        		assertEquals("Short", attribute.getSimpleType() ); 
-        		assertEquals("java.lang.Short", attribute.getFullType() ); 
+//        		assertEquals("Short", attribute.getSimpleType() ); 
+//        		assertEquals("java.lang.Short", attribute.getFullType() ); 
 
         	}
         	else if ( attribute.getName().equals("counter6") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getFullType());
+        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertTrue(attribute.isNotNull());
@@ -181,12 +185,12 @@ public class DslModelManagerTest {
         		assertTrue(attribute.isObjectTypeExpected());
         		assertFalse(attribute.isSqlTypeExpected());
 
-        		assertEquals("Short", attribute.getSimpleType() ); 
-        		assertEquals("java.lang.Short", attribute.getFullType() ); 
+//        		assertEquals("Short", attribute.getSimpleType() ); 
+//        		assertEquals("java.lang.Short", attribute.getFullType() ); 
 
         	}
         	else if ( attribute.getName().equals("counter7") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getFullType());
+        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertTrue(attribute.isNotNull());
@@ -195,8 +199,8 @@ public class DslModelManagerTest {
         		assertFalse(attribute.isObjectTypeExpected());
         		assertTrue(attribute.isSqlTypeExpected());
 
-        		assertEquals("Short", attribute.getSimpleType() ); 
-        		assertEquals("java.lang.Short", attribute.getFullType() ); 
+//        		assertEquals("Short", attribute.getSimpleType() ); 
+//        		assertEquals("java.lang.Short", attribute.getFullType() ); 
 
         	}
         }

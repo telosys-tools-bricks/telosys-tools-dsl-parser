@@ -138,25 +138,25 @@ public class ConverterTest {
 		// attributes of entity 1
 		assertEquals(8, entity_1.getAttributes().size());
 		
-		// Check simple type
-		assertEquals("Boolean",    getAttributeByName(entity_1, "myBoolean").getSimpleType());
-		assertEquals("BigDecimal", getAttributeByName(entity_1, "myDecimal").getSimpleType());
-		assertEquals("Integer",    getAttributeByName(entity_1, "myInteger").getSimpleType());
-		assertEquals("String",     getAttributeByName(entity_1, "myString").getSimpleType());
-		assertEquals("Date",       getAttributeByName(entity_1, "myDate").getSimpleType());
-		assertEquals("Date",       getAttributeByName(entity_1, "myTime").getSimpleType());
-		assertEquals("Date",       getAttributeByName(entity_1, "myTimestamp").getSimpleType());
-		assertEquals("byte[]",     getAttributeByName(entity_1, "myBinary").getSimpleType());
+//		// Check simple type
+//		assertEquals("Boolean",    getAttributeByName(entity_1, "myBoolean").getSimpleType());
+//		assertEquals("BigDecimal", getAttributeByName(entity_1, "myDecimal").getSimpleType());
+//		assertEquals("Integer",    getAttributeByName(entity_1, "myInteger").getSimpleType());
+//		assertEquals("String",     getAttributeByName(entity_1, "myString").getSimpleType());
+//		assertEquals("Date",       getAttributeByName(entity_1, "myDate").getSimpleType());
+//		assertEquals("Date",       getAttributeByName(entity_1, "myTime").getSimpleType());
+//		assertEquals("Date",       getAttributeByName(entity_1, "myTimestamp").getSimpleType());
+//		assertEquals("byte[]",     getAttributeByName(entity_1, "myBinary").getSimpleType());
 
-		// Check full type
-		assertEquals("java.lang.Boolean",    getAttributeByName(entity_1, "myBoolean").getFullType());
-		assertEquals("java.math.BigDecimal", getAttributeByName(entity_1, "myDecimal").getFullType());
-		assertEquals("java.lang.Integer",    getAttributeByName(entity_1, "myInteger").getFullType());
-		assertEquals("java.lang.String",     getAttributeByName(entity_1, "myString").getFullType());
-		assertEquals("java.util.Date",       getAttributeByName(entity_1, "myDate").getFullType());
-		assertEquals("java.util.Date",       getAttributeByName(entity_1, "myTime").getFullType());
-		assertEquals("java.util.Date",       getAttributeByName(entity_1, "myTimestamp").getFullType());
-		assertEquals("byte[]",               getAttributeByName(entity_1, "myBinary").getFullType());
+//		// Check full type
+//		assertEquals("java.lang.Boolean",    getAttributeByName(entity_1, "myBoolean").getFullType());
+//		assertEquals("java.math.BigDecimal", getAttributeByName(entity_1, "myDecimal").getFullType());
+//		assertEquals("java.lang.Integer",    getAttributeByName(entity_1, "myInteger").getFullType());
+//		assertEquals("java.lang.String",     getAttributeByName(entity_1, "myString").getFullType());
+//		assertEquals("java.util.Date",       getAttributeByName(entity_1, "myDate").getFullType());
+//		assertEquals("java.util.Date",       getAttributeByName(entity_1, "myTime").getFullType());
+//		assertEquals("java.util.Date",       getAttributeByName(entity_1, "myTimestamp").getFullType());
+//		assertEquals("byte[]",               getAttributeByName(entity_1, "myBinary").getFullType());
 
 		// entity 2
 //		Entity entity_2 = getEntityByClassName(model, "domainEntity_2");
@@ -237,13 +237,13 @@ public class ConverterTest {
 		// boolean @Id 
 		assertTrue(attribute_1_1.isKeyElement());
 		//assertEquals("java.lang.Boolean", getAttributeByName(entity_1, "field_1_2").getFullType());
-		assertEquals("java.lang.Boolean", attribute_1_1.getFullType() );
-		assertEquals("Boolean", attribute_1_1.getSimpleType() );
+//		assertEquals("java.lang.Boolean", attribute_1_1.getFullType() );
+//		assertEquals("Boolean", attribute_1_1.getSimpleType() );
 		
 		// boolean @NotNull => primitive type
 		assertTrue(attribute_1_2.isNotNull());
-		assertEquals("boolean", attribute_1_2.getFullType());
-		assertEquals("boolean", attribute_1_2.getSimpleType());
+//		assertEquals("boolean", attribute_1_2.getFullType());
+//		assertEquals("boolean", attribute_1_2.getSimpleType());
 
 		
 		assertEquals(new BigDecimal( 1), attribute_1_3.getMinValue());

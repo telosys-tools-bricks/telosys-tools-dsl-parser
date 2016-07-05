@@ -17,18 +17,14 @@ package org.telosys.tools.dsl.generic.model;
 
 import java.math.BigDecimal;
 
-import org.telosys.tools.dsl.EntityParserException;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.DateType;
 import org.telosys.tools.generic.model.Entity;
-import org.telosys.tools.generic.model.types.LanguageType;
-import org.telosys.tools.generic.model.types.TypeConverter;
-import org.telosys.tools.generic.model.types.TypeConverterForJava;
 
 public class GenericAttribute implements Attribute {
 	
 	// Use Java type converter by default
-	private final static TypeConverter typeConverter = new TypeConverterForJava() ;
+//	private final static TypeConverter typeConverter = new TypeConverterForJava() ;
 	
 	private String name = "";
 	private String neutralType = "";
@@ -203,12 +199,13 @@ public class GenericAttribute implements Attribute {
 		this.entity = entity;
 	}
 	
-	@Override
-	public String getFullType() {
-//		return fullType;
-		LanguageType languageType = typeConverter.getType(this);
-		return languageType.getFullType();
-	}
+	// Removed in v 3.0.0
+//	@Override
+//	public String getFullType() {
+////		return fullType;
+//		LanguageType languageType = typeConverter.getType(this);
+//		return languageType.getFullType();
+//	}
 //	public void setFullType(String fullType) {
 //		this.fullType = fullType;
 //	}
@@ -335,15 +332,16 @@ public class GenericAttribute implements Attribute {
 		this.sequenceGeneratorSequenceName = sequenceGeneratorSequenceName;
 	}
 
-	@Override
-	public String getSimpleType() {
-//		return simpleType;
-		LanguageType languageType = typeConverter.getType(this);
-		if ( languageType == null ) {			
-			throw new EntityParserException("Invalid type '" + this.getNeutralType() + "'");
-		}
-		return languageType.getSimpleType();
-	}
+	// Removed in v 3.0.0
+//	@Override
+//	public String getSimpleType() {
+////		return simpleType;
+//		LanguageType languageType = typeConverter.getType(this);
+//		if ( languageType == null ) {			
+//			throw new EntityParserException("Invalid type '" + this.getNeutralType() + "'");
+//		}
+//		return languageType.getSimpleType();
+//	}
 //	public void setSimpleType(String simpleType) {
 //		this.simpleType = simpleType;
 //	}
