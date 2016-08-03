@@ -57,7 +57,8 @@ public class DslModelManagerTest {
 //        assertEquals("Integer", attrib.getSimpleType() ) ;
 //        assertEquals("java.lang.Integer", attrib.getFullType() ) ;
         assertTrue(attrib.isKeyElement());
-        assertFalse(attrib.isNotNull());
+        assertTrue(attrib.isNotNull()); // If "@Id" => "@NotNull"
+        assertTrue(attrib.isDatabaseNotNull() ); // If "@Id" => "@NotNull"
         
         attrib = employeeEntity.getAttributes().get(i++);
         assertEquals("firstName", attrib.getName() ) ;
@@ -66,6 +67,7 @@ public class DslModelManagerTest {
 //        assertEquals("java.lang.String", attrib.getFullType() ) ;
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
+        assertFalse(attrib.isDatabaseNotNull());
 
         attrib = employeeEntity.getAttributes().get(i++);
         assertEquals("birthDate", attrib.getName() ) ;
@@ -74,6 +76,7 @@ public class DslModelManagerTest {
 //        assertEquals("java.util.Date", attrib.getFullType() ) ;
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
+        assertFalse(attrib.isDatabaseNotNull());
 
     }
 
@@ -180,6 +183,7 @@ public class DslModelManagerTest {
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertTrue(attribute.isNotNull());
+        		assertTrue(attribute.isDatabaseNotNull());
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		assertTrue(attribute.isObjectTypeExpected());
@@ -194,6 +198,8 @@ public class DslModelManagerTest {
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertTrue(attribute.isNotNull());
+        		assertTrue(attribute.isDatabaseNotNull());
+
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		assertFalse(attribute.isObjectTypeExpected());

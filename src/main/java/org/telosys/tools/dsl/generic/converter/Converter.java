@@ -201,15 +201,6 @@ public class Converter {
 //        genericAttribute.setFullType(convertNeutralTypeToFullType(domainNeutralType) );
         genericAttribute.setNeutralType( domainNeutralType.getName() );
         
-        // If the attribute has a "longtext" type
-//        if ( domainEntityField.getType() == DomainNeutralTypes.getType(DomainNeutralTypes.LONGTEXT_CLOB) ) {
-//            genericAttribute.setLongText(true);
-//        }
-//        else {
-//            genericAttribute.setLongText(false);
-//        }
-        genericAttribute.setLongText(false); // TODO with @LongText
-        
         // If the attribute has a "binary" type 
         if ( domainEntityField.getType() == DomainNeutralTypes.getType(DomainNeutralTypes.BINARY_BLOB) ) {
         	// TODO
@@ -244,6 +235,9 @@ public class Converter {
                 if(AnnotationName.ID.equals(annotation.getName())) {
             		log("Converter : annotation @Id" );
                     genericAttribute.setKeyElement(true);
+                    // If "@Id" => "@NotNull" 
+                    genericAttribute.setNotNull(true);
+                    genericAttribute.setDatabaseNotNull(true);
                 }
                 if(AnnotationName.AUTO_INCREMENTED.equals(annotation.getName())) {
             		log("Converter : annotation @AutoIncremented" );
