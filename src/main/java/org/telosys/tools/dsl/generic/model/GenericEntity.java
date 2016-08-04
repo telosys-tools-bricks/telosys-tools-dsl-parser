@@ -16,6 +16,7 @@
 package org.telosys.tools.dsl.generic.model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.generic.model.Attribute;
@@ -123,10 +124,27 @@ public class GenericEntity implements Entity {
 	public void setViewType(Boolean viewType) {
 		this.viewType = viewType;
 	}
+	
+	/**
+	 * Returns true if the entity has at least one attribute with "@Id"
+	 * @return
+	 */
+	public boolean hasId() {
+		for ( Attribute attribute : this.attributes ) {
+			if ( attribute.isKeyElement() ) {
+				return true ;
+			}
+		}
+		return false ; // No attribute with "@Id"
+	}
 
 	@Override
 	public List<String> getWarnings() {
-		return null; // no warnings for this kind of model
+		List<String> warnings = new LinkedList<String>() ;
+		if ( hasId() == false ) {
+			warnings.add("No ID");
+		}
+		return warnings;
 	}
 	
 }
