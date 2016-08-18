@@ -15,9 +15,11 @@
  */
 package org.telosys.tools.dsl.generic.converter;
 
+import java.util.Collection;
 import java.util.LinkedList;
 
 import org.telosys.tools.commons.ConsoleLogger;
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.TelosysToolsLogger;
 import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.generic.model.GenericAttribute;
@@ -31,6 +33,7 @@ import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralType;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.dsl.parser.model.DomainType;
+import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Cardinality;
 import org.telosys.tools.generic.model.CascadeOptions;
 import org.telosys.tools.generic.model.FetchType;
@@ -101,30 +104,44 @@ public class Converter {
 			return;
 		}
 
-		// STEP 1 : Convert all the existing entities
+		// STEP 1 : Convert all the existing "DomainEntity" to "GenericEntity"
 		for(DomainEntity domainEntity : domainModel.getEntities()) {
-//			GenericEntity genericEntity = new GenericEntity();
-////			genericEntity.setClassName(notNullOrVoidValue(domainEntity.getName(), EMPTY_STRING));
-////			genericEntity.setFullName(notNullOrVoidValue(domainEntity.getName(), EMPTY_STRING));			
-//			genericEntity.setClassName(voidIfNull(domainEntity.getName()));
-//			genericEntity.setFullName(voidIfNull(domainEntity.getName()));
-			
 			GenericEntity genericEntity = convertEntity( domainEntity );
 			genericModel.getEntities().add(genericEntity);
 		}
 		
-		// STEP 2 : Convert the attributes ( basic attributes and link attributes ) 
+		// STEP 2 : Convert basic attributes ( attributes with neutral type ) 
 		for(DomainEntity domainEntity : domainModel.getEntities()) {
+			// Get the GenericEntity built previously
 			GenericEntity genericEntity = (GenericEntity) genericModel.getEntityByClassName(domainEntity.getName());
+			// Convert all attributes to "basic type" or "void attribute" if reference to an entity
 			convertAttributes(domainEntity, genericEntity, genericModel);
 		}
 		
-//		// STEP 3 : Build "keyAttributes"
-//		for(DomainEntity domainEntity : domainModel.getEntities()) {
-//			GenericEntity genericEntity = (GenericEntity) genericModel.getEntityByClassName(domainEntity.getName());
-//			// TODO 
-//		}
+		// STEP x : Create the links ( from attributes referencing an entity ) 
+		for(DomainEntity domainEntity : domainModel.getEntities()) {
+			// Get the GenericEntity built previously
+			GenericEntity genericEntity = (GenericEntity) genericModel.getEntityByClassName(domainEntity.getName());
+			// Creates a link for each field referencing an entity
+			createLinks(domainEntity, genericEntity, genericModel);
+		}
 		
+		// STEP 3 : Build and set "pseudo Foreign Key Attributes"
+		for ( DomainEntity domainEntity : domainModel.getEntities() ) {
+			// Get the GenericEntity built previously
+			GenericEntity genericEntity = (GenericEntity) genericModel.getEntityByClassName(domainEntity.getName());
+			// Replaces the "pseudo FK" attributes if any
+			for ( DomainEntityField field : domainEntity.getFields() ) {
+	            if ( field.getType().isEntity() ) {
+	            	// Build the "pseudo FK attribute"
+	            	GenericAttribute pseudoFKAttribute = convertAttributePseudoForeignKey(field);
+	            	// Search the original "void attribute" in the "GenericEntity" and replace it by the "pseudo FK attribute"
+	            	String originalName = field.getName() ;
+	            	Attribute old = genericEntity.replaceAttribute(originalName, pseudoFKAttribute);
+	            	check(old != null, "Attribute '" + originalName + "' not found");
+	            }
+			}
+		}
 	}
 	
 	private GenericEntity convertEntity( DomainEntity domainEntity ) {
@@ -162,20 +179,44 @@ public class Converter {
         		log("convertEntityAttributes() : " + domainEntityField.getName() + " : neutral type");
             	// Simple type attribute
             	GenericAttribute genericAttribute = convertAttributeNeutralType( domainEntityField );
-                // Add the new attribute to the entity 
-                if ( genericAttribute != null ) {
-                    genericEntity.getAttributes().add(genericAttribute);
-                }
+            	check(genericAttribute != null, "convertAttributeNeutralType returns null");
+            	// Add the new "basic attribute" to the entity 
+            	genericEntity.getAttributes().add(genericAttribute);
             }
+// Moved in createLinks
+//            else if (domainFieldType.isEntity() ) {
+//            	// REFERENCE TO AN ENTITY = LINK
+//        		log("convertEntityAttributes() : " + domainEntityField.getName() + " : entity type (link)");
+//            	// Link type attribute (reference to 1 or N other entity )
+//        		linkIdCounter++;
+//            	GenericLink genericLink = convertAttributeLink( domainEntityField, genericModel );
+//            	// Add the new link to the entity 
+//               	genericEntity.getLinks().add(genericLink);
+//            }
             else if (domainFieldType.isEntity() ) {
+            	// Add a "temporary void attribute" at the expected position in the attributes list
+                GenericAttribute genericAttribute = new GenericAttribute();
+                genericAttribute.setName( notNull(domainEntityField.getName()) );
+            	genericEntity.getAttributes().add(genericAttribute);
+            }
+		}
+	}
+
+	private void createLinks(DomainEntity domainEntity, GenericEntity genericEntity, GenericModel genericModel) {
+		log("createLinks()...");
+		if(domainEntity.getFields() == null) {
+			return;
+		}
+		for ( DomainEntityField domainEntityField : domainEntity.getFields() ) {
+
+            if ( domainEntityField.getType().isEntity() ) { // If this field references an entity 
             	// REFERENCE TO AN ENTITY = LINK
-        		log("convertEntityAttributes() : " + domainEntityField.getName() + " : entity type (link)");
+        		log("createLinks() : " + domainEntityField.getName() + " : entity type (link)");
             	// Link type attribute (reference to 1 or N other entity )
         		linkIdCounter++;
             	GenericLink genericLink = convertAttributeLink( domainEntityField, genericModel );
-                if ( genericLink != null ) {
-                	genericEntity.getLinks().add(genericLink);
-                }
+            	// Add the new link to the entity 
+               	genericEntity.getLinks().add(genericLink);
             }
 		}
 	}
@@ -207,6 +248,47 @@ public class Converter {
             //genericAttribute.setBinary(true);
         }
         
+        initAttributeDefaultValues(genericAttribute, domainEntityField);
+        
+        // Populate field from annotations if any
+        if(domainEntityField.getAnnotations() != null) {
+    		log("Converter : annotations found" );
+    		Collection<DomainEntityFieldAnnotation> fieldAnnotations = domainEntityField.getAnnotations().values();
+            for(DomainEntityFieldAnnotation annotation : fieldAnnotations ) {
+        		log("Converter : annotation '"+ annotation.getName() + "'");
+        		// The annotation name is like "Id", "NotNull", "Max", etc
+        		// without "@" at the beginning and without "#" at the end
+                if(AnnotationName.ID.equals(annotation.getName())) {
+            		log("Converter : annotation @Id" );
+                    genericAttribute.setKeyElement(true);
+                    // If "@Id" => "@NotNull" 
+                    genericAttribute.setNotNull(true);
+                }
+                if(AnnotationName.AUTO_INCREMENTED.equals(annotation.getName())) {
+            		log("Converter : annotation @AutoIncremented" );
+                    genericAttribute.setAutoIncremented(true);
+                }
+                
+                // TODO 
+                // @DefaultValue(xxx)
+                // @Comment(xxx) --> used as DbComment ?
+                //
+                // GUI info 
+                // @Label(xxx)
+                // @InputType(xxx) or config ???
+                //
+            }
+            populateAttributeConstraints(genericAttribute, fieldAnnotations);
+            populateAttributeTypeInfo(genericAttribute, fieldAnnotations);
+            populateAttributeDbInfo(genericAttribute, fieldAnnotations);
+        }
+        else {
+    		log("Converter : no annotation" );
+        }
+        return genericAttribute;
+	}
+	
+	private void initAttributeDefaultValues(GenericAttribute genericAttribute, DomainEntityField domainEntityField ) {
         //genericAttribute.setBooleanFalseValue(booleanFalseValue);
         //genericAttribute.setBooleanTrueValue(booleanTrueValue);
         genericAttribute.setDatabaseComment("");                       // TODO with @DbComment(xxx)
@@ -223,107 +305,214 @@ public class Converter {
         // genericAttribute.setInputType(inputType); // TODO ???
         genericAttribute.setSelected(true);
         // genericAttribute.setPattern(pattern); // TODO
-        
-        
-        // Populate field from annotations if any
-        if(domainEntityField.getAnnotations() != null) {
-    		log("Converter : annotations found" );
-            for(DomainEntityFieldAnnotation annotation : domainEntityField.getAnnotations().values()) {
-        		log("Converter : annotation '"+ annotation.getName() + "'");
-        		// The annotation name is like "Id", "NotNull", "Max", etc
-        		// without "@" at the beginning and without "#" at the end
-                if(AnnotationName.ID.equals(annotation.getName())) {
-            		log("Converter : annotation @Id" );
-                    genericAttribute.setKeyElement(true);
-                    // If "@Id" => "@NotNull" 
-                    genericAttribute.setNotNull(true);
-                    genericAttribute.setDatabaseNotNull(true);
-                }
-                if(AnnotationName.AUTO_INCREMENTED.equals(annotation.getName())) {
-            		log("Converter : annotation @AutoIncremented" );
-                    genericAttribute.setAutoIncremented(true);
-                }
-                if(AnnotationName.NOT_NULL.equals(annotation.getName())) {
-            		log("Converter : annotation @NotNull " );
-                    genericAttribute.setNotNull(true);
-                    genericAttribute.setDatabaseNotNull(true);
-                }
-                if(AnnotationName.NOT_EMPTY.equals(annotation.getName())) {
-            		log("Converter : annotation @NotEmpty " );
-                    genericAttribute.setNotEmpty(true);
-                }
-                if(AnnotationName.NOT_BLANK.equals(annotation.getName())) {
-            		log("Converter : annotation @NotBlank " );
-                    genericAttribute.setNotBlank(true);
-                }
-                if(AnnotationName.MIN.equals(annotation.getName())) {
-            		log("Converter : annotation @Min " );
-                    genericAttribute.setMinValue(annotation.getParameterAsBigDecimal() ); 
-                }
-                if(AnnotationName.MAX.equals(annotation.getName())) {
-            		log("Converter : annotation @Max " );
-                    genericAttribute.setMaxValue(annotation.getParameterAsBigDecimal());
-                }
-                if(AnnotationName.SIZE_MIN.equals(annotation.getName())) {
-            		log("Converter : annotation @SizeMin " );
-                    genericAttribute.setMinLength(annotation.getParameterAsInteger() );
-                }
-                if(AnnotationName.SIZE_MAX.equals(annotation.getName())) {
-            		log("Converter : annotation @SizeMax " );
-                    Integer parameterValue = annotation.getParameterAsInteger();
-                    genericAttribute.setMaxLength(parameterValue);
-                    genericAttribute.setDatabaseSize(parameterValue);
-                }
-                if(AnnotationName.PAST.equals(annotation.getName())) {
-            		log("Converter : annotation @Past " );
-                    genericAttribute.setDatePast(true);
-                }
-                if(AnnotationName.FUTURE.equals(annotation.getName())) {
-            		log("Converter : annotation @Future " );
-                    genericAttribute.setDateFuture(true);
-                }
-                if(AnnotationName.LONG_TEXT.equals(annotation.getName())) {
-            		log("Converter : annotation @LongText" );
-                    genericAttribute.setLongText(true);
-                }
-                
-                //--- Annotations for TYPES
-                if(AnnotationName.PRIMITIVE_TYPE.equals(annotation.getName())) {
-            		log("Converter : annotation @PrimitiveType" );
-                    genericAttribute.setPrimitiveTypeExpected(true);
-                }
-                if(AnnotationName.UNSIGNED_TYPE.equals(annotation.getName())) {
-            		log("Converter : annotation @UnsignedType" );
-                    genericAttribute.setUnsignedTypeExpected(true);
-                }
-                if(AnnotationName.OBJECT_TYPE.equals(annotation.getName())) {
-            		log("Converter : annotation @ObjectType" );
-                    genericAttribute.setObjectTypeExpected(true);
-                }
-                if(AnnotationName.SQL_TYPE.equals(annotation.getName())) {
-            		log("Converter : annotation @SqlType" );
-                    genericAttribute.setSqlTypeExpected(true);
-                }
-                
-                // TODO 
-                // @DefaultValue(xxx)
-                // @Comment(xxx) --> used as DbComment ?
-                // @After(DateISO)
-                // @Before(DateISO)
-                //
-                // @Label(xxx)
-                // @InputType(xxx) or config ???
-                // @Pattern(xxx) or @RegExp ???
-                //
-                // @DbColumn(xxx)
-                // @DbType(xxx)
-                // @DbDefaultValue(xxx)
+		
+	}
+	
+	/**
+	 * Populates generic attribute constraints from the given annotations
+	 * @param genericAttribute
+	 * @param fieldAnnotations
+	 */
+	private void populateAttributeConstraints(GenericAttribute genericAttribute, Collection<DomainEntityFieldAnnotation> fieldAnnotations) {
+        for(DomainEntityFieldAnnotation annotation : fieldAnnotations ) {
+    		log("Converter / populateAttributeConstraints : annotation '"+ annotation.getName() + "'");
+    		
+	        if(AnnotationName.NOT_NULL.equals(annotation.getName())) {
+	    		log("Converter : annotation @NotNull " );
+	            genericAttribute.setNotNull(true);
+	            //genericAttribute.setDatabaseNotNull(true);
+	        }
+	        if(AnnotationName.NOT_EMPTY.equals(annotation.getName())) {
+	    		log("Converter : annotation @NotEmpty " );
+	            genericAttribute.setNotEmpty(true);
+	        }
+	        if(AnnotationName.NOT_BLANK.equals(annotation.getName())) {
+	    		log("Converter : annotation @NotBlank " );
+	            genericAttribute.setNotBlank(true);
+	        }
+	        if(AnnotationName.MIN.equals(annotation.getName())) {
+	    		log("Converter : annotation @Min " );
+	            genericAttribute.setMinValue(annotation.getParameterAsBigDecimal() ); 
+	        }
+	        if(AnnotationName.MAX.equals(annotation.getName())) {
+	    		log("Converter : annotation @Max " );
+	            genericAttribute.setMaxValue(annotation.getParameterAsBigDecimal());
+	        }
+	        if(AnnotationName.SIZE_MIN.equals(annotation.getName())) {
+	    		log("Converter : annotation @SizeMin " );
+	            genericAttribute.setMinLength(annotation.getParameterAsInteger() );
+	        }
+	        if(AnnotationName.SIZE_MAX.equals(annotation.getName())) {
+	    		log("Converter : annotation @SizeMax " );
+//	            Integer parameterValue = annotation.getParameterAsInteger();
+//	            genericAttribute.setMaxLength(parameterValue);
+//	            genericAttribute.setDatabaseSize(parameterValue);
+	            genericAttribute.setMaxLength(annotation.getParameterAsInteger());
+	        }
+	        if(AnnotationName.PAST.equals(annotation.getName())) {
+	    		log("Converter : annotation @Past " );
+	            genericAttribute.setDatePast(true);
+	        }
+	        if(AnnotationName.FUTURE.equals(annotation.getName())) {
+	    		log("Converter : annotation @Future " );
+	            genericAttribute.setDateFuture(true);
+	        }
+	        if(AnnotationName.LONG_TEXT.equals(annotation.getName())) {
+	    		log("Converter : annotation @LongText" );
+	            genericAttribute.setLongText(true);
+	        }
+	        // TODO :
+            // @After(DateISO/TimeISO)
+            // @Before(DateISO/TimeISO)
+            // @Pattern(xxx) or @RegExp ???
+        }
+	}
+	
+	/**
+	 * Populates generic attribute type information from the given annotations
+	 * @param genericAttribute
+	 * @param fieldAnnotations
+	 */
+	private void populateAttributeTypeInfo(GenericAttribute genericAttribute, Collection<DomainEntityFieldAnnotation> fieldAnnotations) {
+        for(DomainEntityFieldAnnotation annotation : fieldAnnotations ) {
+    		log("Converter / populateAttributeTypeInfo : annotation '"+ annotation.getName() + "'");
+
+        	if(AnnotationName.PRIMITIVE_TYPE.equals(annotation.getName())) {
+        		log("Converter : annotation @PrimitiveType" );
+                genericAttribute.setPrimitiveTypeExpected(true);
+            }
+            if(AnnotationName.UNSIGNED_TYPE.equals(annotation.getName())) {
+        		log("Converter : annotation @UnsignedType" );
+                genericAttribute.setUnsignedTypeExpected(true);
+            }
+            if(AnnotationName.OBJECT_TYPE.equals(annotation.getName())) {
+        		log("Converter : annotation @ObjectType" );
+                genericAttribute.setObjectTypeExpected(true);
+            }
+            if(AnnotationName.SQL_TYPE.equals(annotation.getName())) {
+        		log("Converter : annotation @SqlType" );
+                genericAttribute.setSqlTypeExpected(true);
             }
         }
-        else {
-    		log("Converter : no annotation" );
+	}
+
+	private void populateAttributeDbInfo(GenericAttribute genericAttribute, Collection<DomainEntityFieldAnnotation> fieldAnnotations) {
+        for(DomainEntityFieldAnnotation annotation : fieldAnnotations ) {
+    		log("Converter / populateAttributeDbInfo : annotation '"+ annotation.getName() + "'");
+            if(AnnotationName.ID.equals(annotation.getName())) {
+	    		log("Converter : annotation @Id " );
+	            genericAttribute.setDatabaseNotNull(true); // @Id => Not Null 
+            }
+	        if(AnnotationName.NOT_NULL.equals(annotation.getName())) {
+	    		log("Converter : annotation @NotNull " );
+	            genericAttribute.setDatabaseNotNull(true);
+	        }
+	        if(AnnotationName.SIZE_MAX.equals(annotation.getName())) {
+	    		log("Converter : annotation @SizeMax " );
+	            genericAttribute.setDatabaseSize(annotation.getParameterAsInteger());
+	        }
+	        // TODO :
+            // @DbColumn(xxx)
+            // @DbType(xxx)
+            // @DbDefaultValue(xxx)
         }
-        return genericAttribute;
+	}
+	
+//	private GenericAttribute buildVoidAttributePseudoForeignKey( DomainEntityField domainEntityField ) {
+//		log("buildVoidAttributePseudoForeignKey() : name = " + domainEntityField.getName() );
+//
+//		DomainType domainFieldType = domainEntityField.getType();
+//		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
+//		DomainEntity referencedEntity = (DomainEntity) domainFieldType;
+//
+//		DomainEntityField referencedEntityIdField = getIdAttribute(referencedEntity);
+//		
+//        GenericAttribute genericAttribute = new GenericAttribute();
+//        genericAttribute.setName( buildIdAttributeName(domainFieldType.getName(), referencedEntityIdField ) );
+//        genericAttribute.set
+//	}
+	
+	/**
+	 * Converts a "reference/link" attribute <br>
+	 * eg : car : Car ; <br>
+	 * @param domainEntityField the field to be converted
+	 * @return
+	 */
+	private GenericAttribute convertAttributePseudoForeignKey( DomainEntityField domainEntityField ) {
+		log("convertAttributePseudoForeignKey() : name = " + domainEntityField.getName() );
+
+		DomainType domainFieldType = domainEntityField.getType();
+		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
+		DomainEntity referencedEntity = (DomainEntity) domainFieldType;
+
+		DomainEntityField referencedEntityIdField = getReferencedEntityIdField(referencedEntity);
+		
+        //--- Attribute name 
+        String attributeName = buildIdAttributeName(domainEntityField.getName(), referencedEntityIdField ) ;
+        
+        //--- Attribute type 
+        check( referencedEntityIdField.getType().isNeutralType(), "Invalid referenced entity field type. Neutral type expected" );
+        String attributeType = referencedEntityIdField.getTypeName();
+
+
+        //--- Populate attribute
+        GenericAttribute genericAttribute = new GenericAttribute();
+        genericAttribute.setName( attributeName );
+        genericAttribute.setNeutralType( attributeType );
+        initAttributeDefaultValues(genericAttribute, domainEntityField);
+        
+        //--- Use referenced entity id field annotations
+		Collection<DomainEntityFieldAnnotation> fieldAnnotations = referencedEntityIdField.getAnnotations().values();
+        populateAttributeConstraints(genericAttribute, fieldAnnotations) ;
+        populateAttributeTypeInfo(genericAttribute, fieldAnnotations);
+        
+        return genericAttribute ;
+        
+	}
+	
+	/**
+	 * Builds the "pseudo FK" attribute name <br>
+	 * original name + referenced entity field name <br>
+	 * @param originalName
+	 * @param field
+	 * @return
+	 */
+	private String buildIdAttributeName( String originalName, DomainEntityField field) {
+		// e.g. "driver : Driver" --> name = "driverId" ( "Id" from "id : int { @Id } in Driver )
+		return originalName + StrUtil.firstCharUC(field.getName()) ;
+	}
+	
+	/**
+	 * Returns the '@Id' attribute for the given entity
+	 * @param domainEntity
+	 * @return
+	 */
+	private DomainEntityField getReferencedEntityIdField( DomainEntity domainEntity ) {
+		DomainEntityField id = null ;
+		int idCount = 0 ;
+		check(domainEntity.getFields().size() > 0, "No field in entity " + domainEntity );
+		for ( DomainEntityField field : domainEntity.getFields() ) {
+			if ( isId( field ) ) {
+				id = field ;
+				idCount++ ;
+			}
+		}
+		if ( idCount == 0 ) {
+			throw new IllegalStateException("Entity '" + domainEntity.getName() + "' : no @Id" );
+		}
+		if ( idCount > 1 ) {
+			throw new IllegalStateException("Entity '" + domainEntity.getName() + "' has more than 1 @Id" );
+		}
+		return id ;
+	}
+	
+	private boolean isId( DomainEntityField field ) {
+		for ( String annotationName : field.getAnnotationNames() ) {
+			if ( AnnotationName.ID.equals(annotationName) ) {
+				return true ;
+			}
+		}
+		return false ;
 	}
 	
 	/**
@@ -409,117 +598,6 @@ public class Converter {
 	}
 	
 	/**
-	 * Conversion des types
-	 */
-/*****
-//	private static final Map<String, String> mapFullTypeConversion = new HashMap<String, String>();
-//	private static final Map<String, String> mapSimpleTypeConversion = new HashMap<String, String>();
-	private static final Map<String, Class<?>> typeMapping = new HashMap<String, Class<?>>();
-	static {
-//		//--- Full type
-//		mapFullTypeConversion.put(DomainNeutralTypes.BOOLEAN,   Boolean.class.getCanonicalName());
-//		
-//		mapFullTypeConversion.put(DomainNeutralTypes.DECIMAL,   BigDecimal.class.getCanonicalName());
-//		mapFullTypeConversion.put(DomainNeutralTypes.INTEGER,   Integer.class.getCanonicalName());
-//		
-//		mapFullTypeConversion.put(DomainNeutralTypes.STRING,    String.class.getCanonicalName());
-//		
-//		mapFullTypeConversion.put(DomainNeutralTypes.DATE,      Date.class.getCanonicalName());
-//		mapFullTypeConversion.put(DomainNeutralTypes.TIME,      Date.class.getCanonicalName());
-//		mapFullTypeConversion.put(DomainNeutralTypes.TIMESTAMP, Date.class.getCanonicalName());
-//		
-//		
-//		//--- Simple type
-//		mapSimpleTypeConversion.put(DomainNeutralTypes.BOOLEAN,   Boolean.class.getSimpleName());
-//		
-//		
-//		mapSimpleTypeConversion.put(DomainNeutralTypes.DECIMAL,   BigDecimal.class.getSimpleName());
-//		mapSimpleTypeConversion.put(DomainNeutralTypes.INTEGER,   Integer.class.getSimpleName());
-//		
-//		mapSimpleTypeConversion.put(DomainNeutralTypes.STRING,    String.class.getSimpleName());
-//		
-//		mapSimpleTypeConversion.put(DomainNeutralTypes.DATE,      Date.class.getSimpleName());
-//		mapSimpleTypeConversion.put(DomainNeutralTypes.TIME,      Date.class.getSimpleName());
-//		mapSimpleTypeConversion.put(DomainNeutralTypes.TIMESTAMP, Date.class.getSimpleName());
-
-		typeMapping.put(DomainNeutralTypes.BOOLEAN,   Boolean.class );
-		
-		typeMapping.put(DomainNeutralTypes.BYTE,      Byte.class );
-		typeMapping.put(DomainNeutralTypes.SHORT,     Short.class );
-		typeMapping.put(DomainNeutralTypes.INTEGER,   Integer.class );
-		typeMapping.put(DomainNeutralTypes.LONG,      Long.class );
-
-		typeMapping.put(DomainNeutralTypes.FLOAT,     Float.class );
-		typeMapping.put(DomainNeutralTypes.DOUBLE,    Double.class );
-		typeMapping.put(DomainNeutralTypes.DECIMAL,   BigDecimal.class );
-		
-		typeMapping.put(DomainNeutralTypes.STRING,        String.class );
-		typeMapping.put(DomainNeutralTypes.LONGTEXT_CLOB, String.class );
-		
-		typeMapping.put(DomainNeutralTypes.DATE,      Date.class );
-		typeMapping.put(DomainNeutralTypes.TIME,      Date.class );
-		typeMapping.put(DomainNeutralTypes.TIMESTAMP, Date.class );
-
-		typeMapping.put(DomainNeutralTypes.BINARY_BLOB, byte[].class ); 
-	}
-*****/
-//	private Class<?> getJavaTypeClass(DomainNeutralType domainNeutralType) {
-//		if (domainNeutralType == null) {
-//			throw new IllegalStateException("Neutral type is null");
-//		}
-//		Class<?> javaClass = typeMapping.get(domainNeutralType.getName());
-//		if (javaClass == null) {
-//			throw new IllegalStateException("Unknown type '" + domainNeutralType.getName() +"'");
-//		}
-//		return javaClass;
-//	}
-	
-//	/**
-//	 * Convert DSL types (string, integer, etc.) to Generic model types.
-//	 * @param domainNeutralType DSL type
-//	 * @return Generic model type
-//	 */
-//	private String convertNeutralTypeToSimpleType(DomainNeutralType domainNeutralType) {
-////		if (domainNeutralType == null) {
-////			throw new IllegalStateException("Neutral type is null");
-////		}
-////		String genericModelType = mapSimpleTypeConversion.get(domainNeutralType.getName());
-////		if (genericModelType == null) {
-////			throw new IllegalStateException("Unknown type '" + domainNeutralType.getName() +"'");
-////		}		
-////		return genericModelType;
-//		return getJavaTypeClass(domainNeutralType).getSimpleName();
-//	}
-
-//	/**
-//	 * Convert DSL types (string, integer, etc.) to Generic model types.
-//	 * @param domainNeutralType
-//	 * @return Generic model type
-//	 */
-//	private String convertNeutralTypeToFullType(DomainNeutralType domainNeutralType) {
-////		if(domainNeutralType == null) {
-////			//return defaultValue;
-////			throw new IllegalStateException("Neutral type is null");
-////		}
-////		String genericModelType = mapFullTypeConversion.get(domainNeutralType.getName());
-////		return genericModelType;
-//		return getJavaTypeClass(domainNeutralType).getCanonicalName();
-//	}
-
-//	/**
-//	 * Convert String value
-//	 * @param value String value
-//	 * @param defaultValue Default value
-//	 * @return Value for Generic Model
-//	 */
-//	private String notNullOrVoidValue(String value, String defaultValue) {
-//		if(isDefined(value)) {
-//			return value;
-//		}
-//		return defaultValue;
-//	}
-	
-	/**
 	 * Conversion rule to determine the table name for a given entity
 	 * @param domainEntity
 	 * @return
@@ -553,38 +631,4 @@ public class Converter {
 		return value;
 	}
 
-//	/**
-//	 * Convert String value to Integer
-//	 * @param value String value
-//	 * @param defaultValue Default Integer value
-//	 * @return Integer value
-//	 */
-//	private Integer convertStringToInteger(String value, Integer defaultValue) {
-//		if(!isDefined(value)) {
-//			return defaultValue;
-//		}
-//		Integer integerValue;
-//		try {
-//			integerValue = Integer.valueOf(value);
-//		} catch(NumberFormatException e) {
-//			integerValue = defaultValue;
-//		}
-//		return integerValue;
-//	}
-	
-//	/**
-//	 * Check if the String value is defined
-//	 * @param value String value
-//	 * @return is defined
-//	 */
-//	private boolean isDefined(String value) {
-//		if(value == null) {
-//			return false;
-//		}
-//		if(value.trim().equals(EMPTY_STRING)) {
-//			return false;
-//		}
-//		return true;
-//	}
-	
 }

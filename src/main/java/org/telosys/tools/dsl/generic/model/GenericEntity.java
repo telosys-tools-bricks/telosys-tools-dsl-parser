@@ -137,6 +137,24 @@ public class GenericEntity implements Entity {
 		}
 		return false ; // No attribute with "@Id"
 	}
+	
+	/**
+	 * Replaces the attribute identified by the given name by another one
+	 * @param name
+	 * @param newAttribute
+	 * @return
+	 */
+	public Attribute replaceAttribute(String name, Attribute newAttribute) {
+		List<Attribute> list = this.attributes  ;
+		for ( int index = 0 ; index < list.size() ; index++ ) {
+			Attribute attribute = list.get(index);
+			if ( name.equals(attribute.getName()) ) { // Found
+				list.set(index, newAttribute); // Replace
+				return attribute ;
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public List<String> getWarnings() {

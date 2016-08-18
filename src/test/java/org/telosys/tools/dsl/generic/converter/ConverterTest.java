@@ -16,6 +16,7 @@ import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntityField;
 import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainModel;
+import org.telosys.tools.dsl.parser.model.DomainNeutralType;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
@@ -298,18 +299,39 @@ public class ConverterTest {
 //
 //	}
 	
+	private DomainModel buildModel() {
+		DomainModel domainModel = new DomainModel("TestDomainModel");
+		
+		//--- "Driver" entity
+		DomainEntity driverEntity = new DomainEntity("Driver");
+		DomainEntityField driverCode = new DomainEntityField("code", new DomainNeutralType("long"));
+		driverCode.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.ID));
+		driverCode.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.SIZE_MAX, new Integer(20) ));
+		//driverCode.setAnnotationList(annotationList);
+		driverEntity.addField(driverCode);
+
+		//--- "Car" entity referencing "Driver" entity
+		DomainEntity carEntity = new DomainEntity("Car");
+		carEntity.addField(new DomainEntityField("id",     new DomainNeutralType("short")));
+		carEntity.addField(new DomainEntityField("name",   new DomainNeutralType("string")) );
+		carEntity.addField(new DomainEntityField("driver", driverEntity) ); // Reference to "Driver"
+		
+		//--- Add entities to model
+		domainModel.addEntity(carEntity);
+		domainModel.addEntity(driverEntity);
+		
+		//--- Check original model
+		assertEquals(2, domainModel.getEntities().size() );
+		assertEquals(1, driverEntity.getFields().size() );
+		assertEquals(3, carEntity.getFields().size() );
+		
+		return domainModel ;
+	}
+	
 	@Test
 	public void testAttributeWithLink() {
-		// Given
-		DomainModel domainModel = new DomainModel("domainModel");
-		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
-
-		domainModel.addEntity(domainEntity_1);
-		DomainEntityField domainEntityField_1_1 = new DomainEntityField("field_1_1", new DomainEntity("domainEntity_2"));
-		domainEntity_1.addField(domainEntityField_1_1);
-		
-		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
-		domainModel.addEntity(domainEntity_2);
+		// Given		
+		DomainModel domainModel = buildModel() ;
 		
 		// When
 		Model model = converter.convertToGenericModel(domainModel);
@@ -318,23 +340,40 @@ public class ConverterTest {
 		assertEquals(2, model.getEntities().size());
 		
 		// entity 1
-//		GenericEntity entity_1 = (GenericEntity) getEntityByClassName(model, "domainEntity_1");
-		GenericEntity entity_1 = (GenericEntity) model.getEntityByClassName("domainEntity_1");
-		assertEquals("domainEntity_1", entity_1.getClassName());
+		GenericEntity car = (GenericEntity) model.getEntityByClassName("Car");
+		assertEquals("Car", car.getClassName());
 
-//		GenericEntity entity_2 = (GenericEntity) getEntityByClassName(model, "domainEntity_2");
-		GenericEntity entity_2 = (GenericEntity) model.getEntityByClassName("domainEntity_2");
+		GenericEntity driver = (GenericEntity) model.getEntityByClassName("Driver");
 		//assertNull( entity_2.getDatabaseTable());
-		assertEquals("domainEntity_2", entity_2.getDatabaseTable() );
-		assertEquals("domainEntity_2", entity_1.getLinks().get(0).getTargetEntityClassName());
+		assertEquals("Driver", driver.getDatabaseTable() );
+		Attribute driverAttribute = car.getAttributeByName("driverCode");
+		assertEquals("long", driverAttribute.getNeutralType() );
+		//assertEquals("driverCode", driverAttribute.getLabel() ); // "driver" --> "driverCode" TODO ?
+		assertEquals(Integer.valueOf(20), driverAttribute.getMaxLength() );
+		
+		assertEquals(1, car.getLinks().size());
+		assertEquals("Driver", car.getLinks().get(0).getTargetEntityClassName());
+		
+		for ( Attribute attribute : car.getAttributes() ) {
+			System.out.println(" . " + attribute.getName() );
+		}
+		assertEquals(3, car.getAttributes().size() );
+		assertNotNull(car.getAttributeByName("id"));
+		assertNotNull(car.getAttributeByName("name"));
+		assertNotNull(car.getAttributeByName("driverCode")); // Reference to "Driver"
+		
+		Attribute driverCodeAttribute = car.getAttributeByName("driverCode");
+		assertEquals("long", driverCodeAttribute.getNeutralType() ); // same as original attribute
+		//assertEquals("driverCode", driverAttribute.getLabel() ); // "driver" --> "driverCode" TODO ?
+		assertEquals(Integer.valueOf(20), driverCodeAttribute.getMaxLength() ); // same as original attribute
 		
 		//--- Get by class name
-		assertNotNull(model.getEntityByClassName("domainEntity_1"));
-		assertNotNull(model.getEntityByClassName("domainEntity_2"));
+		assertNotNull(model.getEntityByClassName("Car"));
+		assertNotNull(model.getEntityByClassName("Driver")); 
 		
 		//--- Get by table name ( table name = class name )
-		assertNotNull(model.getEntityByTableName("domainEntity_1"));
-		assertNotNull(model.getEntityByTableName("domainEntity_2"));
+		assertNotNull(model.getEntityByTableName("Car"));
+		assertNotNull(model.getEntityByTableName("Driver"));
 		
 	}
 	

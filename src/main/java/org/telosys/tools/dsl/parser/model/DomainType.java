@@ -18,13 +18,14 @@ package org.telosys.tools.dsl.parser.model;
 public abstract class DomainType {
 
     /**
-     * Type name
-     * e.g. "string", "integer", "Book" (entity), "BookType" (enum), etc
+     * Type name <br>
+     * Examples for "neutral type" :  "string", "integer", etc <br> 
+     * Examples for "entity" : "Book", "Car", etc <br>
      */
     private final String name;
 
     /**
-     * Type nature : neutral type, entity or enumeration
+     * Type nature : "neutral type" or "entity" or "enumeration"
      */
     private final DomainTypeNature nature;
 
@@ -35,6 +36,12 @@ public abstract class DomainType {
         this.nature = nature;
     }
 
+    /**
+     * Returns the "type name" <br>
+     * Examples for "neutral type" :  "string", "integer", etc <br> 
+     * Examples for "entity" : "Book", "Car", etc <br>
+     * @return
+     */
     public final String getName() {
         return name;
     }
