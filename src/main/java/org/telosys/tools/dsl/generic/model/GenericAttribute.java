@@ -80,7 +80,12 @@ public class GenericAttribute implements Attribute {
 	private boolean isDateBefore = false;
 	private boolean isDateFuture = false;
 	private boolean isDatePast = false;
-	private boolean isUsedInForeignKey = false;
+	
+	//private boolean isUsedInForeignKey = false;
+	// An attribute can be involved in many FK, it can be both in a SIMPLE FK and in a COMPOSITE FK 
+	private boolean _bForeignKeySimple     = false ; // ( false by default )
+	private boolean _bForeignKeyComposite  = false ; // ( always false in the DSL model )
+
 
 	// Annotations added for types
 	private boolean isPrimitiveTypeExpected = false ;
@@ -520,12 +525,35 @@ public class GenericAttribute implements Attribute {
 		this.selected = selected;
 	}
 
+
+// Replaced by "isFK" in v 3.0.0
+//	@Override
+//	public boolean isUsedInForeignKey() {
+//		return isUsedInForeignKey;
+//	}
+//	public void setUsedInForeignKey(boolean isUsedInForeignKey) {
+//		this.isUsedInForeignKey = isUsedInForeignKey;
+//	}
 	@Override
-	public boolean isUsedInForeignKey() {
-		return isUsedInForeignKey;
+	public boolean isFK() {
+		return _bForeignKeySimple || _bForeignKeyComposite ;
 	}
-	public void setUsedInForeignKey(boolean isUsedInForeignKey) {
-		this.isUsedInForeignKey = isUsedInForeignKey;
+
+	public void setFKSimple(boolean flag) {
+		_bForeignKeySimple = flag ;
+	}
+	@Override
+	public boolean isFKSimple() {
+		return _bForeignKeySimple;
+	}
+
+// Never "Composite" in this model (DSL)
+//	public void setFKComposite(boolean flag) {
+//		_bForeignKeyComposite = flag ;
+//	}
+	@Override
+	public boolean isFKComposite() {
+		return _bForeignKeyComposite;
 	}
 	
 	//----------------------------------------------------------------------------------
