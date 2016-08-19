@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import org.telosys.tools.commons.ConsoleLogger;
-import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.TelosysToolsLogger;
 import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.generic.model.GenericAttribute;
@@ -448,7 +447,8 @@ public class Converter {
 		DomainEntityField referencedEntityIdField = getReferencedEntityIdField(referencedEntity);
 		
         //--- Attribute name 
-        String attributeName = buildIdAttributeName(domainEntityField.getName(), referencedEntityIdField ) ;
+        //String attributeName = buildIdAttributeName(domainEntityField.getName(), referencedEntityIdField ) ;
+        String attributeName = domainEntityField.getName() ; // Keep the same name to avoid potential naming collision 
         
         //--- Attribute type 
         check( referencedEntityIdField.getType().isNeutralType(), "Invalid referenced entity field type. Neutral type expected" );
@@ -466,21 +466,24 @@ public class Converter {
         populateAttributeConstraints(genericAttribute, fieldAnnotations) ;
         populateAttributeTypeInfo(genericAttribute, fieldAnnotations);
         
+        //--- Set flag as "Pseudo Foreign Key" (Simple FK) 
+        genericAttribute.setFKSimple(true);
+        
         return genericAttribute ;
         
 	}
 	
-	/**
-	 * Builds the "pseudo FK" attribute name <br>
-	 * original name + referenced entity field name <br>
-	 * @param originalName
-	 * @param field
-	 * @return
-	 */
-	private String buildIdAttributeName( String originalName, DomainEntityField field) {
-		// e.g. "driver : Driver" --> name = "driverId" ( "Id" from "id : int { @Id } in Driver )
-		return originalName + StrUtil.firstCharUC(field.getName()) ;
-	}
+//	/**
+//	 * Builds the "pseudo FK" attribute name <br>
+//	 * original name + referenced entity field name <br>
+//	 * @param originalName
+//	 * @param field
+//	 * @return
+//	 */
+//	private String buildIdAttributeName( String originalName, DomainEntityField field) {
+//		// e.g. "driver : Driver" --> name = "driverId" ( "Id" from "id : int { @Id } in Driver )
+//		return originalName + StrUtil.firstCharUC(field.getName()) ;
+//	}
 	
 	/**
 	 * Returns the '@Id' attribute for the given entity

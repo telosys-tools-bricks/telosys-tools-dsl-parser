@@ -3,6 +3,7 @@ package org.telosys.tools.dsl.generic.converter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.math.BigDecimal;
 
@@ -339,34 +340,53 @@ public class ConverterTest {
 		// Then
 		assertEquals(2, model.getEntities().size());
 		
-		// entity 1
-		GenericEntity car = (GenericEntity) model.getEntityByClassName("Car");
-		assertEquals("Car", car.getClassName());
-
-		GenericEntity driver = (GenericEntity) model.getEntityByClassName("Driver");
+		//--- "Driver" entity
+		GenericEntity driverEntity = (GenericEntity) model.getEntityByClassName("Driver");
 		//assertNull( entity_2.getDatabaseTable());
-		assertEquals("Driver", driver.getDatabaseTable() );
-		Attribute driverAttribute = car.getAttributeByName("driverCode");
-		assertEquals("long", driverAttribute.getNeutralType() );
-		//assertEquals("driverCode", driverAttribute.getLabel() ); // "driver" --> "driverCode" TODO ?
-		assertEquals(Integer.valueOf(20), driverAttribute.getMaxLength() );
+		assertEquals("Driver", driverEntity.getDatabaseTable() );
 		
-		assertEquals(1, car.getLinks().size());
-		assertEquals("Driver", car.getLinks().get(0).getTargetEntityClassName());
-		
-		for ( Attribute attribute : car.getAttributes() ) {
+		//--- "Car" entity
+		GenericEntity carEntity = (GenericEntity) model.getEntityByClassName("Car");
+		assertEquals("Car", carEntity.getClassName());
+		for ( Attribute attribute : carEntity.getAttributes() ) {
 			System.out.println(" . " + attribute.getName() );
 		}
-		assertEquals(3, car.getAttributes().size() );
-		assertNotNull(car.getAttributeByName("id"));
-		assertNotNull(car.getAttributeByName("name"));
-		assertNotNull(car.getAttributeByName("driverCode")); // Reference to "Driver"
+		assertEquals(3, carEntity.getAttributes().size() );
+		assertNotNull(carEntity.getAttributeByName("id"));
+		assertNotNull(carEntity.getAttributeByName("name"));
+		assertNotNull(carEntity.getAttributeByName("driver"));
+
+		//--- "Car" - "name" attribute
+		Attribute car_nameAttribute = carEntity.getAttributeByName("name");
+		assertNotNull(car_nameAttribute);
+		assertEquals("string", car_nameAttribute.getNeutralType() );
+		assertFalse(car_nameAttribute.isFK()); 
+		assertFalse(car_nameAttribute.isFKSimple()); 
+		assertFalse(car_nameAttribute.isFKComposite());
 		
-		Attribute driverCodeAttribute = car.getAttributeByName("driverCode");
-		assertEquals("long", driverCodeAttribute.getNeutralType() ); // same as original attribute
+		//--- "Car" - "driver" attribute ( "pseudo FK" )
+		Attribute car_driverAttribute = carEntity.getAttributeByName("driver");
+		assertNotNull(car_driverAttribute);
+		assertEquals("long", car_driverAttribute.getNeutralType() );
 		//assertEquals("driverCode", driverAttribute.getLabel() ); // "driver" --> "driverCode" TODO ?
-		assertEquals(Integer.valueOf(20), driverCodeAttribute.getMaxLength() ); // same as original attribute
+		assertEquals(Integer.valueOf(20), car_driverAttribute.getMaxLength() );
 		
+		
+		
+		//Attribute driverFK = carEntity.getAttributeByName("driver"); // Reference to "Driver"
+		//assertNotNull(driverFK);
+		assertEquals("long", car_driverAttribute.getNeutralType() ); // same as original attribute
+		assertEquals(car_driverAttribute.getName(), car_driverAttribute.getLabel() ); 
+		assertEquals(Integer.valueOf(20), car_driverAttribute.getMaxLength() ); // same as original attribute
+		
+		assertTrue(car_driverAttribute.isFK()); // is "FK"
+		assertTrue(car_driverAttribute.isFKSimple()); // is "Simple FK" (is the only attribute in the FK)
+		assertFalse(car_driverAttribute.isFKComposite());
+		
+		//--- "Car" links
+		assertEquals(1, carEntity.getLinks().size());
+		assertEquals("Driver", carEntity.getLinks().get(0).getTargetEntityClassName());
+
 		//--- Get by class name
 		assertNotNull(model.getEntityByClassName("Car"));
 		assertNotNull(model.getEntityByClassName("Driver")); 
@@ -377,7 +397,6 @@ public class ConverterTest {
 		
 	}
 	
-
 	private Attribute getAttributeByName(Entity entity, String name) {
 		for(Attribute attribute : entity.getAttributes()) {
 			if(name.equals(attribute.getName())) {
