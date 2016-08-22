@@ -468,6 +468,7 @@ public class Converter {
         
         //--- Set flag as "Pseudo Foreign Key" (Simple FK) 
         genericAttribute.setFKSimple(true);
+        genericAttribute.setReferencedEntityClassName(referencedEntity.getName());
         
         return genericAttribute ;
         

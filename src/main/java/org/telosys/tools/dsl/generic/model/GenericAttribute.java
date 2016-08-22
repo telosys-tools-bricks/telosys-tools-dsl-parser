@@ -83,8 +83,9 @@ public class GenericAttribute implements Attribute {
 	
 	//private boolean isUsedInForeignKey = false;
 	// An attribute can be involved in many FK, it can be both in a SIMPLE FK and in a COMPOSITE FK 
-	private boolean _bForeignKeySimple     = false ; // ( false by default )
-	private boolean _bForeignKeyComposite  = false ; // ( always false in the DSL model )
+	private boolean isForeignKeySimple     = false ; // ( false by default )
+	private boolean isForeignKeyComposite  = false ; // ( always false in the DSL model )
+	private String  referencedEntityClassName = null ; // no reference by default
 
 
 	// Annotations added for types
@@ -536,15 +537,15 @@ public class GenericAttribute implements Attribute {
 //	}
 	@Override
 	public boolean isFK() {
-		return _bForeignKeySimple || _bForeignKeyComposite ;
+		return isForeignKeySimple || isForeignKeyComposite ;
 	}
 
 	public void setFKSimple(boolean flag) {
-		_bForeignKeySimple = flag ;
+		isForeignKeySimple = flag ;
 	}
 	@Override
 	public boolean isFKSimple() {
-		return _bForeignKeySimple;
+		return isForeignKeySimple;
 	}
 
 // Never "Composite" in this model (DSL)
@@ -553,7 +554,20 @@ public class GenericAttribute implements Attribute {
 //	}
 	@Override
 	public boolean isFKComposite() {
-		return _bForeignKeyComposite;
+		return isForeignKeyComposite; // Always FALSE (never "Composite" in a DSL model)
+	}
+
+	public void setReferencedEntityClassName(String entityClassName) {
+		referencedEntityClassName = entityClassName ;
+	}
+	@Override
+	public String getReferencedEntityClassName() {
+		if ( isFK() ) {
+			return referencedEntityClassName ;
+		}
+		else {
+			return null ;
+		}
 	}
 	
 	//----------------------------------------------------------------------------------
