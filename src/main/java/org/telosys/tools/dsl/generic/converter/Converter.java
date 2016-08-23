@@ -93,6 +93,22 @@ public class Converter {
 	}
 	
 	/**
+	 * Returns TRUE if the given field can be considered as a "Pseudo Foreign Key"
+	 * @param domainEntityField
+	 * @return
+	 */
+	private boolean isPseudoForeignKey(DomainEntityField domainEntityField) {
+		DomainType domainFieldType = domainEntityField.getType();
+		if ( domainFieldType.isEntity() ) { // The field must reference an Entity 
+			if ( domainEntityField.getCardinality() == 1 ) { // The field must reference 1 and only 1 Entity
+				return true ;
+			}
+			// If cardinality > 1 : not a FK, just a link "OneToMany"
+		}
+		return false ;
+	}
+	
+	/**
 	 * Define all entities and attributes
 	 * @param domainModel DSL model
 	 * @param genericModel Generic model
@@ -113,7 +129,7 @@ public class Converter {
 		for(DomainEntity domainEntity : domainModel.getEntities()) {
 			// Get the GenericEntity built previously
 			GenericEntity genericEntity = (GenericEntity) genericModel.getEntityByClassName(domainEntity.getName());
-			// Convert all attributes to "basic type" or "void attribute" if reference to an entity
+			// Convert all attributes to "basic type" or "void pseudo FK attribute" (to keep the initial attributes order)
 			convertAttributes(domainEntity, genericEntity, genericModel);
 		}
 		
@@ -131,7 +147,8 @@ public class Converter {
 			GenericEntity genericEntity = (GenericEntity) genericModel.getEntityByClassName(domainEntity.getName());
 			// Replaces the "pseudo FK" attributes if any
 			for ( DomainEntityField field : domainEntity.getFields() ) {
-	            if ( field.getType().isEntity() ) {
+	            //if ( field.getType().isEntity() ) {
+	            if ( isPseudoForeignKey(field) ) {
 	            	// Build the "pseudo FK attribute"
 	            	GenericAttribute pseudoFKAttribute = convertAttributePseudoForeignKey(field);
 	            	// Search the original "void attribute" in the "GenericEntity" and replace it by the "pseudo FK attribute"
@@ -192,11 +209,15 @@ public class Converter {
 //            	// Add the new link to the entity 
 //               	genericEntity.getLinks().add(genericLink);
 //            }
-            else if (domainFieldType.isEntity() ) {
-            	// Add a "temporary void attribute" at the expected position in the attributes list
-                GenericAttribute genericAttribute = new GenericAttribute();
-                genericAttribute.setName( notNull(domainEntityField.getName()) );
-            	genericEntity.getAttributes().add(genericAttribute);
+            //else if (domainFieldType.isEntity() ) {
+            else {
+            	// Not a "neutral type" ==> "entity reference" ?
+            	if ( isPseudoForeignKey(domainEntityField) ) {
+                	// Add a "temporary void attribute" at the expected position in the attributes list
+                    GenericAttribute genericAttribute = new GenericAttribute();
+                    genericAttribute.setName( notNull(domainEntityField.getName()) );
+                	genericEntity.getAttributes().add(genericAttribute);
+            	}
             }
 		}
 	}

@@ -23,7 +23,7 @@ public class DomainEntityField {
 
     private final String name;
     private final DomainType type;
-    private final int cardinality;
+    private final int cardinality; // if != 1 : "ONE-TO-MANY"
     public static final int THIRTY_ONE = 31;
 
     /*
@@ -34,6 +34,11 @@ public class DomainEntityField {
 
     private final Map<String, DomainEntityFieldAnnotation> annotations = new Hashtable<String, DomainEntityFieldAnnotation>();
 
+    /**
+     * Constructor with default cardinality of 1
+     * @param name
+     * @param type
+     */
     public DomainEntityField(String name, DomainType type) {
         // this.annotationList = new ArrayList<DomainEntityFieldAnnotation>();
         this.name = name;
@@ -41,6 +46,12 @@ public class DomainEntityField {
         this.cardinality = 1;
     }
 
+    /**
+     * Constructor with specific cardinality
+     * @param name
+     * @param type
+     * @param cardinality
+     */
     public DomainEntityField(String name, DomainType type, int cardinality) {
         this.name = name;
         this.type = type;
@@ -70,6 +81,12 @@ public class DomainEntityField {
         return type;
     }
 
+    /**
+     * Returns the cardinality <br>
+     * 1 = standard <br>
+     * Not 1 = multiple (0..N) <br>
+     * @return
+     */
     public final int getCardinality() {
         return cardinality;
     }

@@ -1,9 +1,10 @@
 package org.telosys.tools.dsl.generic.converter;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 
@@ -20,7 +21,9 @@ import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralType;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.generic.model.Attribute;
+import org.telosys.tools.generic.model.Cardinality;
 import org.telosys.tools.generic.model.Entity;
+import org.telosys.tools.generic.model.Link;
 import org.telosys.tools.generic.model.Model;
 import org.telosys.tools.generic.model.ModelType;
 
@@ -300,7 +303,7 @@ public class ConverterTest {
 //
 //	}
 	
-	private DomainModel buildModel() {
+	private DomainModel buildFullModel() {
 		DomainModel domainModel = new DomainModel("TestDomainModel");
 		
 		//--- "Driver" entity
@@ -317,37 +320,116 @@ public class ConverterTest {
 		carEntity.addField(new DomainEntityField("name",   new DomainNeutralType("string")) );
 		carEntity.addField(new DomainEntityField("driver", driverEntity) ); // Reference to "Driver"
 		
+		//--- "Group" entity referencing N "Driver" entity
+		DomainEntity groupEntity = new DomainEntity("Group");
+		
+		DomainEntityField groupId = new DomainEntityField("id",     new DomainNeutralType("int"));
+		groupId.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.ID));
+		groupEntity.addField(groupId);
+		
+		groupEntity.addField(new DomainEntityField("name",   new DomainNeutralType("string")) );
+		groupEntity.addField(new DomainEntityField("drivers", driverEntity, -1) ); // Reference to "Driver"
+		
 		//--- Add entities to model
 		domainModel.addEntity(carEntity);
 		domainModel.addEntity(driverEntity);
+		domainModel.addEntity(groupEntity);
 		
-		//--- Check original model
-		assertEquals(2, domainModel.getEntities().size() );
+		//--- Check original model 
+		// Number of entities
+		assertEquals(3, domainModel.getEntities().size() );
+		// Number of fields
 		assertEquals(1, driverEntity.getFields().size() );
 		assertEquals(3, carEntity.getFields().size() );
+		assertEquals(3, groupEntity.getFields().size() );
 		
 		return domainModel ;
 	}
 	
 	@Test
-	public void testAttributeWithLink() {
+	public void testFullModel() {
 		// Given		
-		DomainModel domainModel = buildModel() ;
+		DomainModel domainModel = buildFullModel() ;
 		
 		// When
 		Model model = converter.convertToGenericModel(domainModel);
 		
 		// Then
-		assertEquals(2, model.getEntities().size());
 		
-		//--- "Driver" entity
-		GenericEntity driverEntity = (GenericEntity) model.getEntityByClassName("Driver");
-		//assertNull( entity_2.getDatabaseTable());
-		assertEquals("Driver", driverEntity.getDatabaseTable() );
 		
 		//--- "Car" entity
-		GenericEntity carEntity = (GenericEntity) model.getEntityByClassName("Car");
+		checkCarEntity((GenericEntity) model.getEntityByClassName("Car"));
+		
+		//--- "Driver" entity
+//		GenericEntity driverEntity = (GenericEntity) model.getEntityByClassName("Driver");
+//		//assertNull( entity_2.getDatabaseTable());
+//		assertEquals("Driver", driverEntity.getDatabaseTable() );
+		checkDriverEntity((GenericEntity) model.getEntityByClassName("Driver"));
+		
+		//--- "Group" entity
+		checkGroupEntity((GenericEntity) model.getEntityByClassName("Group"));
+
+//		GenericEntity carEntity = (GenericEntity) model.getEntityByClassName("Car");
+//		assertEquals("Car", carEntity.getClassName());
+//		for ( Attribute attribute : carEntity.getAttributes() ) {
+//			System.out.println(" . " + attribute.getName() );
+//		}
+//		assertEquals(3, carEntity.getAttributes().size() );
+//		assertNotNull(carEntity.getAttributeByName("id"));
+//		assertNotNull(carEntity.getAttributeByName("name"));
+//		assertNotNull(carEntity.getAttributeByName("driver"));
+//
+//		//--- "Car" - "name" attribute
+//		Attribute car_nameAttribute = carEntity.getAttributeByName("name");
+//		assertNotNull(car_nameAttribute);
+//		assertEquals("string", car_nameAttribute.getNeutralType() );
+//		assertFalse(car_nameAttribute.isFK()); 
+//		assertFalse(car_nameAttribute.isFKSimple()); 
+//		assertFalse(car_nameAttribute.isFKComposite());
+//		
+//		//--- "Car" - "driver" attribute ( "pseudo FK" )
+//		Attribute car_driverAttribute = carEntity.getAttributeByName("driver");
+//		assertNotNull(car_driverAttribute);
+//		assertEquals("long", car_driverAttribute.getNeutralType() );
+//		//assertEquals("driverCode", driverAttribute.getLabel() ); // "driver" --> "driverCode" TODO ?
+//		assertEquals(Integer.valueOf(20), car_driverAttribute.getMaxLength() );
+		
+//		//Attribute driverFK = carEntity.getAttributeByName("driver"); // Reference to "Driver"
+//		//assertNotNull(driverFK);
+//		assertEquals("long", car_driverAttribute.getNeutralType() ); // same as original attribute
+//		assertEquals(car_driverAttribute.getName(), car_driverAttribute.getLabel() ); 
+//		assertEquals(Integer.valueOf(20), car_driverAttribute.getMaxLength() ); // same as original attribute
+//		
+//		assertTrue(car_driverAttribute.isFK()); // is "FK"
+//		assertTrue(car_driverAttribute.isFKSimple()); // is "Simple FK" (is the only attribute in the FK)
+//		assertFalse(car_driverAttribute.isFKComposite());
+//		
+//		//--- "Car" links
+//		assertEquals(1, carEntity.getLinks().size());
+//		assertEquals("Driver", carEntity.getLinks().get(0).getTargetEntityClassName());
+
+		//--- Get by class name
+		assertNotNull(model.getEntityByClassName("Car"));
+		assertNotNull(model.getEntityByClassName("Driver")); 
+		
+		//--- Get by table name ( table name = class name )
+		assertNotNull(model.getEntityByTableName("Car"));
+		assertNotNull(model.getEntityByTableName("Driver"));
+		
+	}
+	
+	/**
+	 * Check "Car" entity
+	 * @param carEntity
+	 */
+	private void checkCarEntity(GenericEntity carEntity) {
+
+		System.out.println("check 'Car' entity...");
+		
 		assertEquals("Car", carEntity.getClassName());
+		assertEquals("Car", carEntity.getDatabaseTable() );
+		
+		//--- "Car" attributes
 		for ( Attribute attribute : carEntity.getAttributes() ) {
 			System.out.println(" . " + attribute.getName() );
 		}
@@ -370,11 +452,6 @@ public class ConverterTest {
 		assertEquals("long", car_driverAttribute.getNeutralType() );
 		//assertEquals("driverCode", driverAttribute.getLabel() ); // "driver" --> "driverCode" TODO ?
 		assertEquals(Integer.valueOf(20), car_driverAttribute.getMaxLength() );
-		
-		
-		
-		//Attribute driverFK = carEntity.getAttributeByName("driver"); // Reference to "Driver"
-		//assertNotNull(driverFK);
 		assertEquals("long", car_driverAttribute.getNeutralType() ); // same as original attribute
 		assertEquals(car_driverAttribute.getName(), car_driverAttribute.getLabel() ); 
 		assertEquals(Integer.valueOf(20), car_driverAttribute.getMaxLength() ); // same as original attribute
@@ -384,17 +461,70 @@ public class ConverterTest {
 		assertFalse(car_driverAttribute.isFKComposite());
 		
 		//--- "Car" links
-		assertEquals(1, carEntity.getLinks().size());
-		assertEquals("Driver", carEntity.getLinks().get(0).getTargetEntityClassName());
+		assertEquals(1, carEntity.getLinks().size()); 
+		
+		Link driver = carEntity.getLinks().get(0);
+		assertEquals(Cardinality.MANY_TO_ONE, driver.getCardinality() );
+		assertEquals("Driver", driver.getTargetEntityClassName());
+		
+	}
+	
+	/**
+	 * Check "Driver" entity
+	 * @param driverEntity
+	 */
+	private void checkDriverEntity(GenericEntity driverEntity) {
+		System.out.println("check 'Driver' entity...");
+		assertEquals("Driver", driverEntity.getClassName() );
+		assertEquals("Driver", driverEntity.getDatabaseTable() );
+		//--- Attributes
+		for ( Attribute attribute : driverEntity.getAttributes() ) {
+			System.out.println(" . " + attribute.getName() );
+		}
+	}
+	
+	/**
+	 * Check "Group" entity
+	 * @param groupEntity
+	 */
+	private void checkGroupEntity(GenericEntity groupEntity) {
+		System.out.println("check 'Group' entity...");
+		assertEquals("Group", groupEntity.getClassName() );
+		assertEquals("Group", groupEntity.getDatabaseTable() );
+		
+		//--- Attributes
+		for ( Attribute attribute : groupEntity.getAttributes() ) {
+			System.out.println(" . " + attribute.getName() );
+		}
 
-		//--- Get by class name
-		assertNotNull(model.getEntityByClassName("Car"));
-		assertNotNull(model.getEntityByClassName("Driver")); 
+		assertEquals(2, groupEntity.getAttributes().size() ); // "drivers" is not a "pseudo FK attribute" => not in attributes list
+		assertNotNull(groupEntity.getAttributeByName("id"));
+		assertNotNull(groupEntity.getAttributeByName("name"));
+		assertNull(groupEntity.getAttributeByName("drivers")); // not an attribute (cardinality is 0..N)
+
+		//--- "id" attribute
+		Attribute id = groupEntity.getAttributeByName("id");
+		assertNotNull(id);
+		assertEquals("int", id.getNeutralType() );
+		assertTrue(id.isKeyElement()); 
+		assertFalse(id.isFK()); 
+		assertFalse(id.isFKSimple()); 
+		assertFalse(id.isFKComposite());
 		
-		//--- Get by table name ( table name = class name )
-		assertNotNull(model.getEntityByTableName("Car"));
-		assertNotNull(model.getEntityByTableName("Driver"));
+		//--- "name" attribute
+		Attribute name = groupEntity.getAttributeByName("name");
+		assertNotNull(name);
+		assertEquals("string", name.getNeutralType() );
+		assertFalse(name.isKeyElement()); 
+		assertFalse(name.isFK()); 
+		assertFalse(name.isFKSimple()); 
+		assertFalse(name.isFKComposite());
 		
+		//--- Links
+		assertEquals(1, groupEntity.getLinks().size());
+		Link drivers = groupEntity.getLinks().get(0);
+		assertEquals(Cardinality.ONE_TO_MANY, drivers.getCardinality() );
+		assertEquals("Driver", drivers.getTargetEntityClassName());
 	}
 	
 	private Attribute getAttributeByName(Entity entity, String name) {
