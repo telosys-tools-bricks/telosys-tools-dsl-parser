@@ -305,24 +305,31 @@ public class ConverterTest {
 	
 	private DomainModel buildFullModel() {
 		DomainModel domainModel = new DomainModel("TestDomainModel");
+
+		DomainEntity carEntity = new DomainEntity("Car");
+		DomainEntity driverEntity = new DomainEntity("Driver");
+		DomainEntity groupEntity = new DomainEntity("Group");
 		
 		//--- "Driver" entity
-		DomainEntity driverEntity = new DomainEntity("Driver");
 		DomainEntityField driverCode = new DomainEntityField("code", new DomainNeutralType("long"));
 		driverCode.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.ID));
 		driverCode.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.SIZE_MAX, new Integer(20) ));
 		//driverCode.setAnnotationList(annotationList);
 		driverEntity.addField(driverCode);
+		
+		driverEntity.addField( new DomainEntityField("firstName", new DomainNeutralType("string") ) );
+		driverEntity.addField( new DomainEntityField("lastName",  new DomainNeutralType("string") ) );
+		driverEntity.addField( new DomainEntityField("car",  carEntity, 1 ) );
 
 		//--- "Car" entity referencing "Driver" entity
-		DomainEntity carEntity = new DomainEntity("Car");
-		carEntity.addField(new DomainEntityField("id",     new DomainNeutralType("short")));
+		DomainEntityField carId = new DomainEntityField("id",     new DomainNeutralType("short") );
+		carId.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.ID));
+		carEntity.addField(carId);
+		
 		carEntity.addField(new DomainEntityField("name",   new DomainNeutralType("string")) );
 		carEntity.addField(new DomainEntityField("driver", driverEntity) ); // Reference to "Driver"
 		
 		//--- "Group" entity referencing N "Driver" entity
-		DomainEntity groupEntity = new DomainEntity("Group");
-		
 		DomainEntityField groupId = new DomainEntityField("id",     new DomainNeutralType("int"));
 		groupId.addAnnotation(new DomainEntityFieldAnnotation(AnnotationName.ID));
 		groupEntity.addField(groupId);
@@ -339,7 +346,7 @@ public class ConverterTest {
 		// Number of entities
 		assertEquals(3, domainModel.getEntities().size() );
 		// Number of fields
-		assertEquals(1, driverEntity.getFields().size() );
+		assertEquals(4, driverEntity.getFields().size() );
 		assertEquals(3, carEntity.getFields().size() );
 		assertEquals(3, groupEntity.getFields().size() );
 		
@@ -481,6 +488,12 @@ public class ConverterTest {
 		for ( Attribute attribute : driverEntity.getAttributes() ) {
 			System.out.println(" . " + attribute.getName() );
 		}
+
+		//--- Links
+		assertEquals(1, driverEntity.getLinks().size());
+		Link car = driverEntity.getLinks().get(0);
+		assertEquals(Cardinality.MANY_TO_ONE, car.getCardinality() );
+		assertEquals("Car", car.getTargetEntityClassName());
 	}
 	
 	/**
