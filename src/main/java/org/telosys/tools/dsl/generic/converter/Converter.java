@@ -565,7 +565,7 @@ public class Converter {
 		GenericLink genericLink = new GenericLink();
 
 		genericLink.setId("Link"+linkIdCounter); // Link ID : generated (just to ensure not null )
-		genericLink.setSelected(true); // nothing for link selection => selected by default
+		//genericLink.setSelected(true); // nothing for link selection => selected by default
 		
 		// Set target entity info
 		//genericLink.setTargetEntityClassName(notNull(domainEntityTarget.getName()));

@@ -602,4 +602,17 @@ public class GenericAttribute implements Attribute {
 	public void setUnsignedTypeExpected(boolean v) {
 		this.isUnsignedTypeExpected = v ;
 	}
+	
+	@Override
+	public boolean isUsedInLinks() {
+		// In this model an attribute is "used in links" if it's a FK (or pseudo FK)
+		return isFK();
+	}
+	
+	@Override
+	public boolean isUsedInSelectedLinks() {
+		// No "link selection" in this model 
+		// Then all links are considered as "selected" => same as "isUsedInLinks()"
+		return isUsedInLinks();
+	}
 }

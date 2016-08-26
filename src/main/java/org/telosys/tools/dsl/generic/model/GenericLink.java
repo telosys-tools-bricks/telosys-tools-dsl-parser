@@ -29,7 +29,7 @@ public class GenericLink implements Link {
     private String fieldType;
     private boolean owningSide;
     private String mappedBy;
-    private boolean selected;
+    private final boolean selected = true ; // Always considered as "selected" 
     private String sourceTableName;
     private boolean inverseSide;
     private String inverseSideLinkId;
@@ -119,12 +119,12 @@ public class GenericLink implements Link {
 
     @Override
     public boolean isSelected() {
-        return selected;
+        return selected; // Always "TRUE" ( "SELECTED" )
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
+//    public void setSelected(boolean selected) {
+//        this.selected = selected;
+//    }
 
     @Override
     public String getSourceTableName() {
