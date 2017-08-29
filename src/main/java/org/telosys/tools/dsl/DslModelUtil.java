@@ -35,11 +35,23 @@ public class DslModelUtil {
     //-------------------------------------------------------------------------------------------------
     // Names from file name
     //-------------------------------------------------------------------------------------------------
+    /**
+     * Adds the ".model" extension to the given model name if necessary 
+     * @param modelName
+     * @return
+     */
     public static String getModelShortFileName(String modelName) {
     	if ( modelName == null ) {
     		throw new IllegalArgumentException("model name is null");
     	}
-    	return modelName.trim() + DOT_MODEL ;
+    	if ( ! modelName.endsWith(DOT_MODEL) ) {
+    		// it doesn't have the extension => add it 
+        	return modelName.trim() + DOT_MODEL ;
+    	}
+    	else {
+    		// it already has the extension => return it as is 
+        	return modelName ;
+    	}
     }
     
     /**
