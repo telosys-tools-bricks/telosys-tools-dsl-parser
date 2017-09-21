@@ -48,16 +48,47 @@ The name of the enumeration must be the same as the file and start with an upper
 
 If no type is defined the default type is integer.
 
+List of simple types
+====================
+* binary
+* boolean
+* byte
+* date
+* decimal
+* double
+* float
+* int
+* long
+* short
+* string
+* time
+* timestamp
+
 List of annotations
-==================
+===================
     @Id - Indicate the primary key of an entity
-    @NotNull - Indicate that this field cannot be emty
+    @NotNull - Indicate that this field cannot be not defined
+    @NotEmpty - Indicate that this field cannot be empty
+    @NotBlank - ?
+    @LongText - ?
     @Min() - The minimum value (integer type only), integer parameter required between the parenthesis
     @Max() - The maximum value (integer type only), integer parameter required between the parenthesis
     @SizeMin() - The minimum size of the field, integer parameter required between the parenthesis
     @SizeMax() - The maximum size ot the field, integer parameter required between the parenthesis
     @Past - ?
     @Future - ?
+
+Set multiple annotations on a field
+===================================
+
+To set multiple annotation on a field, you have to separate them with comma.
+For instance, if you want to have an auto-incremented id you can do this :
+
+        Library {
+          id : integer {@Id, @AutoIncremented}; // the id
+          ...
+        }
+
 
 How-to test
 ===========
