@@ -18,8 +18,8 @@ package org.telosys.tools.dsl.generic.converter;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import org.telosys.tools.commons.ConsoleLogger;
 import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.commons.logger.ConsoleLogger;
 import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.generic.model.GenericAttribute;
 import org.telosys.tools.dsl.generic.model.GenericEntity;
@@ -42,7 +42,7 @@ import org.telosys.tools.generic.model.Optional;
 
 public class Converter {
 	
-	private final static boolean log = true ;
+	private final static boolean log = false ;
 	private final static TelosysToolsLogger logger = new ConsoleLogger();
 	private void log(String msg) {
 		if ( log ) {
