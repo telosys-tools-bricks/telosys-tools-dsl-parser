@@ -220,26 +220,28 @@ public class DslModelUtil {
     //-----------------------------------------------------------------------------------------------------------
     /**
      * Creates a new entity file 
+     * (the first caracter of the entity name is converted tu uppper-case if necessary)
      * @param modelFile the model file defining the model for the entity to be created
      * @param entityName the entity name ( e.g. 'Book' or 'Car' )
      * @return the entity file 
      */
     public static File createNewEntity(File modelFile, String entityName) {
+    	String entityNameInModel = StrUtil.capitalize(entityName);
     	StringBuffer sb = new StringBuffer();
-    	sb.append("// Entity "); sb.append(entityName); sb.append("\n");
+    	sb.append("// Entity "); sb.append(entityNameInModel); sb.append("\n");
     	sb.append("\n");
-    	sb.append(entityName); sb.append(" {\n");
+    	sb.append(entityNameInModel); sb.append(" {\n");
     	sb.append("  myfield : string ; // field example \n" );
     	sb.append("}\n");
     	String content = sb.toString() ;
     	
-    	File entityFile = buildEntityFile(modelFile, entityName);
+    	File entityFile = buildEntityFile(modelFile, entityNameInModel);
     	if ( ! entityFile.exists() ) {
         	try {
 				FileUtil.copy(content, entityFile, true);
 	        	return entityFile ;
 			} catch (Exception e) {
-				throw new RuntimeException("Cannot create new entity '" + entityName + "'", e);
+				throw new RuntimeException("Cannot create new entity '" + entityNameInModel + "'", e);
 			}
     	}
     	else {
