@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.generic.model;
+package org.telosys.tools.dsl.model;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -24,7 +24,7 @@ import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.Link;
 
-public class GenericEntity implements Entity {
+public class DslModelEntity implements Entity {
 
 	private String className;
 	private String packageName;

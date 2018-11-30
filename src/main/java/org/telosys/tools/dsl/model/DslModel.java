@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.generic.model;
+package org.telosys.tools.dsl.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,16 +24,16 @@ import org.telosys.tools.generic.model.Model;
 import org.telosys.tools.generic.model.ModelType;
 import org.telosys.tools.generic.model.util.EntityClassNameComparator;
 
-public class GenericModel implements Model {
+public class DslModel implements Model {
 	
-	private final ModelType type    = ModelType.DOMAIN_SPECIFIC_LANGUAGE ;
-	private final String    version = GenericModelVersion.VERSION ;
+	private static final ModelType MODEL_TYPE    = ModelType.DOMAIN_SPECIFIC_LANGUAGE ;
+	private static final String    MODEL_VERSION = DslModelVersion.VERSION ;
 
 	private String name = "";
 	private String description = "";
 	private Integer databaseId;
 	private String databaseProductName	;
-	private List<Entity> entities = new ArrayList<Entity>();
+	private List<Entity> entities = new ArrayList<>();
 
 	@Override
 	public Entity getEntityByClassName(String entityClassName) {
@@ -47,7 +47,6 @@ public class GenericModel implements Model {
 	@Override
 	public Entity getEntityByTableName(String entityTableName) {
 		for(Entity entity : getEntities()) {
-//			if ( entityTableName.equals(entity.getFullName()) ) {
 			if ( entityTableName.equals(entity.getDatabaseTable() ) ) {
 				return entity;
 			}
@@ -65,11 +64,8 @@ public class GenericModel implements Model {
 
 	@Override
 	public String getVersion() {
-		return version;
+		return MODEL_VERSION;
 	}
-//	public void setVersion(String version) {
-//		this.version = version;
-//	}
 
 	@Override
 	public String getDescription() {
@@ -81,11 +77,8 @@ public class GenericModel implements Model {
 
 	@Override
 	public ModelType getType() {
-		return type;
+		return MODEL_TYPE;
 	}
-//	public void setType(ModelType type) {
-//		this.type = type;
-//	}
 	
 	@Override
 	public Integer getDatabaseId() {
@@ -107,9 +100,6 @@ public class GenericModel implements Model {
 	public List<Entity> getEntities() {
 		return entities;
 	}
-//	public void setEntities(List<Entity> entities) {
-//		this.entities = entities;
-//	}
 
 	public void sortEntitiesByClassName() {
 		Collections.sort(entities, new EntityClassNameComparator() ) ;

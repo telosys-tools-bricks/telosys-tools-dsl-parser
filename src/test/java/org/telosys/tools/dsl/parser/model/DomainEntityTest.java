@@ -7,7 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 
 public class DomainEntityTest {
 
@@ -83,21 +83,21 @@ public class DomainEntityTest {
 //		assertFalse ( field.isNeutralType() );
 //	}
 	
-	@Test ( expected = EntityParserException.class )
+	@Test ( expected = DslParserException.class )
 	public void testFieldDuplicated1() {
 		DomainEntity entity = new DomainEntity("Book") ;
 		entity.addField( new DomainEntityField("lastName", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
 		entity.addField( new DomainEntityField("lastName", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
 	}
 	
-	@Test ( expected = EntityParserException.class )
+	@Test ( expected = DslParserException.class )
 	public void testFieldDuplicated2() {
 		DomainEntity entity = new DomainEntity("Student") ;
 		entity.addField( new DomainEntityField("teacher", new DomainEntity("Teacher") ) );
 		entity.addField( new DomainEntityField("teacher", new DomainEntity("Teacher") ) );
 	}
 	
-	@Test ( expected = EntityParserException.class )
+	@Test ( expected = DslParserException.class )
 	public void testFieldDuplicated3() {
 		DomainEntity entity = new DomainEntity("Student") ;
 //		entity.addField( new DomainEntityField("studentType", new DomainEnumerationForString("StudentType") ) );

@@ -13,14 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.generic.model;
+package org.telosys.tools.dsl.model;
 
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.ForeignKeyColumn;
 
 import java.util.List;
 
-public class GenericForeignKey implements ForeignKey {
+public class DslModelForeignKey implements ForeignKey {
     private String name;
     private String tableName;
     private String referencedTableName;

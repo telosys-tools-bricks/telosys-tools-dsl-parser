@@ -21,7 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import org.telosys.tools.dsl.DslModelUtil;
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntityField;
 import org.telosys.tools.dsl.parser.model.DomainModel;
@@ -65,7 +65,7 @@ public class EntityParser extends AbstractParser {
         try {
             is = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            throw new EntityParserException( "File Not found : "+ file.getAbsolutePath() );
+            throw new DslParserException( "File Not found : "+ file.getAbsolutePath() );
         }
         String entityNameFromFileName = DslModelUtil.getEntityName(file);
         return this.parse(is, entityNameFromFileName);
@@ -159,23 +159,23 @@ public class EntityParser extends AbstractParser {
      * Verify the structure of an entity
      * @param entity
      * @param entityNameFromFileName
-     * @throws EntityParserException
+     * @throws DslParserException
      */
-    private void verifyEntityStructure(DomainEntity entity, String entityNameFromFileName) throws EntityParserException {
+    private void verifyEntityStructure(DomainEntity entity, String entityNameFromFileName) throws DslParserException {
         DomainEntityField fieldWithId = null;
         for (DomainEntityField tmp : entity.getFields()) {
             if (tmp.getAnnotationNames().contains("Id")) {
                 if (fieldWithId != null) {
-                    throw new EntityParserException(entityNameFromFileName + " : The Id is defined more than once"
+                    throw new DslParserException(entityNameFromFileName + " : The Id is defined more than once"
                     			+ " (entity " + entity.getName() + ")" );
                 }
                 if (tmp.getCardinality() != 1) {
-                    throw new EntityParserException(entityNameFromFileName + " : The Id cannot be an array"
+                    throw new DslParserException(entityNameFromFileName + " : The Id cannot be an array"
                     			+ " (entity " + entity.getName() + ")" );
                 }
                 if (tmp.isNeutralType()) {
                     if (tmp.getTypeName().equals(DomainNeutralTypes.BINARY_BLOB) ) {
-                        throw new EntityParserException(entityNameFromFileName + " : The Id cannot be a binary"
+                        throw new DslParserException(entityNameFromFileName + " : The Id cannot be a binary"
                     			+ " (entity " + entity.getName() + ")" );
                     }
                 }

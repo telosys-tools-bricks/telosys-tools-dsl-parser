@@ -15,7 +15,7 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 
 import java.util.*;
 
@@ -72,7 +72,7 @@ public final class DomainNeutralTypes {
         if (NEUTRAL_TYPES.containsKey(typeName)) {
             return NEUTRAL_TYPES.get(typeName);
         } else {
-            throw new EntityParserException("Invalid neutral type name '" + typeName + "'");
+            throw new DslParserException("Invalid neutral type name '" + typeName + "'");
         }
     }
 

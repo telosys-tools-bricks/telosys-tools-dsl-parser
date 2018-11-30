@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.generic.model;
+package org.telosys.tools.dsl.model;
 
 import java.math.BigDecimal;
 
@@ -21,7 +21,7 @@ import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.DateType;
 import org.telosys.tools.generic.model.Entity;
 
-public class GenericAttribute implements Attribute {
+public class DslModelAttribute implements Attribute {
 	
 	// Use Java type converter by default
 //	private final static TypeConverter typeConverter = new TypeConverterForJava() ;

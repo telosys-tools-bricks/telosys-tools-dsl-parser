@@ -32,7 +32,10 @@ public class DslModelUtil {
     private static final String DOT_ENTITY          = ".entity" ;
     private static final String MODEL_FOLDER_SUFFIX = "_model"  ;
 
-    //-------------------------------------------------------------------------------------------------
+    private DslModelUtil() {
+	}
+
+	//-------------------------------------------------------------------------------------------------
     // Names from file name
     //-------------------------------------------------------------------------------------------------
     /**
@@ -227,7 +230,7 @@ public class DslModelUtil {
      */
     public static File createNewEntity(File modelFile, String entityName) {
     	String entityNameInModel = StrUtil.capitalize(entityName);
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	sb.append("// Entity "); sb.append(entityNameInModel); sb.append("\n");
     	sb.append("\n");
     	sb.append(entityNameInModel); sb.append(" {\n");
@@ -265,7 +268,6 @@ public class DslModelUtil {
     		return new File(modelFilePath);
     	}
     	else {
-    		//throw new IllegalArgumentException("Invalid entity file");
     		return null ;
     	}
     }

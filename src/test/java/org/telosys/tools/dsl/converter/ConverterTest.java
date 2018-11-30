@@ -1,4 +1,4 @@
-package org.telosys.tools.dsl.generic.converter;
+package org.telosys.tools.dsl.converter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -10,10 +10,8 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.AnnotationName;
-//import org.junit.runner.RunWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.runners.MockitoJUnitRunner;
-import org.telosys.tools.dsl.generic.model.GenericEntity;
+import org.telosys.tools.dsl.converter.Converter;
+import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntityField;
 import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
@@ -365,16 +363,16 @@ public class ConverterTest {
 		
 		
 		//--- "Car" entity
-		checkCarEntity((GenericEntity) model.getEntityByClassName("Car"));
+		checkCarEntity((DslModelEntity) model.getEntityByClassName("Car"));
 		
 		//--- "Driver" entity
 //		GenericEntity driverEntity = (GenericEntity) model.getEntityByClassName("Driver");
 //		//assertNull( entity_2.getDatabaseTable());
 //		assertEquals("Driver", driverEntity.getDatabaseTable() );
-		checkDriverEntity((GenericEntity) model.getEntityByClassName("Driver"));
+		checkDriverEntity((DslModelEntity) model.getEntityByClassName("Driver"));
 		
 		//--- "Group" entity
-		checkGroupEntity((GenericEntity) model.getEntityByClassName("Group"));
+		checkGroupEntity((DslModelEntity) model.getEntityByClassName("Group"));
 
 //		GenericEntity carEntity = (GenericEntity) model.getEntityByClassName("Car");
 //		assertEquals("Car", carEntity.getClassName());
@@ -429,7 +427,7 @@ public class ConverterTest {
 	 * Check "Car" entity
 	 * @param carEntity
 	 */
-	private void checkCarEntity(GenericEntity carEntity) {
+	private void checkCarEntity(DslModelEntity carEntity) {
 
 		System.out.println("check 'Car' entity...");
 		
@@ -480,7 +478,7 @@ public class ConverterTest {
 	 * Check "Driver" entity
 	 * @param driverEntity
 	 */
-	private void checkDriverEntity(GenericEntity driverEntity) {
+	private void checkDriverEntity(DslModelEntity driverEntity) {
 		System.out.println("check 'Driver' entity...");
 		assertEquals("Driver", driverEntity.getClassName() );
 		assertEquals("Driver", driverEntity.getDatabaseTable() );
@@ -500,7 +498,7 @@ public class ConverterTest {
 	 * Check "Group" entity
 	 * @param groupEntity
 	 */
-	private void checkGroupEntity(GenericEntity groupEntity) {
+	private void checkGroupEntity(DslModelEntity groupEntity) {
 		System.out.println("check 'Group' entity...");
 		assertEquals("Group", groupEntity.getClassName() );
 		assertEquals("Group", groupEntity.getDatabaseTable() );

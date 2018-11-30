@@ -32,7 +32,7 @@ public class DomainModelParserTest {
 	public void testFileWithData() {
 		String modelLocation = "/models/test1-model/toto.model" ;
 		System.out.println("Parsing model : " + modelLocation );
-		DomainModelParser parser = new DomainModelParser();
+		Parser parser = new Parser();
 		File file = getFileByClassPath(modelLocation);
 		System.out.println("File : " + file );
 		DomainModel model = parser.parse(file);
@@ -45,7 +45,7 @@ public class DomainModelParserTest {
 	public void testFileWithoutData() {
 		String modelLocation = "/models/test2-model/toto.model" ;
 		System.out.println("Parsing model : " + modelLocation );
-		DomainModelParser parser = new DomainModelParser();
+		Parser parser = new Parser();
 		File file = getFileByClassPath(modelLocation);
 		System.out.println("File : " + file );
 		DomainModel model = parser.parse(file);

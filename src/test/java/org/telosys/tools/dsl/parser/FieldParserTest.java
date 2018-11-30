@@ -2,7 +2,7 @@ package org.telosys.tools.dsl.parser;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntityField;
 import org.telosys.tools.dsl.parser.model.DomainModel;
@@ -87,17 +87,17 @@ public class FieldParserTest {
     	Assert.assertEquals("@Id, @Max(12)", fieldParser.getAnnotations(ENTITY_NAME, "aa:string[2] { @Id, @Max(12) } ") );
 	}
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
 	public void testInvalidCardinality01() throws Exception {
     	FieldParser fieldParser = new FieldParser(getDomainModel());
     	fieldParser.getCardinality(ENTITY_NAME, "aa:string [-2]") ;
 	}
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
 	public void testInvalidCardinality02() throws Exception {
     	FieldParser fieldParser = new FieldParser(getDomainModel());
     	fieldParser.getCardinality(ENTITY_NAME, "aa:string [0]") ;
 	}
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
 	public void testInvalidCardinality03() throws Exception {
     	FieldParser fieldParser = new FieldParser(getDomainModel());
     	fieldParser.getCardinality(ENTITY_NAME, "aa:string [xx]") ;
@@ -206,142 +206,142 @@ public class FieldParserTest {
     //--------------------------------------------------------------------------
     // Invalid field syntax : EntityParserException expected
     //--------------------------------------------------------------------------
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxColon01() {
     	checkFieldSyntax( "aa:string : zzz");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxColon02() {
     	checkFieldSyntax( "aa string ");
     }    
     //--------------------------------------------------------------------------------------
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxCardinality01() {
     	checkFieldSyntax( "aa:string [[");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxCardinality02() {
     	checkFieldSyntax( "aa:string [3[]");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxCardinality03() {
     	checkFieldSyntax( "aa:string [3]]");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxCardinality04() {
     	checkFieldSyntax( "aa:string ]2[");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxCardinality05() {
     	checkFieldSyntax( "aa : string [6 ");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxCardinality06() {
     	checkFieldSyntax("aa : string 6]] ");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxCardinality07() {
     	checkFieldSyntax( "aa : string 6] ");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxCardinality08() {
     	checkFieldSyntax("aa : string [6 ");
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxAnnotations01() {
     	checkFieldSyntax("aa : string { @Id ");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxAnnotations02() {
     	checkFieldSyntax("aa : string { { @Id ");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxAnnotations03() {
     	checkFieldSyntax("aa : string @Id }");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxAnnotations04() {
     	checkFieldSyntax("aa : string { @Id }}");
     }    
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxAnnotations05() {
     	checkFieldSyntax("aa { : string @Id }");
     }    
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxAnnotations06() {
     	checkFieldSyntax("aa {@Id} : string ");
     }    
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidSyntaxAnnotations07() {
     	checkFieldSyntax("aa }@Id{ : string ");
     }    
     //--------------------------------------------------------------------------------------
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_NoFieldDescription01() {
         parseField("");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_NoFieldDescription02() {
         parseField("    ");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_NoFieldDescription03() {
         parseField("  \t \t  ");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_FieldTypeMissing() {
         parseField("id:");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_FieldNameMissing() {
         parseField(" : string");
     }
     
     //--- Bad cardinality
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_BadCardinality01() {
         parseField("code:string[n]");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_BadCardinality02() {
         parseField("code : string[-2]");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_BadCardinality03() {
         parseField("code : string[0]");
     }
     //--- Bad type
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_BadType0() {
         parseField("code : badtype");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_BadType1() {
         parseField("country :  Country");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_BadType2() {
         parseField("country : #Country");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_BadType3() {
         parseField("country : $Country");
     }
     //--- Bad syntax
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_BadSyntax01() {
         parseField("id");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_BadSyntax02() {
         parseField("name = string");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_BadSyntax03() {
         parseField("namestring");
     }
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testInvalidField_BadSyntax04() {
         parseField("idinteger");
     }

@@ -15,14 +15,17 @@
  */
 package org.telosys.tools.dsl;
 
-public class EntityParserException extends RuntimeException {
+/**
+ * DSL Parser Exception 
+ * 
+ * @author Laurent GUERIN
+ *
+ */
+public class DslParserException extends RuntimeException {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
-    public EntityParserException(String message) {
+    public DslParserException(String message) {
         super(message);
     }
 }

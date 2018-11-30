@@ -13,40 +13,8 @@
 
 	<name>telosys-tools-dsl-parser</name>
 	<artifactId>telosys-tools-dsl-parser</artifactId>
-	<version>${telosys-tools-dsl-parser.version}</version>
+	<version>${telosys-tools-dsl-parser.version}</version> <!-- Version defined in parent -->
 	<packaging>jar</packaging>
-
-<!-- 
-	<build>
-		<sourceDirectory>src/main/java</sourceDirectory>
-		<testSourceDirectory>src/test/java</testSourceDirectory>
-		<plugins>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>org.telosys.tools.dsl.parser.Application</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
--->
 
 	<dependencies>
 		<!-- For compilation -->
@@ -60,19 +28,6 @@
 			<artifactId>telosys-tools-commons</artifactId>
 			<version>${telosys-tools-commons.version}</version>
 		</dependency>
-		
-		<!-- 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.7</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>1.7.7</version>
-		</dependency>
-		 -->
 		
 		<!-- For tests -->
 		 

@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 
 public class DomainModelTest {
 
@@ -38,14 +38,14 @@ public class DomainModelTest {
 		}
 	}
 
-	@Test ( expected = EntityParserException.class )
+	@Test ( expected = DslParserException.class )
 	public void testEntityDuplicated() {
 		DomainModel model = new DomainModel("mymodel");
 		model.addEntity( new DomainEntity("Book") );
 		model.addEntity( new DomainEntity("Book") ); // ERROR expected
 	}
 
-	@Test ( expected = EntityParserException.class )
+	@Test ( expected = DslParserException.class )
 	public void testEntityWithNeutralTypeName() {
 		DomainModel model = new DomainModel("mymodel");
 		model.addEntity( new DomainEntity("string") ); // ERROR expected

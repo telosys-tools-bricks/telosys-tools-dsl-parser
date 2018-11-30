@@ -13,14 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.generic.model;
+package org.telosys.tools.dsl.model;
 
 import org.telosys.tools.generic.model.*;
 
 import java.util.List;
 import org.telosys.tools.generic.model.Optional;
 
-public class GenericLink implements Link {
+public class DslModelLink implements Link {
     private String id;
     private List<JoinColumn> joinColumns;
     private String targetTableName;
@@ -121,10 +121,6 @@ public class GenericLink implements Link {
     public boolean isSelected() {
         return selected; // Always "TRUE" ( "SELECTED" )
     }
-
-//    public void setSelected(boolean selected) {
-//        this.selected = selected;
-//    }
 
     @Override
     public String getSourceTableName() {

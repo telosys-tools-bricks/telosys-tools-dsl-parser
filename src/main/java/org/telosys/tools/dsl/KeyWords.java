@@ -23,15 +23,18 @@ import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 
 public class KeyWords {
 
+	private KeyWords() {
+	}
+
 	/**
 	 * String to start a single line comment
 	 */
-	private final static String SINGLE_LINE_COMMENT = "//" ;
+	private static final String SINGLE_LINE_COMMENT = "//" ;
 	
 	/**
 	 * List annotations names (# means numeric parameter required)
 	 */
-	private final static String[] annotations = { 
+	private static final String[] annotations = { 
 		
 		AnnotationName.ID, // "Id",
 		AnnotationName.AUTO_INCREMENTED,
@@ -65,7 +68,7 @@ public class KeyWords {
 	 * Return the single line comment string (ie '//' )  <br>
 	 * @return
 	 */
-	public final static String getSingleLineComment() {
+	public static final String getSingleLineComment() {
 		return SINGLE_LINE_COMMENT ;
 	}
 	
@@ -74,7 +77,7 @@ public class KeyWords {
 	 * e.g. 'string', 'integer', 'decimal', etc
 	 * @return
 	 */
-	public final static List<String> getNeutralTypes() {
+	public static final List<String> getNeutralTypes() {
 		return DomainNeutralTypes.getNames();
 	}
 	
@@ -83,7 +86,7 @@ public class KeyWords {
 	 * e.g. 'Id', 'NotNull', 'Min#', 'Max#', etc
 	 * @return
 	 */
-	public final static List<String> getAnnotations() {
+	public static final List<String> getAnnotations() {
 		return new LinkedList<String>(Arrays.asList(annotations));
 	}
 	

@@ -22,7 +22,7 @@ import java.util.Properties;
 
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.DslModelUtil;
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 
@@ -36,7 +36,7 @@ import org.telosys.tools.dsl.parser.model.DomainModel;
  * . etc <br>
  *
  */
-public class DomainModelParser {
+public class Parser {
 
 	/*
 	 * Entities files with errors 
@@ -101,7 +101,7 @@ public class DomainModelParser {
 				domainEntity = entityParser.parse(entityFileName);
 	        	//--- Populate
 	            model.populateEntityFileds(domainEntity.getName(), domainEntity.getFields() );
-			} catch (EntityParserException parsingException) {
+			} catch (DslParserException parsingException) {
 				errorsCount++ ;
 				File entityFile = new File(entityFileName);
 				entitiesErrors.put(entityFile.getName(), parsingException.getMessage() );
@@ -111,7 +111,7 @@ public class DomainModelParser {
             return model;
         }
         else {
-        	throw new EntityParserException( "Parsing error(s) : " + errorsCount + " invalid entity(ies) ") ;
+        	throw new DslParserException( "Parsing error(s) : " + errorsCount + " invalid entity(ies) ") ;
         }
     }
 

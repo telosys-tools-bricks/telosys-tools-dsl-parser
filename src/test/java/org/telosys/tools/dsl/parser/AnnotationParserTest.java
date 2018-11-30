@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
 
 public class AnnotationParserTest {
@@ -256,62 +256,62 @@ public class AnnotationParserTest {
     //-------------------------------------------------------------------------------------------
     // Parsing invalid annotations ( exception expected )
     //-------------------------------------------------------------------------------------------
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseUnknownAnnotation() {
         parseAnnotations("@BadAnnotation");
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseInvalidAnnotation() {
         parseAnnotations("Abcde");
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseMultipleAnnotationsWithWrongSyntax() {
         parseAnnotations( "@Id;@Max(3)" );
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseMultipleAnnotationsWithWrongSyntax2() {
         parseAnnotations( "@Id @Max(3)" );
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseAnnotationWithMissingParameter() {
         parseAnnotations( "@Max" );
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseAnnotationWithEmptyParameter() {
         parseAnnotations( "@Max()" );
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseAnnotationWithBadParameter() {
         parseAnnotations( "@Max(aa)" );
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseAnnotationWithUnexpectedParameter() {
         parseAnnotations( "@Id(12)" );
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseParameteredAnnotationWithWrongSyntax() {
         parseAnnotations( "@Max(3" );
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseAnnotationWithMissingStartParenthesis() {
         parseAnnotations( "@Id, @Max3)" );
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseAnnotationWithMissingEndParenthesis() {
         parseAnnotations( "@Id, @Max(3" );
 	}
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseAnnotationWithoutAt() {
         parseAnnotations( "#Id, @Max(3" );
     }

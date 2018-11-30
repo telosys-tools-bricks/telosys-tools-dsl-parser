@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 
 /**
  * Root class for a Domain Model built after Domain Specific Language text file parsing
@@ -100,12 +100,12 @@ public class DomainModel {
 	private final void checkName(String name) {
         // Do not accept an entity/enumeration with a "neutral type" name
         if (DomainNeutralTypes.exists(name)) {
-            throw new EntityParserException("Reserved name '" + name + "' (neutral type)");
+            throw new DslParserException("Reserved name '" + name + "' (neutral type)");
         }
 
         // Do not accept an entity and an enumeration with the same name /!\
         if (entities.get(name) != null) {
-            throw new EntityParserException("An entity already exists with name '" + name + "'");
+            throw new DslParserException("An entity already exists with name '" + name + "'");
         }
 //        if (enumerations.get(name) != null) {
 //            throw new EntityParserException("An enumeration already exists with name '" + name + "'");
@@ -228,7 +228,7 @@ public class DomainModel {
             }
         }
         else {
-            throw new EntityParserException("Cannot popumate entity '" + entityName + "' (not found in model).");
+            throw new DslParserException("Cannot popumate entity '" + entityName + "' (not found in model).");
         }
     }
 

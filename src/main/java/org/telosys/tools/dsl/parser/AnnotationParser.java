@@ -34,7 +34,7 @@ public class AnnotationParser extends AbstractParser  {
      * Constructor
      */
     public AnnotationParser() {
-    	//super(LoggerFactory.getLogger(AnnotationParser.class));
+    	super();
     }
     
     /**
@@ -96,10 +96,6 @@ public class AnnotationParser extends AbstractParser  {
         }
 
         //--- get the annotation name 
-//        String annotationName = getAnnotationName(annotationString);
-//        if ( ! annotationName.equals( getAnnotationWithoutParameter(annotationString)) ) {
-//    		throwAnnotationParsingError( entityName, fieldName, annotationString, "invalid syntax" );
-//        }
         String annotationName = null;
 		try {
 			annotationName = getAnnotationName(annotationString);
@@ -126,14 +122,10 @@ public class AnnotationParser extends AbstractParser  {
                 // Annotation name found in defined annotations
                 if ( annotationDefinition.endsWith("%") ) {
                 	// this annotation must have an integer parameter between ( and )
-//                	if ( parameterValue == null || parameterValue.length() == 0 ) {
-//                		throwAnnotationParsingError( entityName, fieldName, annotationString, "parameter required ");
-//                	}
                 	// Integer parameter required
                 	Integer numberValue = null ;
                 	try {
                 		numberValue = getParameterValueAsInteger(parameterValue);
-						//new BigDecimal(parameterValue) ;
 					} catch (Exception e) {
                 		throwAnnotationParsingError( entityName, fieldName, annotationString, "integer parameter required ");
 					}
@@ -197,25 +189,6 @@ public class AnnotationParser extends AbstractParser  {
     	return sb.toString();
     }
 
-//    /**
-//     * @param annotation e.g. "@Id ", "@Max xx (12)", etc
-//     * @return "Id", "Max xx ", etc
-//     */
-//    /* package */ String getAnnotationWithoutParameter (String annotation) {
-//    	StringBuffer sb = new StringBuffer();
-//    	// skip the first char (supposed to be @)
-//    	for ( int i = 1 ; i < annotation.length() ; i++ ) {
-//    		char c = annotation.charAt(i);
-//            if ( c == '(' ) {
-//        		break;
-//        	}
-//            if ( c >= ' ' ) {
-//        		sb.append(c);
-//            }
-//    	}
-//    	return sb.toString().trim();
-//    }
-    
     /**
      * Returns the parameter value if any.<br>
      * The value located between the given open/close char.<br>

@@ -13,13 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.generic.model;
+package org.telosys.tools.dsl.model;
 
 /**
- * Created by ludovicchaboud on 19/12/14.
+ * 
  */
-public class GenericModelVersion {
+public class DslModelVersion {
 
-    public final static String VERSION = "1.0.0";
+    public static final String VERSION = "3.1.0";
 
 }

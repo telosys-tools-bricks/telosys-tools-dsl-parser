@@ -15,7 +15,7 @@
  */
 package org.telosys.tools.dsl.parser.utils;
 
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,13 +40,13 @@ public final class StringUtils {
                 ret.append(line + "\n");
             }
         } catch (IOException e) {
-            throw new EntityParserException("Error while reading the stream : " + e.getMessage()
+            throw new DslParserException("Error while reading the stream : " + e.getMessage()
                     + "\n Documentation : " + e);
         } finally {
             try {
                 inputStream.close();
             } catch (IOException e) {
-                throw new EntityParserException("Error while closing the stream : " + e.getMessage()
+                throw new DslParserException("Error while closing the stream : " + e.getMessage()
                         + "\n Documentation : " + e);
             }
         }

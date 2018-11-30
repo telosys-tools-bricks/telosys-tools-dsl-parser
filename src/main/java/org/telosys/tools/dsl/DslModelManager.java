@@ -20,15 +20,13 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 import org.telosys.tools.commons.PropertiesManager;
-import org.telosys.tools.dsl.generic.converter.Converter;
-import org.telosys.tools.dsl.parser.DomainModelParser;
+import org.telosys.tools.dsl.converter.Converter;
+import org.telosys.tools.dsl.parser.Parser;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainModelInfo;
 import org.telosys.tools.generic.model.Model;
 
 public class DslModelManager {
-
-    //static Logger logger = LoggerFactory.getLogger(DslModelManager.class);
 
     private Hashtable<String,String> parsingErrors = null ;
     private String parsingErrorMessage = null ;
@@ -63,23 +61,13 @@ public class DslModelManager {
      */
     public Model loadModel(File modelFile) {
     	
-//        //--- 1) Parse the model 
-//        DomainModelParser domainModelParser = new DomainModelParser();
-//        logger.info("\nParse model : " + modelFile.getAbsolutePath() );
-//        DomainModel domainModel = domainModelParser.parse(modelFile);
-//        logger.info("\n"+domainModel.toString());
-//        //--- 2) Convert the "domain model" to "generic model" 
-//        Converter converter = new Converter();
-//        Model model = converter.convertToGenericModel(domainModel);
-//        logger.info(model.toString());
-
         //--- 1) Parse the model 
-        DomainModelParser domainModelParser = new DomainModelParser();
+        Parser domainModelParser = new Parser();
         DomainModel domainModel = null ;
         Exception parsingException = null ;
 		try {
 			domainModel = domainModelParser.parse(modelFile);
-		} catch (EntityParserException e) {
+		} catch (DslParserException e) {
 			parsingException = e ;
 		}
 		
@@ -96,29 +84,31 @@ public class DslModelManager {
 				return converter.convertToGenericModel(domainModel);
 			} catch (Exception e) {
 				parsingErrorMessage = "Converter error : " + e.getMessage() ;
-				parsingErrors = new Hashtable<String,String>();
+				parsingErrors = new Hashtable<>();
 				parsingErrors.put("", parsingErrorMessage );
 				return null ;
 			}
-            //logger.info(model.toString());
-            //return model;
         }
     }
 
     /**
-     * Loads the model information from the model file 
+     * Loads the model information from the given file 
      * 
      * @param modelFile the ".model" file 
      * @return
      */
     public DomainModelInfo loadModelInformation(File modelFile) {
-//    	Properties properties = DslModelUtil.loadModelProperties(modelFile);
     	PropertiesManager propertiesManager = new PropertiesManager(modelFile);
     	Properties properties = propertiesManager.load();
     	
     	return new DomainModelInfo(properties);
     }
 
+    /**
+     * Saves the model information in the given file
+     * @param modelFile the ".model" file 
+     * @param domainModelInfo
+     */
     public void saveModelInformation(File modelFile, DomainModelInfo domainModelInfo) {
     	PropertiesManager propertiesManager = new PropertiesManager(modelFile);
     	propertiesManager.save( domainModelInfo.getProperties() );

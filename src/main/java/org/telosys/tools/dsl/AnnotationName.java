@@ -18,32 +18,35 @@ package org.telosys.tools.dsl;
 
 public class AnnotationName {
 
-	public final static String ID = "Id" ;
+	private AnnotationName() {
+	}
 	
-	public final static String NOT_NULL  = "NotNull" ;
-	public final static String NOT_EMPTY = "NotEmpty" ;
-	public final static String NOT_BLANK = "NotBlank" ;
+	public static final String ID = "Id" ;
 	
-	public final static String MIN = "Min" ;
-	public final static String MAX = "Max" ;
+	public static final String NOT_NULL  = "NotNull" ;
+	public static final String NOT_EMPTY = "NotEmpty" ;
+	public static final String NOT_BLANK = "NotBlank" ;
 	
-	public final static String SIZE_MIN = "SizeMin" ;
-	public final static String SIZE_MAX = "SizeMax" ;
+	public static final String MIN = "Min" ;
+	public static final String MAX = "Max" ;
 	
-	public final static String PAST   = "Past" ;
-	public final static String FUTURE = "Future" ;
+	public static final String SIZE_MIN = "SizeMin" ;
+	public static final String SIZE_MAX = "SizeMax" ;
+	
+	public static final String PAST   = "Past" ;
+	public static final String FUTURE = "Future" ;
 
-	public final static String EMBEDDED = "Embedded" ;
+	public static final String EMBEDDED = "Embedded" ;
 
-	public final static String AUTO_INCREMENTED = "AutoIncremented" ;
+	public static final String AUTO_INCREMENTED = "AutoIncremented" ;
 	
-	public final static String LONG_TEXT = "LongText" ;
+	public static final String LONG_TEXT = "LongText" ;
 
 	// Types 
-	public final static String PRIMITIVE_TYPE = "PrimitiveType" ;
-	public final static String OBJECT_TYPE    = "ObjectType" ;
-	public final static String UNSIGNED_TYPE  = "UnsignedType" ;
-	public final static String SQL_TYPE       = "SqlType" ;
+	public static final String PRIMITIVE_TYPE = "PrimitiveType" ;
+	public static final String OBJECT_TYPE    = "ObjectType" ;
+	public static final String UNSIGNED_TYPE  = "UnsignedType" ;
+	public static final String SQL_TYPE       = "SqlType" ;
 
 	// TODO 
     // @DefaultValue(xxx) or  @InitValue(xxx)

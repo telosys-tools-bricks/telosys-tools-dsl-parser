@@ -4,21 +4,21 @@ import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 
 public class EntityParserTest {
 	@Before
 	public void setUp() throws Exception {}
 
-	@Test(expected = EntityParserException.class)
+	@Test(expected = DslParserException.class)
 	public void testParseFileWithAFileWhichDoesntExist() {
 		File file = new File("entity_test/nul.entity");
 		EntityParser parser = new EntityParser(new DomainModel("model"));
 		parser.parse(file);
 	}
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseMissingBracket() {
         String testMissingBracket = "Entityid:integer;";
 
@@ -28,7 +28,7 @@ public class EntityParserTest {
         parser.parseFlattenContent(testMissingBracket, "Entity");
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseMultipleEntities() {
         String testMultipleEntities = "Entity{id:integer;}Entity2{id:integer;}";
 
@@ -36,7 +36,7 @@ public class EntityParserTest {
         parser.parseFlattenContent(testMultipleEntities, "Entity");
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseWithoutField() {
         String testEntityWithoutField = "Entity{}";
 
@@ -45,7 +45,7 @@ public class EntityParserTest {
         parser.parseFlattenContent(testEntityWithoutField, "Entity");
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseEntityWithIllegalCharacters() {
         String testEntityNameIllegalCharacters = "E#n_tité{id:integer;}";
 
@@ -53,7 +53,7 @@ public class EntityParserTest {
         parser.parseFlattenContent(testEntityNameIllegalCharacters, "E#n_tité");
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseFieldWithIllegalCharacters() {
         String testEntityFieldIllegalCharacters = "Entity{ié#_:integer;}";
 
@@ -61,7 +61,7 @@ public class EntityParserTest {
         parser.parseFlattenContent(testEntityFieldIllegalCharacters, "Entity");
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseMissingSemiColumn() {
         String testMissingSemiColumn = "Entity{id:integer;name:string}";
 
@@ -69,7 +69,7 @@ public class EntityParserTest {
         parser.parseFlattenContent(testMissingSemiColumn, "Entity");
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseMissingLastBracket() {
         String testMissingLastBracket = "Entity{id:integer;";
 
@@ -77,7 +77,7 @@ public class EntityParserTest {
         parser.parseFlattenContent(testMissingLastBracket, "Entity");
     }
     
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseWithTwoIds() {
         String testWithTwoIds = "Entity{id:integer{@Id};idbis:integer{@Id};}";
 
@@ -85,7 +85,7 @@ public class EntityParserTest {
         parser.parseFlattenContent(testWithTwoIds, "Entity");
     }
     
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseWithAnIdInAnArray() {
         String testWithAnIdInAnArray = "Entity{id:integer[]{@Id};}";
 
@@ -93,7 +93,7 @@ public class EntityParserTest {
         parser.parseFlattenContent(testWithAnIdInAnArray, "Entity");
     }
     
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseWithAnIdInAClob() {
         String testWithAnIdInAClob = "Entity{id:clob{@Id};}";
 
@@ -101,7 +101,7 @@ public class EntityParserTest {
         parser.parseFlattenContent(testWithAnIdInAClob, "Entity");
     }
     
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseWithAnIdInABlob() {
         String testWithAnIdInABlob = "Entity{id:blob{@Id};}";
 
@@ -109,7 +109,7 @@ public class EntityParserTest {
         parser.parseFlattenContent(testWithAnIdInABlob, "Entity");
     }
 
-    @Test(expected = EntityParserException.class)
+    @Test(expected = DslParserException.class)
     public void testParseWithoutUcFirst() {
         String testMissingLastBracket = "entity{id:integer{@Id};};";
 

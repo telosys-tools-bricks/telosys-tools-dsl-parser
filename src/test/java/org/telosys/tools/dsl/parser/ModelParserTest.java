@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntityField;
 import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
@@ -49,7 +49,7 @@ public class ModelParserTest {
 	@Test
 	public void testParseModel_OneEntity() throws Exception {
 		File modelFile = new File("src/test/resources/model_test/valid/OneEntity.model");
-		DomainModelParser parser = new DomainModelParser();
+		Parser parser = new Parser();
 		DomainModel model = parser.parse(modelFile);
 		
 		assertEquals("OneEntity", model.getName());
@@ -73,7 +73,7 @@ public class ModelParserTest {
 	@Test
 	public void testParseModel_TwoEntities() throws Exception {
 		File modelFile = new File("src/test/resources/model_test/valid/TwoEntities.model");
-		DomainModelParser parser = new DomainModelParser();
+		Parser parser = new Parser();
 		DomainModel model = parser.parse(modelFile);
 		
 		DomainModel modelToCompare = new DomainModel("TwoEntities");
@@ -108,7 +108,7 @@ public class ModelParserTest {
     @Test
     public void testParseModel_TwoEntitiesWithEmbedded() throws Exception {
         File modelFile = new File("src/test/resources/model_test/valid/TwoEntitiesWithEmbedded.model");
-        DomainModelParser parser = new DomainModelParser();
+        Parser parser = new Parser();
         DomainModel model = parser.parse(modelFile);
         
         DomainModel modelToCompare = new DomainModel("TwoEntitiesWithEmbedded");
@@ -181,7 +181,7 @@ public class ModelParserTest {
 	@Test
 	public void testParseModel_TwoEntitiesWithSpaces() throws Exception {
 		File modelFile = new File("src/test/resources/model_test/valid/TwoEntitiesWithSpaces.model");
-		DomainModelParser parser = new DomainModelParser();
+		Parser parser = new Parser();
 		DomainModel model = parser.parse(modelFile);
 		
 		assertEquals("TwoEntitiesWithSpaces", model.getName());
@@ -259,7 +259,7 @@ public class ModelParserTest {
 	@Test
 	public void testParseModel_FourEntitiesDirty() throws Exception {
 		File modelFile = new File("src/test/resources/model_test/valid/FourEntitiesDirty.model");
-		DomainModelParser parser = new DomainModelParser();
+		Parser parser = new Parser();
 		DomainModel model = parser.parse(modelFile);
 		
 		assertEquals("FourEntitiesDirty", model.getName());
@@ -315,7 +315,7 @@ public class ModelParserTest {
 	@Test
     public void testParseModel_FourEntities() throws Exception {
         File modelFile = new File("src/test/resources/model_test/valid/FourEntities.model");
-        DomainModelParser parser = new DomainModelParser();
+        Parser parser = new Parser();
         DomainModel model = parser.parse(modelFile);
         
 		assertEquals("FourEntities", model.getName());
@@ -373,12 +373,12 @@ public class ModelParserTest {
 	@Test
     public void testParseModel_FourEntities_Invalid() throws Exception {
         File modelFile = new File("src/test/resources/model_test/invalid/FourEntities.model");
-        DomainModelParser parser = new DomainModelParser();
+        Parser parser = new Parser();
         DomainModel model = null ;
         Exception exception = null ;
 		try {
 			model = parser.parse(modelFile);
-		} catch (EntityParserException e) {
+		} catch (DslParserException e) {
 			exception = e ;
 			e.printStackTrace();
 		}
@@ -424,7 +424,7 @@ public class ModelParserTest {
 	@Test
     public void testParseModel_AttributesOrder() throws Exception {
         File modelFile = new File("src/test/resources/model_test/valid/FourEntities.model");
-        DomainModelParser parser = new DomainModelParser();
+        Parser parser = new Parser();
         DomainModel model = parser.parse(modelFile);
         
 		assertEquals("FourEntities", model.getName());

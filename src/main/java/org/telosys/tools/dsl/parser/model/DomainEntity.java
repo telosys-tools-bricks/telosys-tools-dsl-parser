@@ -15,7 +15,7 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 
 import java.util.*;
 
@@ -47,7 +47,7 @@ public class DomainEntity extends DomainType {
 
     public void addField(DomainEntityField field) {
         if (fieldsMap.containsKey(field.getName())) {
-            throw new EntityParserException("Field '" + field.getName() + "' already defined");
+            throw new DslParserException("Field '" + field.getName() + "' already defined");
         }
         fieldsMap.put(field.getName(), field);
     }

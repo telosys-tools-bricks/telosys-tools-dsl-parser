@@ -18,7 +18,7 @@ package org.telosys.tools.dsl.parser;
 import java.io.File;
 import java.util.StringTokenizer;
 
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 
 public class ParserUtil {
 	
@@ -76,17 +76,17 @@ public class ParserUtil {
         if ( ! file.exists() ) {
             String textError = "File '" + file.toString() + "' not found";
             //logger.error(textError);
-            throw new EntityParserException(textError);
+            throw new DslParserException(textError);
         }
         if ( ! file.isFile() ) {
             String textError = "'" + file.toString() + "' is not a file";
             //logger.error(textError);
-            throw new EntityParserException(textError);
+            throw new DslParserException(textError);
         }
         if ( ! file.getName().endsWith(DOT_MODEL)) {
             String textError = "File '" + file.toString() + "' doesn't end with '" + DOT_MODEL + "'";
             //logger.error(textError);
-            throw new EntityParserException(textError);
+            throw new DslParserException(textError);
         }
     }
 

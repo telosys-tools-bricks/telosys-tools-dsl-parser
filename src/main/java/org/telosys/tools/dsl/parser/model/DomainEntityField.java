@@ -15,7 +15,7 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
-import org.telosys.tools.dsl.EntityParserException;
+import org.telosys.tools.dsl.DslParserException;
 
 import java.util.*;
 
@@ -69,7 +69,7 @@ public class DomainEntityField {
         if (!annotations.containsKey(annotation.getName())) {
             annotations.put(annotation.getName(), annotation);
         } else {
-            throw new EntityParserException("The annotation " + annotation.getName() + " is already define in the field " + this.getName());
+            throw new DslParserException("The annotation " + annotation.getName() + " is already define in the field " + this.getName());
         }
     }
 
