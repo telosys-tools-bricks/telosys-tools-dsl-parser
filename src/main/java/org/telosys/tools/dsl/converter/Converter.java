@@ -52,20 +52,16 @@ public class Converter {
 	private int linkIdCounter = 0 ;
 
 	/**
-	 * Converts the DSL model to the Generic model <br>
+	 * Converts PARSER MODEL to DSL/Generic model <br>
 	 * 
-	 * @param domainModel DSL model
-	 * @return Generic model
+	 * @param domainModel paser domain model
+	 * @return DSL/Generic model
 	 * @throws IllegalStateException if an error occurs
 	 */
 	public Model convertToGenericModel(DomainModel domainModel) {
 		
-//		checkTypeMapping();
-		
 		DslModel genericModel = new DslModel();
-//		genericModel.setType( ModelType.DOMAIN_SPECIFIC_LANGUAGE );
 		genericModel.setName( voidIfNull(domainModel.getName()) );
-//		genericModel.setVersion( GenericModelVersion.VERSION );
 		genericModel.setDescription( voidIfNull(domainModel.getDescription() ) );
 
 		// convert all entities
@@ -76,15 +72,7 @@ public class Converter {
 		
 		return genericModel;
 	}
-	
-//	private void checkTypeMapping() {
-//		
-//		if ( typeMapping.size() != DomainNeutralTypes.getNames().size() ) {
-//			throw new IllegalStateException("Inconsistant type mapping in converter ("+
-//					typeMapping.size() + " entries, " + DomainNeutralTypes.getNames().size() + " expected)");
-//		}
-//	}
-	
+
 	private void check(boolean expr, String errorMessage ) {
 		if ( ! expr ) {
 			throw new IllegalStateException(errorMessage);
@@ -146,7 +134,6 @@ public class Converter {
 			DslModelEntity genericEntity = (DslModelEntity) genericModel.getEntityByClassName(domainEntity.getName());
 			// Replaces the "pseudo FK" attributes if any
 			for ( DomainEntityField field : domainEntity.getFields() ) {
-	            //if ( field.getType().isEntity() ) {
 	            if ( isPseudoForeignKey(field) ) {
 	            	// Build the "pseudo FK attribute"
 	            	DslModelAttribute pseudoFKAttribute = convertAttributePseudoForeignKey(field);
@@ -198,17 +185,6 @@ public class Converter {
             	// Add the new "basic attribute" to the entity 
             	genericEntity.getAttributes().add(genericAttribute);
             }
-// Moved in createLinks
-//            else if (domainFieldType.isEntity() ) {
-//            	// REFERENCE TO AN ENTITY = LINK
-//        		log("convertEntityAttributes() : " + domainEntityField.getName() + " : entity type (link)");
-//            	// Link type attribute (reference to 1 or N other entity )
-//        		linkIdCounter++;
-//            	GenericLink genericLink = convertAttributeLink( domainEntityField, genericModel );
-//            	// Add the new link to the entity 
-//               	genericEntity.getLinks().add(genericLink);
-//            }
-            //else if (domainFieldType.isEntity() ) {
             else {
             	// Not a "neutral type" ==> "entity reference" ?
             	if ( isPseudoForeignKey(domainEntityField) ) {
@@ -437,20 +413,6 @@ public class Converter {
         }
 	}
 	
-//	private GenericAttribute buildVoidAttributePseudoForeignKey( DomainEntityField domainEntityField ) {
-//		log("buildVoidAttributePseudoForeignKey() : name = " + domainEntityField.getName() );
-//
-//		DomainType domainFieldType = domainEntityField.getType();
-//		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
-//		DomainEntity referencedEntity = (DomainEntity) domainFieldType;
-//
-//		DomainEntityField referencedEntityIdField = getIdAttribute(referencedEntity);
-//		
-//        GenericAttribute genericAttribute = new GenericAttribute();
-//        genericAttribute.setName( buildIdAttributeName(domainFieldType.getName(), referencedEntityIdField ) );
-//        genericAttribute.set
-//	}
-	
 	/**
 	 * Converts a "reference/link" attribute <br>
 	 * eg : car : Car ; <br>
@@ -467,7 +429,6 @@ public class Converter {
 		DomainEntityField referencedEntityIdField = getReferencedEntityIdField(referencedEntity);
 		
         //--- Attribute name 
-        //String attributeName = buildIdAttributeName(domainEntityField.getName(), referencedEntityIdField ) ;
         String attributeName = domainEntityField.getName() ; // Keep the same name to avoid potential naming collision 
         
         //--- Attribute type 
@@ -493,18 +454,6 @@ public class Converter {
         return genericAttribute ;
         
 	}
-	
-//	/**
-//	 * Builds the "pseudo FK" attribute name <br>
-//	 * original name + referenced entity field name <br>
-//	 * @param originalName
-//	 * @param field
-//	 * @return
-//	 */
-//	private String buildIdAttributeName( String originalName, DomainEntityField field) {
-//		// e.g. "driver : Driver" --> name = "driverId" ( "Id" from "id : int { @Id } in Driver )
-//		return originalName + StrUtil.firstCharUC(field.getName()) ;
-//	}
 	
 	/**
 	 * Returns the '@Id' attribute for the given entity
@@ -550,9 +499,6 @@ public class Converter {
 		
 		DomainType domainFieldType = domainEntityField.getType();
 		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
-//        DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
-//		
-//        GenericAttribute genericAttribute = new GenericAttribute();
 		
 		DomainEntity domainEntityTarget = (DomainEntity) domainFieldType;
 		
@@ -567,7 +513,6 @@ public class Converter {
 		//genericLink.setSelected(true); // nothing for link selection => selected by default
 		
 		// Set target entity info
-		//genericLink.setTargetEntityClassName(notNull(domainEntityTarget.getName()));
 		genericLink.setTargetEntityClassName(domainEntityField.getType().getName());
 		genericLink.setTargetTableName(determineTableName(domainEntityTarget));
 		
