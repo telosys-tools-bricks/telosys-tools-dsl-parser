@@ -31,7 +31,7 @@ public class DslModelAttribute implements Attribute {
 	
 	private String booleanFalseValue;
 	private String booleanTrueValue;
-	private String databaseComment;
+	private String databaseComment = "";
 	private String databaseDefaultValue;
 	private String databaseName;
 	private Integer databaseSize;
