@@ -15,6 +15,10 @@ public class ParserUtilTest {
         Assert.assertEquals("xx", "\t xx ".trim() );
         Assert.assertEquals("x x", "\t x x ".trim() );
         Assert.assertEquals("x\tx", "\t x\tx ".trim() );
+
+        Assert.assertEquals("xxx", "\n xxx \t \n".trim() );
+        Assert.assertEquals("x  x  x", " \n\r\n x  x  x \t \n".trim() );
+        Assert.assertEquals("a \tb  c", " \n\r\n a \tb  c \t \n".trim() );
     }
     
     @Test
@@ -122,6 +126,35 @@ public class ParserUtilTest {
     	System.out.println("Initial text : \n" + text );
     	String filteredText = text.replaceAll(COMMENT_REGEXP,"");
     	System.out.println("Result : \n" + filteredText );
+    }
+    
+    public void checkUnquote(char quote) {
+        Assert.assertEquals("abc",      ParserUtil.unquote("abc",          quote) );
+        Assert.assertEquals("abc",      ParserUtil.unquote("\"abc\"",      quote) );
+        Assert.assertEquals("a b c",    ParserUtil.unquote("\"a b c\"",    quote) );
+        Assert.assertEquals("a\"b 'c'", ParserUtil.unquote("\"a\"b 'c'\"", quote) );
+    }
+    
+    @Test
+    public void testUnquote1() {
+    	char quote = '"';
+        Assert.assertNull(ParserUtil.unquote(null, quote) );
+        Assert.assertEquals("",         ParserUtil.unquote("",          quote) );
+        Assert.assertEquals("abc",      ParserUtil.unquote("abc",          quote) );
+        Assert.assertEquals("abc",      ParserUtil.unquote("\"abc\"",      quote) );
+        Assert.assertEquals("a b c",    ParserUtil.unquote("\"a b c\"",    quote) );
+        Assert.assertEquals("a \"b\" 'c'", ParserUtil.unquote("\"a \"b\" 'c'\"", quote) );
+    }
+    
+    @Test
+    public void testUnquote2() {
+    	char quote = '\'';
+        Assert.assertNull(ParserUtil.unquote(null, quote) );
+        Assert.assertEquals("",         ParserUtil.unquote("",          quote) );
+        Assert.assertEquals("abc",      ParserUtil.unquote("abc",          quote) );
+        Assert.assertEquals("abc",      ParserUtil.unquote("'abc'",      quote) );
+        Assert.assertEquals("a b c",    ParserUtil.unquote("'a b c'",    quote) );
+        Assert.assertEquals("a \"b\" 'c'", ParserUtil.unquote("'a \"b\" 'c''", quote) );
     }
     
 }

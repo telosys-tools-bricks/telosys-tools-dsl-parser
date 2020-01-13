@@ -55,7 +55,7 @@ public class AnnotationParser extends AbstractParser  {
      * @param annotations the annotations string without '{' and '}'
      * @return
      */
-    List<DomainEntityFieldAnnotation> parseAnnotations(String entityName, String fieldName, String annotations) {
+    protected List<DomainEntityFieldAnnotation> parseAnnotations(String entityName, String fieldName, String annotations) {
 
     	if ( annotations == null || "".equals(annotations) ) {
     		// return void list
@@ -120,9 +120,8 @@ public class AnnotationParser extends AbstractParser  {
         for (String annotationDefinition : definedAnnotations) { // "Id", "SizeMin%", "SizeMax%", "Max#", "Min#", ""...
             if ( annotationDefinition.startsWith(annotationName) ) {
                 // Annotation name found in defined annotations
-                if ( annotationDefinition.endsWith("%") ) {
+                if ( annotationDefinition.endsWith("%") ) { // INTEGER parameter required
                 	// this annotation must have an integer parameter between ( and )
-                	// Integer parameter required
                 	Integer numberValue = null ;
                 	try {
                 		numberValue = getParameterValueAsInteger(parameterValue);
@@ -131,8 +130,7 @@ public class AnnotationParser extends AbstractParser  {
 					}
                 	return new DomainEntityFieldAnnotation(annotationName, numberValue);
                 }
-                else if ( annotationDefinition.endsWith("#") ) {
-                	// Decimal parameter required
+                else if ( annotationDefinition.endsWith("#") ) { // DECIMAL parameter required
                 	BigDecimal numberValue = null ;
                 	try {
                 		numberValue = getParameterValueAsBigDecimal(parameterValue);
@@ -140,6 +138,15 @@ public class AnnotationParser extends AbstractParser  {
                 		throwAnnotationParsingError( entityName, fieldName, annotationString, "numeric parameter required ");
 					}
                 	return new DomainEntityFieldAnnotation(annotationName, numberValue);
+                }
+                else if ( annotationDefinition.endsWith("$") ) { // STRING parameter required
+                	String value = null ;
+                	try {
+                		value = getParameterValueAsString(parameterValue);
+					} catch (Exception e) {
+                		throwAnnotationParsingError( entityName, fieldName, annotationString, "string parameter required ");
+					}
+                	return new DomainEntityFieldAnnotation(annotationName, value);
                 }
                 else {
                 	// annotation without parameter
@@ -260,4 +267,62 @@ public class AnnotationParser extends AbstractParser  {
 			throw new Exception("Invalid decimal parameter '" + parameterValue + "'");
 		}
     }
+    
+    /* package */ String getParameterValueAsString(String parameterValue) throws Exception {
+    	checkParameterExistence(parameterValue);
+    	String s = parameterValue.trim(); // removes all void chars ( blank, tab, cr, lf, ...)
+    	if ( s.startsWith("\"") && s.endsWith("\"") ) {
+    		return ParserUtil.unquote(s, '"');
+    	}
+    	else if ( s.startsWith("'") && s.endsWith("'") ) {
+    		return ParserUtil.unquote(s, '\'');
+    	}
+    	else {
+    		return s;
+    	}
+    	/*
+        @DefaultValue(ab c)  // trim
+        @DefaultValue(123)   // trim
+        @DefaultValue(true)  // trim
+        @DefaultValue(" ab c ") // no trim inside ""  
+        */
+
+    }
+    
+/**    
+    protected String removeVoidCharsAround(String s) {
+    	StringBuilder sb = new StringBuilder();
+    	boolean started = false ;
+    	// Remove void chars on LEFT side 
+    	for ( byte b : s.getBytes() ) {
+			if ( isVoidChar(b) ) {
+				if ( started ) {
+					sb.append(b);
+				}
+				// if not stared : do not keep this char
+			}
+			else {
+				sb.append(b);
+				started = true ;
+			}
+    	}
+    	// Remove void chars on RIGHT side 
+    	int i = sb.length()-1;
+    	while ( isVoidChar((byte)sb.charAt(i)) ) {
+    		i--;
+    	}
+    	if ( i <= 0 ) {
+    		return "" ;
+    	}
+    	else {
+    		return sb.substring(0, i+1);
+    	}
+    }
+//    private boolean isVoidChar(char c) {
+//    	
+//    }
+    private boolean isVoidChar(byte b) {
+    	return  b == ' ' || b == '\t' || b == '\n' || b == '\r' ;
+    }
+**/
 }

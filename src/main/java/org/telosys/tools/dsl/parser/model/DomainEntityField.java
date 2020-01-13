@@ -132,7 +132,7 @@ public class DomainEntityField {
     	for (String mapKey : annotations.keySet()) {
     		String parameter = "";
     		if(annotations.get(mapKey).hasParameter()){
-    			parameter = "("+ annotations.get(mapKey).getParameter() +")";
+    			parameter = "("+ annotations.get(mapKey).getParameterAsString() +")";
     		}
     		annotationsString += "\n\t\t\t\t" + annotations.get(mapKey).getName()+parameter;
     	}

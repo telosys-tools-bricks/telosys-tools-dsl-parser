@@ -2,6 +2,7 @@ package org.telosys.tools.dsl.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -68,6 +69,19 @@ public class AnnotationParserTest {
         Assert.assertEquals("Foo", getAnnotationName("@Foo(4)"));
         Assert.assertEquals("Min", getAnnotationName("@Min\r \n (4)"));
     }
+
+    //-------------------------------------------------------------------------------------------
+//    private List<DomainEntityFieldAnnotation>  parseAnnotations(String annotations) {
+//    	AnnotationParser annotationParser = new AnnotationParser();
+//    	return annotationParser.parseAnnotations("entityName", "fieldName", annotations);
+//    }
+    @Test 
+    public void testParseAnnotations() throws Exception {
+    	AnnotationParser annotationParser = new AnnotationParser();
+    	List<DomainEntityFieldAnnotation> annotations = annotationParser.parseAnnotations("entityName", "fieldName", "");
+    	Assert.assertEquals(0, annotations.size());
+    }
+
 
     //-------------------------------------------------------------------------------------------
     @Test (expected=Exception.class)
@@ -227,7 +241,7 @@ public class AnnotationParserTest {
     	
         DomainEntityFieldAnnotation annotation =  annotations.get(0);
         assertEquals("Id", annotation.getName() );
-        assertEquals(null,   annotation.getParameter() );
+        assertEquals(null,   annotation.getParameterAsString() );
 
         annotation =  annotations.get(1);
         assertEquals("Min", annotation.getName() );
@@ -251,6 +265,34 @@ public class AnnotationParserTest {
     @Test
     public void testParseMultipleAnnotations3() {
     	checkExpectedResultIdMinMax(parseAnnotations(" \t @Id , \t \n @Min  (  3 ), \t \r\n @Max ( 50 )  ") );
+    }
+
+    @Test
+    public void testParseAnnotationsWithStringParam() {
+    	List<DomainEntityFieldAnnotation> list = parseAnnotations("  @DefaultValue( 50 )  ") ;
+    	assertEquals(1, list.size());
+    	DomainEntityFieldAnnotation annot = list.get(0);
+    	assertEquals("DefaultValue", annot.getName());
+    	assertEquals("50", annot.getParameterAsString());
+    	assertNull(annot.getParameterAsInteger());
+    	assertNull(annot.getParameterAsBigDecimal());
+
+    	list = parseAnnotations("  @DefaultValue( abc def )  ") ;
+    	assertEquals(1, list.size());
+    	annot = list.get(0);
+    	assertEquals("abc def", annot.getParameterAsString());
+
+    	list = parseAnnotations("  @DefaultValue( ' abc def ' )  ") ;
+    	assertEquals(1, list.size());
+    	annot = list.get(0);
+    	assertEquals(" abc def ", annot.getParameterAsString());
+
+    	list = parseAnnotations("  @DefaultValue( \" abc def \" ),  @InitialValue(true) ") ;
+    	assertEquals(2, list.size());
+    	assertEquals("DefaultValue", list.get(0).getName());
+    	assertEquals(" abc def ", list.get(0).getParameterAsString());
+    	assertEquals("InitialValue", list.get(1).getName());
+    	assertEquals("true", list.get(1).getParameterAsString());
     }
 
     //-------------------------------------------------------------------------------------------

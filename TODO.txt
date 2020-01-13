@@ -1,0 +1,69 @@
+
+String getDefaultValue();    
+    @DefaultValue(ab c)  // trim
+    @DefaultValue(123)   // trim
+    @DefaultValue(true)  // trim
+    @DefaultValue(" ab c ") // no trim inside ""  
+
+String getInitialValue() ;
+    @InitialValue(ab c)  // trim
+    @InitialValue(123)   // trim
+    @InitialValue(true)  // trim
+    @InitialValue(" ab c ") // no trim inside ""  
+
+String getLabel();
+    @Label(abc)  // trim
+    @Label(" abc ")  // no trim inside ""  
+
+String getInputType();  
+    @InputType(abc)   // trim
+    @InputType("abc") // no trim inside "" 
+
+String getPattern(); 
+    @Pattern(abc)   // trim
+    @Pattern("abc") // no trim inside "" 
+
+String getDateAfterValue() ;
+    @After(2012-05-23) // ISO format (fixed)
+
+String getDateBeforeValue() ;
+    @Before(2012-05-23) // ISO format (fixed)
+
+-------------------------------------------------------
+
+ @IdPart 
+ or 
+ @Id multiple 
+ 
+-------------------------------------------------------
+
+Integer   getMaxLength() ; ???  @SizeMax
+Integer   getMinLength() ; ???  @SizeMin
+
+BigDecimal getMaxValue() ; ???  @Max
+BigDecimal getMinValue() ; ???  @Min
+
+-------------------------------------------------------
+
+String getDatabaseComment() ;
+    @DbComment(abc) 
+
+String getDatabaseDefaultValue();
+    @DbDefaultValue(abc) 
+
+String getDatabaseName();
+    @DbName(abc) 
+
+String getDatabaseType();
+    @DbType(abc) 
+
+Integer getDatabaseSize();
+    @DbSize(123) 
+
+-------------------------------------------------------
+
+Change Licence header
+
+Changer ver to 3.2.0
+
+-------------------------------------------------------

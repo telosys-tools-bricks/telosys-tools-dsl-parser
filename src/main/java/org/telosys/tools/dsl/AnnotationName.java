@@ -33,6 +33,7 @@ public class AnnotationName {
 	public static final String SIZE_MIN = "SizeMin" ;
 	public static final String SIZE_MAX = "SizeMax" ;
 	
+
 	public static final String PAST   = "Past" ;
 	public static final String FUTURE = "Future" ;
 
@@ -48,6 +49,11 @@ public class AnnotationName {
 	public static final String UNSIGNED_TYPE  = "UnsignedType" ;
 	public static final String SQL_TYPE       = "SqlType" ;
 
+	// Added in ver 3.2.0
+	public static final String DEFAULT_VALUE   = "DefaultValue" ; // v 3.2.0
+	public static final String INITIAL_VALUE   = "InitialValue" ; // v 3.2.0
+	
+	
 	// TODO 
     // @DefaultValue(xxx) or  @InitValue(xxx)
     // @Comment(xxx) --> used as DbComment ?

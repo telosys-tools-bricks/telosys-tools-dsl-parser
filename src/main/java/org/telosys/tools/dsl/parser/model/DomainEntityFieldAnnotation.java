@@ -19,8 +19,7 @@ import java.math.BigDecimal;
 
 /**
  * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre, Laurent Guerin
- * @version 1.0
- * @date 2014-05-22
+ * @version 3.2.0
  */
 public class DomainEntityFieldAnnotation {
 
@@ -86,7 +85,7 @@ public class DomainEntityFieldAnnotation {
      * or null if none
      * @return
      */
-    public String getParameter() {
+    public String getParameterAsString() {
         return stringParameter;
     }
 
@@ -113,21 +112,6 @@ public class DomainEntityFieldAnnotation {
     	}
     	return null ;
     }
-
-    
-//    public int getParameterAsInt() {
-//    	if ( hasParameter ) {
-//            try {
-//                return Integer.parseInt(stringParameter);
-//            }
-//            catch (NumberFormatException ex) {
-//            	throw new IllegalStateException("Annotation '"+name+"' : invalid integer parameter " + stringParameter);
-//            }
-//    	}
-//    	else {
-//    		throw new IllegalStateException("Annotation '"+name+"' : No parameter for this annotation");
-//    	}
-//    }
 
 /***
     @Override

@@ -47,8 +47,9 @@ public class KeyWords {
 		AnnotationName.MAX + "#", //"Max#",      // # means decimal parameter
 		AnnotationName.SIZE_MIN + "%", // "SizeMin%",  // % means integer parameter
 		AnnotationName.SIZE_MAX + "%", // "SizeMax%",  // % means integer parameter
-		AnnotationName.PAST, // "Past",
-		AnnotationName.FUTURE, // "Future",
+		
+		AnnotationName.PAST, // "Past" for Date
+		AnnotationName.FUTURE, // "Future" for Date
 		
 		AnnotationName.PRIMITIVE_TYPE,
 		AnnotationName.UNSIGNED_TYPE,
@@ -57,7 +58,12 @@ public class KeyWords {
 
 		AnnotationName.LONG_TEXT,
 		
-		AnnotationName.EMBEDDED // "Embedded"
+		AnnotationName.EMBEDDED, // "Embedded"
+
+		//--- Added in ver 3.2.0
+		AnnotationName.DEFAULT_VALUE + "$", // $ means string parameter  @DefaultValue(ab c)
+		AnnotationName.INITIAL_VALUE + "$", // $ means string parameter  @InitialValue(ab c)
+		
 		// In the future 
 		// "DbColumn$" // $ means string parameter
 		// "DbTable$"  // $ means string parameter

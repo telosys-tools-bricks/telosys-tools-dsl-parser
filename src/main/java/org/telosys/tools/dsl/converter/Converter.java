@@ -356,6 +356,17 @@ public class Converter {
 	    		log("Converter : annotation @LongText" );
 	            genericAttribute.setLongText(true);
 	        }
+	        
+	        //--- Added in ver 3.2.0
+	        if(AnnotationName.DEFAULT_VALUE.equals(annotation.getName())) {
+	    		log("Converter : annotation @DefaultValue" );
+	            genericAttribute.setDefaultValue(annotation.getParameterAsString());
+	        }
+	        if(AnnotationName.INITIAL_VALUE.equals(annotation.getName())) {
+	    		log("Converter : annotation @InitialValue" );
+	            genericAttribute.setInitialValue(annotation.getParameterAsString());
+	        }
+	        
 	        // TODO :
             // @After(DateISO/TimeISO)
             // @Before(DateISO/TimeISO)

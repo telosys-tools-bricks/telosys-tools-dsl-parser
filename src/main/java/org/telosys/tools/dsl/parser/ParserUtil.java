@@ -22,8 +22,14 @@ import org.telosys.tools.dsl.DslParserException;
 
 public class ParserUtil {
 	
-    private final static String COMMENT_REGEXP = "(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)" ;
+    private static final String COMMENT_REGEXP = "(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)" ;
 	
+    /**
+     * Private constructor
+     */
+    private ParserUtil() { 
+    }
+    
     /**
      * Removes the comments from the given text ( single-line and multi-line comments )
      * @param initialText
@@ -75,19 +81,37 @@ public class ParserUtil {
     protected static void checkModelFile(File file) {
         if ( ! file.exists() ) {
             String textError = "File '" + file.toString() + "' not found";
-            //logger.error(textError);
             throw new DslParserException(textError);
         }
         if ( ! file.isFile() ) {
             String textError = "'" + file.toString() + "' is not a file";
-            //logger.error(textError);
             throw new DslParserException(textError);
         }
         if ( ! file.getName().endsWith(DOT_MODEL)) {
             String textError = "File '" + file.toString() + "' doesn't end with '" + DOT_MODEL + "'";
-            //logger.error(textError);
             throw new DslParserException(textError);
         }
     }
 
+    /**
+     * Remove quote char at the first and last position if any 
+     * @param s
+     * @param quoteChar
+     * @return
+     */
+    protected static String unquote(String s, char quoteChar ) {
+    	if ( s == null ) {
+    		return s ;
+    	}
+    	if ( s.length() == 0  ) {
+    		return s ;
+    	}
+    	int last = s.length()-1;
+    	if ( s.charAt(0) == quoteChar && s.charAt(last) == quoteChar ) {
+    		return s.substring(1, last);
+    	}
+    	else {
+    		return s ;
+    	}
+    }
 }

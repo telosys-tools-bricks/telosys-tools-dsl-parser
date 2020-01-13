@@ -17,7 +17,7 @@ public class DomainEntityFieldAnnotationTest {
 		DomainEntityFieldAnnotation annotation = new DomainEntityFieldAnnotation("Id") ;
 		System.out.println(annotation);
 		assertFalse ( annotation.hasParameter() ) ;
-		assertNull ( annotation.getParameter() ) ;
+		assertNull ( annotation.getParameterAsString() ) ;
 		assertNull ( annotation.getParameterAsInteger() ) ;
 		assertNull ( annotation.getParameterAsBigDecimal() ) ;
 	}
@@ -27,7 +27,7 @@ public class DomainEntityFieldAnnotationTest {
 		DomainEntityFieldAnnotation annotation = new DomainEntityFieldAnnotation("Max", new BigDecimal("123.45")) ;
 		System.out.println(annotation);
 		assertTrue ( annotation.hasParameter() ) ;
-		assertNull ( annotation.getParameter() ) ;
+		assertNull ( annotation.getParameterAsString() ) ;
 		assertNull ( annotation.getParameterAsInteger() ) ;
 		assertNotNull ( annotation.getParameterAsBigDecimal() ) ;
 		assertEquals(new BigDecimal("123.45"), annotation.getParameterAsBigDecimal() );
@@ -38,7 +38,7 @@ public class DomainEntityFieldAnnotationTest {
 		DomainEntityFieldAnnotation annotation = new DomainEntityFieldAnnotation("SizeMax", new Integer("12")) ;
 		System.out.println(annotation);
 		assertTrue ( annotation.hasParameter() ) ;
-		assertNull ( annotation.getParameter() ) ;
+		assertNull ( annotation.getParameterAsString() ) ;
 		assertNotNull ( annotation.getParameterAsInteger() ) ;
 		assertNull ( annotation.getParameterAsBigDecimal() ) ;
 		assertEquals(new Integer("12"), annotation.getParameterAsInteger() );
@@ -49,10 +49,10 @@ public class DomainEntityFieldAnnotationTest {
 		DomainEntityFieldAnnotation annotation = new DomainEntityFieldAnnotation("DbColumn", "FIRST_NAME") ;
 		System.out.println(annotation);
 		assertTrue ( annotation.hasParameter() ) ;
-		assertNotNull ( annotation.getParameter() ) ;
+		assertNotNull ( annotation.getParameterAsString() ) ;
 		assertNull ( annotation.getParameterAsInteger() ) ;
 		assertNull ( annotation.getParameterAsBigDecimal() ) ;
-		assertEquals("FIRST_NAME", annotation.getParameter() );
+		assertEquals("FIRST_NAME", annotation.getParameterAsString() );
 	}
 	
 }
