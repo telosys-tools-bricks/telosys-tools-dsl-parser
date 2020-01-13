@@ -52,16 +52,15 @@ public class AnnotationName {
 	// Added in ver 3.2.0
 	public static final String DEFAULT_VALUE   = "DefaultValue" ; // v 3.2.0
 	public static final String INITIAL_VALUE   = "InitialValue" ; // v 3.2.0
-	
+	public static final String LABEL           = "Label";     // v 3.2.0
+	public static final String INPUT_TYPE      = "InputType"; // v 3.2.0
+	public static final String PATTERN         = "Pattern";   // v 3.2.0
 	
 	// TODO 
-    // @DefaultValue(xxx) or  @InitValue(xxx)
     // @Comment(xxx) --> used as DbComment ?
     // @After(DateISO)
     // @Before(DateISO)
     //
-    // @Label(xxx)
-    // @InputType(xxx) or config ???
     // @Pattern(xxx) or @RegExp(xxx) ???
     //
     // @DbColumn(xxx)

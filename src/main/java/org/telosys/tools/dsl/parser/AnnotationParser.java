@@ -25,10 +25,12 @@ import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
 /**
  * Field annotations parsing
  * 
- * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre, Laurent Guerin
- * @version 1.0
+ * @author Laurent Guerin
  */
 public class AnnotationParser extends AbstractParser  {
+
+    static final char OPENING_PARENTHESIS = '(' ;
+    static final char CLOSING_PARENTHESIS = ')' ;
 
     /**
      * Constructor
@@ -59,7 +61,7 @@ public class AnnotationParser extends AbstractParser  {
 
     	if ( annotations == null || "".equals(annotations) ) {
     		// return void list
-    		return new ArrayList<DomainEntityFieldAnnotation>();
+    		return new ArrayList<>();
     	}
 
         // list of annotation found
@@ -68,10 +70,10 @@ public class AnnotationParser extends AbstractParser  {
         if (annotationList.length == 0 ) {
         	// example : "," or ",," (only commas)
         	// not an error => return void list
-        	return new ArrayList<DomainEntityFieldAnnotation>();
+        	return new ArrayList<>();
         }
 
-        List<DomainEntityFieldAnnotation> list = new ArrayList<DomainEntityFieldAnnotation>();
+        List<DomainEntityFieldAnnotation> list = new ArrayList<>();
         // extract annotations
         for (String annotationString : annotationList) {
             DomainEntityFieldAnnotation annotation = this.parseSingleAnnotation(entityName, fieldName, annotationString.trim());
@@ -107,7 +109,7 @@ public class AnnotationParser extends AbstractParser  {
         //--- get the parameter value if any 
     	String parameterValue = null ;
     	try {
-			parameterValue = getParameterValue(annotationString, '(', ')' ) ;
+			parameterValue = getParameterValue(annotationString ) ;
 		} catch (Exception e) {
 			// invalid syntax in the parameter 
     		throwAnnotationParsingError( entityName, fieldName, annotationString, e.getMessage() );
@@ -171,7 +173,7 @@ public class AnnotationParser extends AbstractParser  {
      */
     /* package */ String getAnnotationName (String annotation) throws Exception {
     	boolean blankCharFound = false ;
-    	StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	// skip the first char (supposed to be @)
     	for ( int i = 1 ; i < annotation.length() ; i++ ) {
     		char c = annotation.charAt(i);
@@ -207,9 +209,10 @@ public class AnnotationParser extends AbstractParser  {
      * @return the parameter value or null if none
      * @throws Exception
      */
-    /* package */ String getParameterValue(String annotation, char openChar, char closeChar) throws Exception {
-        int openIndex  = annotation.lastIndexOf(openChar);
-        int closeIndex = annotation.lastIndexOf(closeChar);
+    // String getParameterValue(String annotation, char openChar, char closeChar) throws Exception {
+        /* package */ String getParameterValue(String annotation) throws Exception {
+        int openIndex  = annotation.lastIndexOf(OPENING_PARENTHESIS);
+        int closeIndex = annotation.lastIndexOf(CLOSING_PARENTHESIS);
     	if ( openIndex < 0 && closeIndex < 0 ) {
     		// no open nor close char
     		return null ;
@@ -227,16 +230,16 @@ public class AnnotationParser extends AbstractParser  {
         		}
         		else {
         			// unbalanced ( and ) eg ")aa("
-        	        throw new Exception("unbalanced " + openChar + " and " + closeChar );
+        	        throw new Exception("unbalanced " + OPENING_PARENTHESIS + " and " + CLOSING_PARENTHESIS );
         		}
         	}
         	else {
     			// unbalanced ( and ) eg "(aa" or "aa)"
             	if ( openIndex < 0 ) {
-	    	        throw new Exception(" '" + openChar + "' missing");
+	    	        throw new Exception(" '" + OPENING_PARENTHESIS + "' missing");
             	}
             	else {
-	    	        throw new Exception(" '" + closeChar + "' missing");
+	    	        throw new Exception(" '" + CLOSING_PARENTHESIS + "' missing");
             	}
         	}
     	}
@@ -280,49 +283,6 @@ public class AnnotationParser extends AbstractParser  {
     	else {
     		return s;
     	}
-    	/*
-        @DefaultValue(ab c)  // trim
-        @DefaultValue(123)   // trim
-        @DefaultValue(true)  // trim
-        @DefaultValue(" ab c ") // no trim inside ""  
-        */
-
     }
     
-/**    
-    protected String removeVoidCharsAround(String s) {
-    	StringBuilder sb = new StringBuilder();
-    	boolean started = false ;
-    	// Remove void chars on LEFT side 
-    	for ( byte b : s.getBytes() ) {
-			if ( isVoidChar(b) ) {
-				if ( started ) {
-					sb.append(b);
-				}
-				// if not stared : do not keep this char
-			}
-			else {
-				sb.append(b);
-				started = true ;
-			}
-    	}
-    	// Remove void chars on RIGHT side 
-    	int i = sb.length()-1;
-    	while ( isVoidChar((byte)sb.charAt(i)) ) {
-    		i--;
-    	}
-    	if ( i <= 0 ) {
-    		return "" ;
-    	}
-    	else {
-    		return sb.substring(0, i+1);
-    	}
-    }
-//    private boolean isVoidChar(char c) {
-//    	
-//    }
-    private boolean isVoidChar(byte b) {
-    	return  b == ' ' || b == '\t' || b == '\n' || b == '\r' ;
-    }
-**/
 }

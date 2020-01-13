@@ -37,10 +37,10 @@ public class AnnotationParserTest {
         System.out.println("getAnnotationName('" + s + "')");
         return annotationParser.getAnnotationName(s) ;
 	}
-	private String getParameterValue(String s, char c1, char c2) throws Exception {
+	private String getParameterValue(String s) throws Exception {
         AnnotationParser annotationParser = new AnnotationParser();
         System.out.println("getParameterValue('" + s + "')");
-        return annotationParser.getParameterValue(s, c1, c2 ) ;
+        return annotationParser.getParameterValue(s ) ;
 	}
 	private Number getParameterValueAsInteger(String value) throws Exception {
         AnnotationParser annotationParser = new AnnotationParser();
@@ -120,34 +120,38 @@ public class AnnotationParserTest {
 	//-------------------------------------------------------------------------------------------
     @Test
     public void testGetParamValue() throws Exception {
-        Assert.assertEquals(null, getParameterValue("", '(', ')' ));
-        Assert.assertEquals(null, getParameterValue("@Foo", '(', ')' ));
-        Assert.assertEquals(null, getParameterValue(" @Foo  ", '(', ')' ));
-        Assert.assertEquals("aa", getParameterValue("@Foo(aa)", '(', ')' ));
-        Assert.assertEquals("aa", getParameterValue("@Foo  (aa)  ", '(', ')' ));
-        Assert.assertEquals("a a", getParameterValue("  @Foo  (a a)  ", '(', ')' ));
-        Assert.assertEquals("aa", getParameterValue("@Foo  (  aa  )  ", '(', ')' ));
+        assertNull( getParameterValue("") );
+        assertNull( getParameterValue("@Foo" ));
+        assertNull( getParameterValue(" @Foo  " ));
+        assertEquals("aa",  getParameterValue("@Foo(aa)"));
+        assertEquals("aa",  getParameterValue("@Foo  (aa)  " ));
+        assertEquals("a a", getParameterValue("  @Foo  (a a)  "));
+        assertEquals("aa",  getParameterValue("@Foo  (  aa  )  " ));
+        
+        assertEquals("'aa'", getParameterValue("@Foo('aa')  " ));
+        assertEquals("'{aa}b'", getParameterValue("@Foo('{aa}b')  " ));
+//        assertEquals(" '(aa)' ", getParameterValue("@Foo  ( '(aa)'  )  " ));
     }
     //-------------------------------------------------------------------------------------------
     @Test (expected=Exception.class)
     public void testGetParamValueWithError1() throws Exception {
-    	getParameterValue(" @Foo (a  ", '(', ')' );
+    	getParameterValue(" @Foo (a  " );
     }
     @Test (expected=Exception.class)
     public void testGetParamValueWithError2() throws Exception {
-    	getParameterValue(" @Foo a)  ", '(', ')' );
+    	getParameterValue(" @Foo a)  " );
     }
     @Test (expected=Exception.class)
     public void testGetParamValueWithError3() throws Exception {
-    	getParameterValue(" @Foo )a(  ", '(', ')' );
+    	getParameterValue(" @Foo )a(  " );
     }
     @Test (expected=Exception.class)
     public void testGetParamValueWithError4() throws Exception {
-    	getParameterValue(" @Foo a))  ", '(', ')' );
+    	getParameterValue(" @Foo a))  " );
     }
     @Test(expected = Exception.class)
     public void testGetParamValueWithError5() throws Exception {
-    	getParameterValue(" @Bar(a(  ", '(', ')' );
+    	getParameterValue(" @Bar(a(  ");
     }
 	//-------------------------------------------------------------------------------------------
     @Test
@@ -269,9 +273,12 @@ public class AnnotationParserTest {
 
     @Test
     public void testParseAnnotationsWithStringParam() {
-    	List<DomainEntityFieldAnnotation> list = parseAnnotations("  @DefaultValue( 50 )  ") ;
+    	List<DomainEntityFieldAnnotation> list ;
+    	DomainEntityFieldAnnotation annot;
+    	
+    	list = parseAnnotations("  @DefaultValue( 50 )  ") ;
     	assertEquals(1, list.size());
-    	DomainEntityFieldAnnotation annot = list.get(0);
+    	annot = list.get(0);
     	assertEquals("DefaultValue", annot.getName());
     	assertEquals("50", annot.getParameterAsString());
     	assertNull(annot.getParameterAsInteger());
@@ -293,6 +300,31 @@ public class AnnotationParserTest {
     	assertEquals(" abc def ", list.get(0).getParameterAsString());
     	assertEquals("InitialValue", list.get(1).getName());
     	assertEquals("true", list.get(1).getParameterAsString());
+
+    	list = parseAnnotations("  @Label( BlaBla  )  ") ;
+    	assertEquals(1, list.size());
+    	annot = list.get(0);
+    	assertEquals("Label", annot.getName());
+    	assertEquals("BlaBla", annot.getParameterAsString());
+    	assertNull(annot.getParameterAsInteger());
+    	assertNull(annot.getParameterAsBigDecimal());
+
+//    	list = parseAnnotations("  @InputType( '(password)'  )  ") ;
+//    	assertEquals(1, list.size());
+//    	annot = list.get(0);
+//    	assertEquals("InputType", annot.getName());
+//    	assertEquals("(password)", annot.getParameterAsString());
+//    	assertNull(annot.getParameterAsInteger());
+//    	assertNull(annot.getParameterAsBigDecimal());
+//
+//    	list = parseAnnotations("  @Pattern( '([A-Z][A-Z0-9]*) [^>]*' ) ") ;
+//    	assertEquals(1, list.size());
+//    	annot = list.get(0);
+//    	assertEquals("Pattern", annot.getName());
+//    	assertEquals("([A-Z][A-Z0-9]*) [^>]*", annot.getParameterAsString());
+//    	assertNull(annot.getParameterAsInteger());
+//    	assertNull(annot.getParameterAsBigDecimal());
+    	
     }
 
     //-------------------------------------------------------------------------------------------

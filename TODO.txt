@@ -1,16 +1,4 @@
 
-String getDefaultValue();    
-    @DefaultValue(ab c)  // trim
-    @DefaultValue(123)   // trim
-    @DefaultValue(true)  // trim
-    @DefaultValue(" ab c ") // no trim inside ""  
-
-String getInitialValue() ;
-    @InitialValue(ab c)  // trim
-    @InitialValue(123)   // trim
-    @InitialValue(true)  // trim
-    @InitialValue(" ab c ") // no trim inside ""  
-
 String getLabel();
     @Label(abc)  // trim
     @Label(" abc ")  // no trim inside ""  
@@ -61,9 +49,37 @@ Integer getDatabaseSize();
     @DbSize(123) 
 
 -------------------------------------------------------
+JPA ???
+  @OneToMany(xxxx)
+  @OneToOne(xxx)
+  @ManyToOne(xxx)
+  @ManyToMany(xxxx)
+  @MappedBy(xx)
+
+Fix code gen with jpa.xxx when mappedBy="null" !
+
+-------------------------------------------------------
+',' optional between annotations 
+-------------------------------------------------------
 
 Change Licence header
 
 Changer ver to 3.2.0
 
--------------------------------------------------------
+
+======================================================================
+   DONE 
+======================================================================
+String getDefaultValue();    
+    @DefaultValue(ab c)  // trim
+    @DefaultValue(123)   // trim
+    @DefaultValue(true)  // trim
+    @DefaultValue(" ab c ") // no trim inside ""  
+    @DefaultValue(' ab c ') // no trim inside '' 
+
+String getInitialValue() ;
+    @InitialValue(ab c)  // trim
+    @InitialValue(123)   // trim
+    @InitialValue(true)  // trim
+    @InitialValue(" ab c ") // no trim inside ""  
+
