@@ -1,0 +1,9 @@
+// qdqds
+
+
+Employee {
+	id : int {@Id}; // the id
+	firstName : string ;
+	birthDate : date ;
+}
+ 
