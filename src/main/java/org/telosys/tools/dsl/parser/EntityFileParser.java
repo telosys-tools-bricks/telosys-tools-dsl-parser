@@ -96,10 +96,14 @@ public class EntityFileParser { // extends AbstractParser {
 	}
 	protected void processLine(String line, int lineNumber) {
 		System.out.println(lineNumber + " : " + line);
+		System.out.println("position = " + position);
 		switch ( position ) {
 		case IN_ENTITY:
-			String entityName = processLineEntity(line, lineNumber);
-			System.out.println("entityName : '" + entityName + "'");
+			String s = processLineEntity(line, lineNumber);
+			System.out.println("processLineEntity : '" + s + "'");
+			if ( s != null ) {
+				String entityNameInText = s ;
+			}
 			break;
 		case IN_FIELDS:
 			break;
@@ -113,7 +117,7 @@ public class EntityFileParser { // extends AbstractParser {
 		StringBuilder sb = new StringBuilder();
 		char previous = 0;
 		for (char c : line.toCharArray()) {
-//			System.out.print(c);
+			System.out.print( "[" + c+ "]");
 			if (c > SPACE) {
 				switch (c) {
 				case '{':
@@ -125,10 +129,11 @@ public class EntityFileParser { // extends AbstractParser {
 				case '/':
 					if (previous == '/') {
 						// comment 
-						return null;
+						return currentValue(sb);
 					}
 					break;
 				default:
+					//System.out.print("append("+c+")");
 					sb.append(c);
 				}
 				previous = c;
@@ -137,8 +142,43 @@ public class EntityFileParser { // extends AbstractParser {
 				break;
 			}
 		}
+		return currentValue(sb);
+	}
+
+	protected String processLineInFieldsLevel(String line, int lineNumber) {
+		StringBuilder sb = new StringBuilder();
+		char previous = 0;
+		for (char c : line.toCharArray()) {
+			System.out.print( "[" + c+ "]");
+			if (c > SPACE) {
+				switch (c) {
+				case '{':
+					position++;
+					break;
+				case '}':
+					position--;
+					break;
+				case '/':
+					if (previous == '/') {
+						// comment 
+						return currentValue(sb);
+					}
+					break;
+				default:
+					System.out.print("append("+c+")");
+					sb.append(c);
+				}
+				previous = c;
+			}
+			if ( position != IN_ENTITY ) {
+				break;
+			}
+		}
+		return currentValue(sb);
+	}
+
+	private String currentValue(StringBuilder sb) {
 		String s = sb.toString();
 		return ( s.length() > 0 ? s : null );
 	}
-
 }

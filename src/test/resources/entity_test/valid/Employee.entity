@@ -1,7 +1,8 @@
 // qdqds
 
-
-Employee {
+  // qlkjqlksjd
+Employee // foo
+{ 
 	id : int {@Id}; // the id
 	firstName : string ;
 	birthDate : date ;
