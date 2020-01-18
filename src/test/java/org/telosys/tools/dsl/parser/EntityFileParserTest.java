@@ -1,5 +1,7 @@
 package org.telosys.tools.dsl.parser;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,7 +21,12 @@ public class EntityFileParserTest {
 	public void testEntityFileParser() {
 		
 		EntityFileParser entityFileParser = new EntityFileParser("src/test/resources/entity_test/valid/Employee.entity");
-		entityFileParser.parse();
+		//entityFileParser.parse();
+		List<Field> fields = entityFileParser.parseFields();
+		System.out.println("\nFIELDS PARSED :");
+		for ( Field field : fields ) {
+			System.out.println(" . " + field);
+		}
 	}
 
 }
