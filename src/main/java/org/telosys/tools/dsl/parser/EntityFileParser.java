@@ -207,12 +207,12 @@ public class EntityFileParser { // extends AbstractParser {
 			}
 		}
 	}
-	private void endOfCurrentField() {
-		currentField.finished();
-		System.out.println("\n\n=== FINISHED : " + currentField);
-		currentField = null ; // no current field
-		position = Const.IN_FIELDS;
-	}
+//	private void endOfCurrentField() {
+//		currentField.finished();
+//		System.out.println("\n\n=== FINISHED : " + currentField);
+//		currentField = null ; // no current field
+//		position = Const.IN_FIELDS;
+//	}
 
 	/**
 	 * Process the given line for a current level = FIELD LEVEL
@@ -222,6 +222,9 @@ public class EntityFileParser { // extends AbstractParser {
 	 */
 //	protected Field processLineFieldLevel(String line, int lineNumber) {
 	protected void processLineFieldLevel(String line, int lineNumber) {
+		
+		boolean inSingleQuote = false ;
+		boolean inDoubleQuote = false ;
 		
 		char previous = 0;
 //		Field currentField = null ;
@@ -233,31 +236,108 @@ public class EntityFileParser { // extends AbstractParser {
 		
 		// parse all chararcters in the given line
 		for (char c : line.toCharArray()) {
-			System.out.print( "[" + c+ "]");
-			if (c > SPACE) { // if not a void char
+			System.out.print( "[" + c + "]");
+			if (c >= SPACE) { // if not a void char
 				
 				switch (c) {
+				case SPACE :   // end of field 
+					if ( inSingleQuote || inDoubleQuote ) {
+						System.out.print( "+" );
+						currentField.append(c);
+					}
+					break;
+
 				case ';':   // end of field 
-					currentField.finished();
-					System.out.println("\n\n=== FINISHED : " + currentField);
-					fieldsParsed.add(currentField);
-					currentField = null ; // no current field
-					position = Const.IN_FIELDS;
+					if ( position == Const.IN_FIELDS ) {
+						currentField.finished();
+						// TODO : check field
+						// if invalid => ERROR unexpected ';'
+						System.out.println("\n\n=== FINISHED : " + currentField);
+						fieldsParsed.add(currentField);
+//						currentField = null ; // no current field
+						currentField = new Field(lineNumber) ; // no current field
+						position = Const.IN_FIELDS;
+					}
+					else {
+						System.out.print( "+" );
+						currentField.append(c);
+					}
 					break;
 				case '{':
-					position++;
-					currentField.setPosition(position);
-//					// end of field definition part 
-//					field.setFieldPart(fieldPart.toString());
+					if ( inSingleQuote || inDoubleQuote ) {
+						System.out.print( "+" );
+						currentField.append(c);
+					}
+					else {
+						if ( position == Const.IN_FIELDS ) {
+							position++;
+							currentField.setPosition(position);
+						}
+						else {
+							System.out.print( "+" );
+							currentField.append(c);
+						}
+					}
 					break;
 				case '}':
-					position--;
-					currentField.setPosition(position);
+					if ( inSingleQuote || inDoubleQuote ) {
+						System.out.print( "+" );
+						currentField.append(c);
+					}
+					else {
+						if ( position == Const.IN_ANNOTATIONS ) {
+							position--;
+							currentField.setPosition(position);
+						}
+						else {
+							System.out.print( "+" );
+							currentField.append(c);
+						}
+					}
 					break;
 				case '/':
-					if (previous == '/') {
-						// comment => end of current line
-						return ;
+					if ( inSingleQuote || inDoubleQuote ) {
+						System.out.print( "+" );
+						currentField.append(c);
+					}
+					else {
+//						if ( position != Const.IN_ANNOTATIONS ) {
+							if (previous == '/') {
+								// comment => end of current line
+								return ;
+							}
+//						}
+					}
+					break;
+					
+				case '\'': // single quote char (open/close)
+					if ( position == Const.IN_ANNOTATIONS ) {
+						if ( ! inDoubleQuote ) {
+							inSingleQuote = ! inSingleQuote ; // toggle quote flag
+						}
+						currentField.append(c);
+					}
+					else {
+						throw new DslParserException("Unexpected single quote");
+					}
+					break;
+					
+				case '"': // double quote char (open/close)
+					if ( position == Const.IN_ANNOTATIONS ) {
+						if ( ! inSingleQuote ) {
+							// toggle quote flag
+							inDoubleQuote = ! inDoubleQuote ;
+						}
+//						if ( inDoubleQuote ) {
+//							inDoubleQuote = false ; // close single quote
+//						}
+//						else {
+//							inDoubleQuote = true ; // open single quote
+//						}
+						currentField.append(c);
+					}
+					else {
+						throw new DslParserException("Unexpected double quote");
 					}
 					break;
 				default:
