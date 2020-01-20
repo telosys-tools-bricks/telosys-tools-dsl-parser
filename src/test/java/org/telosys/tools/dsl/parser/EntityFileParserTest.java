@@ -20,11 +20,13 @@ public class EntityFileParserTest {
 	@Test
 	public void testEntityFileParser() {
 		
-		EntityFileParser entityFileParser = new EntityFileParser("src/test/resources/entity_test/valid/Employee.entity");
+		EntityFileParser entityFileParser = new EntityFileParser("src/test/resources/entity_test_v_3_2/Employee.entity");
 		//entityFileParser.parse();
-		List<Field> fields = entityFileParser.parseFile();
+		EntityFileParsingResult result = entityFileParser.parse();
+		System.out.println("\nPARSING RESULT :");
+		System.out.println(" Entity name : " + result.getEntityNameParsed() );
 		System.out.println("\nFIELDS PARSED :");
-		for ( Field field : fields ) {
+		for ( Field field : result.getFields() ) {
 			System.out.println(" . " + field);
 		}
 	}

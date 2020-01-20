@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.DslParserException;
-import org.telosys.tools.dsl.parser.model.DomainEntity;
 
 /**
  * Telosys DSL entity parser
@@ -45,9 +44,16 @@ public class EntityFileParser {
 	private boolean inFields      = false ;
 	private boolean inAnnotations = false ;
 	
-	
+	private String entityNameParsed = null ;
+
 	private void log(String message) {
 		System.out.println("LOG:" + message);
+	}
+	private void logChar(char c) {
+		System.out.print( "[" + c + "]");
+	}
+	private void log(char c) {
+		System.out.print(c);
 	}
 
 	private void throwParsingException(String message) {
@@ -59,6 +65,10 @@ public class EntityFileParser {
 		throw new DslParserException(errorMessage);
 	}
 
+	/**
+	 * Constructor
+	 * @param fileName
+	 */
 	public EntityFileParser(String fileName) {
 		this.entityFile = new File(fileName);
 		this.entityNameFromFileName = DslModelUtil.getEntityName(entityFile);
@@ -70,16 +80,21 @@ public class EntityFileParser {
 	 * @param file
 	 * @return
 	 */
-	public DomainEntity parse() {
+//	public DomainEntity parse() {
+//
+//		DomainEntity domainEntity = new DomainEntity(entityNameFromFileName);
+//
+//		List<Field> fields = parseFile() ; // rename parseFile()
+//		// TODO : parseAllFields(domainEntity);
+//		return domainEntity;
+//	}
+	public EntityFileParsingResult parse() {
 
-		DomainEntity domainEntity = new DomainEntity(entityNameFromFileName);
-
-		List<Field> fields = parseFile() ; // rename parseFile()
-		// TODO : parseAllFields(domainEntity);
-		return domainEntity;
+		parseFile() ; // rename parseFile()
+		return new EntityFileParsingResult(this.entityNameFromFileName, this.entityNameParsed, this.fieldsParsed);
 	}
 	
-	protected List<Field> parseFile() {
+	protected void parseFile() {
 		if (!entityFile.exists()) {
 			throwParsingException("File not found");
 		}
@@ -96,27 +111,22 @@ public class EntityFileParser {
 		} catch (IOException e) {
 			throwParsingException("IOException");
 		}
-		return this.fieldsParsed ;
 	}
 	
 	private void processLine(String line, int lineNumber) {
-		System.out.println("\n-------------------------------------------");
-		System.out.println("#" + lineNumber + " : " + line);
+		log("\n-------------------------------------------");
+		log("#" + lineNumber + " : " + line);
 		
 		if ( inFields ) {
 			processLineFieldLevel(line, lineNumber);
-			System.out.println("processLineFieldLevel return : Field = " + currentField );
 		}
 		else {
-			String s = processLineEntityLevel(line, lineNumber);
-			if ( s != null ) {
-				System.out.println("\n=== ENTITY : " + s);
-			}
+			this.entityNameParsed = processLineEntityLevel(line, lineNumber);
 		}
 	}
 
 	/**
-	 * Process the given line for a current level = ENTITY LEVEL
+	 * Process the given line at ENTITY LEVEL
 	 * @param line
 	 * @param lineNumber
 	 * @return the entity name if found or null if none
@@ -125,7 +135,7 @@ public class EntityFileParser {
 		StringBuilder sb = new StringBuilder();
 		char previous = 0;
 		for (char c : line.toCharArray()) {
-			System.out.print( "[" + c+ "]");
+			logChar(c);
 			if (c > SPACE) {
 				switch (c) {
 
@@ -179,18 +189,25 @@ public class EntityFileParser {
 		
 		char previous = 0;
 		resetCurrentField(lineNumber);
-		System.out.println("processLineFieldLevel : #" + lineNumber + " : '" + line + "'");
-		System.out.println("processLineFieldLevel : #" + lineNumber + " : Field : " + currentField );
+		log("processLineFieldLevel : #" + lineNumber + " : '" + line + "'");
+		log("processLineFieldLevel : #" + lineNumber + " : currentField : " + currentField );
 		
 		// parse all chararcters in the given line
 		for (char c : line.toCharArray()) {
-			System.out.print( "[" + c + "]");
+			logChar(c);
 			if (c >= SPACE) { // if not a void char
 				
 				switch (c) {
 				case SPACE :   // end of field 
-					if ( inSingleQuote || inDoubleQuote ) {
-						keepChar(c);
+					if ( inAnnotations ) {
+						if ( inSingleQuote || inDoubleQuote ) {
+							keepChar(c);
+						}
+					}
+					else if ( inFields ) {
+						if ( ! currentField.isVoid() ) {
+							keepChar(c);
+						}
 					}
 					break;
 
@@ -204,7 +221,7 @@ public class EntityFileParser {
 						}
 					}
 					else if ( inFields ) {
-						endOfCurrentField() ;
+						endOfCurrentField(lineNumber) ;
 					}
 					else {
 						throwParsingException("Unexpected ';'", lineNumber) ;
@@ -293,22 +310,19 @@ public class EntityFileParser {
 	}
 	
 	private void keepChar(char c) {
-		System.out.print( "+" );
+		log( '+' );
 		currentField.append(c);
 	}
-//	private void keepCharOnlyIfInQuote(char c) {
-//		System.out.print( "+" );
-//		currentField.append(c);
-//	}
 
-	private void endOfCurrentField() {
+	private void endOfCurrentField(int lineNumber) {
 		currentField.finished();
 		// TODO : check field
 		// if invalid => ERROR unexpected ';'
-		System.out.println("\n\n=== FINISHED : " + currentField);
-		fieldsParsed.add(currentField);
-	//	currentField = null ; // no current field
-		currentField = new Field(-1) ; // no current field
+		log("\n\n=== FINISHED : " + currentField);
+		if ( ! currentField.isVoid() ) {
+			fieldsParsed.add(currentField);
+		}
+		currentField = new Field(lineNumber) ; // no current field
 		inAnnotations = false ;
 	}
 	
