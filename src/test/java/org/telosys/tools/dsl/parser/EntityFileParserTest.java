@@ -22,7 +22,7 @@ public class EntityFileParserTest {
 		
 		EntityFileParser entityFileParser = new EntityFileParser("src/test/resources/entity_test/valid/Employee.entity");
 		//entityFileParser.parse();
-		List<Field> fields = entityFileParser.parseFields();
+		List<Field> fields = entityFileParser.parseFile();
 		System.out.println("\nFIELDS PARSED :");
 		for ( Field field : fields ) {
 			System.out.println(" . " + field);

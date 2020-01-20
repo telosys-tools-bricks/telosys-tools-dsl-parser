@@ -28,4 +28,8 @@ public class DslParserException extends RuntimeException {
     public DslParserException(String message) {
         super(message);
     }
+    public DslParserException(String message, int lineNumber) {
+    	// TODO : build message
+        super(message);
+    }
 }
