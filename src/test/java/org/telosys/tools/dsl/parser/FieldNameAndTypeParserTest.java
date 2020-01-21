@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.telosys.tools.dsl.DslParserException;
+import org.telosys.tools.dsl.parser.model.DomainTypeNature;
 
 public class FieldNameAndTypeParserTest {
 
@@ -147,6 +148,36 @@ public class FieldNameAndTypeParserTest {
     	Assert.assertEquals( 2, fieldParser.getFieldTypeCardinality(field, "aa:string \t [ \t 2 ]") );
     	Assert.assertEquals(-1, fieldParser.getFieldTypeCardinality(field, "aa:string []") );
     	Assert.assertEquals(20, fieldParser.getFieldTypeCardinality(field, "aa:Car [20]") );
+	}
+
+	//----------------------------------------------------------------------
+	// test entry point 
+	//----------------------------------------------------------------------
+	@Test
+    public void testParseFieldNameAndType() {
+		FieldNameAndTypeParser fieldParser = getParser();
+		
+		FieldNameAndType r ;
+		r = fieldParser.parseFieldNameAndType( new Field(12, "aa:string [2]", ""));
+		Assert.assertEquals( "aa", r.getName() );
+		Assert.assertEquals( "string", r.getType() );
+		Assert.assertEquals( 2, r.getCardinality() );
+		Assert.assertEquals( "string", r.getDomainType().getName() );
+		Assert.assertEquals( DomainTypeNature.NEUTRAL_TYPE, r.getDomainType().getNature() );
+
+		r = fieldParser.parseFieldNameAndType( new Field(12, "  foo : long ", ""));
+		Assert.assertEquals( "foo", r.getName() );
+		Assert.assertEquals( "long", r.getType() );
+		Assert.assertEquals( 1, r.getCardinality() );
+		Assert.assertEquals( "long", r.getDomainType().getName() );
+		Assert.assertEquals( DomainTypeNature.NEUTRAL_TYPE, r.getDomainType().getNature() );
+
+		r = fieldParser.parseFieldNameAndType( new Field(12, "  bar : int [  ] ", ""));
+		Assert.assertEquals( "bar", r.getName() );
+		Assert.assertEquals( "int", r.getType() );
+		Assert.assertEquals( -1, r.getCardinality() );
+		Assert.assertEquals( "int", r.getDomainType().getName() );
+		Assert.assertEquals( DomainTypeNature.NEUTRAL_TYPE, r.getDomainType().getNature() );
 	}
 
 }
