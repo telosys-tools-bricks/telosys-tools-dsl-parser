@@ -75,6 +75,15 @@ public class EntityFileParser {
 	}
 
 	/**
+	 * Constructor
+	 * @param file
+	 */
+	public EntityFileParser(File file) {
+		this.entityFile = file;
+		this.entityNameFromFileName = DslModelUtil.getEntityName(entityFile);
+	}
+
+	/**
 	 * Parse entity from the given file
 	 * 
 	 * @param file

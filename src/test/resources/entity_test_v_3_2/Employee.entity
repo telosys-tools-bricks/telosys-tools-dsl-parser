@@ -14,7 +14,7 @@ Employee { // foo
 	    ;
 	    
 	;;   
-	birthDate  ; : date 
+	birthDate : date 
 	{
 	@Future, 		 @NotEmpty , @Test('az,ee')
 	}
@@ -28,6 +28,20 @@ Employee { // foo
 	
 	bar1 : int ; 		;; bar2 : string;
 	
-	ba r3 : long ;
+//	ba r3 : long ; // "Invalid field name"
+	bar3 : long   [ 33 ] ;
+	
+	bar$ : string ;
+	
+	bar@ : string { @Max(12) } ;
+	
+	bar% : int @Foo(xx) ; / // "Invalid field type"
+
+	bar% : int  ; / // "Invalid field type"
+	
+	bar4 : short[2] ;
+	
+//	ba r5 : int ; // "Invalid field name"
+
 }
  

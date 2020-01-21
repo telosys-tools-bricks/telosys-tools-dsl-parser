@@ -1,9 +1,10 @@
-package org.telosys.tools.dsl.parser;
+package org.telosys.tools.dsl.oldparser;
 
 import java.io.File;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.telosys.tools.dsl.oldparser.EntityParser;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 
 

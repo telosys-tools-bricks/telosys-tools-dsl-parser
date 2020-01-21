@@ -1,7 +1,8 @@
-package org.telosys.tools.dsl.parser;
+package org.telosys.tools.dsl.oldparser;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.telosys.tools.dsl.oldparser.ParserUtil;
 
 public class ParserUtilTest {
 	

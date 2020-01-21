@@ -21,7 +21,7 @@ import java.util.Properties;
 
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.converter.Converter;
-import org.telosys.tools.dsl.parser.Parser;
+import org.telosys.tools.dsl.oldparser.Parser;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainModelInfo;
 import org.telosys.tools.generic.model.Model;

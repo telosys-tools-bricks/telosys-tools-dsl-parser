@@ -1,10 +1,11 @@
-package org.telosys.tools.dsl.parser;
+package org.telosys.tools.dsl.oldparser;
 
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
 import org.junit.Test;
+import org.telosys.tools.dsl.oldparser.Parser;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.junit.utils.TestFileProvider;
 

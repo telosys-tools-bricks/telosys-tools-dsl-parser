@@ -1,4 +1,4 @@
-package org.telosys.tools.dsl.parser;
+package org.telosys.tools.dsl.oldparser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.telosys.tools.dsl.DslParserException;
+import org.telosys.tools.dsl.oldparser.AnnotationParser;
 import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
 
 public class AnnotationParserTest {
