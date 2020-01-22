@@ -38,8 +38,8 @@ public class EntityFileParser {
 	private final File entityFile;
 	private final String entityNameFromFileName;
 
-	private final List<Field> fieldsParsed = new LinkedList<>();
-	private Field currentField = null ;
+	private final List<FieldBuilder> fieldsParsed = new LinkedList<>();
+	private FieldBuilder currentField = null ;
 
 	private boolean inFields      = false ;
 	private boolean inAnnotations = false ;
@@ -176,11 +176,11 @@ public class EntityFileParser {
 	
 	private void resetCurrentField(int lineNumber) {
 		if ( currentField == null ) {
-			currentField = new Field(lineNumber);
+			currentField = new FieldBuilder(lineNumber);
 		}
 		else {
 			if ( currentField.isVoid() ) {
-				currentField = new Field(lineNumber);
+				currentField = new FieldBuilder(lineNumber);
 			}
 		}
 	}
@@ -331,7 +331,7 @@ public class EntityFileParser {
 		if ( ! currentField.isVoid() ) {
 			fieldsParsed.add(currentField);
 		}
-		currentField = new Field(lineNumber) ; // no current field
+		currentField = new FieldBuilder(lineNumber) ; // no current field
 		inAnnotations = false ;
 	}
 	

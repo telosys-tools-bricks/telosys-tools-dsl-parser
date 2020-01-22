@@ -6,9 +6,9 @@ public class EntityFileParsingResult {
 
 	private final String entityNameFromFileName;
 	private final String entityNameParsed ;
-	private final List<Field> fields ;
+	private final List<FieldBuilder> fields ;
 	
-	public EntityFileParsingResult(String entityNameFromFileName, String entityNameParsed, List<Field> fields) {
+	public EntityFileParsingResult(String entityNameFromFileName, String entityNameParsed, List<FieldBuilder> fields) {
 		super();
 		this.entityNameFromFileName = entityNameFromFileName;
 		this.entityNameParsed = entityNameParsed;
@@ -23,7 +23,7 @@ public class EntityFileParsingResult {
 		return entityNameParsed;
 	}
 
-	public List<Field> getFields() {
+	public List<FieldBuilder> getFields() {
 		return fields;
 	}
 

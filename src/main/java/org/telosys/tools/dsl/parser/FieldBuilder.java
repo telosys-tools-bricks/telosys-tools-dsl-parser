@@ -1,6 +1,6 @@
 package org.telosys.tools.dsl.parser;
 
-class Field {
+class FieldBuilder {
 
 //	private int position ;
 	private boolean inAnnotations;
@@ -17,7 +17,7 @@ class Field {
 		System.out.flush();
 	}
 
-	protected Field(int lineNumber) {
+	protected FieldBuilder(int lineNumber) {
 		super();
 		System.out.println("\n=== Field log : new Field()" );
 		this.nameAndTypeBuilder = new StringBuilder();
@@ -28,7 +28,7 @@ class Field {
 		this.lineNumber = lineNumber;
 	}
 
-	protected Field(int lineNumber, String nameAndTypePart, String annotationsPart) {
+	protected FieldBuilder(int lineNumber, String nameAndTypePart, String annotationsPart) {
 		super();
 		this.nameAndTypeBuilder = new StringBuilder();
 		this.annotationsBuilder = new StringBuilder();

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.dsl.parser.model.DomainEntity;
+import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
 
 public class Parser {
 
@@ -38,18 +39,22 @@ public class Parser {
     	EntityFileParser entityFileParser = new EntityFileParser(file);
     	EntityFileParsingResult result = entityFileParser.parse();
     	String entityNameFromFileName = result.getEntityNameFromFileName();
-    	for ( Field field : result.getFields() ) {
+    	for ( FieldBuilder field : result.getFields() ) {
 //    		FieldNameAndType fieldNameAndType = parser.parseFieldNameAndType(field);
     		parseField(entityNameFromFileName, field); 
     	}
     	return null;
     }
     
-    public final void parseField(String entityNameFromFileName, Field field) {
+    public final void parseField(String entityNameFromFileName, FieldBuilder field) {
+    	// Parse the field NAME and TYPE
 		FieldNameAndTypeParser parser = new FieldNameAndTypeParser(entityNameFromFileName, entitiesNames);
 		FieldNameAndType fieldNameAndType = parser.parseFieldNameAndType(field);
 		System.out.println("Field : name '" + fieldNameAndType.getName() 
 			+ "' type '" + fieldNameAndType.getType() 
 			+ "' cardinality = " + fieldNameAndType.getCardinality() );
+		
+		// Parse field ANNOTATIONS and TAGS
+		// TODO
     }
 }

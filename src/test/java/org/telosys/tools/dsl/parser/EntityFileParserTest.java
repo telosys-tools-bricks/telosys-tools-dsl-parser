@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.EntityFileParser;
 import org.telosys.tools.dsl.parser.EntityFileParsingResult;
-import org.telosys.tools.dsl.parser.Field;
+import org.telosys.tools.dsl.parser.FieldBuilder;
 
 public class EntityFileParserTest {
 	
@@ -29,7 +29,7 @@ public class EntityFileParserTest {
 		System.out.println("\nPARSING RESULT :");
 		System.out.println(" Entity name : " + result.getEntityNameParsed() );
 		System.out.println("\nFIELDS PARSED :");
-		for ( Field field : result.getFields() ) {
+		for ( FieldBuilder field : result.getFields() ) {
 			System.out.println(" . " + field);
 		}
 	}
