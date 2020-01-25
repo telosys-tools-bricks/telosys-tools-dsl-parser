@@ -119,6 +119,14 @@ public class AnnotationOrTagParserTest {
 		assertTrue(annotation.hasParameter());
 		assertNull(annotation.getParameterAsString());
 		assertEquals(new BigDecimal("123.45"), annotation.getParameterAsBigDecimal());
+		
+		annotation = parser.parse("@SizeMax(22)");
+		assertEquals("SizeMax", annotation.getName());
+		assertTrue(annotation.hasParameter());
+		assertNull(annotation.getParameterAsString());
+		assertNull(annotation.getParameterAsBigDecimal());
+		assertEquals(new Integer("22"), annotation.getParameterAsInteger());
+
 	}
 
 	@Test(expected = DslParserException.class)
@@ -145,4 +153,28 @@ public class AnnotationOrTagParserTest {
 		parser.parse("@Max");
 	}
 
+	@Test(expected = DslParserException.class)
+	public void testParseAnnotationError5() {
+		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
+		parser.parse("@Abcdef"); // unhknown annotation
+	}
+
+	@Test(expected = DslParserException.class)
+	public void testParseAnnotationError6() {
+		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
+		//parser.parse("@Maximum(123)"); // unhknown annotation
+		parser.parse("@Maxi(123)"); // unhknown annotation
+	}
+
+	@Test(expected = DslParserException.class)
+	public void testParseAnnotationError7() {
+		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
+		parser.parse("@Id(145)"); // Unexpected parameter
+	}
+
+	@Test(expected = DslParserException.class)
+	public void testParseAnnotationError8() {
+		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
+		parser.parse("@SizeMax(44.55)"); // integer parameter required
+	}
 }
