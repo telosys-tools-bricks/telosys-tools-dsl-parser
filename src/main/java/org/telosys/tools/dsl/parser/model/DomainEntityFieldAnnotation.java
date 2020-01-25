@@ -76,7 +76,7 @@ public class DomainEntityFieldAnnotation {
      * Returns true if the annotation has a parameter
      * @return
      */
-    boolean hasParameter() {
+    public boolean hasParameter() {
         return this.hasParameter;
     }
 
