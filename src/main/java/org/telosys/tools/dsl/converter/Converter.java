@@ -25,7 +25,7 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainEntityField;
+import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralType;
@@ -84,7 +84,7 @@ public class Converter {
 	 * @param domainEntityField
 	 * @return
 	 */
-	private boolean isPseudoForeignKey(DomainEntityField domainEntityField) {
+	private boolean isPseudoForeignKey(DomainField domainEntityField) {
 		DomainType domainFieldType = domainEntityField.getType();
 		if ( domainFieldType.isEntity() ) { // The field must reference an Entity 
 			if ( domainEntityField.getCardinality() == 1 ) { // The field must reference 1 and only 1 Entity
@@ -133,7 +133,7 @@ public class Converter {
 			// Get the GenericEntity built previously
 			DslModelEntity genericEntity = (DslModelEntity) genericModel.getEntityByClassName(domainEntity.getName());
 			// Replaces the "pseudo FK" attributes if any
-			for ( DomainEntityField field : domainEntity.getFields() ) {
+			for ( DomainField field : domainEntity.getFields() ) {
 	            if ( isPseudoForeignKey(field) ) {
 	            	// Build the "pseudo FK attribute"
 	            	DslModelAttribute pseudoFKAttribute = convertAttributePseudoForeignKey(field);
@@ -173,7 +173,7 @@ public class Converter {
 		if(domainEntity.getFields() == null) {
 			return;
 		}
-		for ( DomainEntityField domainEntityField : domainEntity.getFields() ) {
+		for ( DomainField domainEntityField : domainEntity.getFields() ) {
 
             DomainType domainFieldType = domainEntityField.getType();
             if (domainFieldType.isNeutralType() ) {
@@ -202,7 +202,7 @@ public class Converter {
 		if(domainEntity.getFields() == null) {
 			return;
 		}
-		for ( DomainEntityField domainEntityField : domainEntity.getFields() ) {
+		for ( DomainField domainEntityField : domainEntity.getFields() ) {
 
             if ( domainEntityField.getType().isEntity() ) { // If this field references an entity 
             	// REFERENCE TO AN ENTITY = LINK
@@ -222,7 +222,7 @@ public class Converter {
 	 * @param domainEntityField
 	 * @return
 	 */
-	private DslModelAttribute convertAttributeNeutralType( DomainEntityField domainEntityField ) {
+	private DslModelAttribute convertAttributeNeutralType( DomainField domainEntityField ) {
 		log("convertAttributeNeutralType() : name = " + domainEntityField.getName() );
 
 		DomainType domainFieldType = domainEntityField.getType();
@@ -283,7 +283,7 @@ public class Converter {
         return genericAttribute;
 	}
 	
-	private void initAttributeDefaultValues(DslModelAttribute genericAttribute, DomainEntityField domainEntityField ) {
+	private void initAttributeDefaultValues(DslModelAttribute genericAttribute, DomainField domainEntityField ) {
         //genericAttribute.setBooleanFalseValue(booleanFalseValue);
         //genericAttribute.setBooleanTrueValue(booleanTrueValue);
         genericAttribute.setDatabaseComment("");                       // TODO with @DbComment(xxx)
@@ -430,14 +430,14 @@ public class Converter {
 	 * @param domainEntityField the field to be converted
 	 * @return
 	 */
-	private DslModelAttribute convertAttributePseudoForeignKey( DomainEntityField domainEntityField ) {
+	private DslModelAttribute convertAttributePseudoForeignKey( DomainField domainEntityField ) {
 		log("convertAttributePseudoForeignKey() : name = " + domainEntityField.getName() );
 
 		DomainType domainFieldType = domainEntityField.getType();
 		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
 		DomainEntity referencedEntity = (DomainEntity) domainFieldType;
 
-		DomainEntityField referencedEntityIdField = getReferencedEntityIdField(referencedEntity);
+		DomainField referencedEntityIdField = getReferencedEntityIdField(referencedEntity);
 		
         //--- Attribute name 
         String attributeName = domainEntityField.getName() ; // Keep the same name to avoid potential naming collision 
@@ -471,11 +471,11 @@ public class Converter {
 	 * @param domainEntity
 	 * @return
 	 */
-	private DomainEntityField getReferencedEntityIdField( DomainEntity domainEntity ) {
-		DomainEntityField id = null ;
+	private DomainField getReferencedEntityIdField( DomainEntity domainEntity ) {
+		DomainField id = null ;
 		int idCount = 0 ;
 		check(domainEntity.getFields().size() > 0, "No field in entity " + domainEntity );
-		for ( DomainEntityField field : domainEntity.getFields() ) {
+		for ( DomainField field : domainEntity.getFields() ) {
 			if ( isId( field ) ) {
 				id = field ;
 				idCount++ ;
@@ -490,7 +490,7 @@ public class Converter {
 		return id ;
 	}
 	
-	private boolean isId( DomainEntityField field ) {
+	private boolean isId( DomainField field ) {
 		for ( String annotationName : field.getAnnotationNames() ) {
 			if ( AnnotationName.ID.equals(annotationName) ) {
 				return true ;
@@ -506,7 +506,7 @@ public class Converter {
 	 * @param genericModel
 	 * @return
 	 */
-	private DslModelLink convertAttributeLink( DomainEntityField domainEntityField, DslModel genericModel ) {
+	private DslModelLink convertAttributeLink( DomainField domainEntityField, DslModel genericModel ) {
 		
 		DomainType domainFieldType = domainEntityField.getType();
 		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");

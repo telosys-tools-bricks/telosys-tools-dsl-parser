@@ -13,7 +13,7 @@ import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.converter.Converter;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainEntityField;
+import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralType;
@@ -111,18 +111,18 @@ public class ConverterTest {
 //		domainEntity_1.addField(domainEntityField_1_8);
 //		domainEntity_1.addField(domainEntityField_1_9);
 
-		domainEntity_1.addField( new DomainEntityField("myBoolean", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN)) );
+		domainEntity_1.addField( new DomainField("myBoolean", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN)) );
 		
-		domainEntity_1.addField( new DomainEntityField("myDecimal", DomainNeutralTypes.getType(DomainNeutralTypes.DECIMAL)) );
-		domainEntity_1.addField( new DomainEntityField("myInteger", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER)) );
+		domainEntity_1.addField( new DomainField("myDecimal", DomainNeutralTypes.getType(DomainNeutralTypes.DECIMAL)) );
+		domainEntity_1.addField( new DomainField("myInteger", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER)) );
 		
-		domainEntity_1.addField( new DomainEntityField("myString", DomainNeutralTypes.getType(DomainNeutralTypes.STRING)) );
+		domainEntity_1.addField( new DomainField("myString", DomainNeutralTypes.getType(DomainNeutralTypes.STRING)) );
 		
-		domainEntity_1.addField( new DomainEntityField("myDate", DomainNeutralTypes.getType(DomainNeutralTypes.DATE)) );
-		domainEntity_1.addField( new DomainEntityField("myTime", DomainNeutralTypes.getType(DomainNeutralTypes.TIME))  );
-		domainEntity_1.addField( new DomainEntityField("myTimestamp", DomainNeutralTypes.getType(DomainNeutralTypes.TIMESTAMP)) );
+		domainEntity_1.addField( new DomainField("myDate", DomainNeutralTypes.getType(DomainNeutralTypes.DATE)) );
+		domainEntity_1.addField( new DomainField("myTime", DomainNeutralTypes.getType(DomainNeutralTypes.TIME))  );
+		domainEntity_1.addField( new DomainField("myTimestamp", DomainNeutralTypes.getType(DomainNeutralTypes.TIMESTAMP)) );
 
-		domainEntity_1.addField( new DomainEntityField("myBinary", DomainNeutralTypes.getType(DomainNeutralTypes.BINARY_BLOB)) );
+		domainEntity_1.addField( new DomainField("myBinary", DomainNeutralTypes.getType(DomainNeutralTypes.BINARY_BLOB)) );
 		
 		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
 		domainModel.addEntity(domainEntity_2);
@@ -177,14 +177,14 @@ public class ConverterTest {
 		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
 
 		domainModel.addEntity(domainEntity_1);
-		DomainEntityField domainEntityField_1_1 = new DomainEntityField("field_1_1", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
-		DomainEntityField domainEntityField_1_2 = new DomainEntityField("field_1_2", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
-		DomainEntityField domainEntityField_1_3 = new DomainEntityField("field_1_3", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
-		DomainEntityField domainEntityField_1_4 = new DomainEntityField("field_1_4", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
-		DomainEntityField domainEntityField_1_5 = new DomainEntityField("field_1_5", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
-		DomainEntityField domainEntityField_1_6 = new DomainEntityField("field_1_6", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
-		DomainEntityField domainEntityField_1_7 = new DomainEntityField("field_1_7", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
-		DomainEntityField domainEntityField_1_8 = new DomainEntityField("field_1_8", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainField domainEntityField_1_1 = new DomainField("field_1_1", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainField domainEntityField_1_2 = new DomainField("field_1_2", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainField domainEntityField_1_3 = new DomainField("field_1_3", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainField domainEntityField_1_4 = new DomainField("field_1_4", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainField domainEntityField_1_5 = new DomainField("field_1_5", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainField domainEntityField_1_6 = new DomainField("field_1_6", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainField domainEntityField_1_7 = new DomainField("field_1_7", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
+		DomainField domainEntityField_1_8 = new DomainField("field_1_8", DomainNeutralTypes.getType(DomainNeutralTypes.BOOLEAN));
 		domainEntity_1.addField(domainEntityField_1_1);
 		domainEntity_1.addField(domainEntityField_1_2);
 		domainEntity_1.addField(domainEntityField_1_3);
@@ -309,31 +309,31 @@ public class ConverterTest {
 		DomainEntity groupEntity = new DomainEntity("Group");
 		
 		//--- "Driver" entity
-		DomainEntityField driverCode = new DomainEntityField("code", new DomainNeutralType("long"));
+		DomainField driverCode = new DomainField("code", new DomainNeutralType("long"));
 		driverCode.addAnnotation(new DomainAnnotationOrTag(AnnotationName.ID));
 		driverCode.addAnnotation(new DomainAnnotationOrTag(AnnotationName.SIZE_MAX, new Integer(20) ));
 		//driverCode.setAnnotationList(annotationList);
 		driverEntity.addField(driverCode);
 		
-		driverEntity.addField( new DomainEntityField("firstName", new DomainNeutralType("string") ) );
-		driverEntity.addField( new DomainEntityField("lastName",  new DomainNeutralType("string") ) );
-		driverEntity.addField( new DomainEntityField("car",  carEntity, 1 ) );
+		driverEntity.addField( new DomainField("firstName", new DomainNeutralType("string") ) );
+		driverEntity.addField( new DomainField("lastName",  new DomainNeutralType("string") ) );
+		driverEntity.addField( new DomainField("car",  carEntity, 1 ) );
 
 		//--- "Car" entity referencing "Driver" entity
-		DomainEntityField carId = new DomainEntityField("id",     new DomainNeutralType("short") );
+		DomainField carId = new DomainField("id",     new DomainNeutralType("short") );
 		carId.addAnnotation(new DomainAnnotationOrTag(AnnotationName.ID));
 		carEntity.addField(carId);
 		
-		carEntity.addField(new DomainEntityField("name",   new DomainNeutralType("string")) );
-		carEntity.addField(new DomainEntityField("driver", driverEntity) ); // Reference to "Driver"
+		carEntity.addField(new DomainField("name",   new DomainNeutralType("string")) );
+		carEntity.addField(new DomainField("driver", driverEntity) ); // Reference to "Driver"
 		
 		//--- "Group" entity referencing N "Driver" entity
-		DomainEntityField groupId = new DomainEntityField("id",     new DomainNeutralType("int"));
+		DomainField groupId = new DomainField("id",     new DomainNeutralType("int"));
 		groupId.addAnnotation(new DomainAnnotationOrTag(AnnotationName.ID));
 		groupEntity.addField(groupId);
 		
-		groupEntity.addField(new DomainEntityField("name",   new DomainNeutralType("string")) );
-		groupEntity.addField(new DomainEntityField("drivers", driverEntity, -1) ); // Reference to "Driver"
+		groupEntity.addField(new DomainField("name",   new DomainNeutralType("string")) );
+		groupEntity.addField(new DomainField("drivers", driverEntity, -1) ); // Reference to "Driver"
 		
 		//--- Add entities to model
 		domainModel.addEntity(carEntity);

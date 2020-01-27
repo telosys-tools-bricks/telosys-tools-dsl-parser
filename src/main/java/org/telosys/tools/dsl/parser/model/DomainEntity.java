@@ -31,7 +31,7 @@ public class DomainEntity extends DomainType {
     /**
      * Map of fields used for direct access by field name and to check uniqueness 
      */
-    private final Map<String, DomainEntityField> fieldsMap;
+    private final Map<String, DomainField> fieldsMap;
     
 
     /**
@@ -42,10 +42,10 @@ public class DomainEntity extends DomainType {
         super(name, DomainTypeNature.ENTITY);
         //this.fieldsMap = new Hashtable<String, DomainEntityField>();
         // LinkedHashMap to keep the original order
-        this.fieldsMap = new LinkedHashMap<String, DomainEntityField>(); 
+        this.fieldsMap = new LinkedHashMap<String, DomainField>(); 
     }
 
-    public void addField(DomainEntityField field) {
+    public void addField(DomainField field) {
         if (fieldsMap.containsKey(field.getName())) {
             throw new DslParserException("Field '" + field.getName() + "' already defined");
         }
@@ -56,8 +56,8 @@ public class DomainEntity extends DomainType {
      * Returns a list containing all the fields
      * @return
      */
-    public List<DomainEntityField> getFields() {
-        return new LinkedList<DomainEntityField>(fieldsMap.values());
+    public List<DomainField> getFields() {
+        return new LinkedList<DomainField>(fieldsMap.values());
     }
 
     /**
@@ -65,7 +65,7 @@ public class DomainEntity extends DomainType {
      * @param fieldName
      * @return the field found (or null if not found)
      */
-    public DomainEntityField getField(String fieldName) {
+    public DomainField getField(String fieldName) {
         return fieldsMap.get(fieldName);
     }
 
@@ -91,7 +91,7 @@ public class DomainEntity extends DomainType {
     //-------------------------------------------------------------------------------------
     public String toString() {
         String fieldRet = "";
-        for (DomainEntityField f : fieldsMap.values()) {
+        for (DomainField f : fieldsMap.values()) {
             fieldRet += "\n\t\t"+f.toString();
         }
         return this.getName() + " {" + fieldRet + "}";

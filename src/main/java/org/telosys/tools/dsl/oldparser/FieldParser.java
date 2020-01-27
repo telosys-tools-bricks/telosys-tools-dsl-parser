@@ -17,7 +17,7 @@ package org.telosys.tools.dsl.oldparser;
 
 import java.util.List;
 
-import org.telosys.tools.dsl.parser.model.DomainEntityField;
+import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
@@ -68,7 +68,7 @@ public class FieldParser  extends AbstractParser  {
      * @param fieldInfo field definition including annotations, eg 'id:integer', 'id:Country', 'name : integer { @Max(3) }'
      * @return The parsed field
      */
-    protected DomainEntityField parseField(String  entityNameFromFileName, String fieldInfo) {
+    protected DomainField parseField(String  entityNameFromFileName, String fieldInfo) {
     	
     	checkSyntax(entityNameFromFileName, fieldInfo);
     	
@@ -86,7 +86,7 @@ public class FieldParser  extends AbstractParser  {
         		this.annotationParser.parseAnnotations(entityNameFromFileName, fieldName, annotationsString);
 
         // create with previous informations
-        DomainEntityField field = new DomainEntityField(fieldName, domainType, fieldCardinality);
+        DomainField field = new DomainField(fieldName, domainType, fieldCardinality);
         field.setAnnotationList(annotationsList);
 
         return field;

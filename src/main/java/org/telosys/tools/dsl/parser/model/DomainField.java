@@ -19,7 +19,7 @@ import org.telosys.tools.dsl.DslParserException;
 
 import java.util.*;
 
-public class DomainEntityField {
+public class DomainField {
 
     private final String name;
     private final DomainType type;
@@ -39,7 +39,7 @@ public class DomainEntityField {
      * @param name
      * @param type
      */
-    public DomainEntityField(String name, DomainType type) {
+    public DomainField(String name, DomainType type) {
         // this.annotationList = new ArrayList<DomainEntityFieldAnnotation>();
         this.name = name;
         this.type = type;
@@ -52,7 +52,7 @@ public class DomainEntityField {
      * @param type
      * @param cardinality
      */
-    public DomainEntityField(String name, DomainType type, int cardinality) {
+    public DomainField(String name, DomainType type, int cardinality) {
         this.name = name;
         this.type = type;
         this.cardinality = cardinality;
@@ -150,7 +150,7 @@ public class DomainEntityField {
             return false;
         }
 
-        DomainEntityField field = (DomainEntityField) o;
+        DomainField field = (DomainField) o;
 
         if (!annotations.equals(field.annotations)) {
             return false;

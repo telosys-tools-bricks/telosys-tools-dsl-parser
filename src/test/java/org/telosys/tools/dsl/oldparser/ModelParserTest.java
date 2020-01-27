@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.oldparser.Parser;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainEntityField;
+import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
@@ -33,8 +33,8 @@ public class ModelParserTest {
 	}
 	private final void compareEntities(DomainEntity e1, DomainEntity e2) {
 		assertEquals ( e1.getNumberOfFields(), e2.getNumberOfFields()) ;
-		for ( DomainEntityField field1 : e1.getFields() ) {
-			DomainEntityField field2 = e2.getField(field1.getName());
+		for ( DomainField field1 : e1.getFields() ) {
+			DomainField field2 = e2.getField(field1.getName());
 			assertNotNull(field2);
 			System.out.println("Compare fields : ");
 			System.out.println(" " + field1.toString());
@@ -59,11 +59,11 @@ public class ModelParserTest {
 		
 		DomainModel modelToCompare = new DomainModel("OneEntity");
 		DomainEntity employee = new DomainEntity("Employee");
-		DomainEntityField id = new DomainEntityField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
+		DomainField id = new DomainField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
 		id.addAnnotation(new DomainAnnotationOrTag("Id"));
 		employee.addField(id);
-		employee.addField(new DomainEntityField("firstName", DomainNeutralTypes.getType("string")));
-		employee.addField(new DomainEntityField("birthDate", DomainNeutralTypes.getType("date")));
+		employee.addField(new DomainField("firstName", DomainNeutralTypes.getType("string")));
+		employee.addField(new DomainField("birthDate", DomainNeutralTypes.getType("date")));
 		modelToCompare.addEntity(employee);
 		
 		//assertEquals(modelToCompare,model);
@@ -92,12 +92,12 @@ public class ModelParserTest {
 		modelToCompare.addEntity(country);
 		
 		DomainEntity employee = new DomainEntity("Employee");
-		DomainEntityField id = new DomainEntityField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
+		DomainField id = new DomainField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
 		id.addAnnotation(new DomainAnnotationOrTag("Id"));
 		employee.addField(id);
-		employee.addField(new DomainEntityField("firstName", DomainNeutralTypes.getType("string")));
-		employee.addField(new DomainEntityField("birthDate", DomainNeutralTypes.getType("date")));
-		DomainEntityField countryField = new DomainEntityField("country", country);
+		employee.addField(new DomainField("firstName", DomainNeutralTypes.getType("string")));
+		employee.addField(new DomainField("birthDate", DomainNeutralTypes.getType("date")));
+		DomainField countryField = new DomainField("country", country);
 		countryField.addAnnotation(new DomainAnnotationOrTag("Max", new BigDecimal("3")));
 		employee.addField(countryField);
 		modelToCompare.addEntity(employee);
@@ -124,12 +124,12 @@ public class ModelParserTest {
         modelToCompare.addEntity(country);
 
         DomainEntity employee = new DomainEntity("Employee");
-        DomainEntityField id = new DomainEntityField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
+        DomainField id = new DomainField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
         id.addAnnotation(new DomainAnnotationOrTag("Id"));
         employee.addField(id);
-        employee.addField(new DomainEntityField("firstName", DomainNeutralTypes.getType("string")));
-        employee.addField(new DomainEntityField("birthDate", DomainNeutralTypes.getType("date")));
-        DomainEntityField countryField = new DomainEntityField("country", country);
+        employee.addField(new DomainField("firstName", DomainNeutralTypes.getType("string")));
+        employee.addField(new DomainField("birthDate", DomainNeutralTypes.getType("date")));
+        DomainField countryField = new DomainField("country", country);
         countryField.addAnnotation(new DomainAnnotationOrTag("Max", new BigDecimal("3")));
         countryField.addAnnotation(new DomainAnnotationOrTag("Embedded"));
         employee.addField(countryField);
@@ -197,14 +197,14 @@ public class ModelParserTest {
 		DomainEntity country = buildCountryEntity();
 		
 		DomainEntity employee = new DomainEntity("Employee");
-		DomainEntityField id = new DomainEntityField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
+		DomainField id = new DomainField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
 		id.addAnnotation(new DomainAnnotationOrTag("Id"));
 		employee.addField(id);
-		employee.addField(new DomainEntityField("firstName", DomainNeutralTypes.getType("string")));
-		employee.addField(new DomainEntityField("birthDate", DomainNeutralTypes.getType("date")));
+		employee.addField(new DomainField("firstName", DomainNeutralTypes.getType("string")));
+		employee.addField(new DomainField("birthDate", DomainNeutralTypes.getType("date")));
 		
 //		DomainEntityField countryField = new DomainEntityField("country", enumeration );
-		DomainEntityField countryField = new DomainEntityField("country", country );
+		DomainField countryField = new DomainField("country", country );
 		employee.addField(countryField);
 		modelToCompare.addEntity(employee);
 //		modelToCompare.addEnumeration(enumeration);
@@ -281,24 +281,24 @@ public class ModelParserTest {
 		DomainEntity gender = buildGenderEntity();
 
 		DomainEntity employee = new DomainEntity("Employee");
-		DomainEntityField employeeId = new DomainEntityField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
+		DomainField employeeId = new DomainField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
 		employeeId.addAnnotation(new DomainAnnotationOrTag("Id"));
 		employeeId.addAnnotation(new DomainAnnotationOrTag("NotNull"));
 		employee.addField(employeeId);
-		DomainEntityField employeePoste = new DomainEntityField("poste", DomainNeutralTypes.getType("string"), -1);
+		DomainField employeePoste = new DomainField("poste", DomainNeutralTypes.getType("string"), -1);
 		employee.addField(employeePoste);
 		employeePoste.addAnnotation(new DomainAnnotationOrTag("NotNull"));
 		
 		DomainEntity person = new DomainEntity("Person");
-		DomainEntityField personId = new DomainEntityField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
+		DomainField personId = new DomainField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
 		personId.addAnnotation(new DomainAnnotationOrTag("Id"));
 		person.addField(personId);
-		person.addField(new DomainEntityField("firstName", DomainNeutralTypes.getType("string")));
-		person.addField(new DomainEntityField("lastName", DomainNeutralTypes.getType("string")));
-		person.addField(new DomainEntityField("birthDate", DomainNeutralTypes.getType("date")));
-		DomainEntityField countryField = new DomainEntityField("country", country, 998 );
+		person.addField(new DomainField("firstName", DomainNeutralTypes.getType("string")));
+		person.addField(new DomainField("lastName", DomainNeutralTypes.getType("string")));
+		person.addField(new DomainField("birthDate", DomainNeutralTypes.getType("date")));
+		DomainField countryField = new DomainField("country", country, 998 );
 		person.addField(countryField);
-		DomainEntityField genderField = new DomainEntityField("gender", gender );
+		DomainField genderField = new DomainField("gender", gender );
 		person.addField(genderField);
 		
 		modelToCompare.addEntity(employee);
@@ -338,26 +338,26 @@ public class ModelParserTest {
 		DomainEntity gender = buildGenderEntity();
         
         DomainEntity employee = new DomainEntity("Employee");
-        DomainEntityField employeeId = new DomainEntityField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
+        DomainField employeeId = new DomainField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
         employeeId.addAnnotation(new DomainAnnotationOrTag("Id"));
         employeeId.addAnnotation(new DomainAnnotationOrTag("NotNull"));
         employee.addField(employeeId);
-        DomainEntityField employeePoste = new DomainEntityField("poste", DomainNeutralTypes.getType("string"), 4);
+        DomainField employeePoste = new DomainField("poste", DomainNeutralTypes.getType("string"), 4);
         employee.addField(employeePoste);
         employeePoste.addAnnotation(new DomainAnnotationOrTag("NotNull"));
         
         DomainEntity person = new DomainEntity("Person");
-        DomainEntityField personId = new DomainEntityField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
+        DomainField personId = new DomainField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
         personId.addAnnotation(new DomainAnnotationOrTag("Id"));
         person.addField(personId);
-        DomainEntityField firstName =new DomainEntityField("firstName", DomainNeutralTypes.getType("string"));
+        DomainField firstName =new DomainField("firstName", DomainNeutralTypes.getType("string"));
         firstName.addAnnotation(new DomainAnnotationOrTag("SizeMax", new BigDecimal("3") ));
         person.addField(firstName);
-        person.addField(new DomainEntityField("lastName", DomainNeutralTypes.getType("string")));
-        person.addField(new DomainEntityField("birthDate", DomainNeutralTypes.getType("date")));
-        DomainEntityField countryField = new DomainEntityField("country", country, 999 );
+        person.addField(new DomainField("lastName", DomainNeutralTypes.getType("string")));
+        person.addField(new DomainField("birthDate", DomainNeutralTypes.getType("date")));
+        DomainField countryField = new DomainField("country", country, 999 );
         person.addField(countryField);
-        DomainEntityField genderField = new DomainEntityField("gender", gender );
+        DomainField genderField = new DomainField("gender", gender );
         person.addField(genderField);
         
         modelToCompare.addEntity(employee);
@@ -398,12 +398,12 @@ public class ModelParserTest {
 		DomainEntity country = new DomainEntity("Country");
 		
 		// id : integer {@Id}
-		DomainEntityField idCountry = new DomainEntityField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
+		DomainField idCountry = new DomainField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER));
 		idCountry.addAnnotation(new DomainAnnotationOrTag("Id"));
 		country.addField(idCountry);
 		
 		// name : string
-		country.addField(new DomainEntityField("name", DomainNeutralTypes.getType("string")));
+		country.addField(new DomainField("name", DomainNeutralTypes.getType("string")));
 		
 		return country ;
 	}
@@ -412,12 +412,12 @@ public class ModelParserTest {
 		DomainEntity country = new DomainEntity("Gender");
 		
 		// id : string {@Id}
-		DomainEntityField idCountry = new DomainEntityField("id", DomainNeutralTypes.getType("string"));
+		DomainField idCountry = new DomainField("id", DomainNeutralTypes.getType("string"));
 		idCountry.addAnnotation(new DomainAnnotationOrTag("Id"));
 		country.addField(idCountry);
 		
 		// name : string
-		country.addField(new DomainEntityField("name", DomainNeutralTypes.getType("string")));
+		country.addField(new DomainField("name", DomainNeutralTypes.getType("string")));
 		
 		return country ;
 	}
@@ -435,9 +435,9 @@ public class ModelParserTest {
 		DomainEntity entity = model.getEntity("Person");
 		assertNotNull(entity);
 		System.out.println("Entity '" + entity.getName()+"' ready.");
-		List<DomainEntityField> fields = entity.getFields();
+		List<DomainField> fields = entity.getFields();
 		System.out.println(fields.size() + " field(s) : ");
-		for ( DomainEntityField field : fields ) {
+		for ( DomainField field : fields ) {
 			System.out.println(" . " + field.getName() + " ( type = " + field.getTypeName() + " )");
 		}
 		assertEquals(6, fields.size());

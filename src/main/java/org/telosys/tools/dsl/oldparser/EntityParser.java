@@ -23,7 +23,7 @@ import java.io.InputStream;
 import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainEntityField;
+import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.dsl.parser.utils.StringUtils;
@@ -130,7 +130,7 @@ public class EntityParser extends AbstractParser {
 
         // extract fields
         for (String field : fieldList) {
-            DomainEntityField f = fieldParser.parseField(entityNameFromFileName, field.trim());
+            DomainField f = fieldParser.parseField(entityNameFromFileName, field.trim());
             domainEntity.addField(f);
         }
         verifyEntityStructure(domainEntity, entityNameFromFileName);
@@ -162,8 +162,8 @@ public class EntityParser extends AbstractParser {
      * @throws DslParserException
      */
     private void verifyEntityStructure(DomainEntity entity, String entityNameFromFileName) throws DslParserException {
-        DomainEntityField fieldWithId = null;
-        for (DomainEntityField tmp : entity.getFields()) {
+        DomainField fieldWithId = null;
+        for (DomainField tmp : entity.getFields()) {
             if (tmp.getAnnotationNames().contains("Id")) {
                 if (fieldWithId != null) {
                     throw new DslParserException(entityNameFromFileName + " : The Id is defined more than once"

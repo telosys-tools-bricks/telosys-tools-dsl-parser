@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.oldparser.FieldParser;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainEntityField;
+import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 
@@ -20,7 +20,7 @@ public class FieldParserTest {
 		}
 		return model ;
 	}
-	private DomainEntityField parseField(String fieldDescription) {
+	private DomainField parseField(String fieldDescription) {
         FieldParser fieldParser = new FieldParser(getDomainModel());
         return fieldParser.parseField(ENTITY_NAME, fieldDescription) ;
 	}
@@ -130,7 +130,7 @@ public class FieldParserTest {
         checkResult1(parseField("id : int[]"), -1);
     }
 
-    private void checkResult1(DomainEntityField field, int cardinality) {
+    private void checkResult1(DomainField field, int cardinality) {
         Assert.assertEquals("id", field.getName());
         Assert.assertEquals("int", field.getTypeName());
         Assert.assertEquals(DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER), field.getType());
@@ -151,7 +151,7 @@ public class FieldParserTest {
 //        expectedField.setAnnotationList(annotationList);
 
         FieldParser fieldParser = new FieldParser(getDomainModel());
-        DomainEntityField domainEntityField = fieldParser.parseField(ENTITY_NAME, "id:int{@Id}" ) ;
+        DomainField domainEntityField = fieldParser.parseField(ENTITY_NAME, "id:int{@Id}" ) ;
         
         Assert.assertEquals("id",      domainEntityField.getName() );
         Assert.assertEquals("int", domainEntityField.getType().getName() );
@@ -168,7 +168,7 @@ public class FieldParserTest {
         DomainEntity country = new DomainEntity("Country");
         model.addEntity(country);
 
-        DomainEntityField compareTo = new DomainEntityField("id", country);
+        DomainField compareTo = new DomainField("id", country);
 
         FieldParser fieldParser = new FieldParser(model);
         Assert.assertEquals(compareTo, fieldParser.parseField(ENTITY_NAME, fieldInfo));
@@ -178,7 +178,7 @@ public class FieldParserTest {
     public void testParseFieldWithCardinalityN() throws Exception {
         String fieldInfo = "id:int[]";
 
-        DomainEntityField compareTo = new DomainEntityField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER), -1);
+        DomainField compareTo = new DomainField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER), -1);
 
         FieldParser fieldParser = new FieldParser(getDomainModel());
         Assert.assertEquals(compareTo, fieldParser.parseField(ENTITY_NAME, fieldInfo));
@@ -188,7 +188,7 @@ public class FieldParserTest {
     public void testParseFieldWithCardinality3() throws Exception {
         String fieldInfo = "id:int[3]";
 
-        DomainEntityField compareTo = new DomainEntityField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER), 3);
+        DomainField compareTo = new DomainField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER), 3);
 
         FieldParser fieldParser = new FieldParser(getDomainModel());
         Assert.assertEquals(compareTo, fieldParser.parseField(ENTITY_NAME, fieldInfo));
@@ -198,7 +198,7 @@ public class FieldParserTest {
     public void testParseFieldWithoutCardinality() throws Exception {
         String fieldInfo = "id:int";
 
-        DomainEntityField compareTo = new DomainEntityField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER), 1);
+        DomainField compareTo = new DomainField("id", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER), 1);
 
         FieldParser fieldParser = new FieldParser(getDomainModel());
         Assert.assertEquals(compareTo, fieldParser.parseField(ENTITY_NAME, fieldInfo));
