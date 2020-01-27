@@ -17,11 +17,7 @@ package org.telosys.tools.dsl.parser.model;
 
 import java.math.BigDecimal;
 
-/**
- * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre, Laurent Guerin
- * @version 3.2.0
- */
-public class DomainEntityFieldAnnotation {
+public class DomainAnnotationOrTag {
 
     private final String  name;
     private final String  stringParameter;
@@ -33,7 +29,7 @@ public class DomainEntityFieldAnnotation {
      * Constructor for annotation without parameter
      * @param name
      */
-    public DomainEntityFieldAnnotation(String name) {
+    public DomainAnnotationOrTag(String name) {
         this.name = name;
         this.stringParameter = null;
         this.numberParameter = null;
@@ -45,7 +41,7 @@ public class DomainEntityFieldAnnotation {
      * @param name
      * @param param
      */
-    public DomainEntityFieldAnnotation(String name, String param) {
+    public DomainAnnotationOrTag(String name, String param) {
         this.name = name;
         this.stringParameter = param;
         this.numberParameter = null;
@@ -57,7 +53,7 @@ public class DomainEntityFieldAnnotation {
      * @param name
      * @param param
      */
-    public DomainEntityFieldAnnotation(String name, Number param) {
+    public DomainAnnotationOrTag(String name, Number param) {
         this.name = name;
         this.stringParameter = null;
         this.numberParameter = param;
@@ -147,7 +143,7 @@ public class DomainEntityFieldAnnotation {
     @Override
     public String toString() {
     	StringBuilder sb = new StringBuilder();
-    	sb.append("@");
+//    	sb.append("@");
     	sb.append(name);
     	if ( this.hasParameter ) {
         	sb.append("(");

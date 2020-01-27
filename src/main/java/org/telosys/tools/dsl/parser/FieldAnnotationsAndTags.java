@@ -3,11 +3,11 @@ package org.telosys.tools.dsl.parser;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 
 public class FieldAnnotationsAndTags {
 
-	private final List<DomainEntityFieldAnnotation>  annotations ;
+	private final List<DomainAnnotationOrTag>  annotations ;
 	// TODO : tags 
 	
 	public FieldAnnotationsAndTags() {
@@ -15,11 +15,11 @@ public class FieldAnnotationsAndTags {
 		this.annotations = new LinkedList<>();
 	}
 
-	public void addAnnotation(DomainEntityFieldAnnotation annotation) {
+	public void addAnnotation(DomainAnnotationOrTag annotation) {
 		annotations.add(annotation);
 	}
 
-	public List<DomainEntityFieldAnnotation> getAnnotations() {
+	public List<DomainAnnotationOrTag> getAnnotations() {
 		return annotations;
 	}
 	

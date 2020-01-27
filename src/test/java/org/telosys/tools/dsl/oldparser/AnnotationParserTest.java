@@ -11,7 +11,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.oldparser.AnnotationParser;
-import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 
 public class AnnotationParserTest {
 	
@@ -55,7 +55,7 @@ public class AnnotationParserTest {
         Number r = annotationParser.getParameterValueAsBigDecimal(value) ;
         return r ;
 	}
-	private List<DomainEntityFieldAnnotation> parseAnnotations(String annotationsString) {
+	private List<DomainAnnotationOrTag> parseAnnotations(String annotationsString) {
         AnnotationParser annotationParser = new AnnotationParser();
         return annotationParser.parseAnnotations(ENTITY_NAME, FIELD_NAME, annotationsString) ;
 	}
@@ -79,7 +79,7 @@ public class AnnotationParserTest {
     @Test 
     public void testParseAnnotations() throws Exception {
     	AnnotationParser annotationParser = new AnnotationParser();
-    	List<DomainEntityFieldAnnotation> annotations = annotationParser.parseAnnotations("entityName", "fieldName", "");
+    	List<DomainAnnotationOrTag> annotations = annotationParser.parseAnnotations("entityName", "fieldName", "");
     	Assert.assertEquals(0, annotations.size());
     }
 
@@ -204,7 +204,7 @@ public class AnnotationParserTest {
     //-------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------
     
-    private void checkExpectedResultVoid(List<DomainEntityFieldAnnotation> annotations ) {
+    private void checkExpectedResultVoid(List<DomainAnnotationOrTag> annotations ) {
     	assertEquals(0, annotations.size());
         //DomainEntityFieldAnnotation annotation =  annotations.get(0);
     }
@@ -240,11 +240,11 @@ public class AnnotationParserTest {
 
     //-------------------------------------------------------------------------------------
     
-    private void checkExpectedResultIdMinMax(List<DomainEntityFieldAnnotation> annotations ) {
+    private void checkExpectedResultIdMinMax(List<DomainAnnotationOrTag> annotations ) {
     	
     	assertEquals(3, annotations.size());
     	
-        DomainEntityFieldAnnotation annotation =  annotations.get(0);
+        DomainAnnotationOrTag annotation =  annotations.get(0);
         assertEquals("Id", annotation.getName() );
         assertEquals(null,   annotation.getParameterAsString() );
 
@@ -274,8 +274,8 @@ public class AnnotationParserTest {
 
     @Test
     public void testParseAnnotationsWithStringParam() {
-    	List<DomainEntityFieldAnnotation> list ;
-    	DomainEntityFieldAnnotation annot;
+    	List<DomainAnnotationOrTag> list ;
+    	DomainAnnotationOrTag annot;
     	
     	list = parseAnnotations("  @DefaultValue( 50 )  ") ;
     	assertEquals(1, list.size());

@@ -21,7 +21,7 @@ public class ParserTest {
 	public void testParser() {
 		
 		Parser parser = new Parser();
-//		parser.parse(new File("src/test/resources/entity_test_v_3_2/Employee.entity") );
+		parser.parseEntity(new File("src/test/resources/entity_test_v_3_2/Employee.entity") );
 		
 //		//entityFileParser.parse();
 //		EntityFileParsingResult result = entityFileParser.parse();

@@ -26,7 +26,7 @@ import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntityField;
-import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralType;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
@@ -248,8 +248,8 @@ public class Converter {
         // Populate field from annotations if any
         if(domainEntityField.getAnnotations() != null) {
     		log("Converter : annotations found" );
-    		Collection<DomainEntityFieldAnnotation> fieldAnnotations = domainEntityField.getAnnotations().values();
-            for(DomainEntityFieldAnnotation annotation : fieldAnnotations ) {
+    		Collection<DomainAnnotationOrTag> fieldAnnotations = domainEntityField.getAnnotations().values();
+            for(DomainAnnotationOrTag annotation : fieldAnnotations ) {
         		log("Converter : annotation '"+ annotation.getName() + "'");
         		// The annotation name is like "Id", "NotNull", "Max", etc
         		// without "@" at the beginning and without "#" at the end
@@ -308,8 +308,8 @@ public class Converter {
 	 * @param genericAttribute
 	 * @param fieldAnnotations
 	 */
-	private void populateAttributeConstraints(DslModelAttribute genericAttribute, Collection<DomainEntityFieldAnnotation> fieldAnnotations) {
-        for(DomainEntityFieldAnnotation annotation : fieldAnnotations ) {
+	private void populateAttributeConstraints(DslModelAttribute genericAttribute, Collection<DomainAnnotationOrTag> fieldAnnotations) {
+        for(DomainAnnotationOrTag annotation : fieldAnnotations ) {
     		log("Converter / populateAttributeConstraints : annotation '"+ annotation.getName() + "'");
     		
 	        if(AnnotationName.NOT_NULL.equals(annotation.getName())) {
@@ -379,8 +379,8 @@ public class Converter {
 	 * @param genericAttribute
 	 * @param fieldAnnotations
 	 */
-	private void populateAttributeTypeInfo(DslModelAttribute genericAttribute, Collection<DomainEntityFieldAnnotation> fieldAnnotations) {
-        for(DomainEntityFieldAnnotation annotation : fieldAnnotations ) {
+	private void populateAttributeTypeInfo(DslModelAttribute genericAttribute, Collection<DomainAnnotationOrTag> fieldAnnotations) {
+        for(DomainAnnotationOrTag annotation : fieldAnnotations ) {
     		log("Converter / populateAttributeTypeInfo : annotation '"+ annotation.getName() + "'");
 
         	if(AnnotationName.PRIMITIVE_TYPE.equals(annotation.getName())) {
@@ -402,8 +402,8 @@ public class Converter {
         }
 	}
 
-	private void populateAttributeDbInfo(DslModelAttribute genericAttribute, Collection<DomainEntityFieldAnnotation> fieldAnnotations) {
-        for(DomainEntityFieldAnnotation annotation : fieldAnnotations ) {
+	private void populateAttributeDbInfo(DslModelAttribute genericAttribute, Collection<DomainAnnotationOrTag> fieldAnnotations) {
+        for(DomainAnnotationOrTag annotation : fieldAnnotations ) {
     		log("Converter / populateAttributeDbInfo : annotation '"+ annotation.getName() + "'");
             if(AnnotationName.ID.equals(annotation.getName())) {
 	    		log("Converter : annotation @Id " );
@@ -454,7 +454,7 @@ public class Converter {
         initAttributeDefaultValues(genericAttribute, domainEntityField);
         
         //--- Use referenced entity id field annotations
-		Collection<DomainEntityFieldAnnotation> fieldAnnotations = referencedEntityIdField.getAnnotations().values();
+		Collection<DomainAnnotationOrTag> fieldAnnotations = referencedEntityIdField.getAnnotations().values();
         populateAttributeConstraints(genericAttribute, fieldAnnotations) ;
         populateAttributeTypeInfo(genericAttribute, fieldAnnotations);
         
@@ -567,7 +567,7 @@ public class Converter {
 
         // Annotation
         if(domainEntityField.getAnnotations() != null) {
-            for(DomainEntityFieldAnnotation annotation : domainEntityField.getAnnotations().values()) {
+            for(DomainAnnotationOrTag annotation : domainEntityField.getAnnotations().values()) {
                 if("@Embedded".equals(annotation.getName())) {
                     genericLink.setIsEmbedded(true);
                 }

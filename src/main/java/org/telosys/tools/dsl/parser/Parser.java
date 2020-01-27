@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainTag;
+import org.telosys.tools.dsl.parser.model.DomainAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 
 public class Parser {
 
@@ -32,13 +34,17 @@ public class Parser {
      * @param file the ".model" file 
      * @return
      */
+    /**
+     * @param file
+     * @return
+     */
     public final DomainEntity parseEntity(File file) {
     	
     	// ParserUtil.checkModelFile(file);
-    	
     	EntityFileParser entityFileParser = new EntityFileParser(file);
     	EntityFileParsingResult result = entityFileParser.parse();
     	String entityNameFromFileName = result.getEntityNameFromFileName();
+    	System.out.println("\n----------");
     	for ( FieldBuilder field : result.getFields() ) {
 //    		FieldNameAndType fieldNameAndType = parser.parseFieldNameAndType(field);
     		parseField(entityNameFromFileName, field); 
@@ -47,14 +53,29 @@ public class Parser {
     }
     
     public final void parseField(String entityNameFromFileName, FieldBuilder field) {
-    	// Parse the field NAME and TYPE
+    	
+    	// 1) Parse the field NAME and TYPE
 		FieldNameAndTypeParser parser = new FieldNameAndTypeParser(entityNameFromFileName, entitiesNames);
 		FieldNameAndType fieldNameAndType = parser.parseFieldNameAndType(field);
 		System.out.println("Field : name '" + fieldNameAndType.getName() 
 			+ "' type '" + fieldNameAndType.getType() 
 			+ "' cardinality = " + fieldNameAndType.getCardinality() );
 		
-		// Parse field ANNOTATIONS and TAGS
-		// TODO
+		String fieldName = fieldNameAndType.getName();
+		
+		// 2) Parse field ANNOTATIONS and TAGS
+		FieldAnnotationsAndTagsParser fieldAnnotationsAndTagsParser = new FieldAnnotationsAndTagsParser(entityNameFromFileName);
+		FieldAnnotationsAndTags fieldAnnotationsAndTags = fieldAnnotationsAndTagsParser.parse(fieldName, field);
+		List<DomainAnnotationOrTag> annotationsAndTagsList = fieldAnnotationsAndTags.getAnnotations();
+		System.out.println("\n--- ANNOTATIONS and TAGS : " + annotationsAndTagsList.size() );
+		for ( DomainAnnotationOrTag annotationOrTag : annotationsAndTagsList ) {
+			if ( annotationOrTag instanceof DomainTag ) {
+				System.out.println(" . TAG : " + annotationOrTag );
+			}
+			else if ( annotationOrTag instanceof DomainAnnotation ) {
+				System.out.println(" . ANNOTATION : " + annotationOrTag );
+			}
+		}
+		System.out.println("--- ");
     }
 }

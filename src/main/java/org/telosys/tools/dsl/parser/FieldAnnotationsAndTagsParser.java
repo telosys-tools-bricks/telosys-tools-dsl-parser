@@ -2,6 +2,8 @@ package org.telosys.tools.dsl.parser;
 
 import java.util.List;
 
+import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
+
 public class FieldAnnotationsAndTagsParser {
 
 	private final String entityNameFromFileName;
@@ -10,11 +12,11 @@ public class FieldAnnotationsAndTagsParser {
 		this.entityNameFromFileName = entityNameFromFileName;
 	}
 	
-	public FieldAnnotationsAndTags parse(FieldBuilder field) {
-		return parse( field.getAnnotationsPart());
+	public FieldAnnotationsAndTags parse(String fieldName, FieldBuilder field) {
+		return parse( fieldName, field.getAnnotationsPart());
 	}
 
-	public FieldAnnotationsAndTags parse(String annotationsAndTags) {
+	public FieldAnnotationsAndTags parse(String fieldName, String annotationsAndTags) {
 		FieldAnnotationsAndTags result = new FieldAnnotationsAndTags();
 
     	if ( annotationsAndTags == null || "".equals(annotationsAndTags) ) {
@@ -22,6 +24,12 @@ public class FieldAnnotationsAndTagsParser {
     	}
     	Splitter splitter = new Splitter();
 		List<String> elements = splitter.split(annotationsAndTags);
+		for ( String element : elements ) {
+			System.out.println(" . '" + element + "'");
+			AnnotationOrTagParser annotationOrTagParser = new AnnotationOrTagParser(entityNameFromFileName, fieldName);
+			DomainAnnotationOrTag annotationOrTag = annotationOrTagParser.parse(element);
+			result.addAnnotation(annotationOrTag);
+		}
 		return result;
 	}
 

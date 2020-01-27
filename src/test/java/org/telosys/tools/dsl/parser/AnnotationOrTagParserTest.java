@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.DslParserException;
-import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -87,7 +87,7 @@ public class AnnotationOrTagParserTest {
 
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 
-		DomainEntityFieldAnnotation annotation ;
+		DomainAnnotationOrTag annotation ;
 		
 		annotation = parser.parseAnnotation("@Id");
 		assertEquals("Id", annotation.getName());

@@ -42,9 +42,9 @@ public class EntityFileParser2_BAK { // extends AbstractParser {
 	private final String entityNameFromFileName;
 	// private final DomainModel model ;
 
-	private final List<Field> fieldsParsed = new LinkedList<>();
+	private final List<FieldBuilder> fieldsParsed = new LinkedList<>();
 //	private int   position ;
-	private Field currentField = null ;
+	private FieldBuilder currentField = null ;
 
 	private boolean inFields      = false ;
 	private boolean inAnnotations = false ;
@@ -101,12 +101,12 @@ public class EntityFileParser2_BAK { // extends AbstractParser {
 //		} catch (IOException e) {
 //			throwParsingException("IOException");
 //		}
-		List<Field> fields = parseFields() ; // rename parseFile()
+		List<FieldBuilder> fields = parseFields() ; // rename parseFile()
 		// TODO : parseAllFields(domainEntity);
 		return domainEntity;
 	}
 	
-	protected List<Field> parseFields() {
+	protected List<FieldBuilder> parseFields() {
 		if (!entityFile.exists()) {
 			throwParsingException("File not found");
 		}
@@ -225,11 +225,11 @@ public class EntityFileParser2_BAK { // extends AbstractParser {
 	
 	private void resetCurrentField(int lineNumber) {
 		if ( currentField == null ) {
-			currentField = new Field(lineNumber);
+			currentField = new FieldBuilder(lineNumber);
 		}
 		else {
 			if ( currentField.isVoid() ) {
-				currentField = new Field(lineNumber);
+				currentField = new FieldBuilder(lineNumber);
 			}
 		}
 	}
@@ -470,7 +470,7 @@ public class EntityFileParser2_BAK { // extends AbstractParser {
 		System.out.println("\n\n=== FINISHED : " + currentField);
 		fieldsParsed.add(currentField);
 	//	currentField = null ; // no current field
-		currentField = new Field(-1) ; // no current field
+		currentField = new FieldBuilder(-1) ; // no current field
 		inAnnotations = false ;
 //		position = Const.IN_FIELDS;
 	}

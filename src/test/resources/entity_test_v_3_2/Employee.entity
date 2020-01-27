@@ -6,24 +6,24 @@ Employee { // foo
 
 
 
-	id 		: int {@Id}; // the id
-	firstName : string   
+	id 		: int {@Id , @AutoIncremented, @Embedded , @Max(800)}; // the id
+	firstName : string   { @DefaultValue( "   a b") #MyTag(qqq) #foo(12) }
 	;
 	lastName : string {
-	    @NotBlank,  @Test('az()e;//r'),  @Embedded  		}
-	    ;
+	    @NotBlank,  @Embedded  	 // @Test('az()e;//r'),  @Embedded  		}
+	    } ;
 	    
 	;;   
 	birthDate : date 
 	{
-	@Future, 		 @NotEmpty , @Test('az,ee')
+	@Future  @NotEmpty // , @Test('az,ee')
 	}
 	;
 	
-	foo : string { @NotBlank,  @Test("  a z'e''r}zz")::? };
+	foo : string { @NotBlank, }; //  @Test("  a z'e''r}zz")::? };
 	;;;
 	count : int // dsdeza
-			{ @Max(12), @Min(  0 ), @NotNull 
+			{ @Max(12), @Min(  0 ), @NotNull , @SizeMax(12)
 			};
 	
 	bar1 : int ; 		;; bar2 : string;
@@ -31,13 +31,13 @@ Employee { // foo
 //	ba r3 : long ; // "Invalid field name"
 	bar3 : long   [ 33 ] ;
 	
-	bar$ : string ;
+	bar$ : string { #Foo #Bar(123) } ;
 	
-	bar@ : string { @Max(12) } ;
+	bar@ : string { @Max(12) #Test } ;
 	
-	bar% : int @Foo(xx) ; / // "Invalid field type"
+	//bar% : int @Foo(xx) ; / // "Invalid field type"
 
-	bar% : int  ; / // "Invalid field type"
+	bar% : int  ; 
 	
 	bar4 : short[2] ;
 	

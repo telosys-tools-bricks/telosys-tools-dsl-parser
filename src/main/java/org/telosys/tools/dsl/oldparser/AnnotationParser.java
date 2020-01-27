@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.telosys.tools.dsl.KeyWords;
-import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 
 /**
  * Field annotations parsing
@@ -57,7 +57,7 @@ public class AnnotationParser extends AbstractParser  {
      * @param annotations the annotations string without '{' and '}'
      * @return
      */
-    protected List<DomainEntityFieldAnnotation> parseAnnotations(String entityName, String fieldName, String annotations) {
+    protected List<DomainAnnotationOrTag> parseAnnotations(String entityName, String fieldName, String annotations) {
 
     	if ( annotations == null || "".equals(annotations) ) {
     		// return void list
@@ -73,10 +73,10 @@ public class AnnotationParser extends AbstractParser  {
         	return new ArrayList<>();
         }
 
-        List<DomainEntityFieldAnnotation> list = new ArrayList<>();
+        List<DomainAnnotationOrTag> list = new ArrayList<>();
         // extract annotations
         for (String annotationString : annotationList) {
-            DomainEntityFieldAnnotation annotation = this.parseSingleAnnotation(entityName, fieldName, annotationString.trim());
+            DomainAnnotationOrTag annotation = this.parseSingleAnnotation(entityName, fieldName, annotationString.trim());
             list.add(annotation);
         }
 
@@ -90,7 +90,7 @@ public class AnnotationParser extends AbstractParser  {
      * @param annotationString e.g. "@Id", "@Max(12)", etc
      * @return
      */
-    private DomainEntityFieldAnnotation parseSingleAnnotation(String entityName, String fieldName, String annotationString) {
+    private DomainAnnotationOrTag parseSingleAnnotation(String entityName, String fieldName, String annotationString) {
     	
         // must start with a '@'
         if (annotationString.charAt(0) != '@') {
@@ -130,7 +130,7 @@ public class AnnotationParser extends AbstractParser  {
 					} catch (Exception e) {
                 		throwAnnotationParsingError( entityName, fieldName, annotationString, "integer parameter required ");
 					}
-                	return new DomainEntityFieldAnnotation(annotationName, numberValue);
+                	return new DomainAnnotationOrTag(annotationName, numberValue);
                 }
                 else if ( annotationDefinition.endsWith("#") ) { // DECIMAL parameter required
                 	BigDecimal numberValue = null ;
@@ -139,7 +139,7 @@ public class AnnotationParser extends AbstractParser  {
 					} catch (Exception e) {
                 		throwAnnotationParsingError( entityName, fieldName, annotationString, "numeric parameter required ");
 					}
-                	return new DomainEntityFieldAnnotation(annotationName, numberValue);
+                	return new DomainAnnotationOrTag(annotationName, numberValue);
                 }
                 else if ( annotationDefinition.endsWith("$") ) { // STRING parameter required
                 	String value = null ;
@@ -148,14 +148,14 @@ public class AnnotationParser extends AbstractParser  {
 					} catch (Exception e) {
                 		throwAnnotationParsingError( entityName, fieldName, annotationString, "string parameter required ");
 					}
-                	return new DomainEntityFieldAnnotation(annotationName, value);
+                	return new DomainAnnotationOrTag(annotationName, value);
                 }
                 else {
                 	// annotation without parameter
                 	if ( parameterValue != null ) {
                 		throwAnnotationParsingError( entityName, fieldName, annotationString, "unexpected parameter");
                 	}
-                	return new DomainEntityFieldAnnotation(annotationName);
+                	return new DomainAnnotationOrTag(annotationName);
                 }
             }
         }

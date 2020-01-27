@@ -87,8 +87,21 @@ public class SplitterTest {
 		assertEquals("@--ab++??", list.get(i++));
 		assertEquals("@Foo", list.get(i++));
 		assertEquals("@Foo", list.get(i++));
-		
-		
+	}
+
+	@Test
+	public void test3() {
+		int i = 0 ;
+		List<String> list ;
+
+		list = split("@NotBlank,#Test @Foo #MyTag,, #Bar");
+		i = 0 ;
+		assertEquals(5, list.size());
+		assertEquals("@NotBlank", list.get(i++));
+		assertEquals("#Test", list.get(i++));
+		assertEquals("@Foo", list.get(i++));
+		assertEquals("#MyTag", list.get(i++));
+		assertEquals("#Bar", list.get(i++));
 	}
 
 	@Test(expected = DslParserException.class)

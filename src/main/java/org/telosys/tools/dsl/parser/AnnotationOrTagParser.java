@@ -20,7 +20,9 @@ import java.util.List;
 
 import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.KeyWords;
-import org.telosys.tools.dsl.parser.model.DomainEntityFieldAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
+import org.telosys.tools.dsl.parser.model.DomainTag;
 
 /**
  * Field annotations parsing
@@ -67,15 +69,15 @@ public class AnnotationOrTagParser {
 	 *            e.g. "@Id", "@Max(12)", "#Tag", etc
 	 * @return
 	 */
-	public DomainEntityFieldAnnotation parse(String annotationOrTagString) {
+	public DomainAnnotationOrTag parse(String annotationOrTagString) {
 
 		char firstChar = annotationOrTagString.charAt(0);
 		if (firstChar == '@') {
-			DomainEntityFieldAnnotation annotation = parseAnnotation(annotationOrTagString);
+			DomainAnnotationOrTag annotation = parseAnnotation(annotationOrTagString);
 			// TODO annotationOrTag.setType(ANNOTATION);
 			return annotation;
 		} else if (firstChar == '#') {
-			DomainEntityFieldAnnotation tag = parseTag(annotationOrTagString);
+			DomainAnnotationOrTag tag = parseTag(annotationOrTagString);
 			// TODO annotationOrTag.setType(TAG);
 			return tag;
 		} else {
@@ -84,7 +86,7 @@ public class AnnotationOrTagParser {
 		return null;
 	}
 
-	protected DomainEntityFieldAnnotation parseAnnotation(String annotation) {
+	protected DomainAnnotationOrTag parseAnnotation(String annotation) {
 		
 		// get the name 
 		String name = getName(annotation);
@@ -114,7 +116,7 @@ public class AnnotationOrTagParser {
 					} catch (Exception e) {
 						throwAnnotationParsingError(annotation, "integer parameter required ");
 					}
-					return new DomainEntityFieldAnnotation(name, numberValue);
+					return new DomainAnnotation(name, numberValue);
 				} else if (annotationDefinition.endsWith("#")) { // DECIMAL
 																	// parameter
 																	// required
@@ -124,7 +126,7 @@ public class AnnotationOrTagParser {
 					} catch (Exception e) {
 						throwAnnotationParsingError(annotation, "numeric parameter required ");
 					}
-					return new DomainEntityFieldAnnotation(name, numberValue);
+					return new DomainAnnotation(name, numberValue);
 				} else if (annotationDefinition.endsWith("$")) { // STRING
 																	// parameter
 																	// required
@@ -134,13 +136,13 @@ public class AnnotationOrTagParser {
 					} catch (Exception e) {
 						throwAnnotationParsingError(annotation, "string parameter required ");
 					}
-					return new DomainEntityFieldAnnotation(name, value);
+					return new DomainAnnotation(name, value);
 				} else {
 					// annotation without parameter
 					if (parameterValue != null) {
 						throwAnnotationParsingError(annotation, "unexpected parameter");
 					}
-					return new DomainEntityFieldAnnotation(name);
+					return new DomainAnnotation(name);
 				}
 			}
 		}
@@ -149,11 +151,16 @@ public class AnnotationOrTagParser {
 		return null; // never reached
 	}
 
-	protected DomainEntityFieldAnnotation parseTag(String tagString) {
+	protected DomainAnnotationOrTag parseTag(String tagString) {
 		String name = getName(tagString);
 		String rawParameterValue = getParameterValue(tagString);
-		String parameterValue = getParameterValueAsString(rawParameterValue);
-		return new DomainEntityFieldAnnotation(name, parameterValue);
+		if ( rawParameterValue != null ) {
+			String parameterValue = getParameterValueAsString(rawParameterValue);
+			return new DomainTag(name, parameterValue);
+		}
+		else {
+			return new DomainTag(name);
+		}
 	}
 
 	/**

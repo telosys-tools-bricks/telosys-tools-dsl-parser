@@ -40,7 +40,7 @@ public class Splitter {
 		
 		for (char c : s.toCharArray() ) {
 			logChar(c);
-			if ( c == '@' ) {
+			if ( c == '@' || c == '#' ) {
 				if ( inParentheses() ) {
 					if ( inQuote() ) {
 						keepChar(c);

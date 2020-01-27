@@ -32,7 +32,7 @@ public class DomainEntityField {
       TODO : final
       */
 
-    private final Map<String, DomainEntityFieldAnnotation> annotations = new Hashtable<String, DomainEntityFieldAnnotation>();
+    private final Map<String, DomainAnnotationOrTag> annotations = new Hashtable<String, DomainAnnotationOrTag>();
 
     /**
      * Constructor with default cardinality of 1
@@ -59,13 +59,13 @@ public class DomainEntityField {
         //    this.annotationList = new ArrayList<DomainEntityFieldAnnotation>();
     }
 
-    public void setAnnotationList(List<DomainEntityFieldAnnotation> annotationList) {
-        for (DomainEntityFieldAnnotation annotation : annotationList) {
+    public void setAnnotationList(List<DomainAnnotationOrTag> annotationList) {
+        for (DomainAnnotationOrTag annotation : annotationList) {
             addAnnotation(annotation);
         }
     }
 
-    public void addAnnotation(DomainEntityFieldAnnotation annotation) {
+    public void addAnnotation(DomainAnnotationOrTag annotation) {
         if (!annotations.containsKey(annotation.getName())) {
             annotations.put(annotation.getName(), annotation);
         } else {
@@ -191,7 +191,7 @@ public class DomainEntityField {
      * Return annotations
      * @return annotations
      */
-    public Map<String, DomainEntityFieldAnnotation> getAnnotations() {
+    public Map<String, DomainAnnotationOrTag> getAnnotations() {
         return this.annotations;
     }
 }
