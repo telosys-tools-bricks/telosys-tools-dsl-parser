@@ -13,7 +13,7 @@ public class DomainModelTest {
 
 	@Test
 	public void testEntity() {
-		DomainModel model = new DomainModel("mymodel");
+		DomainModel model = new DomainModel();
 		assertTrue( model.getNumberOfEntities() == 0 ) ;
 		
 		model.addEntity( new DomainEntity("Book") );
@@ -40,14 +40,14 @@ public class DomainModelTest {
 
 	@Test ( expected = DslParserException.class )
 	public void testEntityDuplicated() {
-		DomainModel model = new DomainModel("mymodel");
+		DomainModel model = new DomainModel();
 		model.addEntity( new DomainEntity("Book") );
 		model.addEntity( new DomainEntity("Book") ); // ERROR expected
 	}
 
 	@Test ( expected = DslParserException.class )
 	public void testEntityWithNeutralTypeName() {
-		DomainModel model = new DomainModel("mymodel");
+		DomainModel model = new DomainModel();
 		model.addEntity( new DomainEntity("string") ); // ERROR expected
 	}
 

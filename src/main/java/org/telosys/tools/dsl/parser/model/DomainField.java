@@ -15,24 +15,23 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.telosys.tools.dsl.DslParserException;
 
-import java.util.*;
-
 public class DomainField {
+    public static final int THIRTY_ONE = 31;
 
     private final String name;
     private final DomainType type;
     private final int cardinality; // if != 1 : "ONE-TO-MANY"
-    public static final int THIRTY_ONE = 31;
 
-    /*
-      TODO : Hashtable (each annotation is unique for a field)
-      private List<DomainEntityFieldAnnotation> annotationList;
-      TODO : final
-      */
-
-    private final Map<String, DomainAnnotationOrTag> annotations = new Hashtable<String, DomainAnnotationOrTag>();
+    private final Map<String, DomainAnnotation> annotations = new HashMap<>();
+    private final Map<String, DomainTag> tags = new HashMap<>();
 
     /**
      * Constructor with default cardinality of 1
@@ -40,7 +39,6 @@ public class DomainField {
      * @param type
      */
     public DomainField(String name, DomainType type) {
-        // this.annotationList = new ArrayList<DomainEntityFieldAnnotation>();
         this.name = name;
         this.type = type;
         this.cardinality = 1;
@@ -56,33 +54,58 @@ public class DomainField {
         this.name = name;
         this.type = type;
         this.cardinality = cardinality;
-        //    this.annotationList = new ArrayList<DomainEntityFieldAnnotation>();
     }
 
-    public void setAnnotationList(List<DomainAnnotationOrTag> annotationList) {
-        for (DomainAnnotationOrTag annotation : annotationList) {
-            addAnnotation(annotation);
-        }
-    }
+//    public void setAnnotationList(List<DomainAnnotationOrTag> annotationList) {
+//        for (DomainAnnotationOrTag annotation : annotationList) {
+//            addAnnotation(annotation);
+//        }
+//    }
 
-    public void addAnnotation(DomainAnnotationOrTag annotation) {
+    /**
+     * Add a new annotation to the field <br>
+     * Throws an exception if the given annotation is already defined
+     * @param annotation
+     */
+    public void addAnnotation(DomainAnnotation annotation) {
         if (!annotations.containsKey(annotation.getName())) {
             annotations.put(annotation.getName(), annotation);
         } else {
-            throw new DslParserException("The annotation " + annotation.getName() + " is already define in the field " + this.getName());
+            throw new DslParserException("Annotation '" + annotation.getName() + "' already define in field '" + this.getName() + "'");
         }
     }
 
+    /**
+     * Add a new tag to the field <br>
+     * Throws an exception if the given tag is already defined
+     * @param tag
+     */
+    public void addTag(DomainTag tag) {
+        if (!tags.containsKey(tag.getName())) {
+        	tags.put(tag.getName(), tag);
+        } else {
+            throw new DslParserException("Tag '" + tag.getName() + "' already define in field '" + this.getName() + "'");
+        }
+    }
+
+    /**
+     * Returns the name of the field
+     * @return
+     */
     public final String getName() {
         return name;
     }
 
+    /**
+     * Returns the type of the field
+     * @return
+     */
     public final DomainType getType() {
         return type;
     }
 
     /**
-     * Returns the cardinality <br>
+     * Returns the cardinality of the type <br>
      * 1 = standard <br>
      * Not 1 = multiple (0..N) <br>
      * @return
@@ -105,6 +128,25 @@ public class DomainField {
 
     public final boolean isEnumeration() {
         return type.isEnumeration();
+    }
+
+    /**
+     * Returns all the annotation names (in alphabetical order)
+     *
+     * @return
+     */
+    public final List<String> getAnnotationNames() {
+        List<String> names = new LinkedList<>(annotations.keySet());
+        Collections.sort(names);
+        return names;
+    }
+
+    /**
+     * Return annotations
+     * @return annotations
+     */
+    public Map<String, DomainAnnotation> getAnnotations() {
+        return this.annotations;
     }
 
     @Override
@@ -141,6 +183,8 @@ public class DomainField {
                 '}';
     }
 
+    //------------------------------------------------------------------------------------------
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -176,22 +220,4 @@ public class DomainField {
         return result;
     }
 
-    /**
-     * Returns all the annotation names (in alphabetical order)
-     *
-     * @return
-     */
-    public final List<String> getAnnotationNames() {
-        List<String> names = new LinkedList<String>(annotations.keySet());
-        Collections.sort(names);
-        return names;
-    }
-
-    /**
-     * Return annotations
-     * @return annotations
-     */
-    public Map<String, DomainAnnotationOrTag> getAnnotations() {
-        return this.annotations;
-    }
 }

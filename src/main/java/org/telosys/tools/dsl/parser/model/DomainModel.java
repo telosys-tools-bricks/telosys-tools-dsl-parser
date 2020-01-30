@@ -32,39 +32,30 @@ import org.telosys.tools.dsl.DslParserException;
  */
 public class DomainModel {
 
-//    private final String modelName;
-//    private final String modelVersion;
-//    private final String modelDescription;
 	private final DomainModelInfo domainModelInfo ;
 
     /*
     NB :
         Do not accept an entity and an enumeration with the same name /!\
      */
-    private final Map<String, DomainEntity> entities = new Hashtable<String, DomainEntity>();
+    private final Map<String, DomainEntity> entities = new Hashtable<>();
 
 //    private final Map<String, DomainEnumeration<?>> enumerations = new Hashtable<String, DomainEnumeration<?>>();
 
-
     /**
      * Constructor
-     *
-     * @param modelName
      */
-    public DomainModel(String modelName) {
+    public DomainModel() {
         super();
-//        this.modelName = modelName;
-//        this.modelVersion = "" ;
-//        this.modelDescription = "" ;
         domainModelInfo = new DomainModelInfo();
     }
 
-//    public DomainModel(String modelName, Properties properties) {
+    /**
+     * Constructor
+     * @param properties
+     */
     public DomainModel(Properties properties) {
     	super();
-//        this.modelName = modelName;
-//        this.modelVersion = properties.getProperty("version", "");
-//        this.modelDescription = properties.getProperty("description", "");
         domainModelInfo = new DomainModelInfo(properties);
     }
 
@@ -74,7 +65,6 @@ public class DomainModel {
      * @return
      */
     public final String getName() {
-//        return modelName;
         return domainModelInfo.getName();
     }
 
@@ -84,7 +74,6 @@ public class DomainModel {
      * @return
      */
     public String getVersion() {
-//		return modelVersion;
 		return domainModelInfo.getVersion();
 	}
 
@@ -93,7 +82,6 @@ public class DomainModel {
 	 * @return
 	 */
 	public String getDescription() {
-//		return modelDescription;
 		return domainModelInfo.getDescription();
 	}
 

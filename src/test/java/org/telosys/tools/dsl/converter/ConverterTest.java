@@ -1,20 +1,13 @@
 package org.telosys.tools.dsl.converter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.AnnotationName;
-import org.telosys.tools.dsl.converter.Converter;
 import org.telosys.tools.dsl.model.DslModelEntity;
+import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
-import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralType;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
@@ -24,6 +17,12 @@ import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Link;
 import org.telosys.tools.generic.model.Model;
 import org.telosys.tools.generic.model.ModelType;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 //@RunWith(MockitoJUnitRunner.class)
 public class ConverterTest {
@@ -35,7 +34,7 @@ public class ConverterTest {
 	@Test
 	public void testEmptyModel() {
 		// Given
-		DomainModel domainModel = new DomainModel("test-model");
+		DomainModel domainModel = new DomainModel();
 		
 		// When
 		Model model = converter.convertToGenericModel(domainModel);
@@ -48,7 +47,7 @@ public class ConverterTest {
 	}
 	
 	private Model buildModelWithTwoEmptyEntities() {
-		DomainModel domainModel = new DomainModel("domainModel");
+		DomainModel domainModel = new DomainModel();
 		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
 		domainModel.addEntity(domainEntity_1);
 		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
@@ -92,7 +91,7 @@ public class ConverterTest {
 	@Test
 	public void testAttributeWithNeutralTypes() {
 		// Given
-		DomainModel domainModel = new DomainModel("domainModel");
+		DomainModel domainModel = new DomainModel();
 		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
 
 		domainModel.addEntity(domainEntity_1);
@@ -173,7 +172,7 @@ public class ConverterTest {
 	@Test
 	public void testAttributeWithAnnotations() {
 		// Given
-		DomainModel domainModel = new DomainModel("domainModel");
+		DomainModel domainModel = new DomainModel();
 		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
 
 		domainModel.addEntity(domainEntity_1);
@@ -195,20 +194,20 @@ public class ConverterTest {
 		domainEntity_1.addField(domainEntityField_1_8);
 //		domainEntityField_1_1.addAnnotation(new DomainEntityFieldAnnotation("@Id"));
 //		domainEntityField_1_2.addAnnotation(new DomainEntityFieldAnnotation("@NotNull"));
-		domainEntityField_1_1.addAnnotation(new DomainAnnotationOrTag(AnnotationName.ID));
-		domainEntityField_1_2.addAnnotation(new DomainAnnotationOrTag(AnnotationName.NOT_NULL));
+		domainEntityField_1_1.addAnnotation(new DomainAnnotation(AnnotationName.ID));
+		domainEntityField_1_2.addAnnotation(new DomainAnnotation(AnnotationName.NOT_NULL));
 //		domainEntityField_1_3.addAnnotation(new DomainEntityFieldAnnotation("@Min", "1"));
 //		domainEntityField_1_4.addAnnotation(new DomainEntityFieldAnnotation("@Max", "2"));
-		domainEntityField_1_3.addAnnotation(new DomainAnnotationOrTag(AnnotationName.MIN, new BigDecimal(1) ));
-		domainEntityField_1_4.addAnnotation(new DomainAnnotationOrTag(AnnotationName.MAX, new BigDecimal(25) ));
+		domainEntityField_1_3.addAnnotation(new DomainAnnotation(AnnotationName.MIN, new BigDecimal(1) ));
+		domainEntityField_1_4.addAnnotation(new DomainAnnotation(AnnotationName.MAX, new BigDecimal(25) ));
 //		domainEntityField_1_5.addAnnotation(new DomainEntityFieldAnnotation("@SizeMin", "3"));
 //		domainEntityField_1_6.addAnnotation(new DomainEntityFieldAnnotation("@SizeMax", "4"));
-		domainEntityField_1_5.addAnnotation(new DomainAnnotationOrTag(AnnotationName.SIZE_MIN, new Integer(3)  ));
-		domainEntityField_1_6.addAnnotation(new DomainAnnotationOrTag(AnnotationName.SIZE_MAX, new Integer(4)  ));
+		domainEntityField_1_5.addAnnotation(new DomainAnnotation(AnnotationName.SIZE_MIN, new Integer(3)  ));
+		domainEntityField_1_6.addAnnotation(new DomainAnnotation(AnnotationName.SIZE_MAX, new Integer(4)  ));
 //		domainEntityField_1_7.addAnnotation(new DomainEntityFieldAnnotation("@Past"));
 //		domainEntityField_1_8.addAnnotation(new DomainEntityFieldAnnotation("@Future"));
-		domainEntityField_1_7.addAnnotation(new DomainAnnotationOrTag(AnnotationName.PAST));
-		domainEntityField_1_8.addAnnotation(new DomainAnnotationOrTag(AnnotationName.FUTURE));
+		domainEntityField_1_7.addAnnotation(new DomainAnnotation(AnnotationName.PAST));
+		domainEntityField_1_8.addAnnotation(new DomainAnnotation(AnnotationName.FUTURE));
 
 		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
 		domainModel.addEntity(domainEntity_2);
@@ -302,7 +301,7 @@ public class ConverterTest {
 //	}
 	
 	private DomainModel buildFullModel() {
-		DomainModel domainModel = new DomainModel("TestDomainModel");
+		DomainModel domainModel = new DomainModel();
 
 		DomainEntity carEntity = new DomainEntity("Car");
 		DomainEntity driverEntity = new DomainEntity("Driver");
@@ -310,8 +309,8 @@ public class ConverterTest {
 		
 		//--- "Driver" entity
 		DomainField driverCode = new DomainField("code", new DomainNeutralType("long"));
-		driverCode.addAnnotation(new DomainAnnotationOrTag(AnnotationName.ID));
-		driverCode.addAnnotation(new DomainAnnotationOrTag(AnnotationName.SIZE_MAX, new Integer(20) ));
+		driverCode.addAnnotation(new DomainAnnotation(AnnotationName.ID));
+		driverCode.addAnnotation(new DomainAnnotation(AnnotationName.SIZE_MAX, new Integer(20) ));
 		//driverCode.setAnnotationList(annotationList);
 		driverEntity.addField(driverCode);
 		
@@ -321,7 +320,7 @@ public class ConverterTest {
 
 		//--- "Car" entity referencing "Driver" entity
 		DomainField carId = new DomainField("id",     new DomainNeutralType("short") );
-		carId.addAnnotation(new DomainAnnotationOrTag(AnnotationName.ID));
+		carId.addAnnotation(new DomainAnnotation(AnnotationName.ID));
 		carEntity.addField(carId);
 		
 		carEntity.addField(new DomainField("name",   new DomainNeutralType("string")) );
@@ -329,7 +328,7 @@ public class ConverterTest {
 		
 		//--- "Group" entity referencing N "Driver" entity
 		DomainField groupId = new DomainField("id",     new DomainNeutralType("int"));
-		groupId.addAnnotation(new DomainAnnotationOrTag(AnnotationName.ID));
+		groupId.addAnnotation(new DomainAnnotation(AnnotationName.ID));
 		groupEntity.addField(groupId);
 		
 		groupEntity.addField(new DomainField("name",   new DomainNeutralType("string")) );

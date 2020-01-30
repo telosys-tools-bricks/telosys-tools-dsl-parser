@@ -40,9 +40,8 @@ public class DomainEntity extends DomainType {
      */
     public DomainEntity(String name) {
         super(name, DomainTypeNature.ENTITY);
-        //this.fieldsMap = new Hashtable<String, DomainEntityField>();
         // LinkedHashMap to keep the original order
-        this.fieldsMap = new LinkedHashMap<String, DomainField>(); 
+        this.fieldsMap = new LinkedHashMap<>(); 
     }
 
     public void addField(DomainField field) {
@@ -57,7 +56,7 @@ public class DomainEntity extends DomainType {
      * @return
      */
     public List<DomainField> getFields() {
-        return new LinkedList<DomainField>(fieldsMap.values());
+        return new LinkedList<>(fieldsMap.values());
     }
 
     /**
@@ -77,17 +76,6 @@ public class DomainEntity extends DomainType {
         return fieldsMap.size();
     }
 
-//    /**
-//     * Adds all the fields into another entity
-//     *
-//     * @param destination the destination
-//     */
-//    public void addAllFields(DomainEntity destination) {
-//        Collection<DomainEntityField> e = fieldsMap.values();
-//        for (DomainEntityField entity : e) {
-//            destination.addField(entity);
-//        }
-//    }
     //-------------------------------------------------------------------------------------
     public String toString() {
         String fieldRet = "";

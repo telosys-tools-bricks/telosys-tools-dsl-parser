@@ -21,7 +21,7 @@ import java.util.Properties;
 
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.converter.Converter;
-import org.telosys.tools.dsl.oldparser.Parser;
+import org.telosys.tools.dsl.parser.Parser;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainModelInfo;
 import org.telosys.tools.generic.model.Model;
@@ -62,11 +62,11 @@ public class DslModelManager {
     public Model loadModel(File modelFile) {
     	
         //--- 1) Parse the model 
-        Parser domainModelParser = new Parser();
+        Parser dslParser = new Parser();
         DomainModel domainModel = null ;
         Exception parsingException = null ;
 		try {
-			domainModel = domainModelParser.parse(modelFile);
+			domainModel = dslParser.parseModel(modelFile);
 		} catch (DslParserException e) {
 			parsingException = e ;
 		}
@@ -74,7 +74,7 @@ public class DslModelManager {
         if ( parsingException != null ) {
         	//--- 2) Keep error information
         	parsingErrorMessage   = parsingException.getMessage();
-        	parsingErrors = domainModelParser.getErrors();
+        	parsingErrors = dslParser.getErrors();
             return null;
         }
         else {
