@@ -27,12 +27,12 @@ public class FieldNameAndTypeParser {
 		this.entitiesNamesInModel = entitiesNames;
 	}
 
-	private void throwParsingException(FieldBuilder field, String message) {
+	private void throwParsingException(FieldParts field, String message) {
 		String errorMessage = entityNameFromFileName + " : " + message + " [line " + field.getLineNumber() + "]";
 		throw new DslParserException(errorMessage);
 	}
 
-	public FieldNameAndType parseFieldNameAndType(FieldBuilder field) {
+	public FieldNameAndType parseFieldNameAndType(FieldParts field) {
 
 		String fieldNameAndType = field.getNameAndTypePart();
 
@@ -64,7 +64,7 @@ public class FieldNameAndTypeParser {
 	 * @param field
 	 * @param fieldNameAndType
 	 */
-	void checkFieldNameAndType(FieldBuilder field, String fieldNameAndType) {
+	void checkFieldNameAndType(FieldParts field, String fieldNameAndType) {
 		int separatorIndex = -1;
 		int cardinalityOpen = -1;
 		int cardinalityClose = -1;
@@ -94,7 +94,7 @@ public class FieldNameAndTypeParser {
 		checkPositions(field, separatorIndex, cardinalityOpen, cardinalityClose);
 	}
 
-	private void checkPositions(FieldBuilder field, int separatorIndex, int cardinalityOpen, int cardinalityClose) {
+	private void checkPositions(FieldParts field, int separatorIndex, int cardinalityOpen, int cardinalityClose) {
 		if (separatorIndex < 0) {
 			throwParsingException(field, "':' missing");
 		}
@@ -118,7 +118,7 @@ public class FieldNameAndTypeParser {
 	 * @param field
 	 * @param fieldName
 	 */
-	void checkFieldName(FieldBuilder field, String fieldName) {
+	void checkFieldName(FieldParts field, String fieldName) {
 		if (fieldName.length() == 0) {
 			throwParsingException(field, "Field name is missing");
 		}
@@ -133,7 +133,7 @@ public class FieldNameAndTypeParser {
 	 * @param field
 	 * @param fieldName
 	 */
-	void checkFieldTypeWithCardinality(FieldBuilder field, String fieldTypeWithCardinality) {
+	void checkFieldTypeWithCardinality(FieldParts field, String fieldTypeWithCardinality) {
 		if (fieldTypeWithCardinality.length() == 0) {
 			throwParsingException(field, "Field type is missing");
 		}
@@ -151,7 +151,7 @@ public class FieldNameAndTypeParser {
 	 * @param fieldTypeWithCardinality
 	 * @return
 	 */
-	String getFieldTypeWithoutCardinality(FieldBuilder field, String fieldTypeWithCardinality) {
+	String getFieldTypeWithoutCardinality(FieldParts field, String fieldTypeWithCardinality) {
 		StringBuilder sb = new StringBuilder();
 		int start = fieldTypeWithCardinality.indexOf(':') + 1;
 		int end = fieldTypeWithCardinality.length() - 1;
@@ -176,7 +176,7 @@ public class FieldNameAndTypeParser {
 	 * @param fieldTypeWithCardinality
 	 * @return
 	 */
-	int getFieldTypeCardinality(FieldBuilder field, String fieldTypeWithCardinality) {
+	int getFieldTypeCardinality(FieldParts field, String fieldTypeWithCardinality) {
 		if (fieldTypeWithCardinality.contains("[") && fieldTypeWithCardinality.contains("]")) {
 			int startArray = fieldTypeWithCardinality.lastIndexOf('[');
 			int endArray = fieldTypeWithCardinality.lastIndexOf(']');
@@ -209,7 +209,7 @@ public class FieldNameAndTypeParser {
 	 * @param typeName eg 'string', 'date', 'Book', 'Country', etc
 	 * @return
 	 */
-	private DomainType getFieldDomainType(FieldBuilder field, String typeName) {
+	private DomainType getFieldDomainType(FieldParts field, String typeName) {
 		if (DomainNeutralTypes.exists(typeName)) { 
 			// Simple neutral type ( string, int, date, etc )
 			return DomainNeutralTypes.getType(typeName);

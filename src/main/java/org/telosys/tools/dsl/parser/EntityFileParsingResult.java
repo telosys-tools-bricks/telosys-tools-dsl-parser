@@ -5,10 +5,10 @@ import java.util.List;
 public class EntityFileParsingResult {
 
 	private final String entityNameFromFileName;
-	private final String entityNameParsed ;
-	private final List<FieldBuilder> fields ;
-	
-	public EntityFileParsingResult(String entityNameFromFileName, String entityNameParsed, List<FieldBuilder> fields) {
+	private final String entityNameParsed;
+	private final List<FieldParts> fields;
+
+	public EntityFileParsingResult(String entityNameFromFileName, String entityNameParsed, List<FieldParts> fields) {
 		super();
 		this.entityNameFromFileName = entityNameFromFileName;
 		this.entityNameParsed = entityNameParsed;
@@ -23,7 +23,7 @@ public class EntityFileParsingResult {
 		return entityNameParsed;
 	}
 
-	public List<FieldBuilder> getFields() {
+	public List<FieldParts> getFields() {
 		return fields;
 	}
 

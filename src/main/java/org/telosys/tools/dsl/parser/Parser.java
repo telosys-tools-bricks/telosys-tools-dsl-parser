@@ -143,7 +143,7 @@ public class Parser {
     	String entityNameFromFileName = result.getEntityNameFromFileName();
     	System.out.println("\n----------");
     	DomainEntity domainEntity = new DomainEntity(entityNameFromFileName);
-    	for ( FieldBuilder field : result.getFields() ) {
+    	for ( FieldParts field : result.getFields() ) {
 //    		FieldNameAndType fieldNameAndType = parser.parseFieldNameAndType(field);
     		DomainField domainField = parseField(entityNameFromFileName, field); 
         	domainEntity.addField(domainField);
@@ -156,7 +156,7 @@ public class Parser {
      * @param entityNameFromFileName
      * @param field
      */
-    protected final DomainField parseField(String entityNameFromFileName, FieldBuilder field) {
+    protected final DomainField parseField(String entityNameFromFileName, FieldParts field) {
     	
     	// 1) Parse the field NAME and TYPE
 		FieldNameAndTypeParser parser = new FieldNameAndTypeParser(entityNameFromFileName, entitiesNames);

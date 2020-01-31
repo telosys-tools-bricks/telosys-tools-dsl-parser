@@ -29,7 +29,7 @@ public class EntityFileParserTest {
 		System.out.println("\nPARSING RESULT :");
 		System.out.println(" Entity name : " + result.getEntityNameParsed() );
 		System.out.println("\nFIELDS PARSED :");
-		for ( FieldBuilder field : result.getFields() ) {
+		for ( FieldParts field : result.getFields() ) {
 			System.out.println(" . " + field);
 		}
 	}

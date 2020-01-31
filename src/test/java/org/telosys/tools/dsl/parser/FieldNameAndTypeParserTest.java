@@ -28,7 +28,7 @@ public class FieldNameAndTypeParserTest {
     
 	@Test
     public void testCheckFieldNameAndType()  {
-		FieldBuilder field = new FieldBuilder(12, "", "");
+		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 
 		fieldParser.checkFieldNameAndType(field, "aa:string");
@@ -44,7 +44,7 @@ public class FieldNameAndTypeParserTest {
 	//----------------------------------------------------------------------
 	@Test
     public void testCheckFieldName()  {
-		FieldBuilder field = new FieldBuilder(12, "", "");
+		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 
 		fieldParser.checkFieldName(field, "aaa");
@@ -54,19 +54,19 @@ public class FieldNameAndTypeParserTest {
 
 	@Test(expected=DslParserException.class)
 	public void testCheckFieldNameWithError1()  {
-		FieldBuilder field = new FieldBuilder(12, "", "");
+		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 		fieldParser.checkFieldName(field, "");
 	}
 	@Test(expected=DslParserException.class)
 	public void testCheckFieldNameWithError2()  {
-		FieldBuilder field = new FieldBuilder(12, "", "");
+		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 		fieldParser.checkFieldName(field, "   ");
 	}
 	@Test(expected=DslParserException.class)
 	public void testCheckFieldNameWithError3()  {
-		FieldBuilder field = new FieldBuilder(12, "", "");
+		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 		fieldParser.checkFieldName(field, "aa bb");
 	}
@@ -76,7 +76,7 @@ public class FieldNameAndTypeParserTest {
 	//----------------------------------------------------------------------
 	@Test
     public void testCheckFieldType()  {
-		FieldBuilder field = new FieldBuilder(12, "", "");
+		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 
 		fieldParser.checkFieldTypeWithCardinality(field, "aaa");
@@ -89,7 +89,7 @@ public class FieldNameAndTypeParserTest {
 	}
 	@Test(expected=DslParserException.class)
 	public void testCheckFieldTypeError1()  {
-		FieldBuilder field = new FieldBuilder(12, "", "");
+		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 		fieldParser.checkFieldTypeWithCardinality(field, "");
 	}
@@ -111,7 +111,7 @@ public class FieldNameAndTypeParserTest {
 	//----------------------------------------------------------------------
 	@Test
     public void testGetFieldType()  {
-		FieldBuilder field = new FieldBuilder(12, "", "");
+		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 		
     	Assert.assertEquals("string",     fieldParser.getFieldTypeWithoutCardinality(field, "aa:string"));
@@ -139,7 +139,7 @@ public class FieldNameAndTypeParserTest {
 	//----------------------------------------------------------------------
 	@Test
     public void testGetCardinality() {
-		FieldBuilder field = new FieldBuilder(12, "", "");
+		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 		
     	Assert.assertEquals( 1, fieldParser.getFieldTypeCardinality(field, "aa:string") );
@@ -158,21 +158,21 @@ public class FieldNameAndTypeParserTest {
 		FieldNameAndTypeParser fieldParser = getParser();
 		
 		FieldNameAndType r ;
-		r = fieldParser.parseFieldNameAndType( new FieldBuilder(12, "aa:string [2]", ""));
+		r = fieldParser.parseFieldNameAndType( new FieldParts(12, "aa:string [2]", ""));
 		Assert.assertEquals( "aa", r.getName() );
 		Assert.assertEquals( "string", r.getType() );
 		Assert.assertEquals( 2, r.getCardinality() );
 		Assert.assertEquals( "string", r.getDomainType().getName() );
 		Assert.assertEquals( DomainTypeNature.NEUTRAL_TYPE, r.getDomainType().getNature() );
 
-		r = fieldParser.parseFieldNameAndType( new FieldBuilder(12, "  foo : long ", ""));
+		r = fieldParser.parseFieldNameAndType( new FieldParts(12, "  foo : long ", ""));
 		Assert.assertEquals( "foo", r.getName() );
 		Assert.assertEquals( "long", r.getType() );
 		Assert.assertEquals( 1, r.getCardinality() );
 		Assert.assertEquals( "long", r.getDomainType().getName() );
 		Assert.assertEquals( DomainTypeNature.NEUTRAL_TYPE, r.getDomainType().getNature() );
 
-		r = fieldParser.parseFieldNameAndType( new FieldBuilder(12, "  bar : int [  ] ", ""));
+		r = fieldParser.parseFieldNameAndType( new FieldParts(12, "  bar : int [  ] ", ""));
 		Assert.assertEquals( "bar", r.getName() );
 		Assert.assertEquals( "int", r.getType() );
 		Assert.assertEquals( -1, r.getCardinality() );

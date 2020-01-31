@@ -12,7 +12,7 @@ public class FieldAnnotationsAndTagsParser {
 		this.entityNameFromFileName = entityNameFromFileName;
 	}
 	
-	public FieldAnnotationsAndTags parse(String fieldName, FieldBuilder field) {
+	public FieldAnnotationsAndTags parse(String fieldName, FieldParts field) {
 		return parse( fieldName, field.getAnnotationsPart());
 	}
 

@@ -89,18 +89,14 @@ public class EntityFileParser {
 	 * @param file
 	 * @return
 	 */
-//	public DomainEntity parse() {
-//
-//		DomainEntity domainEntity = new DomainEntity(entityNameFromFileName);
-//
-//		List<Field> fields = parseFile() ; // rename parseFile()
-//		// TODO : parseAllFields(domainEntity);
-//		return domainEntity;
-//	}
 	public EntityFileParsingResult parse() {
 
 		parseFile() ; // rename parseFile()
-		return new EntityFileParsingResult(this.entityNameFromFileName, this.entityNameParsed, this.fieldsParsed);
+		List<FieldParts> fieldsParts = new LinkedList<>();
+		for ( FieldBuilder fb : fieldsParsed ) {
+			fieldsParts.add(new FieldParts(fb.getLineNumber(), fb.getNameAndTypePart(), fb.getAnnotationsPart()));
+		}
+		return new EntityFileParsingResult(this.entityNameFromFileName, this.entityNameParsed, fieldsParts);
 	}
 	
 	protected void parseFile() {
