@@ -20,6 +20,7 @@ Employee { // foo
 	}
 	;
 	
+	hour:time ;
 	foo : string { @NotBlank, }; //  @Test("  a z'e''r}zz")::? };
 	;;;
 	count : int // dsdeza

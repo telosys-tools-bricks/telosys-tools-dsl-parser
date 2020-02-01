@@ -28,7 +28,7 @@ public class FieldAnnotationsAndTagsParser {
 			System.out.println(" . '" + element + "'");
 			AnnotationOrTagParser annotationOrTagParser = new AnnotationOrTagParser(entityNameFromFileName, fieldName);
 			DomainAnnotationOrTag annotationOrTag = annotationOrTagParser.parse(element);
-			result.addAnnotation(annotationOrTag);
+			result.addAnnotationOrTag(annotationOrTag);
 		}
 		return result;
 	}

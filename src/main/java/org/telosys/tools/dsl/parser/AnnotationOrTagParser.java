@@ -73,20 +73,16 @@ public class AnnotationOrTagParser {
 
 		char firstChar = annotationOrTagString.charAt(0);
 		if (firstChar == '@') {
-			DomainAnnotationOrTag annotation = parseAnnotation(annotationOrTagString);
-			// TODO annotationOrTag.setType(ANNOTATION);
-			return annotation;
+			return parseAnnotation(annotationOrTagString);
 		} else if (firstChar == '#') {
-			DomainAnnotationOrTag tag = parseTag(annotationOrTagString);
-			// TODO annotationOrTag.setType(TAG);
-			return tag;
+			return parseTag(annotationOrTagString);
 		} else {
 			throwAnnotationParsingError(annotationOrTagString, "must start with '@' or '#'");
 		}
 		return null;
 	}
 
-	protected DomainAnnotationOrTag parseAnnotation(String annotation) {
+	protected DomainAnnotation parseAnnotation(String annotation) {
 		
 		// get the name 
 		String name = getName(annotation);
@@ -151,7 +147,7 @@ public class AnnotationOrTagParser {
 		return null; // never reached
 	}
 
-	protected DomainAnnotationOrTag parseTag(String tagString) {
+	protected DomainTag parseTag(String tagString) {
 		String name = getName(tagString);
 		String rawParameterValue = getParameterValue(tagString);
 		if ( rawParameterValue != null ) {

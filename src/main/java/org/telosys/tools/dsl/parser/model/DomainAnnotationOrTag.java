@@ -109,6 +109,18 @@ public class DomainAnnotationOrTag {
     	return null ;
     }
 
+    public Object getParameter() {
+    	if ( this.hasParameter ) {
+            if (numberParameter != null ) {
+            	return numberParameter;
+            }
+            else if (stringParameter != null ) {
+            	return stringParameter;
+            }
+    	}
+    	return null ;
+    }
+
 /***
     @Override
     public boolean equals(Object o) {

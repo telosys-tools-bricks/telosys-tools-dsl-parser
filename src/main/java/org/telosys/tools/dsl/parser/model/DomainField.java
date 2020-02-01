@@ -169,15 +169,17 @@ public class DomainField {
     			fieldString+="["+cardinality+"]";
     		}
     	}
-    	String annotationsString= "";
     	
+    	String annotationsString= "";    	
     	for (String mapKey : annotations.keySet()) {
+    		DomainAnnotation annotation = annotations.get(mapKey);
     		String parameter = "";
-    		if(annotations.get(mapKey).hasParameter()){
-    			parameter = "("+ annotations.get(mapKey).getParameterAsString() +")";
+    		if(annotation.hasParameter()){
+    			parameter = "("+ annotation.getParameter() +")";
     		}
-    		annotationsString += "\n\t\t\t\t" + annotations.get(mapKey).getName()+parameter;
+    		annotationsString += "\n\t\t" + annotation.getName()+parameter;
     	}
+    	// TODO : tags 
         return  fieldString + '{' +
                  	annotationsString +
                 '}';

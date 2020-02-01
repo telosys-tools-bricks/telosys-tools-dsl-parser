@@ -1,0 +1,21 @@
+// qdqds
+
+Student { 
+
+	id 		: int {@Id , @AutoIncremented, @Embedded , @Max(800)}; // the id
+	firstName : string   { @DefaultValue( "   a b") #MyTag(qqq) #foo(12) };
+	lastName : string { @NotBlank,  @Embedded } ; 
+	;;   
+	birthDate : date {
+		@Past  @NotEmpty } ;
+	
+	foo : string { @NotBlank, }; //  @Test("  a z'e''r}zz")::? };
+	;;;
+	count : int // dsdeza
+			{ @Max(12), @Min(  0 ), @NotNull , @SizeMax(12)
+			};
+	
+	car : Car { @Embedded } ;
+
+}
+ 

@@ -6,21 +6,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainField;
-import org.telosys.tools.dsl.parser.model.DomainModel;
-import org.telosys.tools.dsl.parser.model.DomainTag;
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
-import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
+import org.telosys.tools.dsl.parser.model.DomainEntity;
+import org.telosys.tools.dsl.parser.model.DomainField;
+import org.telosys.tools.dsl.parser.model.DomainModel;
+import org.telosys.tools.dsl.parser.model.DomainTag;
 
 public class Parser {
 
     private static final String DOT_MODEL           = ".model"  ;
 
-	private final List<String> entitiesNames;
+//	private final List<String> entitiesNames;
 	
     /*
 	 * Entities files with errors 
@@ -31,7 +30,7 @@ public class Parser {
 	
     public Parser() {
 		super();
-		this.entitiesNames = getEntitiesNames();
+//		this.entitiesNames = getEntitiesNames();
 	}
 
     public Hashtable<String,String> getErrors() {
@@ -66,11 +65,11 @@ public class Parser {
     }
 
 
-    private List<String> getEntitiesNames() {
-    	List<String> list = new LinkedList<>();
-    	list.add("Car");  // TODO : get entities names from model files 
-    	return list;
-    }
+//    private List<String> getEntitiesNames() {
+//    	List<String> list = new LinkedList<>();
+//    	list.add("Car");  // TODO : get entities names from model files 
+//    	return list;
+//    }
     
     /**
      * Parse the given MODEL file
@@ -89,22 +88,23 @@ public class Parser {
         DomainModel model = new DomainModel(properties);
         
         List<String> entitiesFileNames = DslModelUtil.getEntitiesAbsoluteFileNames(file);
+        List<String> entitiesNames = new LinkedList<>();
         
         //--- Step 2 : build void entities (1 instance for each entity defined in the model)
         for (String entityFileName : entitiesFileNames) {
             String entityName = DslModelUtil.getEntityName(new File(entityFileName));
+            entitiesNames.add(entityName);
             model.addEntity(new DomainEntity(entityName));
         }
 
         //--- Step 3 : parse each entity and populate it in the model
         int errorsCount = 0 ;
-//        EntityParser entityParser = new EntityParser(model);
         for (String entityFileName : entitiesFileNames) {
         	//--- Parse
         	DomainEntity domainEntity;
 			try {
 //				domainEntity = entityParser.parse(entityFileName);
-				domainEntity = parseEntity(entityFileName);
+				domainEntity = parseEntity(entityFileName, entitiesNames);
 	        	//--- Populate
 	            model.populateEntityFileds(domainEntity.getName(), domainEntity.getFields() );
 			} catch (DslParserException parsingException) {
@@ -126,9 +126,9 @@ public class Parser {
      * @param entityFileName
      * @return
      */
-    protected final DomainEntity parseEntity(String entityFileName) {
+    protected final DomainEntity parseEntity(String entityFileName, List<String> entitiesNames) {
     	File entityFile = new File(entityFileName);
-    	return parseEntity(entityFile);
+    	return parseEntity(entityFile, entitiesNames);
     }
     
     /**
@@ -136,7 +136,7 @@ public class Parser {
      * @param file
      * @return
      */
-    protected final DomainEntity parseEntity(File file) {
+    protected final DomainEntity parseEntity(File file, List<String> entitiesNames) {
     	
     	EntityFileParser entityFileParser = new EntityFileParser(file);
     	EntityFileParsingResult result = entityFileParser.parse();
@@ -145,7 +145,7 @@ public class Parser {
     	DomainEntity domainEntity = new DomainEntity(entityNameFromFileName);
     	for ( FieldParts field : result.getFields() ) {
 //    		FieldNameAndType fieldNameAndType = parser.parseFieldNameAndType(field);
-    		DomainField domainField = parseField(entityNameFromFileName, field); 
+    		DomainField domainField = parseField(entityNameFromFileName, field, entitiesNames); 
         	domainEntity.addField(domainField);
     	}
     	return domainEntity;
@@ -156,7 +156,7 @@ public class Parser {
      * @param entityNameFromFileName
      * @param field
      */
-    protected final DomainField parseField(String entityNameFromFileName, FieldParts field) {
+    protected final DomainField parseField(String entityNameFromFileName, FieldParts field, List<String> entitiesNames) {
     	
     	// 1) Parse the field NAME and TYPE
 		FieldNameAndTypeParser parser = new FieldNameAndTypeParser(entityNameFromFileName, entitiesNames);
@@ -174,20 +174,31 @@ public class Parser {
 		// 2) Parse field ANNOTATIONS and TAGS
 		FieldAnnotationsAndTagsParser fieldAnnotationsAndTagsParser = new FieldAnnotationsAndTagsParser(entityNameFromFileName);
 		FieldAnnotationsAndTags fieldAnnotationsAndTags = fieldAnnotationsAndTagsParser.parse(fieldName, field);
-		List<DomainAnnotationOrTag> annotationsAndTagsList = fieldAnnotationsAndTags.getAnnotations();
-		System.out.println("\n--- ANNOTATIONS and TAGS : " + annotationsAndTagsList.size() );
-		for ( DomainAnnotationOrTag annotationOrTag : annotationsAndTagsList ) {
-			if ( annotationOrTag instanceof DomainTag ) {
-				System.out.println(" . TAG : " + annotationOrTag );
-				//--- Add a new TAG 
-				domainField.addTag((DomainTag)annotationOrTag);
-			}
-			else if ( annotationOrTag instanceof DomainAnnotation ) {
-				System.out.println(" . ANNOTATION : " + annotationOrTag );
-				//--- Add a new ANNOTATION 
-				domainField.addAnnotation((DomainAnnotation)annotationOrTag);
-			}
+//		List<DomainAnnotationOrTag> annotationsAndTagsList = fieldAnnotationsAndTags.getAnnotations();
+//		System.out.println("\n--- ANNOTATIONS and TAGS : " + annotationsAndTagsList.size() );
+//		for ( DomainAnnotationOrTag annotationOrTag : annotationsAndTagsList ) {
+//			if ( annotationOrTag instanceof DomainTag ) {
+//				System.out.println(" . TAG : " + annotationOrTag );
+//				//--- Add a new TAG 
+//				domainField.addTag((DomainTag)annotationOrTag);
+//			}
+//			else if ( annotationOrTag instanceof DomainAnnotation ) {
+//				System.out.println(" . ANNOTATION : " + annotationOrTag );
+//				//--- Add a new ANNOTATION 
+//				domainField.addAnnotation((DomainAnnotation)annotationOrTag);
+//			}
+//		}
+		// Annotations found
+		List<DomainAnnotation> annotationsList = fieldAnnotationsAndTags.getAnnotations();
+		for ( DomainAnnotation annotation : annotationsList ) {
+			domainField.addAnnotation(annotation);
 		}
+		// Tags found
+		List<DomainTag> tagsList = fieldAnnotationsAndTags.getTags();
+		for ( DomainTag tag : tagsList ) {
+			domainField.addTag(tag);
+		}
+		
 		System.out.println("--- ");
 		return domainField;
     }
