@@ -1,8 +1,13 @@
 package org.telosys.tools.dsl.parser;
 
-class FieldBuilder {
+/**
+ * A work object used to build an instance of 'FieldParts'
+ * 
+ * @author Laurent GUERIN
+ *
+ */
+class FieldPartsBuilder {
 
-//	private int position ;
 	private boolean inAnnotations;
 	private boolean finished;
 	private final StringBuilder nameAndTypeBuilder ;
@@ -17,18 +22,17 @@ class FieldBuilder {
 		System.out.flush();
 	}
 
-	protected FieldBuilder(int lineNumber) {
+	protected FieldPartsBuilder(int lineNumber) {
 		super();
 		System.out.println("\n=== Field log : new Field()" );
 		this.nameAndTypeBuilder = new StringBuilder();
 		this.annotationsBuilder = new StringBuilder();
-//		this.position = Const.IN_FIELDS; 
 		this.inAnnotations = false ;
 		this.finished = false ;
 		this.lineNumber = lineNumber;
 	}
 
-	protected FieldBuilder(int lineNumber, String nameAndTypePart, String annotationsPart) {
+	protected FieldPartsBuilder(int lineNumber, String nameAndTypePart, String annotationsPart) {
 		super();
 		this.nameAndTypeBuilder = new StringBuilder();
 		this.annotationsBuilder = new StringBuilder();
@@ -40,12 +44,6 @@ class FieldBuilder {
 	
 	protected void append(char c) {
 		if ( ! finished ) {
-//			if ( position == Const.IN_FIELDS ) {
-//				nameAndTypeBuilder.append(c);
-//			}
-//			else if ( position == Const.IN_ANNOTATIONS ) {
-//				annotationsBuilder.append(c);
-//			}
 			if ( inAnnotations ) {
 				annotationsBuilder.append(c);				
 			}
@@ -69,32 +67,21 @@ class FieldBuilder {
 	protected void setInAnnotations(boolean flag) {
 		this.inAnnotations = flag;
 	}
-//	protected void setPosition(int position) {
-//		this.position = position ;
-//		log("setPosition(" + position + ")");
-//	}
-//	public int getPosition() {
-//		return position;
-//	}
 	
-	public int getLineNumber() {
-		return lineNumber;
-	}
-	
-	public String getNameAndTypePart() {
-		return nameAndTypePart;
-	}
-//	protected void setFieldPart(String fieldPart) {
-//		this.nameAndTypeBuilder = fieldPart;
+//	public int getLineNumber() {
+//		return lineNumber;
+//	}
+//	public String getNameAndTypePart() {
+//		return nameAndTypePart;
+//	}
+//	public String getAnnotationsPart() {
+//		return annotationsPart;
 //	}
 
-	public String getAnnotationsPart() {
-		return annotationsPart;
+	public FieldParts getFieldParts() {
+		return new FieldParts(lineNumber, nameAndTypePart, annotationsPart);
 	}
-//	protected void setAnnotationsPart(String annotationsPart) {
-//		this.annotationsPart = annotationsPart;
-//	}
-
+	
 	@Override
 	public String toString() {
 		return "Field : line " + lineNumber + " (finished=" + finished + ")"

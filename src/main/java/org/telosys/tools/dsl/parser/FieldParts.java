@@ -1,5 +1,15 @@
 package org.telosys.tools.dsl.parser;
 
+/**
+ * This object contains a 'field' after the first step of parsing. <br>
+ * It contains the 2 parts of the field : <br>
+ * . name and type<br>
+ * . annotations ans tags <br>
+ * These two parts are raw (not yet parsed) <br>
+ * 
+ * @author Laurent GUERIN
+ *
+ */
 class FieldParts {
 
 	private final int lineNumber;

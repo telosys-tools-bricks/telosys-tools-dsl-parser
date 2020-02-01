@@ -38,8 +38,8 @@ public class EntityFileParser {
 	private final File entityFile;
 	private final String entityNameFromFileName;
 
-	private final List<FieldBuilder> fieldsParsed = new LinkedList<>();
-	private FieldBuilder currentField = null ;
+	private final List<FieldPartsBuilder> fieldsParsed = new LinkedList<>();
+	private FieldPartsBuilder currentField = null ;
 
 	private boolean inFields      = false ;
 	private boolean inAnnotations = false ;
@@ -93,8 +93,9 @@ public class EntityFileParser {
 
 		parseFile() ; // rename parseFile()
 		List<FieldParts> fieldsParts = new LinkedList<>();
-		for ( FieldBuilder fb : fieldsParsed ) {
-			fieldsParts.add(new FieldParts(fb.getLineNumber(), fb.getNameAndTypePart(), fb.getAnnotationsPart()));
+		for ( FieldPartsBuilder fb : fieldsParsed ) {
+//			fieldsParts.add(new FieldParts(fb.getLineNumber(), fb.getNameAndTypePart(), fb.getAnnotationsPart()));
+			fieldsParts.add(fb.getFieldParts());
 		}
 		return new EntityFileParsingResult(this.entityNameFromFileName, this.entityNameParsed, fieldsParts);
 	}
@@ -172,11 +173,11 @@ public class EntityFileParser {
 	
 	private void resetCurrentField(int lineNumber) {
 		if ( currentField == null ) {
-			currentField = new FieldBuilder(lineNumber);
+			currentField = new FieldPartsBuilder(lineNumber);
 		}
 		else {
 			if ( currentField.isVoid() ) {
-				currentField = new FieldBuilder(lineNumber);
+				currentField = new FieldPartsBuilder(lineNumber);
 			}
 		}
 	}
@@ -327,7 +328,7 @@ public class EntityFileParser {
 		if ( ! currentField.isVoid() ) {
 			fieldsParsed.add(currentField);
 		}
-		currentField = new FieldBuilder(lineNumber) ; // no current field
+		currentField = new FieldPartsBuilder(lineNumber) ; // no current field
 		inAnnotations = false ;
 	}
 	

@@ -1,12 +1,7 @@
 package org.telosys.tools.dsl.parser;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.EntityFileParser;
-import org.telosys.tools.dsl.parser.EntityFileParsingResult;
-import org.telosys.tools.dsl.parser.FieldBuilder;
 
 public class EntityFileParserTest {
 	
