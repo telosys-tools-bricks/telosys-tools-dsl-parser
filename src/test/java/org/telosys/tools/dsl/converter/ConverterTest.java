@@ -317,7 +317,7 @@ public class ConverterTest {
 		
 		driverEntity.addField( new DomainField("firstName", new DomainNeutralType("string") ) );
 		driverEntity.addField( new DomainField("lastName",  new DomainNeutralType("string") ) );
-		driverEntity.addField( new DomainField("car",  carEntity, 1 ) );
+		driverEntity.addField( new DomainField(0, "car",  carEntity, 1 ) );
 
 		//--- "Car" entity referencing "Driver" entity
 		DomainField carId = new DomainField("id",     new DomainNeutralType("short") );
@@ -333,7 +333,7 @@ public class ConverterTest {
 		groupEntity.addField(groupId);
 		
 		groupEntity.addField(new DomainField("name",   new DomainNeutralType("string")) );
-		groupEntity.addField(new DomainField("drivers", driverEntity, -1) ); // Reference to "Driver"
+		groupEntity.addField(new DomainField(0, "drivers", driverEntity, -1) ); // Reference to "Driver"
 		
 		//--- Add entities to model
 		domainModel.addEntity(carEntity);

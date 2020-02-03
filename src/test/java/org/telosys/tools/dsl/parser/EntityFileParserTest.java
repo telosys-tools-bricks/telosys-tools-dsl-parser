@@ -2,6 +2,7 @@ package org.telosys.tools.dsl.parser;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 
 public class EntityFileParserTest {
 	
@@ -16,7 +17,7 @@ public class EntityFileParserTest {
 //	}
 
 	@Test
-	public void testEntityFileParser() {
+	public void testEntityFileParser() throws EntityParsingError {
 		
 		EntityFileParser entityFileParser = new EntityFileParser("src/test/resources/entity_test_v_3_2/Employee.entity");
 		//entityFileParser.parse();

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.telosys.tools.dsl.DslParserException;
+import org.telosys.tools.dsl.parser.exceptions.DslParserException;
 
 /**
  * Root class for a Domain Model built after Domain Specific Language text file parsing

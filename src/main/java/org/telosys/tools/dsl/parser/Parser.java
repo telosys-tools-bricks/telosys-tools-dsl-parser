@@ -1,15 +1,18 @@
 package org.telosys.tools.dsl.parser;
 
 import java.io.File;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.DslModelUtil;
-import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
+import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
+import org.telosys.tools.dsl.parser.exceptions.FieldNameAndTypeError;
+import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -18,7 +21,7 @@ import org.telosys.tools.dsl.parser.model.DomainTag;
 
 public class Parser {
 
-    private static final String DOT_MODEL           = ".model"  ;
+    private static final String DOT_MODEL = ".model"  ;
 
 //	private final List<String> entitiesNames;
 	
@@ -27,14 +30,13 @@ public class Parser {
 	 * Key   : entity absolute file name 
 	 * Value : parsing error
 	 */
-	private final Hashtable<String,String> entitiesErrors = new Hashtable<>();
+	private final Map<String,String> entitiesErrors = new HashMap<>();
 	
     public Parser() {
 		super();
-//		this.entitiesNames = getEntitiesNames();
 	}
 
-    public Hashtable<String,String> getErrors() {
+    public Map<String,String> getErrors() {
     	return entitiesErrors ;
     }
     
@@ -44,40 +46,33 @@ public class Parser {
      * @param file the ".model" file 
      * @return
      */
-    public final DomainModel parseModel(File file) {
+    public final DomainModel parseModel(File file) throws ModelParsingError {
     	checkModelFile(file);
     	return parseModelFile(file);
     }
     
-    protected static void checkModelFile(File file) {
+    protected static void checkModelFile(File file) throws ModelParsingError {
         if ( ! file.exists() ) {
-            String textError = "File '" + file.toString() + "' not found";
-            throw new DslParserException(textError);
+            String error = "File '" + file.toString() + "' not found";
+            throw new ModelParsingError(file, error);
         }
         if ( ! file.isFile() ) {
-            String textError = "'" + file.toString() + "' is not a file";
-            throw new DslParserException(textError);
+            String error = "'" + file.toString() + "' is not a file";
+            throw new ModelParsingError(file, error);
         }
         if ( ! file.getName().endsWith(DOT_MODEL)) {
-            String textError = "File '" + file.toString() + "' doesn't end with '" + DOT_MODEL + "'";
-            throw new DslParserException(textError);
+            String error = "File '" + file.toString() + "' doesn't end with '" + DOT_MODEL + "'";
+            throw new ModelParsingError(file, error);
         }
     }
 
-
-//    private List<String> getEntitiesNames() {
-//    	List<String> list = new LinkedList<>();
-//    	list.add("Car");  // TODO : get entities names from model files 
-//    	return list;
-//    }
-    
     /**
      * Parse the given MODEL file
      *
      * @param file the model file ( file with ".model" suffix )
      * @return
      */
-    private final DomainModel parseModelFile(File file) {
+    private final DomainModel parseModelFile(File file) throws ModelParsingError {
     	
     	//checkModelFile(file);
     	
@@ -107,7 +102,7 @@ public class Parser {
 				domainEntity = parseEntity(entityFileName, entitiesNames);
 	        	//--- Populate
 	            model.populateEntityFileds(domainEntity.getName(), domainEntity.getFields() );
-			} catch (DslParserException parsingException) {
+			} catch (EntityParsingError parsingException) {
 				errorsCount++ ;
 				File entityFile = new File(entityFileName);
 				entitiesErrors.put(entityFile.getName(), parsingException.getMessage() );
@@ -117,7 +112,7 @@ public class Parser {
             return model;
         }
         else {
-        	throw new DslParserException( "Parsing error(s) : " + errorsCount + " invalid entity(ies) ") ;
+        	throw new ModelParsingError(file, "Parsing error(s) : " + errorsCount + " invalid entity(ies) ") ;
         }
     }
     
@@ -126,7 +121,7 @@ public class Parser {
      * @param entityFileName
      * @return
      */
-    protected final DomainEntity parseEntity(String entityFileName, List<String> entitiesNames) {
+    protected final DomainEntity parseEntity(String entityFileName, List<String> entitiesNames) throws EntityParsingError {
     	File entityFile = new File(entityFileName);
     	return parseEntity(entityFile, entitiesNames);
     }
@@ -136,7 +131,7 @@ public class Parser {
      * @param file
      * @return
      */
-    protected final DomainEntity parseEntity(File file, List<String> entitiesNames) {
+    protected final DomainEntity parseEntity(File file, List<String> entitiesNames) throws EntityParsingError {
     	
     	EntityFileParser entityFileParser = new EntityFileParser(file);
     	EntityFileParsingResult result = entityFileParser.parse();
@@ -144,9 +139,28 @@ public class Parser {
     	ParserLogger.log("\n----------");
     	DomainEntity domainEntity = new DomainEntity(entityNameFromFileName);
     	for ( FieldParts field : result.getFields() ) {
-//    		FieldNameAndType fieldNameAndType = parser.parseFieldNameAndType(field);
-    		DomainField domainField = parseField(entityNameFromFileName, field, entitiesNames); 
-        	domainEntity.addField(domainField);
+    		DomainField domainField ;
+    		// Try to parse field
+			try {
+				domainField = parseField(entityNameFromFileName, field, entitiesNames);
+	        	domainEntity.addField(domainField);
+			} catch (FieldNameAndTypeError | AnnotationOrTagError e) {
+				domainEntity.addError(e); // Cannot parse field name and type
+				domainField = null ;
+			}
+    		// If field parsing OK
+			if ( domainField != null ) {
+	    		// Add field if not already defined
+				if ( domainEntity.hasField(domainField) ) {
+					// Already defined => Error
+					domainEntity.addError(
+							new FieldNameAndTypeError(entityNameFromFileName, domainField.getName(), 
+									"field defined more than once")  );
+				}
+				else {
+					domainEntity.addField(domainField);
+				}
+			}
     	}
     	return domainEntity;
     }
@@ -156,11 +170,12 @@ public class Parser {
      * @param entityNameFromFileName
      * @param field
      */
-    protected final DomainField parseField(String entityNameFromFileName, FieldParts field, List<String> entitiesNames) {
+    protected final DomainField parseField(String entityNameFromFileName, FieldParts field, List<String> entitiesNames) 
+    		throws FieldNameAndTypeError, AnnotationOrTagError {
     	
     	// 1) Parse the field NAME and TYPE
 		FieldNameAndTypeParser parser = new FieldNameAndTypeParser(entityNameFromFileName, entitiesNames);
-		FieldNameAndType fieldNameAndType = parser.parseFieldNameAndType(field);
+		FieldNameAndType fieldNameAndType = parser.parseFieldNameAndType(field); // throws FieldNameAndTypeError
 		ParserLogger.log("Field : name '" + fieldNameAndType.getName() 
 			+ "' type '" + fieldNameAndType.getType() 
 			+ "' cardinality = " + fieldNameAndType.getCardinality() );
@@ -168,7 +183,7 @@ public class Parser {
 		String fieldName = fieldNameAndType.getName();
 		
 		//--- New "DomainField" instance
-		DomainField domainField = new DomainField(fieldName, 
+		DomainField domainField = new DomainField(field.getLineNumber(), fieldName, 
 				fieldNameAndType.getDomainType(), fieldNameAndType.getCardinality());
 		
 		// 2) Parse field ANNOTATIONS and TAGS

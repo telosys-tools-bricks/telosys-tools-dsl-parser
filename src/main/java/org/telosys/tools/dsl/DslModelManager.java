@@ -17,22 +17,25 @@ package org.telosys.tools.dsl;
 
 import java.io.File;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.converter.Converter;
 import org.telosys.tools.dsl.parser.Parser;
+import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
+import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainModelInfo;
 import org.telosys.tools.generic.model.Model;
 
 public class DslModelManager {
 
-    private Hashtable<String,String> parsingErrors = null ;
+    private Map<String,String> parsingErrors = null ;
     private String parsingErrorMessage = null ;
 
     
-    public Hashtable<String, String> getParsingErrors() {
+    public Map<String, String> getParsingErrors() {
 		return parsingErrors;
 	}
 
@@ -47,7 +50,7 @@ public class DslModelManager {
      * @param modelFileAbsolutePath the ".model" absolute file name 
      * @return
      */
-    public Model loadModel(String modelFileAbsolutePath) {
+    public Model loadModel(String modelFileAbsolutePath) throws EntityParsingError {
     	return loadModel( new File(modelFileAbsolutePath) );
     }
     
@@ -67,7 +70,7 @@ public class DslModelManager {
         Exception parsingException = null ;
 		try {
 			domainModel = dslParser.parseModel(modelFile);
-		} catch (DslParserException e) {
+		} catch (ModelParsingError e) {
 			parsingException = e ;
 		}
 		

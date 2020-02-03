@@ -13,23 +13,34 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl;
+package org.telosys.tools.dsl.parser.exceptions;
+
+import java.io.File;
 
 /**
- * DSL Parser Exception 
+ * Model Parsing Error
  * 
  * @author Laurent GUERIN
  *
  */
-public class DslParserException extends RuntimeException {
+public class ModelParsingError extends Exception {
 
     private static final long serialVersionUID = 1L;
+    
+	private final File modelFile;
+	private final String error ;
+	private final String detailMessage ;
 
-    public DslParserException(String message) {
-        super(message);
+    public ModelParsingError(File modelFile, String error) {
+        super();
+        this.modelFile = modelFile ;
+        this.error = error;
+		this.detailMessage = modelFile.getName() + " : " + error ;
     }
-    public DslParserException(String message, int lineNumber) {
-    	// TODO : build message
-        super(message);
+
+    @Override
+    public String getMessage() {
+        return detailMessage;
     }
+    
 }

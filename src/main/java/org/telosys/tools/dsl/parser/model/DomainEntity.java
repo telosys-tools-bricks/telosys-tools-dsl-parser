@@ -15,9 +15,12 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
-import org.telosys.tools.dsl.DslParserException;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
+import org.telosys.tools.dsl.parser.exceptions.DslParserException;
 
 /**
  * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre
@@ -33,6 +36,8 @@ public class DomainEntity extends DomainType {
      */
     private final Map<String, DomainField> fieldsMap;
     
+	private final List<Exception> errors = new LinkedList<>() ;
+
 
     /**
      * Constructor
@@ -44,6 +49,9 @@ public class DomainEntity extends DomainType {
         this.fieldsMap = new LinkedHashMap<>(); 
     }
 
+    public boolean hasField(DomainField field) {
+    	return fieldsMap.containsKey(field.getName());
+    }
     public void addField(DomainField field) {
         if (fieldsMap.containsKey(field.getName())) {
             throw new DslParserException("Field '" + field.getName() + "' already defined");
@@ -75,6 +83,18 @@ public class DomainEntity extends DomainType {
     public int getNumberOfFields() {
         return fieldsMap.size();
     }
+    
+    /**
+     * Add a new error to the field 
+     * @param error
+     */
+    public void addError(Exception error) {
+    	errors.add(error);
+    }
+    
+    public boolean hasError() {
+    	return ! errors.isEmpty();
+    }
 
     //-------------------------------------------------------------------------------------
     public String toString() {
@@ -85,35 +105,35 @@ public class DomainEntity extends DomainType {
         return this.getName() + " {" + fieldRet + "}";
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if (other == null) {
-            return false;
-        }
-        if (other == this) {
-            return true;
-        }
-        if (!(other instanceof DomainEntity)) {
-            return false;
-        }
-        DomainEntity otherEntity = (DomainEntity) other;
-        if (!otherEntity.getName().equals(this.getName())) {
-            return false;
-        }
-        if (otherEntity.fieldsMap.size() != fieldsMap.size()) {
-            return false;
-        }
-        if (!otherEntity.fieldsMap.equals(fieldsMap)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = this.getName() != null ? this.getName().hashCode() : 0;
-        result = THIRTY_ONE_HASH_CODE * result + (fieldsMap != null ? fieldsMap.hashCode() : 0);
-        return result;
-    }
+//    @Override
+//    public boolean equals(Object other) {
+//        if (other == null) {
+//            return false;
+//        }
+//        if (other == this) {
+//            return true;
+//        }
+//        if (!(other instanceof DomainEntity)) {
+//            return false;
+//        }
+//        DomainEntity otherEntity = (DomainEntity) other;
+//        if (!otherEntity.getName().equals(this.getName())) {
+//            return false;
+//        }
+//        if (otherEntity.fieldsMap.size() != fieldsMap.size()) {
+//            return false;
+//        }
+//        if (!otherEntity.fieldsMap.equals(fieldsMap)) {
+//            return false;
+//        }
+//        return true;
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int result = this.getName() != null ? this.getName().hashCode() : 0;
+//        result = THIRTY_ONE_HASH_CODE * result + (fieldsMap != null ? fieldsMap.hashCode() : 0);
+//        return result;
+//    }
 
 }

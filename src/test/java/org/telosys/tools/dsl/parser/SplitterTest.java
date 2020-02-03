@@ -3,12 +3,9 @@ package org.telosys.tools.dsl.parser;
 import java.util.List;
 
 import org.junit.Test;
-import org.telosys.tools.dsl.DslParserException;
+import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class SplitterTest {
 	
@@ -19,14 +16,17 @@ public class SplitterTest {
 //		parser.parse(file);
 //	}
 
-	private List<String> split(String s) {
+	private List<String> split(String s) throws AnnotationOrTagError {
 		System.out.println("\nsplit(\""+s+"\")");
-		Splitter splitter = new Splitter();
+		Splitter splitter = new Splitter("MyEntity","myField");
 		List<String> list;
 		try {
 			list = splitter.split(s);
 			print(list);
 			return list;
+		} catch (AnnotationOrTagError e) {
+			print(e);
+			throw e;
 		} catch (Exception e) {
 			print(e);
 			throw e;
@@ -45,7 +45,7 @@ public class SplitterTest {
 	}
 
 	@Test
-	public void test1() {
+	public void test1() throws AnnotationOrTagError  {
 		int i = 0 ;
 		List<String> list ;
 
@@ -74,7 +74,7 @@ public class SplitterTest {
 	}
 	
 	@Test
-	public void test2() {
+	public void test2() throws AnnotationOrTagError  {
 		int i = 0 ;
 		List<String> list ;
 
@@ -90,7 +90,7 @@ public class SplitterTest {
 	}
 
 	@Test
-	public void test3() {
+	public void test3() throws AnnotationOrTagError {
 		int i = 0 ;
 		List<String> list ;
 
@@ -104,54 +104,54 @@ public class SplitterTest {
 		assertEquals("#Bar", list.get(i++));
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testError1() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testError1() throws AnnotationOrTagError  {
 		// unexpected '(' 
 		split("@NotBlank (()   @Test(\"  a z'e''r}zz\")");
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testError2() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testError2() throws AnnotationOrTagError  {
 		// unexpected ')' 
 		split("@NotBlank (  ) )   @Foo(\"  a z'e''r}zz\")  @Bar");
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testError3() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testError3() throws AnnotationOrTagError {
 		// unexpected '@' 
 		split("@NotBlank (  @ 'aa' )   @Foo  @Bar");
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testError4() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testError4() throws AnnotationOrTagError {
 		// unexpected '"' 
 		split("@NotBlank \" ('aa')   @Foo  @Bar");
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testError5() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testError5() throws AnnotationOrTagError {
 		// unexpected single quote
 		split("@NotBlank ' ('aa')   @Foo  @Bar");
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testError6() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testError6() throws AnnotationOrTagError {
 		// unexpected single quote
 		split("@NotBlank('aa')   @Foo ' @Bar");
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testError7() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testError7() throws AnnotationOrTagError {
 		// unexpected '"' 
 		split("@NotBlank  ('aa )   @Foo  @Bar");
 	}
-	@Test(expected = DslParserException.class)
-	public void testError8() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testError8() throws AnnotationOrTagError {
 		// unexpected '"' 
 		split("@NotBlank  ('aa '   @Foo  @Bar");
 	}
-	@Test(expected = DslParserException.class)
-	public void testError9() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testError9() throws AnnotationOrTagError {
 		// unexpected '"' 
 		split("@NotBlank  ('aa ' ");
 	}

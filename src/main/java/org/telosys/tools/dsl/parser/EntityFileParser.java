@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.dsl.DslModelUtil;
-import org.telosys.tools.dsl.DslParserException;
+import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 
 /**
  * Telosys DSL entity parser
@@ -56,14 +56,14 @@ public class EntityFileParser {
 		ParserLogger.print(String.valueOf(c));
 	}
 
-	private void throwParsingException(String message) {
-		String errorMessage = entityNameFromFileName + " : " + message;
-		throw new DslParserException(errorMessage);
-	}
-	private void throwParsingException(String message, int lineNumber) {
-		String errorMessage = entityNameFromFileName + " : " + message + " [line " + lineNumber + "]";
-		throw new DslParserException(errorMessage);
-	}
+//	private void throwParsingException(String message) {
+//		String errorMessage = entityNameFromFileName + " : " + message;
+//		throw new DslParserException(errorMessage);
+//	}
+//	private void throwParsingException(String message, int lineNumber) {
+//		String errorMessage = entityNameFromFileName + " : " + message + " [line " + lineNumber + "]";
+//		throw new DslParserException(errorMessage);
+//	}
 
 	/**
 	 * Constructor
@@ -89,7 +89,7 @@ public class EntityFileParser {
 	 * @param file
 	 * @return
 	 */
-	public EntityFileParsingResult parse() {
+	public EntityFileParsingResult parse() throws EntityParsingError  {
 
 		parseFile() ; // rename parseFile()
 		List<FieldParts> fieldsParts = new LinkedList<>();
@@ -100,9 +100,10 @@ public class EntityFileParser {
 		return new EntityFileParsingResult(this.entityNameFromFileName, this.entityNameParsed, fieldsParts);
 	}
 	
-	protected void parseFile() {
+	protected void parseFile() throws EntityParsingError {
 		if (!entityFile.exists()) {
-			throwParsingException("File not found");
+//			throwParsingException("File not found");
+			throw new EntityParsingError(entityNameFromFileName, "File not found");
 		}
 		log("parse() : File : " + entityFile.getAbsolutePath());
 		
@@ -115,11 +116,12 @@ public class EntityFileParser {
 				// read next line
 			}
 		} catch (IOException e) {
-			throwParsingException("IOException");
+//			throwParsingException("IOException");
+			throw new EntityParsingError(entityNameFromFileName, "IOException");
 		}
 	}
 	
-	private void processLine(String line, int lineNumber) {
+	private void processLine(String line, int lineNumber) throws EntityParsingError {
 		log("\n-------------------------------------------");
 		log("#" + lineNumber + " : " + line);
 		
@@ -188,7 +190,7 @@ public class EntityFileParser {
 	 * @param lineNumber
 	 * @return
 	 */
-	protected void processLineFieldLevel(String line, int lineNumber) {
+	protected void processLineFieldLevel(String line, int lineNumber) throws EntityParsingError {
 		
 		boolean inSingleQuote = false ;
 		boolean inDoubleQuote = false ;
@@ -223,14 +225,16 @@ public class EntityFileParser {
 							keepChar(c);
 						}
 						else {
-							throwParsingException("Unexpected ';'", lineNumber) ;
+//							throwParsingException("Unexpected ';'", lineNumber) ;
+							throw new EntityParsingError(entityNameFromFileName, "Unexpected ';'", lineNumber);
 						}
 					}
 					else if ( inFields ) {
 						endOfCurrentField(lineNumber) ;
 					}
 					else {
-						throwParsingException("Unexpected ';'", lineNumber) ;
+//						throwParsingException("Unexpected ';'", lineNumber) ;
+						throw new EntityParsingError(entityNameFromFileName, "Unexpected ';'", lineNumber);
 					}
 					break;
 					
@@ -240,7 +244,8 @@ public class EntityFileParser {
 							keepChar(c);
 						}
 						else {
-							throwParsingException("Unexpected '{'", lineNumber) ;
+//							throwParsingException("Unexpected '{'", lineNumber) ;
+							throw new EntityParsingError(entityNameFromFileName, "Unexpected '{'", lineNumber);
 						}
 					}
 					else if ( inFields ) {
@@ -248,7 +253,8 @@ public class EntityFileParser {
 						currentField.setInAnnotations(true);
 					}
 					else {
-						throwParsingException("Unexpected '{'", lineNumber) ;
+//						throwParsingException("Unexpected '{'", lineNumber) ;
+						throw new EntityParsingError(entityNameFromFileName, "Unexpected '{'", lineNumber);
 					}
 					
 					break;
@@ -267,7 +273,8 @@ public class EntityFileParser {
 						inFields = false ; // End of fields
 					}
 					else {
-						throwParsingException("Unexpected '}'", lineNumber) ;
+//						throwParsingException("Unexpected '}'", lineNumber) ;
+						throw new EntityParsingError(entityNameFromFileName, "Unexpected '}'", lineNumber);
 					}
 					break;
 					
@@ -291,7 +298,8 @@ public class EntityFileParser {
 						keepChar(c);
 					}
 					else {
-						throw new DslParserException("Unexpected single quote");
+//						throw new DslParserException("Unexpected single quote");
+						throw new EntityParsingError(entityNameFromFileName, "Unexpected single quote", lineNumber);
 					}
 					break;
 					
@@ -303,7 +311,8 @@ public class EntityFileParser {
 						keepChar(c);
 					}
 					else {
-						throw new DslParserException("Unexpected double quote");
+//						throw new DslParserException("Unexpected double quote");
+						throw new EntityParsingError(entityNameFromFileName, "Unexpected double quote", lineNumber);
 					}
 					break;
 

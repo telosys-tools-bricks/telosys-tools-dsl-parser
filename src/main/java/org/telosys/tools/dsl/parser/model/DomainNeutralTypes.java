@@ -15,9 +15,11 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
-import org.telosys.tools.dsl.DslParserException;
-
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public final class DomainNeutralTypes {
 
@@ -26,11 +28,10 @@ public final class DomainNeutralTypes {
     // Neutral type list of predefined names
     public static final String STRING    = "string";
     
-    public static final String BYTE      = "byte"; // Added
-    public static final String SHORT     = "short"; // Added
-//    public static final String INTEGER   = "integer"; 
-    public static final String INTEGER   = "int"; // Changed
-    public static final String LONG      = "long"; // Added
+    public static final String BYTE      = "byte";
+    public static final String SHORT     = "short";
+    public static final String INTEGER   = "int";
+    public static final String LONG      = "long";
     
     public static final String DECIMAL   = "decimal";
     public static final String FLOAT     = "float";
@@ -42,7 +43,7 @@ public final class DomainNeutralTypes {
     public static final String TIME      = "time";
     public static final String TIMESTAMP = "timestamp";
     
-    public static final String BINARY_BLOB   = "binary"; // BLOB
+    public static final String BINARY_BLOB = "binary"; // BLOB
     //public static final String LONGTEXT_CLOB = "longtext"; // CLOB ( removed : string is sufficient )
 
 
@@ -55,7 +56,7 @@ public final class DomainNeutralTypes {
     	BINARY_BLOB };
     	//, LONGTEXT_CLOB};
 
-    private static final Map<String, DomainNeutralType> NEUTRAL_TYPES = new Hashtable<String, DomainNeutralType>();
+    private static final Map<String, DomainNeutralType> NEUTRAL_TYPES = new HashMap<>();
 
     static {
         for (String name : NAMES) {
@@ -68,16 +69,23 @@ public final class DomainNeutralTypes {
         return NEUTRAL_TYPES.containsKey(typeName);
     }
 
+    /**
+     * Returns the Neutral Type for the given type name <br>
+     * or null if the given type doesn't exist
+     * @param typeName
+     * @return
+     */
     public static final DomainNeutralType getType(String typeName) {
-        if (NEUTRAL_TYPES.containsKey(typeName)) {
-            return NEUTRAL_TYPES.get(typeName);
-        } else {
-            throw new DslParserException("Invalid neutral type name '" + typeName + "'");
-        }
+//        if (NEUTRAL_TYPES.containsKey(typeName)) {
+//            return NEUTRAL_TYPES.get(typeName);
+//        } else {
+//            throw new DslParserException("Invalid neutral type name '" + typeName + "'");
+//        }
+        return NEUTRAL_TYPES.get(typeName);
     }
 
     public static final List<String> getNames() {
-        return new LinkedList<String>(NEUTRAL_TYPES.keySet());
+        return new LinkedList<>(NEUTRAL_TYPES.keySet());
     }
 
     public static final List<String> getSortedNames() {

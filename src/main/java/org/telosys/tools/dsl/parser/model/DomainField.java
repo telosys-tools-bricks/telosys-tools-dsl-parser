@@ -27,6 +27,7 @@ public class DomainField {
 	
     public static final int THIRTY_ONE = 31;
 
+    private final int lineNumber;
     private final String name;
     private final DomainType type;
     private final int cardinality; // if != 1 : "ONE-TO-MANY"
@@ -36,26 +37,28 @@ public class DomainField {
 	private final List<AnnotationOrTagError> errors = new LinkedList<>() ;
 
     /**
-     * Constructor with default cardinality of 1
-     * @param name
-     * @param type
-     */
-    public DomainField(String name, DomainType type) {
-        this.name = name;
-        this.type = type;
-        this.cardinality = 1;
-    }
-
-    /**
      * Constructor with specific cardinality
      * @param name
      * @param type
      * @param cardinality
      */
-    public DomainField(String name, DomainType type, int cardinality) {
+    public DomainField(int lineNumber, String name, DomainType type, int cardinality) {
+    	this.lineNumber = lineNumber;
         this.name = name;
         this.type = type;
         this.cardinality = cardinality;
+    }
+
+    /**
+     * Simplified constructor (only for tests)
+     * @param name
+     * @param type
+     */
+    public DomainField(String name, DomainType type) {
+    	this.lineNumber = 0;
+        this.name = name;
+        this.type = type;
+        this.cardinality = 1;
     }
 
     /**
@@ -90,7 +93,7 @@ public class DomainField {
 
     /**
      * Check if the given tag is already defined in the field
-     * @param annotation
+     * @param tag
      * @return
      */
     public boolean hasTag(DomainTag tag) {
@@ -98,7 +101,7 @@ public class DomainField {
     }
     /**
      * Add a new tag to the field 
-     * @param annotation
+     * @param tag
      */
     public void addTag(DomainTag tag) {
     	tags.put(tag.getName(), tag);
@@ -110,6 +113,10 @@ public class DomainField {
      */
     public void addError(AnnotationOrTagError error) {
     	errors.add(error);
+    }
+    
+    public boolean hasError() {
+    	return ! errors.isEmpty();
     }
     
     /**

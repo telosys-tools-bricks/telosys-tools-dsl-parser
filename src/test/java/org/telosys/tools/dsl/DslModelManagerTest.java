@@ -8,13 +8,14 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 
 import org.junit.Test;
+import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
 
 public class DslModelManagerTest {
     
-	private Model loadModel(String modelFileName) {
+	private Model loadModel(String modelFileName) throws EntityParsingError {
 		System.out.println("Loading model : " + modelFileName );
         DslModelManager modelLoader = new DslModelManager();
         Model model = modelLoader.loadModel(modelFileName);
@@ -33,7 +34,7 @@ public class DslModelManagerTest {
     }
     
     @Test
-    public void testModel1() {
+    public void testModel1() throws EntityParsingError {
         Model model = loadModel("src/test/resources/model_test/valid/OneEntity.model");
         
         assertNotNull(model);
@@ -81,7 +82,7 @@ public class DslModelManagerTest {
     }
 
     @Test
-    public void test2() {
+    public void test2() throws EntityParsingError {
         Model model = loadModel("src/test/resources/model_test/valid/types.model");
         
         assertNotNull(model);

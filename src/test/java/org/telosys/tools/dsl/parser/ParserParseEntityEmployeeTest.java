@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
 
@@ -24,7 +25,7 @@ public class ParserParseEntityEmployeeTest {
 //	}
 
 	@Test
-	public void testParser() {
+	public void testParser() throws EntityParsingError {
 		
 		List<String> entitiesNames = new LinkedList<>();
 		entitiesNames.add("Car");

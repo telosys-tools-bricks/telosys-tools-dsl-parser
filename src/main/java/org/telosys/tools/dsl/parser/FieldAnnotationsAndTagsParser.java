@@ -13,17 +13,17 @@ public class FieldAnnotationsAndTagsParser {
 		this.entityNameFromFileName = entityNameFromFileName;
 	}
 	
-	public FieldAnnotationsAndTags parse(String fieldName, FieldParts field) {
+	public FieldAnnotationsAndTags parse(String fieldName, FieldParts field) throws AnnotationOrTagError {
 		return parse( fieldName, field.getAnnotationsPart());
 	}
 
-	public FieldAnnotationsAndTags parse(String fieldName, String annotationsAndTags) {
+	public FieldAnnotationsAndTags parse(String fieldName, String annotationsAndTags) throws AnnotationOrTagError {
 		FieldAnnotationsAndTags result = new FieldAnnotationsAndTags();
 
     	if ( annotationsAndTags == null || "".equals(annotationsAndTags) ) {
     		return result; // void
     	}
-    	Splitter splitter = new Splitter();
+    	Splitter splitter = new Splitter(entityNameFromFileName, fieldName);
 		List<String> elements = splitter.split(annotationsAndTags);
 		for ( String element : elements ) {
 			ParserLogger.log(" . '" + element + "'");
