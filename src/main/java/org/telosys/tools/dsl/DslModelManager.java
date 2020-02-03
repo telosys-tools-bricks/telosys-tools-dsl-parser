@@ -50,7 +50,7 @@ public class DslModelManager {
      * @param modelFileAbsolutePath the ".model" absolute file name 
      * @return
      */
-    public Model loadModel(String modelFileAbsolutePath) throws EntityParsingError {
+    public Model loadModel(String modelFileAbsolutePath) {
     	return loadModel( new File(modelFileAbsolutePath) );
     }
     

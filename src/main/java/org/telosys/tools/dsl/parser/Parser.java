@@ -101,7 +101,7 @@ public class Parser {
 //				domainEntity = entityParser.parse(entityFileName);
 				domainEntity = parseEntity(entityFileName, entitiesNames);
 	        	//--- Populate
-	            model.populateEntityFileds(domainEntity.getName(), domainEntity.getFields() );
+	            model.populateEntityFields(domainEntity.getName(), domainEntity.getFields() );
 			} catch (EntityParsingError parsingException) {
 				errorsCount++ ;
 				File entityFile = new File(entityFileName);
@@ -143,7 +143,7 @@ public class Parser {
     		// Try to parse field
 			try {
 				domainField = parseField(entityNameFromFileName, field, entitiesNames);
-	        	domainEntity.addField(domainField);
+//	        	domainEntity.addField(domainField);
 			} catch (FieldNameAndTypeError | AnnotationOrTagError e) {
 				domainEntity.addError(e); // Cannot parse field name and type
 				domainField = null ;

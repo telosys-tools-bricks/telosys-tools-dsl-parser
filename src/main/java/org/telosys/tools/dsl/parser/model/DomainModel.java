@@ -207,7 +207,7 @@ public class DomainModel {
      *
      * @param entity
      */
-    public void populateEntityFileds(String entityName, List<DomainField> fields) {
+    public void populateEntityFields(String entityName, List<DomainField> fields) {
     	DomainEntity destinationEntity = getEntity(entityName);
         //entity.addAllFields(getEntity(entity.getName()));
         if (destinationEntity != null) {
