@@ -17,14 +17,14 @@ class FieldPartsBuilder {
 	private String nameAndTypePart = "" ;
 	private String annotationsPart = "" ;
 	
-	private void log(String msg) {
-		System.out.println("\n=== Field log : " + msg + " " + this.toString() + "\n");
-		System.out.flush();
-	}
+//	private void log(String msg) {
+//		System.out.println("\n=== Field log : " + msg + " " + this.toString() + "\n");
+//		System.out.flush();
+//	}
 
 	protected FieldPartsBuilder(int lineNumber) {
 		super();
-		System.out.println("\n=== Field log : new Field()" );
+		ParserLogger.log("\n=== Field log : new Field()" );
 		this.nameAndTypeBuilder = new StringBuilder();
 		this.annotationsBuilder = new StringBuilder();
 		this.inAnnotations = false ;
@@ -61,7 +61,7 @@ class FieldPartsBuilder {
 		finished = true ;
 		nameAndTypePart = nameAndTypeBuilder.toString();
 		annotationsPart = annotationsBuilder.toString();
-		log("finished()");
+		ParserLogger.log("\n=== Field log : finished() " + this.toString() + "\n");
 	}
 	
 	protected void setInAnnotations(boolean flag) {

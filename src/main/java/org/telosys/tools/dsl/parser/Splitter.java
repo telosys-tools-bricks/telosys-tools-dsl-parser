@@ -19,14 +19,17 @@ public class Splitter {
 		super();
 	}
 	
-	private void log(String message) {
-		System.out.println("LOG:" + message);
-	}
+	private static final boolean LOG = false;
+	
 	private void logChar(char c) {
-		System.out.print( "[" + c + "]");
+		if (LOG) {
+			ParserLogger.print( "[" + c + "]");
+		}
 	}
 	private void log(char c) {
-		System.out.print(c);
+		if (LOG) {
+			ParserLogger.print(String.valueOf(c));
+		}
 	}
 	
 	private boolean inParentheses() {

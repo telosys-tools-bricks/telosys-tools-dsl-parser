@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.junit.Test;
 import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.model.DslModelEntity;
+import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -170,7 +171,7 @@ public class ConverterTest {
 	}
 
 	@Test
-	public void testAttributeWithAnnotations() {
+	public void testAttributeWithAnnotations() throws AnnotationOrTagError {
 		// Given
 		DomainModel domainModel = new DomainModel();
 		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
@@ -300,7 +301,7 @@ public class ConverterTest {
 //
 //	}
 	
-	private DomainModel buildFullModel() {
+	private DomainModel buildFullModel() throws AnnotationOrTagError {
 		DomainModel domainModel = new DomainModel();
 
 		DomainEntity carEntity = new DomainEntity("Car");
@@ -351,7 +352,7 @@ public class ConverterTest {
 	}
 	
 	@Test
-	public void testFullModel() {
+	public void testFullModel() throws AnnotationOrTagError {
 		// Given		
 		DomainModel domainModel = buildFullModel() ;
 		

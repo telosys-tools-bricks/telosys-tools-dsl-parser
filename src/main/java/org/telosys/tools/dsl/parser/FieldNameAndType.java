@@ -2,6 +2,13 @@ package org.telosys.tools.dsl.parser;
 
 import org.telosys.tools.dsl.parser.model.DomainType;
 
+/**
+ * This class contains the name and type of a field <br>
+ * e.g. "firstName : string" or "books : Book[]" <br>
+ * 
+ * @author Laurent GUERIN
+ *
+ */
 public class FieldNameAndType {
 
 	private final String name ;

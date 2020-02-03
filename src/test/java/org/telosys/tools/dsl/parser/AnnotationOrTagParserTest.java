@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.DslParserException;
+import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 
 import static org.junit.Assert.assertEquals;
@@ -27,7 +28,7 @@ public class AnnotationOrTagParserTest {
 	}
 
 	@Test
-	public void testGetName() {
+	public void testGetName() throws AnnotationOrTagError {
 
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 
@@ -44,20 +45,20 @@ public class AnnotationOrTagParserTest {
 		assertEquals("Foo", parser.getName("?Foo ( 123.45 ) "));
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testGetNameError1() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testGetNameError1() throws AnnotationOrTagError {
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 		parser.getName("@Fo o ( 123.45  )");
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testGetNameError2() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testGetNameError2() throws AnnotationOrTagError {
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 		parser.getName("@ Foo ( 123.45  )");
 	}
 
 	@Test
-	public void testGetParameterValue() {
+	public void testGetParameterValue() throws AnnotationOrTagError {
 
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 
@@ -83,7 +84,7 @@ public class AnnotationOrTagParserTest {
 	}
 
 	@Test
-	public void testParseAnnotation() {
+	public void testParseAnnotation() throws AnnotationOrTagError {
 
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 
@@ -129,51 +130,51 @@ public class AnnotationOrTagParserTest {
 
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testParseAnnotationError1() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseAnnotationError1() throws AnnotationOrTagError {
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 		parser.parse("@Max(12RRR3)");
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testParseAnnotationError2() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseAnnotationError2() throws AnnotationOrTagError {
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 		parser.parse("@Max(12RRR3)");
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testParseAnnotationError3() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseAnnotationError3() throws AnnotationOrTagError {
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 		parser.parse("@Max(123");
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testParseAnnotationError4() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseAnnotationError4() throws AnnotationOrTagError {
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 		parser.parse("@Max");
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testParseAnnotationError5() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseAnnotationError5() throws AnnotationOrTagError {
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 		parser.parse("@Abcdef"); // unhknown annotation
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testParseAnnotationError6() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseAnnotationError6() throws AnnotationOrTagError {
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 		//parser.parse("@Maximum(123)"); // unhknown annotation
 		parser.parse("@Maxi(123)"); // unhknown annotation
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testParseAnnotationError7() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseAnnotationError7() throws AnnotationOrTagError {
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 		parser.parse("@Id(145)"); // Unexpected parameter
 	}
 
-	@Test(expected = DslParserException.class)
-	public void testParseAnnotationError8() {
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseAnnotationError8() throws AnnotationOrTagError {
 		AnnotationOrTagParser parser = new AnnotationOrTagParser("MyEntity", "myField");
 		parser.parse("@SizeMax(44.55)"); // integer parameter required
 	}

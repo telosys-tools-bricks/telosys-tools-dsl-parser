@@ -47,13 +47,13 @@ public class EntityFileParser {
 	private String entityNameParsed = null ;
 
 	private void log(String message) {
-		System.out.println("LOG:" + message);
+		ParserLogger.log("LOG:" + message);
 	}
 	private void logChar(char c) {
-		System.out.print( "[" + c + "]");
+		ParserLogger.print( "[" + c + "]");
 	}
 	private void log(char c) {
-		System.out.print(c);
+		ParserLogger.print(String.valueOf(c));
 	}
 
 	private void throwParsingException(String message) {

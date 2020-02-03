@@ -9,6 +9,7 @@ import java.util.Properties;
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.DslParserException;
+import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -37,7 +38,6 @@ public class Parser {
     	return entitiesErrors ;
     }
     
-
     /**
      * Parse the given model file
      *
@@ -141,7 +141,7 @@ public class Parser {
     	EntityFileParser entityFileParser = new EntityFileParser(file);
     	EntityFileParsingResult result = entityFileParser.parse();
     	String entityNameFromFileName = result.getEntityNameFromFileName();
-    	System.out.println("\n----------");
+    	ParserLogger.log("\n----------");
     	DomainEntity domainEntity = new DomainEntity(entityNameFromFileName);
     	for ( FieldParts field : result.getFields() ) {
 //    		FieldNameAndType fieldNameAndType = parser.parseFieldNameAndType(field);
@@ -161,7 +161,7 @@ public class Parser {
     	// 1) Parse the field NAME and TYPE
 		FieldNameAndTypeParser parser = new FieldNameAndTypeParser(entityNameFromFileName, entitiesNames);
 		FieldNameAndType fieldNameAndType = parser.parseFieldNameAndType(field);
-		System.out.println("Field : name '" + fieldNameAndType.getName() 
+		ParserLogger.log("Field : name '" + fieldNameAndType.getName() 
 			+ "' type '" + fieldNameAndType.getType() 
 			+ "' cardinality = " + fieldNameAndType.getCardinality() );
 		
@@ -188,18 +188,40 @@ public class Parser {
 //				domainField.addAnnotation((DomainAnnotation)annotationOrTag);
 //			}
 //		}
-		// Annotations found
-		List<DomainAnnotation> annotationsList = fieldAnnotationsAndTags.getAnnotations();
-		for ( DomainAnnotation annotation : annotationsList ) {
-			domainField.addAnnotation(annotation);
-		}
-		// Tags found
-		List<DomainTag> tagsList = fieldAnnotationsAndTags.getTags();
-		for ( DomainTag tag : tagsList ) {
-			domainField.addTag(tag);
+		
+		
+		// Errors found
+		for ( AnnotationOrTagError error : fieldAnnotationsAndTags.getErrors() ) {
+			domainField.addError(error);
 		}
 		
-		System.out.println("--- ");
+		// Annotations found
+		for ( DomainAnnotation annotation : fieldAnnotationsAndTags.getAnnotations() ) {
+			if ( domainField.hasAnnotation(annotation) ) {
+				// Already defined => Error
+				domainField.addError(
+						new AnnotationOrTagError(entityNameFromFileName, fieldName, 
+						annotation.getName(), "annotation defined more than once" )  );
+			}
+			else {
+				domainField.addAnnotation(annotation);
+			}
+		}
+		
+		// Tags found
+		for ( DomainTag tag : fieldAnnotationsAndTags.getTags() ) {
+			if ( domainField.hasTag(tag) ) {
+				// Already defined => Error
+				domainField.addError(
+						new AnnotationOrTagError(entityNameFromFileName, fieldName, 
+						tag.getName(), "tag defined more than once" )  );
+			}
+			else {
+				domainField.addTag(tag);
+			}
+		}
+		
+		ParserLogger.log("--- ");
 		return domainField;
     }
 }

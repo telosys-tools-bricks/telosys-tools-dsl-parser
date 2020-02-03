@@ -18,8 +18,8 @@ package org.telosys.tools.dsl.parser;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.telosys.tools.dsl.DslParserException;
 import org.telosys.tools.dsl.KeyWords;
+import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 import org.telosys.tools.dsl.parser.model.DomainTag;
@@ -49,16 +49,16 @@ public class AnnotationOrTagParser {
 		this.fieldName = fieldName;
 	}
 
-	/**
-	 * Throws an annotation parsing exception
-	 * 
-	 * @param annotationString
-	 * @param message
-	 */
-	private void throwAnnotationParsingError(String annotationString, String message) {
-		String errorMessage = entityName + "." + fieldName + " : '" + annotationString + "' (" + message + ")";
-		throw new DslParserException(errorMessage);
-	}
+//	/**
+//	 * Throws an annotation parsing exception
+//	 * 
+//	 * @param annotationString
+//	 * @param message
+//	 */
+//	private void throwAnnotationParsingError(String annotationString, String message) {
+//		String errorMessage = entityName + "." + fieldName + " : '" + annotationString + "' (" + message + ")";
+//		throw new DslParserException(errorMessage);
+//	}
 
 	/**
 	 * Parse a single annotation or tag
@@ -69,7 +69,7 @@ public class AnnotationOrTagParser {
 	 *            e.g. "@Id", "@Max(12)", "#Tag", etc
 	 * @return
 	 */
-	public DomainAnnotationOrTag parse(String annotationOrTagString) {
+	public DomainAnnotationOrTag parse(String annotationOrTagString) throws AnnotationOrTagError {
 
 		char firstChar = annotationOrTagString.charAt(0);
 		if (firstChar == '@') {
@@ -77,12 +77,13 @@ public class AnnotationOrTagParser {
 		} else if (firstChar == '#') {
 			return parseTag(annotationOrTagString);
 		} else {
-			throwAnnotationParsingError(annotationOrTagString, "must start with '@' or '#'");
+//			throwAnnotationParsingError(annotationOrTagString, "must start with '@' or '#'");
+			throw new AnnotationOrTagError(entityName, fieldName, annotationOrTagString, "must start with '@' or '#'");
 		}
-		return null;
+//		return null;
 	}
 
-	protected DomainAnnotation parseAnnotation(String annotation) {
+	protected DomainAnnotation parseAnnotation(String annotation) throws AnnotationOrTagError {
 		
 		// get the name 
 		String name = getName(annotation);
@@ -110,7 +111,9 @@ public class AnnotationOrTagParser {
 					try {
 						numberValue = getParameterValueAsInteger(annotation, parameterValue);
 					} catch (Exception e) {
-						throwAnnotationParsingError(annotation, "integer parameter required ");
+//						throwAnnotationParsingError(annotation, "integer parameter required ");
+						throw new AnnotationOrTagError(entityName, fieldName, annotation, "integer parameter required");
+						
 					}
 					return new DomainAnnotation(name, numberValue);
 				} else if (annotationDefinition.endsWith("#")) { // DECIMAL
@@ -120,7 +123,8 @@ public class AnnotationOrTagParser {
 					try {
 						numberValue = getParameterValueAsBigDecimal(annotation, parameterValue);
 					} catch (Exception e) {
-						throwAnnotationParsingError(annotation, "numeric parameter required ");
+//						throwAnnotationParsingError(annotation, "numeric parameter required ");
+						throw new AnnotationOrTagError(entityName, fieldName, annotation, "numeric parameter required");
 					}
 					return new DomainAnnotation(name, numberValue);
 				} else if (annotationDefinition.endsWith("$")) { // STRING
@@ -130,24 +134,27 @@ public class AnnotationOrTagParser {
 					try {
 						value = getParameterValueAsString(annotation, parameterValue);
 					} catch (Exception e) {
-						throwAnnotationParsingError(annotation, "string parameter required ");
+//						throwAnnotationParsingError(annotation, "string parameter required ");
+						throw new AnnotationOrTagError(entityName, fieldName, annotation, "string parameter required");
 					}
 					return new DomainAnnotation(name, value);
 				} else {
 					// annotation without parameter
 					if (parameterValue != null) {
-						throwAnnotationParsingError(annotation, "unexpected parameter");
+//						throwAnnotationParsingError(annotation, "unexpected parameter");
+						throw new AnnotationOrTagError(entityName, fieldName, annotation, "unexpected parameter");
 					}
 					return new DomainAnnotation(name);
 				}
 			}
 		}
 
-		throwAnnotationParsingError(annotation, "unknown annotation");
-		return null; // never reached
+//		throwAnnotationParsingError(annotation, "unknown annotation");
+		throw new AnnotationOrTagError(entityName, fieldName, annotation, "unknown annotation");
+//		return null; // never reached
 	}
 
-	protected DomainTag parseTag(String tagString) {
+	protected DomainTag parseTag(String tagString) throws AnnotationOrTagError  {
 		String name = getName(tagString);
 		String rawParameterValue = getParameterValue(tagString);
 		if ( rawParameterValue != null ) {
@@ -167,7 +174,7 @@ public class AnnotationOrTagParser {
 	 * @return "Id", "Max", etc
 	 * @throws Exception
 	 */
-	protected String getName(String annotationOrTag) {
+	protected String getName(String annotationOrTag) throws AnnotationOrTagError {
 		boolean blankCharFound = false;
 		StringBuilder sb = new StringBuilder();
 		// skip the first char (supposed to be '@' or '#' )
@@ -176,7 +183,8 @@ public class AnnotationOrTagParser {
 			if (Character.isLetter(c)) {
 				if (blankCharFound) {
 					// Case letter after a blank char : "Id xxx" or "aaa bbb"
-					throwAnnotationParsingError(annotationOrTag, "Invalid syntax");
+//					throwAnnotationParsingError(annotationOrTag, "Invalid syntax");
+					throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "invalid name");
 				}
 				sb.append(c);
 			} else if (Character.isWhitespace(c)) {
@@ -185,7 +193,8 @@ public class AnnotationOrTagParser {
 				break;
 			} else {
 				// Unexpected ending character
-				throwAnnotationParsingError(annotationOrTag, "Invalid syntax");
+//				throwAnnotationParsingError(annotationOrTag, "Invalid syntax");
+				throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "invalid name");
 			}
 		}
 		return sb.toString();
@@ -201,7 +210,7 @@ public class AnnotationOrTagParser {
 	 * @return the parameter value or null if none
 	 * @throws Exception
 	 */
-	protected String getParameterValue(String annotationOrTag) { 
+	protected String getParameterValue(String annotationOrTag) throws AnnotationOrTagError { 
 		int openIndex = annotationOrTag.indexOf(OPENING_PARENTHESIS); //  first occurrence of '('
 		int closeIndex = annotationOrTag.lastIndexOf(CLOSING_PARENTHESIS); // last occurrence of ')'
 		if (openIndex < 0 && closeIndex < 0) {
@@ -219,49 +228,55 @@ public class AnnotationOrTagParser {
 					return paramValue.trim();
 				} else {
 					// unbalanced ( and ) eg ")aa("
-					throwAnnotationParsingError(annotationOrTag, "unbalanced ( and )");
+//					throwAnnotationParsingError(annotationOrTag, "unbalanced ( and )");
+					throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "unbalanced ( and )");
 				}
 			} else {
 				// unbalanced ( and ) eg "(aa" or "aa)"
 				if (openIndex < 0) {
-					throwAnnotationParsingError(annotationOrTag, "'(' missing");
+//					throwAnnotationParsingError(annotationOrTag, "'(' missing");
+					throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "'(' missing");
 				} else {
-					throwAnnotationParsingError(annotationOrTag, "')' missing");
+//					throwAnnotationParsingError(annotationOrTag, "')' missing");
+					throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "')' missing");
 				}
 			}
 		}
-		return null;
+//		return null;
 	}
 
-	private void checkParameterExistence(String annotationOrTag, String parameterValue) { 
+	private void checkParameterExistence(String annotationOrTag, String parameterValue) throws AnnotationOrTagError { 
 		if (parameterValue == null || parameterValue.length() == 0) {
-			throwAnnotationParsingError(annotationOrTag, "Parameter required");
+//			throwAnnotationParsingError(annotationOrTag, "Parameter required");
+			throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "parameter required");
 		}
 	}
 
-	protected Integer getParameterValueAsInteger(String annotationOrTag, String parameterValue) { 
+	protected Integer getParameterValueAsInteger(String annotationOrTag, String parameterValue) throws AnnotationOrTagError { 
 		// Integer value
 		checkParameterExistence(annotationOrTag, parameterValue);
 		try {
 			return new Integer(parameterValue);
 		} catch (NumberFormatException e) {
-			throwAnnotationParsingError(annotationOrTag, "Invalid integer parameter '" + parameterValue + "'");
-			return 0;
+//			throwAnnotationParsingError(annotationOrTag, "Invalid integer parameter '" + parameterValue + "'");
+//			return 0;
+			throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "invalid integer parameter '" + parameterValue + "'");
 		}
 	}
 
-	protected BigDecimal getParameterValueAsBigDecimal(String annotationOrTag, String parameterValue) {
+	protected BigDecimal getParameterValueAsBigDecimal(String annotationOrTag, String parameterValue) throws AnnotationOrTagError {
 		// Decimal value
 		checkParameterExistence(annotationOrTag, parameterValue);
 		try {
 			return new BigDecimal(parameterValue);
 		} catch (NumberFormatException e) {
-			throwAnnotationParsingError(annotationOrTag, "Invalid decimal parameter '" + parameterValue + "'");
-			return null;
+//			throwAnnotationParsingError(annotationOrTag, "Invalid decimal parameter '" + parameterValue + "'");
+//			return null;
+			throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "invalid decimal parameter '" + parameterValue + "'");
 		}
 	}
 
-	protected String getParameterValueAsString(String annotationOrTag, String parameterValue) {
+	protected String getParameterValueAsString(String annotationOrTag, String parameterValue) throws AnnotationOrTagError {
 		checkParameterExistence(annotationOrTag, parameterValue);
 		return getParameterValueAsString(parameterValue);
 	}

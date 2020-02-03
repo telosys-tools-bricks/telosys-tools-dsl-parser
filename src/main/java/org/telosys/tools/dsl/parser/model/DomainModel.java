@@ -238,53 +238,45 @@ public class DomainModel {
         						+ "\n enumerations=" + enumerationsString + "]";
     }
 
-    @Override
-    public int hashCode() {
-    	String modelName = this.getName();
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((entities == null) ? 0 : entities.hashCode());
-        //result = prime * result + ((enumerations == null) ? 0 : enumerations.hashCode());
-        result = prime * result + ((modelName == null) ? 0 : modelName.hashCode());
-        return result;
-    }
+//    @Override
+//    public int hashCode() {
+//    	String modelName = this.getName();
+//        final int prime = 31;
+//        int result = 1;
+//        result = prime * result + ((entities == null) ? 0 : entities.hashCode());
+//        result = prime * result + ((modelName == null) ? 0 : modelName.hashCode());
+//        return result;
+//    }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        DomainModel other = (DomainModel) obj;
-        if (entities == null) {
-            if (other.entities != null) {
-                return false;
-            }
-        } else if (!entities.equals(other.entities)) {
-            return false;
-        }
-//        if (enumerations == null) {
-//            if (other.enumerations != null) {
-//                return false;
-//            }
-//        } else if (!enumerations.equals(other.enumerations)) {
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (this == obj) {
+//            return true;
+//        }
+//        if (obj == null) {
 //            return false;
 //        }
-        String thisModelName = this.getName();
-        String otherModelName = other.getName();
-        if (thisModelName == null) {
-            if (otherModelName != null) {
-                return false;
-            }
-        } else if (!thisModelName.equals(otherModelName)) {
-            return false;
-        }
-        return true;
-    }
+//        if (getClass() != obj.getClass()) {
+//            return false;
+//        }
+//        DomainModel other = (DomainModel) obj;
+//        if (entities == null) {
+//            if (other.entities != null) {
+//                return false;
+//            }
+//        } else if (!entities.equals(other.entities)) {
+//            return false;
+//        }
+//        String thisModelName = this.getName();
+//        String otherModelName = other.getName();
+//        if (thisModelName == null) {
+//            if (otherModelName != null) {
+//                return false;
+//            }
+//        } else if (!thisModelName.equals(otherModelName)) {
+//            return false;
+//        }
+//        return true;
+//    }
 
 }

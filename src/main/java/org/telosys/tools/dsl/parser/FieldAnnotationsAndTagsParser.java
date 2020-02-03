@@ -2,6 +2,7 @@ package org.telosys.tools.dsl.parser;
 
 import java.util.List;
 
+import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 
 public class FieldAnnotationsAndTagsParser {
@@ -25,10 +26,16 @@ public class FieldAnnotationsAndTagsParser {
     	Splitter splitter = new Splitter();
 		List<String> elements = splitter.split(annotationsAndTags);
 		for ( String element : elements ) {
-			System.out.println(" . '" + element + "'");
+			ParserLogger.log(" . '" + element + "'");
 			AnnotationOrTagParser annotationOrTagParser = new AnnotationOrTagParser(entityNameFromFileName, fieldName);
-			DomainAnnotationOrTag annotationOrTag = annotationOrTagParser.parse(element);
-			result.addAnnotationOrTag(annotationOrTag);
+			DomainAnnotationOrTag annotationOrTag;
+			try {
+				annotationOrTag = annotationOrTagParser.parse(element);
+				result.addAnnotationOrTag(annotationOrTag);
+			} catch (AnnotationOrTagError e) {
+				// invalid annotation or tag 
+				result.addError(e);
+			}
 		}
 		return result;
 	}

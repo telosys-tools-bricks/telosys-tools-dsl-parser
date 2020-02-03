@@ -21,9 +21,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.telosys.tools.dsl.DslParserException;
+import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 
 public class DomainField {
+	
     public static final int THIRTY_ONE = 31;
 
     private final String name;
@@ -32,6 +33,7 @@ public class DomainField {
 
     private final Map<String, DomainAnnotation> annotations = new HashMap<>();
     private final Map<String, DomainTag> tags = new HashMap<>();
+	private final List<AnnotationOrTagError> errors = new LinkedList<>() ;
 
     /**
      * Constructor with default cardinality of 1
@@ -56,38 +58,60 @@ public class DomainField {
         this.cardinality = cardinality;
     }
 
-//    public void setAnnotationList(List<DomainAnnotationOrTag> annotationList) {
-//        for (DomainAnnotationOrTag annotation : annotationList) {
-//            addAnnotation(annotation);
+    /**
+     * Check if the given annotation is already defined in the field
+     * @param annotation
+     * @return
+     */
+    public boolean hasAnnotation(DomainAnnotation annotation) {
+    	return annotations.containsKey(annotation.getName());
+    }
+    /**
+     * Add a new annotation to the field 
+     * @param annotation
+     */
+    public void addAnnotation(DomainAnnotation annotation) {
+    	annotations.put(annotation.getName(), annotation);
+    }
+        
+//    /**
+//     * Add a new annotation to the field <br>
+//     * Throws an exception if the given annotation is already defined
+//     * @param annotation
+//     */
+//    public void addAnnotation(DomainAnnotation annotation) throws AnnotationOrTagError {
+//        if (!annotations.containsKey(annotation.getName())) {
+//            annotations.put(annotation.getName(), annotation);
+//        } else {
+////            throw new DslParserException("Annotation '" + annotation.getName() + "' already define in field '" + this.getName() + "'");
+//            throw new AnnotationOrTagError("", this.name, annotation.getName(), "annotation defined more than once" );
 //        }
 //    }
 
     /**
-     * Add a new annotation to the field <br>
-     * Throws an exception if the given annotation is already defined
+     * Check if the given tag is already defined in the field
+     * @param annotation
+     * @return
+     */
+    public boolean hasTag(DomainTag tag) {
+    	return tags.containsKey(tag.getName());
+    }
+    /**
+     * Add a new tag to the field 
      * @param annotation
      */
-    public void addAnnotation(DomainAnnotation annotation) {
-        if (!annotations.containsKey(annotation.getName())) {
-            annotations.put(annotation.getName(), annotation);
-        } else {
-            throw new DslParserException("Annotation '" + annotation.getName() + "' already define in field '" + this.getName() + "'");
-        }
-    }
-
-    /**
-     * Add a new tag to the field <br>
-     * Throws an exception if the given tag is already defined
-     * @param tag
-     */
     public void addTag(DomainTag tag) {
-        if (!tags.containsKey(tag.getName())) {
-        	tags.put(tag.getName(), tag);
-        } else {
-            throw new DslParserException("Tag '" + tag.getName() + "' already define in field '" + this.getName() + "'");
-        }
+    	tags.put(tag.getName(), tag);
     }
-
+    
+    /**
+     * Add a new error to the field 
+     * @param error
+     */
+    public void addError(AnnotationOrTagError error) {
+    	errors.add(error);
+    }
+    
     /**
      * Returns the name of the field
      * @return
@@ -149,6 +173,14 @@ public class DomainField {
         return this.annotations;
     }
 
+    public boolean hasErrors() {
+    	return ! this.errors.isEmpty();
+    }
+    
+    public List<AnnotationOrTagError> getErrors() {
+    	return this.errors;
+    }
+    
     @Override
     public String toString() {
     	
@@ -187,39 +219,39 @@ public class DomainField {
 
     //------------------------------------------------------------------------------------------
     
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) {
+//            return true;
+//        }
+//        if (o == null || getClass() != o.getClass()) {
+//            return false;
+//        }
+//
+//        DomainField field = (DomainField) o;
+//
+//        if (!annotations.equals(field.annotations)) {
+//            return false;
+//        }
+//        if (!name.equals(field.name)) {
+//            return false;
+//        }
+//        if (!type.equals(field.type)) {
+//            return false;
+//        }
+//        if (cardinality != (field.cardinality)) {
+//        	return false;
+//        }
+//
+//        return true;
+//    }
 
-        DomainField field = (DomainField) o;
-
-        if (!annotations.equals(field.annotations)) {
-            return false;
-        }
-        if (!name.equals(field.name)) {
-            return false;
-        }
-        if (!type.equals(field.type)) {
-            return false;
-        }
-        if (cardinality != (field.cardinality)) {
-        	return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = THIRTY_ONE * result + (type != null ? type.hashCode() : 0);
-        result = THIRTY_ONE * result + (annotations != null ? annotations.hashCode() : 0);
-        return result;
-    }
+//    @Override
+//    public int hashCode() {
+//        int result = name != null ? name.hashCode() : 0;
+//        result = THIRTY_ONE * result + (type != null ? type.hashCode() : 0);
+//        result = THIRTY_ONE * result + (annotations != null ? annotations.hashCode() : 0);
+//        return result;
+//    }
 
 }
