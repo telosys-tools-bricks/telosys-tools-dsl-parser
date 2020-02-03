@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.exceptions.DslParserException;
 import org.telosys.tools.dsl.parser.exceptions.FieldNameAndTypeError;
 import org.telosys.tools.dsl.parser.model.DomainTypeNature;
 

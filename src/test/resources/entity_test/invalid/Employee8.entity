@@ -1,0 +1,10 @@
+Employee8 {
+
+ id:integer;
+ 
+ name : string ;
+ 
+ name : string ; // duplicated field
+ name : long ;
+ 
+} 

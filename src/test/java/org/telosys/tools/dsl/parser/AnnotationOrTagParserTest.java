@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
-import org.telosys.tools.dsl.parser.exceptions.DslParserException;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 
 import static org.junit.Assert.assertEquals;

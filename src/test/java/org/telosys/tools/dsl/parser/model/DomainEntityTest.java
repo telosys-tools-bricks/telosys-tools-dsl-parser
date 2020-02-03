@@ -1,13 +1,12 @@
 package org.telosys.tools.dsl.parser.model;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-import org.telosys.tools.dsl.parser.exceptions.DslParserException;
 
 public class DomainEntityTest {
 
@@ -83,21 +82,24 @@ public class DomainEntityTest {
 //		assertFalse ( field.isNeutralType() );
 //	}
 	
-	@Test ( expected = DslParserException.class )
+//	@Test ( expected = DslParserException.class )
+	@Test
 	public void testFieldDuplicated1() {
 		DomainEntity entity = new DomainEntity("Book") ;
 		entity.addField( new DomainField("lastName", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
 		entity.addField( new DomainField("lastName", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
 	}
 	
-	@Test ( expected = DslParserException.class )
+//	@Test ( expected = DslParserException.class )
+	@Test
 	public void testFieldDuplicated2() {
 		DomainEntity entity = new DomainEntity("Student") ;
 		entity.addField( new DomainField("teacher", new DomainEntity("Teacher") ) );
 		entity.addField( new DomainField("teacher", new DomainEntity("Teacher") ) );
 	}
 	
-	@Test ( expected = DslParserException.class )
+//	@Test ( expected = DslParserException.class )
+	@Test
 	public void testFieldDuplicated3() {
 		DomainEntity entity = new DomainEntity("Student") ;
 //		entity.addField( new DomainEntityField("studentType", new DomainEnumerationForString("StudentType") ) );

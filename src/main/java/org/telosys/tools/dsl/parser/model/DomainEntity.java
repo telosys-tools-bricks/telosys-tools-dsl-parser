@@ -20,13 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.telosys.tools.dsl.parser.exceptions.DslParserException;
-
-/**
- * @author Jonathan Goncalves, Mathieu Herbert, Thomas Legendre
- * @version 1.0
- * @date 2014-05-13
- */
 public class DomainEntity extends DomainType {
 
     public static final int THIRTY_ONE_HASH_CODE = 31; 
@@ -53,9 +46,9 @@ public class DomainEntity extends DomainType {
     	return fieldsMap.containsKey(field.getName());
     }
     public void addField(DomainField field) {
-        if (fieldsMap.containsKey(field.getName())) {
-            throw new DslParserException("Field '" + field.getName() + "' already defined");
-        }
+//        if (fieldsMap.containsKey(field.getName())) {
+//            throw new DslParserException("Field '" + field.getName() + "' already defined");
+//        }
         fieldsMap.put(field.getName(), field);
     }
 
@@ -94,6 +87,10 @@ public class DomainEntity extends DomainType {
     
     public boolean hasError() {
     	return ! errors.isEmpty();
+    }
+    
+    public List<Exception> getErrors() {
+    	return errors;
     }
 
     //-------------------------------------------------------------------------------------

@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.telosys.tools.dsl.parser.exceptions.DslParserException;
-
 /**
  * Root class for a Domain Model built after Domain Specific Language text file parsing
  *
@@ -85,20 +83,20 @@ public class DomainModel {
 		return domainModelInfo.getDescription();
 	}
 
-	private final void checkName(String name) {
-        // Do not accept an entity/enumeration with a "neutral type" name
-        if (DomainNeutralTypes.exists(name)) {
-            throw new DslParserException("Reserved name '" + name + "' (neutral type)");
-        }
-
-        // Do not accept an entity and an enumeration with the same name /!\
-        if (entities.get(name) != null) {
-            throw new DslParserException("An entity already exists with name '" + name + "'");
-        }
-//        if (enumerations.get(name) != null) {
-//            throw new EntityParserException("An enumeration already exists with name '" + name + "'");
+//	private final void checkName(String name) {
+//        // Do not accept an entity/enumeration with a "neutral type" name
+//        if (DomainNeutralTypes.exists(name)) {
+//            throw new DslParserException("Reserved name '" + name + "' (neutral type)");
 //        }
-    }
+//
+//        // Do not accept an entity and an enumeration with the same name /!\
+//        if (entities.get(name) != null) {
+//            throw new DslParserException("An entity already exists with name '" + name + "'");
+//        }
+////        if (enumerations.get(name) != null) {
+////            throw new EntityParserException("An enumeration already exists with name '" + name + "'");
+////        }
+//    }
 
     /*------------------------------------------------------------------------------------------
      ENTITIES
@@ -111,7 +109,7 @@ public class DomainModel {
      * @param entity
      */
     public final void addEntity(DomainEntity entity) {
-        checkName(entity.getName());
+//        checkName(entity.getName());
         entities.put(entity.getName(), entity);
     }
 
@@ -123,6 +121,10 @@ public class DomainModel {
      */
     public final DomainEntity getEntity(String entityName) {
         return entities.get(entityName);
+    }
+
+    public final void setEntity(DomainEntity entity) {
+        entities.put(entity.getName(), entity);
     }
 
     /**
@@ -202,23 +204,23 @@ public class DomainModel {
      ALL
     ------------------------------------------------------------------------------------------*/
 
-    /**
-     * Init the entity fields from the given list
-     *
-     * @param entity
-     */
-    public void populateEntityFields(String entityName, List<DomainField> fields) {
-    	DomainEntity destinationEntity = getEntity(entityName);
-        //entity.addAllFields(getEntity(entity.getName()));
-        if (destinationEntity != null) {
-            for (DomainField field : fields) {
-            	destinationEntity.addField(field);
-            }
-        }
-        else {
-            throw new DslParserException("Cannot popumate entity '" + entityName + "' (not found in model).");
-        }
-    }
+//    /**
+//     * Init the entity fields from the given list
+//     *
+//     * @param entity
+//     */
+//    public void populateEntityFields(String entityName, List<DomainField> fields) {
+//    	DomainEntity destinationEntity = getEntity(entityName);
+//        //entity.addAllFields(getEntity(entity.getName()));
+//        if (destinationEntity != null) {
+//            for (DomainField field : fields) {
+//            	destinationEntity.addField(field);
+//            }
+//        }
+//        else {
+//            throw new DslParserException("Cannot popumate entity '" + entityName + "' (not found in model).");
+//        }
+//    }
 
     @Override
     public String toString() {

@@ -85,7 +85,7 @@ public class Parser {
         List<String> entitiesFileNames = DslModelUtil.getEntitiesAbsoluteFileNames(file);
         List<String> entitiesNames = new LinkedList<>();
         
-        //--- Step 2 : build void entities (1 instance for each entity defined in the model)
+        //--- Step 2 : build VOID entities (1 instance for each entity defined in the model)
         for (String entityFileName : entitiesFileNames) {
             String entityName = DslModelUtil.getEntityName(new File(entityFileName));
             entitiesNames.add(entityName);
@@ -101,7 +101,9 @@ public class Parser {
 //				domainEntity = entityParser.parse(entityFileName);
 				domainEntity = parseEntity(entityFileName, entitiesNames);
 	        	//--- Populate
-	            model.populateEntityFields(domainEntity.getName(), domainEntity.getFields() );
+	            //model.populateEntityFields(domainEntity.getName(), domainEntity.getFields() );
+				//--- Replace VOID ENTITY by REAL ENTITY
+	            model.setEntity(domainEntity);
 			} catch (EntityParsingError parsingException) {
 				errorsCount++ ;
 				File entityFile = new File(entityFileName);
