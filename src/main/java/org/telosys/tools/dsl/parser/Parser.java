@@ -10,6 +10,7 @@ import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.dsl.parser.exceptions.FieldNameAndTypeError;
+import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
@@ -152,12 +153,12 @@ public class Parser {
     	ParserLogger.log("\n----------");
     	DomainEntity domainEntity = new DomainEntity(entityNameFromFileName);
     	for ( FieldParts field : result.getFields() ) {
-    		DomainField domainField ;
+    		DomainField domainField = null ;
     		// Try to parse field
 			try {
 				domainField = parseField(entityNameFromFileName, field, entitiesNames);
-//	        	domainEntity.addField(domainField);
-			} catch (FieldNameAndTypeError | AnnotationOrTagError e) {
+//			} catch (FieldNameAndTypeError | AnnotationOrTagError e) {
+			} catch (FieldParsingError e) {
 				domainEntity.addError(e); // Cannot parse field name and type
 				domainField = null ;
 			}

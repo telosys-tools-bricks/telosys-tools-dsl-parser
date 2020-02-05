@@ -119,6 +119,10 @@ public class DomainField {
     	return ! errors.isEmpty();
     }
     
+    public final int getLineNumber() {
+        return lineNumber;
+    }
+
     /**
      * Returns the name of the field
      * @return

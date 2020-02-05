@@ -20,16 +20,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
+
 public class DomainEntity extends DomainType {
 
-    public static final int THIRTY_ONE_HASH_CODE = 31; 
+//    public static final int THIRTY_ONE_HASH_CODE = 31; 
 
     /**
      * Map of fields used for direct access by field name and to check uniqueness 
      */
     private final Map<String, DomainField> fieldsMap;
     
-	private final List<Exception> errors = new LinkedList<>() ;
+	private final List<FieldParsingError> errors = new LinkedList<>() ;
 
 
     /**
@@ -81,7 +83,7 @@ public class DomainEntity extends DomainType {
      * Add a new error to the field 
      * @param error
      */
-    public void addError(Exception error) {
+    public void addError(FieldParsingError error) {
     	errors.add(error);
     }
     
@@ -89,7 +91,7 @@ public class DomainEntity extends DomainType {
     	return ! errors.isEmpty();
     }
     
-    public List<Exception> getErrors() {
+    public List<FieldParsingError> getErrors() {
     	return errors;
     }
 

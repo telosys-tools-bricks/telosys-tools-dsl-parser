@@ -21,28 +21,23 @@ package org.telosys.tools.dsl.parser.exceptions;
  * @author Laurent GUERIN
  *
  */
-public class FieldNameAndTypeError extends Exception {
+public class FieldNameAndTypeError extends FieldParsingError {
 
     private static final long serialVersionUID = 1L;
     
-	private final String entityName;
-//	private final String fieldName;
+//	private final String entityName;
+////	private final String fieldName;
 	private final String fieldNameAndType;
-	private final String error ;
-	private final String detailMessage ;
+//	private final String error ;
+//	private final String detailMessage ;
 
     public FieldNameAndTypeError(String entityName, String fieldNameAndType, String error) {
-        super();
-        this.entityName = entityName ;
-//        this.fieldName = fieldName ;
+        super(entityName, error, entityName + " : '" + fieldNameAndType + "' (" + error + ")");
         this.fieldNameAndType = fieldNameAndType ;
-        this.error = error;
-		this.detailMessage = entityName + " : '" + fieldNameAndType + "' (" + error + ")";
     }
-    
-    @Override
-    public String getMessage() {
-        return detailMessage;
-    }
+
+	public String getFieldNameAndType() {
+		return fieldNameAndType;
+	}
     
 }
