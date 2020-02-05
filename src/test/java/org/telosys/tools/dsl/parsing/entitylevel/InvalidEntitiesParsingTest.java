@@ -1,4 +1,4 @@
-package org.telosys.tools.dsl.parser;
+package org.telosys.tools.dsl.parsing.entitylevel;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.telosys.tools.dsl.parser.Parser;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -13,7 +14,7 @@ import org.telosys.tools.dsl.parser.model.DomainField;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ParserParseInvalidEntitiesTest {
+public class InvalidEntitiesParsingTest {
 	
 	@Test
 	public void testParseEntity() throws EntityParsingError {
@@ -22,12 +23,9 @@ public class ParserParseInvalidEntitiesTest {
 		entitiesNames.add("Car");
 		Parser parser = new Parser();
 		DomainEntity entity = parser.parseEntity(new File("src/test/resources/entity_test/invalid/Employee8.entity"), entitiesNames );
+		EntityReport.print(entity);
 		
 		assertTrue(entity.hasError());
-		List<Exception> errors = entity.getErrors();
-		for ( Exception e : errors ) {
-			System.out.println(" . " + e.getClass().getSimpleName() + " : " + e.getMessage());
-		}
 		
 //		assertEquals("Student", entity.getName());
 //		assertEquals(7, entity.getNumberOfFields());

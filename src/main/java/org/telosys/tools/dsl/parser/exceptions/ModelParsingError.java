@@ -16,6 +16,7 @@
 package org.telosys.tools.dsl.parser.exceptions;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Model Parsing Error
@@ -27,15 +28,27 @@ public class ModelParsingError extends Exception {
 
     private static final long serialVersionUID = 1L;
     
+    
 	private final File modelFile;
-	private final String error ;
+//	private final String error ;
 	private final String detailMessage ;
 
-    public ModelParsingError(File modelFile, String error) {
+//    public ModelParsingError(File modelFile, String errorMessage, List<EntityParsingError> entityErrors) {
+//        super();
+//        this.modelFile = modelFile ;
+////        this.error = error;
+//		this.detailMessage = modelFile.getName() + " : " + errorMessage ;
+//		this.entityErrors = entityErrors ;
+//    }
+
+    public ModelParsingError(File modelFile, String errorMessage) {
         super();
         this.modelFile = modelFile ;
-        this.error = error;
-		this.detailMessage = modelFile.getName() + " : " + error ;
+		this.detailMessage = modelFile.getName() + " : " + errorMessage ;
+    }
+
+    public File getModelFile() {
+        return modelFile;
     }
 
     @Override

@@ -16,7 +16,9 @@
 package org.telosys.tools.dsl;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -31,11 +33,20 @@ import org.telosys.tools.generic.model.Model;
 
 public class DslModelManager {
 
-    private Map<String,String> parsingErrors = null ;
-    private String parsingErrorMessage = null ;
+	private String parsingErrorMessage = null;
 
-    
-    public Map<String, String> getParsingErrors() {
+	private Map<String, String> parsingErrors = null;
+
+	/**
+	 * Constructor
+	 */
+	public DslModelManager() {
+		super();
+		parsingErrorMessage = "";
+		parsingErrors = new HashMap<>();
+	}
+
+	public Map<String, String> getParsingErrors() {
 		return parsingErrors;
 	}
 
@@ -43,77 +54,90 @@ public class DslModelManager {
 		return parsingErrorMessage;
 	}
 
+	/**
+	 * Loads (parse) the given model file
+	 * 
+	 * @param modelFileAbsolutePath the ".model" absolute file name
+	 * 
+     * @return the model or null if errors detected during parsing 
+	 */
+	public Model loadModel(String modelFileAbsolutePath) {
+		return loadModel(new File(modelFileAbsolutePath));
+	}
 
 	/**
-     * Loads (parse) the given model file
-     * 
-     * @param modelFileAbsolutePath the ".model" absolute file name 
-     * @return
-     */
-    public Model loadModel(String modelFileAbsolutePath) {
-    	return loadModel( new File(modelFileAbsolutePath) );
-    }
-    
-    
-    /**
      * Loads (parse) the given model file
      *
      * @param modelFile the ".model" file 
      * 
-     * @return the model or null if errors during parsing 
+     * @return the model or null if errors detected during parsing 
      */
     public Model loadModel(File modelFile) {
     	
         //--- 1) Parse the model 
         Parser dslParser = new Parser();
         DomainModel domainModel = null ;
-        Exception parsingException = null ;
+        ModelParsingError modelParsingError = null ;
 		try {
 			domainModel = dslParser.parseModel(modelFile);
 		} catch (ModelParsingError e) {
-			parsingException = e ;
+			modelParsingError = e ;
 		}
 		
-        if ( parsingException != null ) {
+        if ( modelParsingError != null ) {
         	//--- 2) Keep error information
-        	parsingErrorMessage   = parsingException.getMessage();
-        	parsingErrors = dslParser.getErrors();
+        	parsingErrorMessage = modelParsingError.getMessage();
             return null;
         }
         else {
-            //--- 2) Convert the "domain model" to "generic model" 
-            Converter converter = new Converter();
-			try {
-				return converter.convertToGenericModel(domainModel);
-			} catch (Exception e) {
-				parsingErrorMessage = "Converter error : " + e.getMessage() ;
-				parsingErrors = new Hashtable<>();
-				parsingErrors.put("", parsingErrorMessage );
-				return null ;
-			}
+        	if ( domainModel.hasError() ) {
+            	parsingErrorMessage = "Parsing error(s) : " + domainModel.getErrors().size() + " invalid entity(ies) ";
+
+            	buildErrorsMap(domainModel.getErrors()); 
+                return null;
+        	}
+        	else {
+                //--- 2) Convert the "domain model" to "generic model" 
+                Converter converter = new Converter();
+    			try {
+    				return converter.convertToGenericModel(domainModel);
+    			} catch (Exception e) {
+    				parsingErrorMessage = "Converter error : " + e.getMessage() ;
+//    				parsingErrors = new Hashtable<>();
+//    				parsingErrors.put("", parsingErrorMessage );
+    				return null ;
+    			}
+        	}
         }
     }
 
-    /**
-     * Loads the model information from the given file 
-     * 
-     * @param modelFile the ".model" file 
-     * @return
-     */
-    public DomainModelInfo loadModelInformation(File modelFile) {
-    	PropertiesManager propertiesManager = new PropertiesManager(modelFile);
-    	Properties properties = propertiesManager.load();
-    	
-    	return new DomainModelInfo(properties);
+    private void buildErrorsMap(List<EntityParsingError> errors) {
+    	for ( EntityParsingError err : errors ) {
+    		parsingErrors.put(err.getEntityName(), err.getMessage());
+    	}
     }
+    
+	/**
+	 * Loads the model information from the given file
+	 * 
+	 * @param modelFile  the ".model" file
+	 * @return
+	 */
+	public DomainModelInfo loadModelInformation(File modelFile) {
+		PropertiesManager propertiesManager = new PropertiesManager(modelFile);
+		Properties properties = propertiesManager.load();
 
-    /**
-     * Saves the model information in the given file
-     * @param modelFile the ".model" file 
-     * @param domainModelInfo
-     */
-    public void saveModelInformation(File modelFile, DomainModelInfo domainModelInfo) {
-    	PropertiesManager propertiesManager = new PropertiesManager(modelFile);
-    	propertiesManager.save( domainModelInfo.getProperties() );
-    }
+		return new DomainModelInfo(properties);
+	}
+
+	/**
+	 * Saves the model information in the given file
+	 * 
+	 * @param modelFile  the ".model" file
+	 * @param domainModelInfo
+	 */
+	public void saveModelInformation(File modelFile, DomainModelInfo domainModelInfo) {
+		PropertiesManager propertiesManager = new PropertiesManager(modelFile);
+		propertiesManager.save(domainModelInfo.getProperties());
+	}
 }

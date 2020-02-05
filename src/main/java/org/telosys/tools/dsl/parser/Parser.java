@@ -1,10 +1,8 @@
 package org.telosys.tools.dsl.parser;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.telosys.tools.commons.PropertiesManager;
@@ -30,56 +28,43 @@ public class Parser {
 	 * Key   : entity absolute file name 
 	 * Value : parsing error
 	 */
-	private final Map<String,String> entitiesErrors = new HashMap<>();
+//	private final Map<String,String> entitiesErrors = new HashMap<>();
+//    private final List<EntityParsingError> entityErrors = new LinkedList<>();
+
 	
     public Parser() {
 		super();
 	}
 
-    public Map<String,String> getErrors() {
-    	return entitiesErrors ;
-    }
+//    public Map<String,String> getErrors() {
+//    	return entitiesErrors ;
+//    }
+    
+//    /**
+//     * Parse the given model file
+//     *
+//     * @param file the ".model" file 
+//     * @return
+//     */
+//    public final DomainModel parseModel(File file) throws ModelParsingError {
+//    	checkModelFile(file);
+//    	return parseModelFile(file);
+//    }
     
     /**
-     * Parse the given model file
-     *
-     * @param file the ".model" file 
+     * Parse the MODEL identified by the ".model" file
+     * @param file  the model file ( file with ".model" suffix )
      * @return
+     * @throws ModelParsingError
      */
     public final DomainModel parseModel(File file) throws ModelParsingError {
-    	checkModelFile(file);
-    	return parseModelFile(file);
-    }
-    
-    protected static void checkModelFile(File file) throws ModelParsingError {
-        if ( ! file.exists() ) {
-            String error = "File '" + file.toString() + "' not found";
-            throw new ModelParsingError(file, error);
-        }
-        if ( ! file.isFile() ) {
-            String error = "'" + file.toString() + "' is not a file";
-            throw new ModelParsingError(file, error);
-        }
-        if ( ! file.getName().endsWith(DOT_MODEL)) {
-            String error = "File '" + file.toString() + "' doesn't end with '" + DOT_MODEL + "'";
-            throw new ModelParsingError(file, error);
-        }
-    }
 
-    /**
-     * Parse the given MODEL file
-     *
-     * @param file the model file ( file with ".model" suffix )
-     * @return
-     */
-    private final DomainModel parseModelFile(File file) throws ModelParsingError {
+    	//--- Step 0 : check model file validity
+    	checkModelFile(file);
     	
-    	//checkModelFile(file);
-    	
-    	//--- Step 1 : load model information
+    	//--- Step 1 : init a void model using the ".model" file
         PropertiesManager propertiesManager = new PropertiesManager(file);
         Properties properties = propertiesManager.load();
-        
         DomainModel model = new DomainModel(properties);
         
         List<String> entitiesFileNames = DslModelUtil.getEntitiesAbsoluteFileNames(file);
@@ -104,10 +89,12 @@ public class Parser {
 	            //model.populateEntityFields(domainEntity.getName(), domainEntity.getFields() );
 				//--- Replace VOID ENTITY by REAL ENTITY
 	            model.setEntity(domainEntity);
-			} catch (EntityParsingError parsingException) {
+			} catch (EntityParsingError entityParsingError) {
 				errorsCount++ ;
-				File entityFile = new File(entityFileName);
-				entitiesErrors.put(entityFile.getName(), parsingException.getMessage() );
+//				File entityFile = new File(entityFileName);
+//				entitiesErrors.put(entityFile.getName(), parsingException.getMessage() );
+//				entityErrors.add(entityParsingError);
+				model.addError(entityParsingError);
 			}
         }
         if ( errorsCount == 0 ) {
@@ -119,11 +106,33 @@ public class Parser {
     }
     
     /**
+     * Check model file validity 
+     * @param file
+     * @throws ModelParsingError
+     */
+    protected void checkModelFile(File file) throws ModelParsingError {
+        if ( ! file.exists() ) {
+            String error = "File '" + file.toString() + "' not found";
+            throw new ModelParsingError(file, error);
+        }
+        if ( ! file.isFile() ) {
+            String error = "'" + file.toString() + "' is not a file";
+            throw new ModelParsingError(file, error);
+        }
+        if ( ! file.getName().endsWith(DOT_MODEL)) {
+            String error = "File '" + file.toString() + "' doesn't end with '" + DOT_MODEL + "'";
+            throw new ModelParsingError(file, error);
+        }
+    }
+
+    /**
      * Parse the given ENTITY file name
      * @param entityFileName
+     * @param entitiesNames
      * @return
+     * @throws EntityParsingError
      */
-    protected final DomainEntity parseEntity(String entityFileName, List<String> entitiesNames) throws EntityParsingError {
+    public final DomainEntity parseEntity(String entityFileName, List<String> entitiesNames) throws EntityParsingError {
     	File entityFile = new File(entityFileName);
     	return parseEntity(entityFile, entitiesNames);
     }
@@ -131,9 +140,11 @@ public class Parser {
     /**
      * Parse the given ENTITY file 
      * @param file
+     * @param entitiesNames
      * @return
+     * @throws EntityParsingError
      */
-    protected final DomainEntity parseEntity(File file, List<String> entitiesNames) throws EntityParsingError {
+    public final DomainEntity parseEntity(File file, List<String> entitiesNames) throws EntityParsingError {
     	
     	EntityFileParser entityFileParser = new EntityFileParser(file);
     	EntityFileParsingResult result = entityFileParser.parse();

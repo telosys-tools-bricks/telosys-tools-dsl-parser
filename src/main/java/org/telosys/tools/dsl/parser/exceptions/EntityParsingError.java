@@ -46,6 +46,18 @@ public class EntityParsingError extends Exception {
 		this.detailMessage = entityName + " : " + error + "(line " + lineNumber + ")";
     }
     
+    public String getEntityName() {
+    	return entityName;
+    }
+
+    public int getLineNumber() {
+    	return lineNumber;
+    }
+    
+    public String getError() {
+    	return error;
+    }
+        
     @Override
     public String getMessage() {
         return detailMessage;

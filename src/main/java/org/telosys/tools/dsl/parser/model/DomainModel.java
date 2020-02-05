@@ -17,11 +17,13 @@ package org.telosys.tools.dsl.parser.model;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 
 /**
  * Root class for a Domain Model built after Domain Specific Language text file parsing
@@ -30,15 +32,21 @@ import java.util.Properties;
  */
 public class DomainModel {
 
+	/**
+	 * Model description and information (from the ".model" file)
+	 */
 	private final DomainModelInfo domainModelInfo ;
 
-    /*
-    NB :
-        Do not accept an entity and an enumeration with the same name /!\
+    /**
+     * Entity errors detected during the parsing
      */
-    private final Map<String, DomainEntity> entities = new Hashtable<>();
+    private final List<EntityParsingError> entityErrors = new LinkedList<>();
 
-//    private final Map<String, DomainEnumeration<?>> enumerations = new Hashtable<String, DomainEnumeration<?>>();
+    /**
+     * Map of all the entities (key is the entity name) 
+     * (unicity for the future "Enum" type that must not collide with entity name
+     */
+    private final Map<String, DomainEntity> entities = new HashMap<>();
 
     /**
      * Constructor
@@ -82,6 +90,26 @@ public class DomainModel {
 	public String getDescription() {
 		return domainModelInfo.getDescription();
 	}
+	
+	//---------------------------------------------------------------------
+	// Model ERRORS 
+	//---------------------------------------------------------------------
+    /**
+     * Add a new error to the field 
+     * @param error
+     */
+    public void addError(EntityParsingError error) {
+    	entityErrors.add(error);
+    }
+    
+    public boolean hasError() {
+    	return ! entityErrors.isEmpty();
+    }
+    
+   public List<EntityParsingError> getErrors() {
+        return entityErrors;
+    }
+
 
 //	private final void checkName(String name) {
 //        // Do not accept an entity/enumeration with a "neutral type" name
@@ -98,9 +126,9 @@ public class DomainModel {
 ////        }
 //    }
 
-    /*------------------------------------------------------------------------------------------
-     ENTITIES
-    ------------------------------------------------------------------------------------------*/
+	//---------------------------------------------------------------------
+	// Model ENTITIES 
+	//---------------------------------------------------------------------
 
     /**
      * Stores a new entity <br>
@@ -200,27 +228,6 @@ public class DomainModel {
 //        return names;
 //    }
 
-    /*------------------------------------------------------------------------------------------
-     ALL
-    ------------------------------------------------------------------------------------------*/
-
-//    /**
-//     * Init the entity fields from the given list
-//     *
-//     * @param entity
-//     */
-//    public void populateEntityFields(String entityName, List<DomainField> fields) {
-//    	DomainEntity destinationEntity = getEntity(entityName);
-//        //entity.addAllFields(getEntity(entity.getName()));
-//        if (destinationEntity != null) {
-//            for (DomainField field : fields) {
-//            	destinationEntity.addField(field);
-//            }
-//        }
-//        else {
-//            throw new DslParserException("Cannot popumate entity '" + entityName + "' (not found in model).");
-//        }
-//    }
 
     @Override
     public String toString() {

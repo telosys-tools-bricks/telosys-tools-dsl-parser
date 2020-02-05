@@ -1,8 +1,9 @@
-package org.telosys.tools.dsl.parser;
+package org.telosys.tools.dsl.parsing.modellevel;
 
 import java.io.File;
 
 import org.junit.Test;
+import org.telosys.tools.dsl.parser.Parser;
 import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainModel;
