@@ -29,7 +29,7 @@ import org.telosys.tools.dsl.parser.model.DomainTag;
  * 
  * @author Laurent Guerin
  */
-public class AnnotationOrTagParser {
+public class FieldAnnotationOrTagParser {
 
 	private static final char OPENING_PARENTHESIS = '(';
 	private static final char CLOSING_PARENTHESIS = ')';
@@ -43,7 +43,7 @@ public class AnnotationOrTagParser {
 	 * @param entityName
 	 * @param fieldName
 	 */
-	public AnnotationOrTagParser(String entityName, String fieldName) {
+	public FieldAnnotationOrTagParser(String entityName, String fieldName) {
 		super();
 		this.entityName = entityName;
 		this.fieldName = fieldName;

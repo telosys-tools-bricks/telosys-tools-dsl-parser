@@ -1,1 +1,3 @@
-Employee3{}
+Employee3xxx { // name diferent from file name
+id : short { @Id @NotNull } ;
+}

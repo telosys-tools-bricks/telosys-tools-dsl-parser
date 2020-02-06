@@ -2,15 +2,21 @@ package org.telosys.tools.dsl.parser;
 
 public class ParserLogger {
 
+	private static final boolean LOG = false;
+
 	private ParserLogger() {
 	}
 
 	public static final void log(String msg) {
-    	System.out.println(msg);		
+		if (LOG) {
+			System.out.println(msg);
+		}
 	}
-	
+
 	public static final void print(String msg) {
-    	System.out.print(msg);		
+		if (LOG) {
+			System.out.print(msg);
+		}
 	}
-	
+
 }

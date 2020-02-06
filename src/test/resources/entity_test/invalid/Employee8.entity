@@ -1,10 +1,14 @@
 Employee8 {
 
- id:integer;
+ id:integer { @Id, @NotNull };
  
  name : string ;
  
  name : string ; // duplicated field
  name : long ;
+ name : long ;
  
+ foo : xxx ;
+ 
+ comment : string { @Xxxx, @Max(aaa)};
 } 

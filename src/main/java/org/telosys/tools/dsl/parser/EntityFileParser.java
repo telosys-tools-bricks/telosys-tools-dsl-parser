@@ -42,6 +42,7 @@ public class EntityFileParser {
 	private FieldPartsBuilder currentField = null ;
 
 	private boolean inFields      = false ;
+	private boolean fieldsClosed  = false ;
 	private boolean inAnnotations = false ;
 	
 	private String entityNameParsed = null ;
@@ -91,7 +92,7 @@ public class EntityFileParser {
 	 */
 	public EntityFileParsingResult parse() throws EntityParsingError  {
 
-		parseFile() ; // rename parseFile()
+		parseFile() ; 
 		List<FieldParts> fieldsParts = new LinkedList<>();
 		for ( FieldPartsBuilder fb : fieldsParsed ) {
 //			fieldsParts.add(new FieldParts(fb.getLineNumber(), fb.getNameAndTypePart(), fb.getAnnotationsPart()));
@@ -102,7 +103,6 @@ public class EntityFileParser {
 	
 	protected void parseFile() throws EntityParsingError {
 		if (!entityFile.exists()) {
-//			throwParsingException("File not found");
 			throw new EntityParsingError(entityNameFromFileName, "File not found");
 		}
 		log("parse() : File : " + entityFile.getAbsolutePath());
@@ -116,20 +116,41 @@ public class EntityFileParser {
 				// read next line
 			}
 		} catch (IOException e) {
-//			throwParsingException("IOException");
 			throw new EntityParsingError(entityNameFromFileName, "IOException");
 		}
 	}
 	
+	/**
+	 * Process any type of line 
+	 * @param line
+	 * @param lineNumber
+	 * @throws EntityParsingError
+	 */
 	private void processLine(String line, int lineNumber) throws EntityParsingError {
 		log("\n-------------------------------------------");
 		log("#" + lineNumber + " : " + line);
 		
+		List<String> entityHeader = new LinkedList<>();
 		if ( inFields ) {
+			// we are "in fields" ( between { and } )
 			processLineFieldLevel(line, lineNumber);
 		}
 		else {
-			this.entityNameParsed = processLineEntityLevel(line, lineNumber);
+			if ( ! fieldsClosed ) {
+				// we are not yet "in fields" or "after fields" => at ENTITY LEVEL 
+				String headerLine = processLineEntityLevel(line, lineNumber);
+				if ( headerLine != null ) {
+					String s = headerLine.trim();
+					if ( s.length() > 0 ) {
+						entityHeader.add(s);
+						this.entityNameParsed = s ; // last line
+					}
+				}
+			}
+			else {
+				// if "after fields" => ERROR
+				processLineAfterFields(line, lineNumber);
+			}
 		}
 	}
 
@@ -172,6 +193,26 @@ public class EntityFileParser {
 		}
 		return currentValue(sb);
 	}
+	
+	/**
+	 * Process a line located after the fields definition <br>
+	 * This line is supposed to be void or blank or just a comment
+	 * @param line
+	 * @param lineNumber
+	 * @throws EntityParsingError
+	 */
+	protected void processLineAfterFields(String line, int lineNumber) throws EntityParsingError {
+		// remove comment if any 
+		String[] parts = line.split("//");
+		if ( parts.length > 0 ) {
+			// at least 1 char 
+			String s = parts[0];
+			if ( s.trim().length() > 0 ) {
+				throw new EntityParsingError(entityNameFromFileName, "Unexpected line after fields definition", lineNumber);
+			}
+		}
+	}
+	
 	
 	private void resetCurrentField(int lineNumber) {
 		if ( currentField == null ) {
@@ -271,6 +312,7 @@ public class EntityFileParser {
 					}
 					else if ( inFields ) {
 						inFields = false ; // End of fields
+						fieldsClosed = true ; // We were in fields, so it's the end
 					}
 					else {
 //						throwParsingException("Unexpected '}'", lineNumber) ;

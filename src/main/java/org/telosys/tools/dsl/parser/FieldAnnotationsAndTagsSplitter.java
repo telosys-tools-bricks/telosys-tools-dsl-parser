@@ -5,7 +5,13 @@ import java.util.List;
 
 import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 
-public class Splitter {
+/**
+ * Utility class designed to split a string containing annotations and tags 
+ * 
+ * @author Laurent GUERIN
+ *
+ */
+public class FieldAnnotationsAndTagsSplitter {
 
 	private final String entityName ;
 	private final String fieldName ;
@@ -19,7 +25,7 @@ public class Splitter {
 	boolean inDoubleQuote = false ;
 	boolean inParentheses = false ;
 	
-	public Splitter(String entityName, String fieldName) {
+	public FieldAnnotationsAndTagsSplitter(String entityName, String fieldName) {
 		super();
 		this.entityName = entityName ;
 		this.fieldName = fieldName ;
@@ -55,7 +61,6 @@ public class Splitter {
 						keepChar(c);
 					}
 					else {
-//						throw new DslParserException("Unexpected '" + c + "' in parentheses");
 						throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected '" + c + "' in parentheses");
 					}
 				}
@@ -70,7 +75,6 @@ public class Splitter {
 						inParentheses = true ;
 					}
 					else {
-//						throw new DslParserException("Unexpected opening parenthesis");
 						throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected opening parenthesis");
 					}
 				}
@@ -83,7 +87,6 @@ public class Splitter {
 						inElement = false; // it's the end of current element
 					}
 					else {
-//						throw new DslParserException("Unexpected closing parenthesis");
 						throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected closing parenthesis");
 					}
 				}
@@ -97,7 +100,6 @@ public class Splitter {
 					keepChar(c);
 				}
 				else {
-//					throw new DslParserException("Unexpected single quote");
 					throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected single quote");
 				}
 				
@@ -110,7 +112,6 @@ public class Splitter {
 					keepChar(c);
 				}
 				else {
-//					throw new DslParserException("Unexpected double quote");
 					throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected double quote");
 				}
 			}
@@ -148,11 +149,9 @@ public class Splitter {
 	private void keepCurrentElement() throws AnnotationOrTagError {
 		if ( currentElement != null ) {
 			if ( inQuote() ) {
-//				throw new DslParserException("Unexpected end of element (quote not closed)");
 				throw new AnnotationOrTagError(entityName, fieldName, currentElement.toString(), "unexpected end of element (quote not closed)");
 			}
 			if ( inParentheses() ) {
-//				throw new DslParserException("Unexpected end of element (parenthesis not closed)");
 				throw new AnnotationOrTagError(entityName, fieldName, currentElement.toString(), "unexpected end of element (parenthesis not closed)");
 			}
 			String element = currentElement.toString().trim();

@@ -23,11 +23,11 @@ public class FieldAnnotationsAndTagsParser {
     	if ( annotationsAndTags == null || "".equals(annotationsAndTags) ) {
     		return result; // void
     	}
-    	Splitter splitter = new Splitter(entityNameFromFileName, fieldName);
+    	FieldAnnotationsAndTagsSplitter splitter = new FieldAnnotationsAndTagsSplitter(entityNameFromFileName, fieldName);
 		List<String> elements = splitter.split(annotationsAndTags);
 		for ( String element : elements ) {
 			ParserLogger.log(" . '" + element + "'");
-			AnnotationOrTagParser annotationOrTagParser = new AnnotationOrTagParser(entityNameFromFileName, fieldName);
+			FieldAnnotationOrTagParser annotationOrTagParser = new FieldAnnotationOrTagParser(entityNameFromFileName, fieldName);
 			DomainAnnotationOrTag annotationOrTag;
 			try {
 				annotationOrTag = annotationOrTagParser.parse(element);

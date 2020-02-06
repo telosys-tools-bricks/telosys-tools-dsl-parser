@@ -150,6 +150,10 @@ public class Parser {
     	EntityFileParser entityFileParser = new EntityFileParser(file);
     	EntityFileParsingResult result = entityFileParser.parse();
     	String entityNameFromFileName = result.getEntityNameFromFileName();
+    	String entityNameParsed = result.getEntityNameParsed();
+    	if ( ! entityNameFromFileName.equals(entityNameParsed)) {
+    		throw new EntityParsingError(entityNameFromFileName, "Entity name '" + entityNameParsed + "' different from file name");
+    	}
     	ParserLogger.log("\n----------");
     	DomainEntity domainEntity = new DomainEntity(entityNameFromFileName);
     	for ( FieldParts field : result.getFields() ) {

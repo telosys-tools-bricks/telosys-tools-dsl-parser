@@ -18,7 +18,7 @@ public class SplitterTest {
 
 	private List<String> split(String s) throws AnnotationOrTagError {
 		System.out.println("\nsplit(\""+s+"\")");
-		Splitter splitter = new Splitter("MyEntity","myField");
+		FieldAnnotationsAndTagsSplitter splitter = new FieldAnnotationsAndTagsSplitter("MyEntity","myField");
 		List<String> list;
 		try {
 			list = splitter.split(s);

@@ -92,7 +92,18 @@ public class DomainEntity extends DomainType {
     }
     
     public List<FieldParsingError> getErrors() {
-    	return errors;
+    	List<FieldParsingError> allErrors = new LinkedList<>();
+    	// Errors at Entity level
+    	for ( FieldParsingError err : errors ) {
+    		allErrors.add(err);
+    	}
+    	// Errors at Field level
+    	for ( DomainField f : getFields()  ) {
+        	for ( FieldParsingError err : f.getErrors() ) {
+        		allErrors.add(err);
+        	}
+    	}
+    	return allErrors;
     }
 
     //-------------------------------------------------------------------------------------

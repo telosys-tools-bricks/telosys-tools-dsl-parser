@@ -13,11 +13,11 @@ public class EntityReport {
 		System.out.println("----------");
 		System.out.println("ENTITY PARSING RESULT :");
 		System.out.println(" Entity name : " + entity.getName() );
-		System.out.println(" Entity hasError() ? : " + entity.hasError());
 		System.out.println(" Entity fields : ");
 		for ( DomainField field : entity.getFields() ) {
 			System.out.println(" . " + field);
 		}
+		System.out.println(" Entity hasError() ? : " + entity.hasError());
 		System.out.println(" Entity errors :");
 		List<FieldParsingError> errors = entity.getErrors();
 		for ( Exception e : errors ) {

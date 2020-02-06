@@ -35,7 +35,7 @@ public class EntityParsingError extends Exception {
         this.entityName = entityName ;
         this.error = error;
         this.lineNumber = 0 ;
-		this.detailMessage = entityName + " : " + error ;
+		this.detailMessage = "entity '" + entityName + "' : " + error ;
     }
 
     public EntityParsingError(String entityName, String error, int lineNumber) {

@@ -16,6 +16,10 @@ Student {
 			};
 	
 	car : Car { @Embedded } ;
-
+// qsdsd
 }
- 
+
+// after fields definition, but OK due to comment
+
+  // zzzz
+
