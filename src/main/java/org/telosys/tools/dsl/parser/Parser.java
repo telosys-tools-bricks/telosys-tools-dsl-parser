@@ -22,36 +22,10 @@ public class Parser {
 
     private static final String DOT_MODEL = ".model"  ;
 
-//	private final List<String> entitiesNames;
-	
-    /*
-	 * Entities files with errors 
-	 * Key   : entity absolute file name 
-	 * Value : parsing error
-	 */
-//	private final Map<String,String> entitiesErrors = new HashMap<>();
-//    private final List<EntityParsingError> entityErrors = new LinkedList<>();
-
-	
     public Parser() {
 		super();
 	}
 
-//    public Map<String,String> getErrors() {
-//    	return entitiesErrors ;
-//    }
-    
-//    /**
-//     * Parse the given model file
-//     *
-//     * @param file the ".model" file 
-//     * @return
-//     */
-//    public final DomainModel parseModel(File file) throws ModelParsingError {
-//    	checkModelFile(file);
-//    	return parseModelFile(file);
-//    }
-    
     /**
      * Parse the MODEL identified by the ".model" file
      * @param file  the model file ( file with ".model" suffix )
@@ -84,10 +58,7 @@ public class Parser {
         	//--- Parse
         	DomainEntity domainEntity;
 			try {
-//				domainEntity = entityParser.parse(entityFileName);
 				domainEntity = parseEntity(entityFileName, entitiesNames);
-	        	//--- Populate
-	            //model.populateEntityFields(domainEntity.getName(), domainEntity.getFields() );
 				//--- Replace VOID ENTITY by REAL ENTITY
 	            model.setEntity(domainEntity);
 			} catch (EntityParsingError entityParsingError) {
@@ -151,8 +122,13 @@ public class Parser {
     	EntityFileParsingResult result = entityFileParser.parse();
     	String entityNameFromFileName = result.getEntityNameFromFileName();
     	String entityNameParsed = result.getEntityNameParsed();
+    	// check entity name 
     	if ( ! entityNameFromFileName.equals(entityNameParsed)) {
     		throw new EntityParsingError(entityNameFromFileName, "Entity name '" + entityNameParsed + "' different from file name");
+    	}
+    	// check number of fields defined  
+    	if ( result.getFields().isEmpty() ) {
+    		throw new EntityParsingError(entityNameFromFileName, "no field defined");
     	}
     	ParserLogger.log("\n----------");
     	DomainEntity domainEntity = new DomainEntity(entityNameFromFileName);
@@ -161,7 +137,6 @@ public class Parser {
     		// Try to parse field
 			try {
 				domainField = parseField(entityNameFromFileName, field, entitiesNames);
-//			} catch (FieldNameAndTypeError | AnnotationOrTagError e) {
 			} catch (FieldParsingError e) {
 				domainEntity.addError(e); // Cannot parse field name and type
 				domainField = null ;

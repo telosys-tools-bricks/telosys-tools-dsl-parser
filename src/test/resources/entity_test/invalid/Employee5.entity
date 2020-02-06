@@ -1,1 +1,4 @@
-Entity{ié#_:integer;}
+
+Employee5 {
+  // no field defined in this entity
+}

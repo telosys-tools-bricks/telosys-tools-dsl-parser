@@ -85,17 +85,15 @@ public class EntityFileParser {
 	}
 
 	/**
-	 * Parse entity from the given file
-	 * 
-	 * @param file
+	 * Parse entity defined in the current file
 	 * @return
+	 * @throws EntityParsingError
 	 */
 	public EntityFileParsingResult parse() throws EntityParsingError  {
 
 		parseFile() ; 
 		List<FieldParts> fieldsParts = new LinkedList<>();
 		for ( FieldPartsBuilder fb : fieldsParsed ) {
-//			fieldsParts.add(new FieldParts(fb.getLineNumber(), fb.getNameAndTypePart(), fb.getAnnotationsPart()));
 			fieldsParts.add(fb.getFieldParts());
 		}
 		return new EntityFileParsingResult(this.entityNameFromFileName, this.entityNameParsed, fieldsParts);

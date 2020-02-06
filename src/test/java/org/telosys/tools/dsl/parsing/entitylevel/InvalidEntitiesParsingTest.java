@@ -61,6 +61,11 @@ public class InvalidEntitiesParsingTest {
 	}
 
 	@Test
+	public void testParseEmployee5() {
+		parseWithErrorExpected("Employee5", new LinkedList<String>());
+	}
+
+	@Test
 	public void testParseEmployee8() throws EntityParsingError {
 		
 		List<String> entitiesNames = new LinkedList<>();
