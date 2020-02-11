@@ -1,1 +1,4 @@
-E#n_tité{id:integer;}
+// Entity name 'E#n_titéid:integer;' different from file name
+E#n_tité {
+ id:integer;
+}

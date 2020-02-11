@@ -1,0 +1,3 @@
+Person1 {  // OK
+ id:int  ;  name : 
+   string ; }

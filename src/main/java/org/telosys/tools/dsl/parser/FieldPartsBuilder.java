@@ -32,15 +32,15 @@ class FieldPartsBuilder {
 		this.lineNumber = lineNumber;
 	}
 
-	protected FieldPartsBuilder(int lineNumber, String nameAndTypePart, String annotationsPart) {
-		super();
-		this.nameAndTypeBuilder = new StringBuilder();
-		this.annotationsBuilder = new StringBuilder();
-		this.finished = true ;
-		this.lineNumber = lineNumber;
-		this.nameAndTypePart = nameAndTypePart;
-		this.annotationsPart = annotationsPart;
-	}
+//	protected FieldPartsBuilder(int lineNumber, String nameAndTypePart, String annotationsPart) {
+//		super();
+//		this.nameAndTypeBuilder = new StringBuilder();
+//		this.annotationsBuilder = new StringBuilder();
+//		this.finished = true ;
+//		this.lineNumber = lineNumber;
+//		this.nameAndTypePart = nameAndTypePart;
+//		this.annotationsPart = annotationsPart;
+//	}
 	
 	protected void append(char c) {
 		if ( ! finished ) {

@@ -28,7 +28,7 @@ import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 /**
  * Telosys DSL entity parser
  *
- * @author Laurent Guerin
+ * @author Laurent GUERIN
  * 
  */
 public class EntityFileParser {
@@ -56,15 +56,6 @@ public class EntityFileParser {
 	private void log(char c) {
 		ParserLogger.print(String.valueOf(c));
 	}
-
-//	private void throwParsingException(String message) {
-//		String errorMessage = entityNameFromFileName + " : " + message;
-//		throw new DslParserException(errorMessage);
-//	}
-//	private void throwParsingException(String message, int lineNumber) {
-//		String errorMessage = entityNameFromFileName + " : " + message + " [line " + lineNumber + "]";
-//		throw new DslParserException(errorMessage);
-//	}
 
 	/**
 	 * Constructor
@@ -156,10 +147,11 @@ public class EntityFileParser {
 	 * Process the given line at ENTITY LEVEL
 	 * @param line
 	 * @param lineNumber
-	 * @return the entity name if found or null if none
+	 * @return the word found in the given line (or null if none)
 	 */
-	protected String processLineEntityLevel(String line, int lineNumber) {
+	protected String processLineEntityLevel(String line, int lineNumber) throws EntityParsingError {
 		StringBuilder sb = new StringBuilder();
+		boolean firstWordIsDone = false ;
 		char previous = 0;
 		for (char c : line.toCharArray()) {
 			logChar(c);
@@ -182,11 +174,27 @@ public class EntityFileParser {
 					break;
 				
 				default:
-					
-					// TODO : check invalid characters
-					sb.append(c);
+					if ( inFields ) {
+						throw new EntityParsingError(entityNameFromFileName, "Unexpected char(s) after '{' ", lineNumber);
+					}
+					else {
+						// keep this char to compose Entity Name (if not already done)
+						if ( ! firstWordIsDone ) {
+							// TODO : check invalid characters ?
+							sb.append(c);
+						}
+						else {
+							throw new EntityParsingError(entityNameFromFileName, "Unexpected char(s) after entity name ", lineNumber);
+						}
+					}
 				}
 				previous = c;
+			}
+			else if ( c == SPACE || c == '\t' ) {
+				if ( sb.length() > 0 ) { 
+					// Word composition in progress...
+					firstWordIsDone = true ; // Word finished !
+				}
 			}
 		}
 		return currentValue(sb);
@@ -245,7 +253,7 @@ public class EntityFileParser {
 			if (c >= SPACE) { // if not a void char
 				
 				switch (c) {
-				case SPACE :   // end of field 
+				case SPACE :   // space = element separator 
 					if ( inAnnotations ) {
 						if ( inSingleQuote || inDoubleQuote ) {
 							keepChar(c);
@@ -264,7 +272,6 @@ public class EntityFileParser {
 							keepChar(c);
 						}
 						else {
-//							throwParsingException("Unexpected ';'", lineNumber) ;
 							throw new EntityParsingError(entityNameFromFileName, "Unexpected ';'", lineNumber);
 						}
 					}
@@ -272,7 +279,6 @@ public class EntityFileParser {
 						endOfCurrentField(lineNumber) ;
 					}
 					else {
-//						throwParsingException("Unexpected ';'", lineNumber) ;
 						throw new EntityParsingError(entityNameFromFileName, "Unexpected ';'", lineNumber);
 					}
 					break;
@@ -283,7 +289,6 @@ public class EntityFileParser {
 							keepChar(c);
 						}
 						else {
-//							throwParsingException("Unexpected '{'", lineNumber) ;
 							throw new EntityParsingError(entityNameFromFileName, "Unexpected '{'", lineNumber);
 						}
 					}
@@ -292,7 +297,6 @@ public class EntityFileParser {
 						currentField.setInAnnotations(true);
 					}
 					else {
-//						throwParsingException("Unexpected '{'", lineNumber) ;
 						throw new EntityParsingError(entityNameFromFileName, "Unexpected '{'", lineNumber);
 					}
 					
@@ -313,7 +317,6 @@ public class EntityFileParser {
 						fieldsClosed = true ; // We were in fields, so it's the end
 					}
 					else {
-//						throwParsingException("Unexpected '}'", lineNumber) ;
 						throw new EntityParsingError(entityNameFromFileName, "Unexpected '}'", lineNumber);
 					}
 					break;
@@ -338,7 +341,6 @@ public class EntityFileParser {
 						keepChar(c);
 					}
 					else {
-//						throw new DslParserException("Unexpected single quote");
 						throw new EntityParsingError(entityNameFromFileName, "Unexpected single quote", lineNumber);
 					}
 					break;
@@ -351,7 +353,6 @@ public class EntityFileParser {
 						keepChar(c);
 					}
 					else {
-//						throw new DslParserException("Unexpected double quote");
 						throw new EntityParsingError(entityNameFromFileName, "Unexpected double quote", lineNumber);
 					}
 					break;

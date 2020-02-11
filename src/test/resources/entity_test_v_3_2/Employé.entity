@@ -1,0 +1,11 @@
+// qlkjqlksjd
+Employé // accentuated entity name is accepted (not recommended but possible)
+{ 
+	id 		: int {@Id , @AutoIncremented, @Embedded , @Max(800)}; // the id
+	
+	prénom : string   // accentuated field name
+	   { @NotNull } ; 
+
+	nom : string { @NotBlank,  @Embedded } ;
+}
+ 

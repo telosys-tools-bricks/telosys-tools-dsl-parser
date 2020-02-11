@@ -1,1 +1,5 @@
-Entity{id:integer;
+
+
+Employee7 { id:integer;  // Unexpected char after '{'
+
+name:string }
