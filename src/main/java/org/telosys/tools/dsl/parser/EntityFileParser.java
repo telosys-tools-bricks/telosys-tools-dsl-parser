@@ -379,8 +379,6 @@ public class EntityFileParser {
 
 	private void endOfCurrentField(int lineNumber) {
 		currentField.finished();
-		// TODO : check field
-		// if invalid => ERROR unexpected ';'
 		log("\n\n=== FINISHED : " + currentField);
 		if ( ! currentField.isVoid() ) {
 			fieldsParsed.add(currentField);
