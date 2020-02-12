@@ -17,11 +17,6 @@ class FieldPartsBuilder {
 	private String nameAndTypePart = "" ;
 	private String annotationsPart = "" ;
 	
-//	private void log(String msg) {
-//		System.out.println("\n=== Field log : " + msg + " " + this.toString() + "\n");
-//		System.out.flush();
-//	}
-
 	protected FieldPartsBuilder(int lineNumber) {
 		super();
 		ParserLogger.log("\n=== Field log : new Field()" );
@@ -32,16 +27,6 @@ class FieldPartsBuilder {
 		this.lineNumber = lineNumber;
 	}
 
-//	protected FieldPartsBuilder(int lineNumber, String nameAndTypePart, String annotationsPart) {
-//		super();
-//		this.nameAndTypeBuilder = new StringBuilder();
-//		this.annotationsBuilder = new StringBuilder();
-//		this.finished = true ;
-//		this.lineNumber = lineNumber;
-//		this.nameAndTypePart = nameAndTypePart;
-//		this.annotationsPart = annotationsPart;
-//	}
-	
 	protected void append(char c) {
 		if ( ! finished ) {
 			if ( inAnnotations ) {
@@ -68,16 +53,6 @@ class FieldPartsBuilder {
 		this.inAnnotations = flag;
 	}
 	
-//	public int getLineNumber() {
-//		return lineNumber;
-//	}
-//	public String getNameAndTypePart() {
-//		return nameAndTypePart;
-//	}
-//	public String getAnnotationsPart() {
-//		return annotationsPart;
-//	}
-
 	public FieldParts getFieldParts() {
 		return new FieldParts(lineNumber, nameAndTypePart, annotationsPart);
 	}

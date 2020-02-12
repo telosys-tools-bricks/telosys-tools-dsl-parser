@@ -8,15 +8,10 @@ import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.dsl.parser.model.DomainType;
 
 public class FieldNameAndTypeParser {
-	// private final DomainModel model;
+
 	private final String entityNameFromFileName;
 	private final List<String> entitiesNamesInModel;
 
-	// public FieldNameAndTypeParser(String entityNameFromFileName, DomainModel
-	// model) {
-	// this.entityNameFromFileName = entityNameFromFileName;
-	// this.model = model ;
-	// }
 	/**
 	 * Constructor
 	 * @param entityNameFromFileName
@@ -26,11 +21,6 @@ public class FieldNameAndTypeParser {
 		this.entityNameFromFileName = entityNameFromFileName;
 		this.entitiesNamesInModel = entitiesNames;
 	}
-
-//	private void throwParsingException(FieldParts field, String message) {
-//		String errorMessage = entityNameFromFileName + " : " + message + " [line " + field.getLineNumber() + "]";
-//		throw new DslParserException(errorMessage);
-//	}
 
 	public FieldNameAndType parseFieldNameAndType(FieldParts field) throws FieldNameAndTypeError {
 
@@ -42,18 +32,13 @@ public class FieldNameAndTypeParser {
 		String fieldName = parts[0].trim();
 		String fieldTypeWithCardinality = parts[1].trim();
 
-		// if ( name.indexOf(' ') >= 0 ) {
-		// throwParsingException("Invalid field name", field.getLineNumber());
-		// }
 		checkFieldName(fieldNameAndType, fieldName);
 		checkFieldTypeWithCardinality(fieldNameAndType, fieldTypeWithCardinality);
 
 		// get field type and cardinality
 		String fieldTypeName = getFieldTypeWithoutCardinality(fieldNameAndType, fieldTypeWithCardinality);
 		int fieldTypeCardinality = getFieldTypeCardinality(fieldNameAndType, fieldTypeWithCardinality);
-//		checkFieldTypeName(field, fieldTypeName);
 		DomainType domainType = getFieldDomainType(fieldNameAndType, fieldTypeName);
-		// DomainType getFieldDomainType(Field field, String typeName)
 
 		return new FieldNameAndType(fieldName, fieldTypeName, fieldTypeCardinality, domainType);
 	}
@@ -74,21 +59,18 @@ public class FieldNameAndTypeParser {
 			switch (c) {
 			case ':':
 				if (separatorIndex >= 0) {
-//					throwParsingException(field, "multiple ':'");
 					throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "multiple ':'");
 				}
 				separatorIndex = i;
 				break;
 			case '[':
 				if (cardinalityOpen >= 0) {
-//					throwParsingException(field, "multiple '['");
 					throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "multiple '['");
 				}
 				cardinalityOpen = i;
 				break;
 			case ']':
 				if (cardinalityClose >= 0) {
-//					throwParsingException(field, "multiple ']'");
 					throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "multiple ']'");
 				}
 				cardinalityClose = i;
@@ -101,23 +83,18 @@ public class FieldNameAndTypeParser {
 	private void checkPositions(String fieldNameAndType, int separatorIndex, 
 			int cardinalityOpen, int cardinalityClose) throws FieldNameAndTypeError {
 		if (separatorIndex < 0) {
-//			throwParsingException(field, "':' missing");
 			throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "':' missing");
 		}
 		if (cardinalityOpen < 0 && cardinalityClose >= 0) {
-//			throwParsingException(field, "']' without '['");
 			throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "']' without '['");
 		}
 		if (cardinalityOpen >= 0 && cardinalityClose < 0) {
-//			throwParsingException(field, "'[' without ']'");
 			throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "'[' without ']'");
 		}
 		if (cardinalityOpen > cardinalityClose) {
-//			throwParsingException(field, "'[' and ']' inverted");
 			throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "'[' and ']' inverted");
 		}
 		if (cardinalityOpen >= 0 && cardinalityOpen < separatorIndex) {
-//			throwParsingException(field, "'[' before ':'");
 			throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "'[' before ':'");
 		}
 	}
@@ -130,39 +107,31 @@ public class FieldNameAndTypeParser {
 	 */
 	void checkFieldName(String fieldNameAndType, String fieldName) throws FieldNameAndTypeError {
 		if (fieldName.length() == 0) {
-//			throwParsingException(field, "Field name is missing");
 			throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "field name is missing");
 		}
 		if (fieldName.indexOf(' ') >= 0) {
-//			throwParsingException(field, "Invalid field name '" + fieldName + "'");
 			throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "invalid field name '" + fieldName + "'");
 		}
 	}
 
 	/**
-	 * Checks field type validity
-	 * 
-	 * @param field
-	 * @param fieldName
+	 * Check field type presence
+	 * @param fieldNameAndType
+	 * @param fieldTypeWithCardinality
+	 * @throws FieldNameAndTypeError
 	 */
 	void checkFieldTypeWithCardinality(String fieldNameAndType, String fieldTypeWithCardinality) throws FieldNameAndTypeError {
 		if (fieldTypeWithCardinality.length() == 0) {
-//			throwParsingException(field, "Field type is missing");
 			throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "field type is missing");
 		}
-		// if (fieldType.indexOf(' ') >= 0) {
-		// throwParsingException(field, "Invalid field type '" + fieldType +
-		// "'");
-		// }
-		// TODO : check type validity : int, string, Entity, etc
 	}
 
 	/**
 	 * Returns the field type without cardinality if any
-	 * 
-	 * @param field
+	 * @param fieldNameAndType
 	 * @param fieldTypeWithCardinality
 	 * @return
+	 * @throws FieldNameAndTypeError
 	 */
 	String getFieldTypeWithoutCardinality(String fieldNameAndType, String fieldTypeWithCardinality) throws FieldNameAndTypeError {
 		StringBuilder sb = new StringBuilder();
@@ -178,7 +147,6 @@ public class FieldNameAndTypeParser {
 		}
 		String fieldType = sb.toString().trim();
 		if (fieldType.length() == 0) {
-//			throwParsingException(field, "field type is missing");
 			throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "field type is missing");
 		}
 		return fieldType;
@@ -186,9 +154,10 @@ public class FieldNameAndTypeParser {
 
 	/**
 	 * Returns the field type cardinality ( the value defined between [ and ] )
-	 * @param field
+	 * @param fieldNameAndType
 	 * @param fieldTypeWithCardinality
 	 * @return
+	 * @throws FieldNameAndTypeError
 	 */
 	int getFieldTypeCardinality(String fieldNameAndType, String fieldTypeWithCardinality) throws FieldNameAndTypeError {
 		if (fieldTypeWithCardinality.contains("[") && fieldTypeWithCardinality.contains("]")) {
@@ -205,11 +174,9 @@ public class FieldNameAndTypeParser {
 				try {
 					cardinality = Integer.parseInt(figure.trim());
 				} catch (Exception e) {
-//					throwParsingException(field, "Invalid cardinality (integer expected)");
 					throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "invalid cardinality (integer expected)");
 				}
 				if (cardinality <= 0) {
-//					throwParsingException(field, "Invalid cardinality (1..N expected)");
 					throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "invalid cardinality (1..N expected)");
 				}
 				return cardinality;
@@ -233,9 +200,7 @@ public class FieldNameAndTypeParser {
 			// Entity type (it is supposed to be known ) eg : 'Book', 'Car', etc
 			return new DomainEntity(typeName);
 		} else {
-//			throwParsingException(field, "invalid type '" + typeName + "'");
 			throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "invalid type '" + typeName + "'");
-//			return null ;
 		}
 	}
 
