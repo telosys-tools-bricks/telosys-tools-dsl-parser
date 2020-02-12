@@ -313,8 +313,15 @@ public class EntityFileParser {
 						}
 					}
 					else if ( inFields ) {
-						inFields = false ; // End of fields
-						fieldsClosed = true ; // We were in fields, so it's the end
+						if ( currentField.isVoid() ) {
+							// no field definition in progress
+							inFields = false ; // End of fields
+							fieldsClosed = true ; // We were in fields, so it's the end
+						}
+						else {
+							// field definition in progress => no ';' before '}' 
+							throw new EntityParsingError(entityNameFromFileName, "';' (end of field) expected before '}'", lineNumber);
+						}
 					}
 					else {
 						throw new EntityParsingError(entityNameFromFileName, "Unexpected '}'", lineNumber);

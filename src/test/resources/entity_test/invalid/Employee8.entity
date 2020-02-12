@@ -1,14 +1,14 @@
 Employee8 {
 
- id:integer { @Id, @NotNull };
+ id:integer { @Id, @NotNull }; // invalid type 'integer'
  
  name : string ;
  
- name : string ; // duplicated field
- name : long ;
- name : long ;
+ name : string ; // field defined more than once
+ name : long ; // field defined more than once
+ name : long ; // field defined more than once
  
- foo : xxx ;
+ foo : xxx ; // invalid type 'xxx'
  
- comment : string { @Xxxx, @Max(aaa)};
+ comment : string { @Xxxx, @Max(aaa)}; // '@Xxxx' (unknown annotation)   '@Max(aaa)' (numeric parameter required)
 } 

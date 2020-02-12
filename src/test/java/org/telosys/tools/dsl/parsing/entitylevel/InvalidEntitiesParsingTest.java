@@ -89,4 +89,9 @@ public class InvalidEntitiesParsingTest {
 		assertTrue(entity.hasError());
 	}
 
+	@Test
+	public void testParseEmployee9() throws EntityParsingError {
+		parseWithErrorExpected("Employee9", new LinkedList<String>());
+	}
+
 }

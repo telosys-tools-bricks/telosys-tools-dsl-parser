@@ -1,0 +1,10 @@
+Employee9 {
+
+ id: int { @Id, @NotNull };
+ 
+ name : string ;
+ 
+ foo : double  ;
+ 
+ comment : string // ';' (end of field) expected before '}'
+} 
