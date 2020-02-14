@@ -1,9 +1,6 @@
 package org.telosys.tools.dsl.parser;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -133,14 +130,9 @@ public class Parser {
 		String entityNameParsed = result.getEntityNameParsed();
 		// check entity name
 		if (!entityNameFromFileName.equals(entityNameParsed)) {
-//			// try to convert to UTF-8
-//			String entityNameFromFileNameUTF8 = toUTF8(entityNameFromFileName);
-//			if (!entityNameFromFileNameUTF8.equals(entityNameParsed)) {
-//				String defaultCharset = Charset.defaultCharset().toString();
-//				throw new EntityParsingError(entityNameFromFileName, "Entity name '" + entityNameParsed
-//						+ "' different from file name" + " (default charset = " + defaultCharset + ")");
-//			}
+			// if the file name contains NON ASCII characters the difference can be due to charset conversion 
 			if ( composedOfStandardAsciiCharacters(entityNameFromFileName) ) {
+				// ASCII only => really different names
 				throw new EntityParsingError(entityNameFromFileName, "Entity name '" + entityNameParsed
 						+ "' different from file name '" + entityNameFromFileName +"' ");
 			}
@@ -175,17 +167,6 @@ public class Parser {
 		return domainEntity;
 	}
 
-	private String toUTF8(String name) {
-//		try {
-//			byte[] bytes = name.getBytes(Charset.defaultCharset());
-//			return new String(bytes, StandardCharsets.UTF_8);
-//		} catch (UnsupportedEncodingException e) {
-//			return name; // no change !
-//		}
-		byte[] bytes = name.getBytes(Charset.defaultCharset());
-		return new String(bytes, StandardCharsets.UTF_8);
-	}
-	
 	private boolean composedOfStandardAsciiCharacters(String s) {
 		byte[] bytes = s.getBytes();
 		for ( byte b : bytes ) {

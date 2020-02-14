@@ -17,8 +17,11 @@ package org.telosys.tools.dsl.parser;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -74,6 +77,28 @@ public class EntityFileParser {
 		this.entityFile = file;
 		this.entityNameFromFileName = DslModelUtil.getEntityName(entityFile);
 	}
+	
+	/**
+	 * Read all lines contained in the given file 
+	 * @param filePath
+	 * @return
+	 * @throws EntityParsingError
+	 */
+	protected List<String> readAllLines(String filePath) throws EntityParsingError {
+		Path path = Paths.get(filePath); 
+		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) { 
+			List<String> lines = new LinkedList<>();
+			String line;
+			while ((line = br.readLine()) != null) {
+				lines.add(line);
+			}
+			return lines;
+		} catch (IOException e) {
+			throw new EntityParsingError(entityNameFromFileName, "IOException : " + e.getMessage() );
+		} catch (Exception e) {
+			throw new EntityParsingError(entityNameFromFileName, "Exception : " + e.getMessage() );
+		}
+	}
 
 	/**
 	 * Parse entity defined in the current file
@@ -81,8 +106,21 @@ public class EntityFileParser {
 	 * @throws EntityParsingError
 	 */
 	public EntityFileParsingResult parse() throws EntityParsingError  {
+		if ( ! entityFile.exists() ) {
+			throw new EntityParsingError(entityNameFromFileName, "File not found");
+		}
+		log("parse() : File : " + entityFile.getAbsolutePath());
 
-		parseFile() ; 
+		List<String> lines = readAllLines(entityFile.getAbsolutePath());
+		int lineNumber = 0 ;
+		for ( String line : lines ) {
+			lineNumber++;
+			// populate "fieldsParsed"
+			processLine(line, lineNumber);
+		}
+		
+//		parseFile() ; 
+		
 		List<FieldParts> fieldsParts = new LinkedList<>();
 		for ( FieldPartsBuilder fb : fieldsParsed ) {
 			fieldsParts.add(fb.getFieldParts());
@@ -90,24 +128,24 @@ public class EntityFileParser {
 		return new EntityFileParsingResult(this.entityNameFromFileName, this.entityNameParsed, fieldsParts);
 	}
 	
-	protected void parseFile() throws EntityParsingError {
-		if (!entityFile.exists()) {
-			throw new EntityParsingError(entityNameFromFileName, "File not found");
-		}
-		log("parse() : File : " + entityFile.getAbsolutePath());
-		
-		int lineNumber = 0;
-		try (BufferedReader br = new BufferedReader(new FileReader(entityFile))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				lineNumber++;
-				processLine(line, lineNumber);
-				// read next line
-			}
-		} catch (IOException e) {
-			throw new EntityParsingError(entityNameFromFileName, "IOException");
-		}
-	}
+//	protected void parseFile() throws EntityParsingError {
+//		if (!entityFile.exists()) {
+//			throw new EntityParsingError(entityNameFromFileName, "File not found");
+//		}
+//		log("parse() : File : " + entityFile.getAbsolutePath());
+//		
+//		int lineNumber = 0;
+//		try (BufferedReader br = new BufferedReader(new FileReader(entityFile))) {
+//			String line;
+//			while ((line = br.readLine()) != null) {
+//				lineNumber++;
+//				processLine(line, lineNumber);
+//				// read next line
+//			}
+//		} catch (IOException e) {
+//			throw new EntityParsingError(entityNameFromFileName, "IOException");
+//		}
+//	}
 	
 	/**
 	 * Process any type of line 

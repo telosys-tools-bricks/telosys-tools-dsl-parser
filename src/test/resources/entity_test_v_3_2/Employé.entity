@@ -7,5 +7,7 @@ Employé // accentuated entity name is accepted (not recommended but possible)
 	   { @NotNull } ; 
 
 	nom : string { @NotBlank,  @Embedded } ;
+	
+	àéè : boolean ;
 }
  
