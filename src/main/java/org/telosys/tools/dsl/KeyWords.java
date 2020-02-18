@@ -63,9 +63,9 @@ public class KeyWords {
 		//--- Added in ver 3.2.0
 		AnnotationName.DEFAULT_VALUE + "$", // $ means string parameter  @DefaultValue(ab c)
 		AnnotationName.INITIAL_VALUE + "$", // $ means string parameter  @InitialValue(ab c)
-		AnnotationName.LABEL         + "$", // $ means string parameter  
-		AnnotationName.INPUT_TYPE    + "$", // $ means string parameter 
-		AnnotationName.PATTERN       + "$", // $ means string parameter  
+		AnnotationName.LABEL         + "$", // $ means string parameter  @Label(ab c)
+		AnnotationName.INPUT_TYPE    + "$", // $ means string parameter  @InputType(xx)
+		AnnotationName.PATTERN       + "$", // $ means string parameter  @Pattern(xxx)
 
 		// In the future 
 		// "DbColumn$" // $ means string parameter

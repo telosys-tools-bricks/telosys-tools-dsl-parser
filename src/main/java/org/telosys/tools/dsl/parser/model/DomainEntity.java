@@ -22,10 +22,13 @@ import java.util.Map;
 
 import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 
-public class DomainEntity extends DomainType {
+public class DomainEntity { // extends DomainType {
 
-//    public static final int THIRTY_ONE_HASH_CODE = 31; 
-
+    /**
+     * Entity name
+     */
+    private final String name;
+    
     /**
      * Map of fields used for direct access by field name and to check uniqueness 
      */
@@ -39,9 +42,14 @@ public class DomainEntity extends DomainType {
      * @param name
      */
     public DomainEntity(String name) {
-        super(name, DomainTypeNature.ENTITY);
+//        super(name, DomainTypeNature.ENTITY);
+        this.name = name ;
         // LinkedHashMap to keep the original order
         this.fieldsMap = new LinkedHashMap<>(); 
+    }
+    
+    public final String getName() {
+        return name;
     }
 
     public boolean hasField(DomainField field) {

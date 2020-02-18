@@ -3,7 +3,7 @@ package org.telosys.tools.dsl.parser;
 import java.util.List;
 
 import org.telosys.tools.dsl.parser.exceptions.FieldNameAndTypeError;
-import org.telosys.tools.dsl.parser.model.DomainEntity;
+import org.telosys.tools.dsl.parser.model.DomainEntityType;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.dsl.parser.model.DomainType;
 
@@ -198,7 +198,8 @@ public class FieldNameAndTypeParser {
 			return DomainNeutralTypes.getType(typeName);
 		} else if (entitiesNamesInModel.contains(typeName)) {
 			// Entity type (it is supposed to be known ) eg : 'Book', 'Car', etc
-			return new DomainEntity(typeName);
+//			return new DomainEntity(typeName); 
+			return new DomainEntityType(typeName); 
 		} else {
 			throw new FieldNameAndTypeError(entityNameFromFileName, fieldNameAndType, "invalid type '" + typeName + "'");
 		}

@@ -1,3 +1,20 @@
+        // TODO : null or "" ?????
+//        assertEquals("", attrib.getPattern() );
+//        assertEquals("", attrib.getInputType() );
+//        assertEquals("", attrib.getDefaultValue() );
+        assertNull(attrib.getInitialValue() );
+        assertNull(attrib.getPattern() );
+        assertNull(attrib.getInputType() );
+        assertNull(attrib.getDefaultValue() );
+-------------------------------------------------------
+
+All links out of attributes ????
+
+	gender : Gender; // in attributes ( "pseudo FK" )
+
+	country : Country[];  // not in attributes ( due to OneToMay cardinality )
+
+-------------------------------------------------------
 
 String getLabel();
     @Label(abc)  // trim

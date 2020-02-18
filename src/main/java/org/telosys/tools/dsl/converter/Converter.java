@@ -60,17 +60,15 @@ public class Converter {
 	 */
 	public Model convertToGenericModel(DomainModel domainModel) {
 		
-		DslModel genericModel = new DslModel();
-		genericModel.setName( voidIfNull(domainModel.getName()) );
-		genericModel.setDescription( voidIfNull(domainModel.getDescription() ) );
-
 		// convert all entities
-		convertEntities(domainModel, genericModel);
+		DslModel dslModel = step1ConvertAllEntities(domainModel);
+		
+		step2CreateAllLinks(domainModel, dslModel);
 		
 		// Finally sort the entities by class name 
-		genericModel.sortEntitiesByClassName();
+		dslModel.sortEntitiesByClassName();
 		
-		return genericModel;
+		return dslModel;
 	}
 
 	private void check(boolean expr, String errorMessage ) {
@@ -100,32 +98,40 @@ public class Converter {
 	 * @param domainModel DSL model
 	 * @param genericModel Generic model
 	 */
-	private void convertEntities(DomainModel domainModel, DslModel genericModel) {
+	protected DslModel step1ConvertAllEntities(DomainModel domainModel) {
 		log("convertEntities()...");
-		if(domainModel.getEntities() == null) {
-			return;
-		}
+		
+		DslModel dslModel = new DslModel();
+		dslModel.setName( voidIfNull(domainModel.getName()) );
+		dslModel.setDescription( voidIfNull(domainModel.getDescription() ) );
 
-		// STEP 1 : Convert all the existing "DomainEntity" to "GenericEntity"
+
+		// for each "DomainEntity" create a void "GenericEntity"
 		for(DomainEntity domainEntity : domainModel.getEntities()) {
-			DslModelEntity genericEntity = convertEntity( domainEntity );
-			genericModel.getEntities().add(genericEntity);
+			DslModelEntity genericEntity = createVoidEntity( domainEntity );
+			dslModel.getEntities().add(genericEntity);
 		}
 		
 		// STEP 2 : Convert basic attributes ( attributes with neutral type ) 
 		for(DomainEntity domainEntity : domainModel.getEntities()) {
 			// Get the GenericEntity built previously
-			DslModelEntity genericEntity = (DslModelEntity) genericModel.getEntityByClassName(domainEntity.getName());
+			DslModelEntity genericEntity = (DslModelEntity) dslModel.getEntityByClassName(domainEntity.getName());
 			// Convert all attributes to "basic type" or "void pseudo FK attribute" (to keep the initial attributes order)
-			convertAttributes(domainEntity, genericEntity, genericModel);
+			convertAttributes(domainEntity, genericEntity, dslModel);
 		}
-		
+
+		return dslModel ;
+	}
+
+	protected void step2CreateAllLinks(DomainModel domainModel, DslModel genericModel) {
+
 		// STEP x : Create the links ( from attributes referencing an entity ) 
 		for(DomainEntity domainEntity : domainModel.getEntities()) {
 			// Get the GenericEntity built previously
 			DslModelEntity genericEntity = (DslModelEntity) genericModel.getEntityByClassName(domainEntity.getName());
 			// Creates a link for each field referencing an entity
-			createLinks(domainEntity, genericEntity, genericModel);
+//			createLinks(domainEntity, genericEntity, genericModel);
+			createLinks(domainEntity, genericEntity, domainModel);
 		}
 		
 		// STEP 3 : Build and set "pseudo Foreign Key Attributes"
@@ -136,7 +142,9 @@ public class Converter {
 			for ( DomainField field : domainEntity.getFields() ) {
 	            if ( isPseudoForeignKey(field) ) {
 	            	// Build the "pseudo FK attribute"
-	            	DslModelAttribute pseudoFKAttribute = convertAttributePseudoForeignKey(field);
+//	            	DslModelAttribute pseudoFKAttribute = convertAttributePseudoForeignKey(field);
+	            	DslModelAttribute pseudoFKAttribute = convertAttributePseudoForeignKey(field, domainModel);
+	            	
 	            	// Search the original "void attribute" in the "GenericEntity" and replace it by the "pseudo FK attribute"
 	            	String originalName = field.getName() ;
 	            	Attribute old = genericEntity.replaceAttribute(originalName, pseudoFKAttribute);
@@ -146,7 +154,7 @@ public class Converter {
 		}
 	}
 	
-	private DslModelEntity convertEntity( DomainEntity domainEntity ) {
+	private DslModelEntity createVoidEntity( DomainEntity domainEntity ) {
 		log("convertEntity("+ domainEntity.getName() +")...");
 		DslModelEntity genericEntity = new DslModelEntity();
 		genericEntity.setClassName(notNull(domainEntity.getName()));
@@ -175,29 +183,36 @@ public class Converter {
 		}
 		for ( DomainField domainEntityField : domainEntity.getFields() ) {
 
+			// Init the new attribute with at least its name
+            DslModelAttribute genericAttribute = new DslModelAttribute();
+            genericAttribute.setName( notNull(domainEntityField.getName()) );
+
             DomainType domainFieldType = domainEntityField.getType();
             if (domainFieldType.isNeutralType() ) {
             	// STANDARD NEUTRAL TYPE = BASIC ATTRIBUTE
         		log("convertEntityAttributes() : " + domainEntityField.getName() + " : neutral type");
             	// Simple type attribute
-            	DslModelAttribute genericAttribute = convertAttributeNeutralType( domainEntityField );
-            	check(genericAttribute != null, "convertAttributeNeutralType returns null");
+//            	DslModelAttribute genericAttribute = convertAttributeNeutralType( domainEntityField );
+            	convertAttributeNeutralType( domainEntityField, genericAttribute );
+//            	check(genericAttribute != null, "convertAttributeNeutralType returns null");
             	// Add the new "basic attribute" to the entity 
             	genericEntity.getAttributes().add(genericAttribute);
             }
             else {
             	// Not a "neutral type" ==> "entity reference" ?
             	if ( isPseudoForeignKey(domainEntityField) ) {
-                	// Add a "temporary void attribute" at the expected position in the attributes list
-                    DslModelAttribute genericAttribute = new DslModelAttribute();
-                    genericAttribute.setName( notNull(domainEntityField.getName()) );
+//                	// Add a "temporary void attribute" at the expected position in the attributes list
+//                    DslModelAttribute genericAttribute = new DslModelAttribute();
+//                    genericAttribute.setName( notNull(domainEntityField.getName()) );
+                	// Add the new attribute to the entity 
                 	genericEntity.getAttributes().add(genericAttribute);
             	}
             }
 		}
 	}
 
-	private void createLinks(DomainEntity domainEntity, DslModelEntity genericEntity, DslModel genericModel) {
+//	private void createLinks(DomainEntity domainEntity, DslModelEntity genericEntity, DslModel genericModel) {
+	private void createLinks(DomainEntity domainEntity, DslModelEntity genericEntity, DomainModel domainModel) {
 		log("createLinks()...");
 		if(domainEntity.getFields() == null) {
 			return;
@@ -209,7 +224,8 @@ public class Converter {
         		log("createLinks() : " + domainEntityField.getName() + " : entity type (link)");
             	// Link type attribute (reference to 1 or N other entity )
         		linkIdCounter++;
-            	DslModelLink genericLink = convertAttributeLink( domainEntityField, genericModel );
+//            	DslModelLink genericLink = convertAttributeLink( domainEntityField, genericModel );
+            	DslModelLink genericLink = convertAttributeLink( domainEntityField, domainModel );
             	// Add the new link to the entity 
                	genericEntity.getLinks().add(genericLink);
             }
@@ -222,15 +238,15 @@ public class Converter {
 	 * @param domainEntityField
 	 * @return
 	 */
-	private DslModelAttribute convertAttributeNeutralType( DomainField domainEntityField ) {
+	private void convertAttributeNeutralType( DomainField domainEntityField, DslModelAttribute genericAttribute) {
 		log("convertAttributeNeutralType() : name = " + domainEntityField.getName() );
 
 		DomainType domainFieldType = domainEntityField.getType();
 		check(domainFieldType.isNeutralType(), "Invalid field type. Neutral type expected");
         DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
 		
-        DslModelAttribute genericAttribute = new DslModelAttribute();
-        genericAttribute.setName( notNull(domainEntityField.getName()) );
+//        DslModelAttribute genericAttribute = new DslModelAttribute();
+//        genericAttribute.setName( notNull(domainEntityField.getName()) );
         
         // the "neutral type" is now the only type managed at this level
 //        genericAttribute.setSimpleType(convertNeutralTypeToSimpleType(domainNeutralType) );
@@ -280,7 +296,7 @@ public class Converter {
         else {
     		log("Converter : no annotation" );
         }
-        return genericAttribute;
+//        return genericAttribute;
 	}
 	
 	private void initAttributeDefaultValues(DslModelAttribute genericAttribute, DomainField domainEntityField ) {
@@ -295,11 +311,11 @@ public class Converter {
         // genericAttribute.setDateBefore(isDateBefore);
         // genericAttribute.setDateBeforeValue(dateBeforeValue);
         // genericAttribute.setDateType(dateType);
-        // genericAttribute.setDefaultValue(defaultValue); // TODO
-        genericAttribute.setLabel(domainEntityField.getName()); // TODO with @Label(xxx)
-        // genericAttribute.setInputType(inputType); // TODO ???
+        // genericAttribute.setDefaultValue(defaultValue); // only set by annotation
+        genericAttribute.setLabel(domainEntityField.getName()); // overridden by @Label(xxx) if any
+        // genericAttribute.setInputType(inputType); // only set by annotation
         genericAttribute.setSelected(true);
-        // genericAttribute.setPattern(pattern); // TODO
+        // genericAttribute.setPattern(pattern); // only set by annotation
 		
 	}
 	
@@ -357,7 +373,7 @@ public class Converter {
 	            genericAttribute.setLongText(true);
 	        }
 	        
-	        //--- Added in ver 3.2.0
+	        //--- Added in ver 3.2.0 
 	        if(AnnotationName.DEFAULT_VALUE.equals(annotation.getName())) {
 	    		log("Converter : annotation @DefaultValue" );
 	            genericAttribute.setDefaultValue(annotation.getParameterAsString());
@@ -365,6 +381,18 @@ public class Converter {
 	        if(AnnotationName.INITIAL_VALUE.equals(annotation.getName())) {
 	    		log("Converter : annotation @InitialValue" );
 	            genericAttribute.setInitialValue(annotation.getParameterAsString());
+	        }
+	        if(AnnotationName.LABEL.equals(annotation.getName())) {
+	    		log("Converter : annotation @Label" );
+	            genericAttribute.setLabel(annotation.getParameterAsString());
+	        }
+	        if(AnnotationName.INPUT_TYPE.equals(annotation.getName())) {
+	    		log("Converter : annotation @InputType" );
+	            genericAttribute.setInputType(annotation.getParameterAsString());
+	        }
+	        if(AnnotationName.PATTERN.equals(annotation.getName())) {
+	    		log("Converter : annotation @Pattern" );
+	            genericAttribute.setInputType(annotation.getParameterAsString());
 	        }
 	        
 	        // TODO :
@@ -425,17 +453,35 @@ public class Converter {
 	}
 	
 	/**
+	 * Returns the entity referenced par the given field
+	 * @param domainField
+	 * @param domainModel
+	 * @return
+	 */
+	private DomainEntity getReferencedEntity(DomainField domainField, DomainModel domainModel) {
+		DomainType domainFieldType = domainField.getType();
+		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
+		DomainEntity domainEntityTarget = domainModel.getEntity(domainFieldType.getName());
+		return domainEntityTarget;
+	}
+
+	private DomainEntity getReferencedEntity(DomainType domainFieldType, DomainModel domainModel) {
+		return domainModel.getEntity(domainFieldType.getName());
+	}
+
+	/**
 	 * Converts a "reference/link" attribute <br>
 	 * eg : car : Car ; <br>
 	 * @param domainEntityField the field to be converted
 	 * @return
 	 */
-	private DslModelAttribute convertAttributePseudoForeignKey( DomainField domainEntityField ) {
+	private DslModelAttribute convertAttributePseudoForeignKey( DomainField domainEntityField, DomainModel domainModel ) {
 		log("convertAttributePseudoForeignKey() : name = " + domainEntityField.getName() );
 
-		DomainType domainFieldType = domainEntityField.getType();
-		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
-		DomainEntity referencedEntity = (DomainEntity) domainFieldType;
+//		DomainType domainFieldType = domainEntityField.getType();
+//		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
+//		// DomainEntity referencedEntity = (DomainEntity) domainFieldType;
+		DomainEntity referencedEntity = getReferencedEntity(domainEntityField, domainModel);
 
 		DomainField referencedEntityIdField = getReferencedEntityIdField(referencedEntity);
 		
@@ -474,7 +520,7 @@ public class Converter {
 	private DomainField getReferencedEntityIdField( DomainEntity domainEntity ) {
 		DomainField id = null ;
 		int idCount = 0 ;
-		check(domainEntity.getFields().size() > 0, "No field in entity " + domainEntity );
+		check(domainEntity.getFields().size() > 0, "No field in referenced entity '" + domainEntity.getName() + "'");
 		for ( DomainField field : domainEntity.getFields() ) {
 			if ( isId( field ) ) {
 				id = field ;
@@ -506,17 +552,20 @@ public class Converter {
 	 * @param genericModel
 	 * @return
 	 */
-	private DslModelLink convertAttributeLink( DomainField domainEntityField, DslModel genericModel ) {
+//	private DslModelLink convertAttributeLink( DomainField domainEntityField, DslModel genericModel ) {
+		private DslModelLink convertAttributeLink( DomainField domainEntityField, DomainModel domainModel) {
 		
 		DomainType domainFieldType = domainEntityField.getType();
 		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
 		
-		DomainEntity domainEntityTarget = (DomainEntity) domainFieldType;
+		// DomainEntity domainEntityTarget = (DomainEntity) domainFieldType;
+		DomainEntity domainEntityTarget = domainModel.getEntity(domainFieldType.getName());
 		
 		// Check target existence
-		DslModelEntity genericEntityTarget =
-				(DslModelEntity) genericModel.getEntityByClassName(domainEntityTarget.getName());
-		check( ( genericEntityTarget != null ), "No target entity for field '" + domainEntityField.getName() + "'. Cannot create Link");
+//		DslModelEntity genericEntityTarget =
+//				(DslModelEntity) genericModel.getEntityByClassName(domainEntityTarget.getName());
+//		check( ( genericEntityTarget != null ), "No target entity for field '" + domainEntityField.getName() + "'. Cannot create Link");
+		check( ( domainEntityTarget != null ), "No target entity for field '" + domainEntityField.getName() + "'. Cannot create Link");
 
 		DslModelLink genericLink = new DslModelLink();
 

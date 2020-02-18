@@ -17,11 +17,13 @@ public class DomainEntityTest {
 		DomainEntity entity = new DomainEntity("Book") ;
 		assertEquals ( entity.getName(), "Book" );
 		
-		assertTrue ( entity.getNature() == DomainTypeNature.ENTITY );
-		
-		assertTrue ( entity.isEntity() );		
-		assertFalse ( entity.isEnumeration() );
-		assertFalse ( entity.isNeutralType() );
+//		assertTrue ( entity.getNature() == DomainTypeNature.ENTITY );
+//		
+//		assertTrue ( entity.isEntity() );		
+//		assertFalse ( entity.isEnumeration() );
+//		assertFalse ( entity.isNeutralType() );
+		assertEquals(0, entity.getNumberOfFields());
+		assertNotNull(entity.getFields());
 	}
 	
 	@Test
@@ -58,7 +60,7 @@ public class DomainEntityTest {
 		DomainEntity student = new DomainEntity("Student") ;
 		assertTrue ( student.getNumberOfFields() == 0 ) ;
 		
-		student.addField( new DomainField("teacher", teacher ) );
+		student.addField( new DomainField("teacher", new DomainEntityType("Teacher") ) );
 		assertTrue ( student.getNumberOfFields() == 1 ) ;
 		
 		DomainField field = student.getField("teacher");
@@ -94,8 +96,8 @@ public class DomainEntityTest {
 	@Test
 	public void testFieldDuplicated2() {
 		DomainEntity entity = new DomainEntity("Student") ;
-		entity.addField( new DomainField("teacher", new DomainEntity("Teacher") ) );
-		entity.addField( new DomainField("teacher", new DomainEntity("Teacher") ) );
+		entity.addField( new DomainField("teacher", new DomainEntityType("Teacher") ) );
+		entity.addField( new DomainField("teacher", new DomainEntityType("Teacher") ) );
 	}
 	
 //	@Test ( expected = DslParserException.class )

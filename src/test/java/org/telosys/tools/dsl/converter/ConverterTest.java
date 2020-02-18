@@ -8,6 +8,7 @@ import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
+import org.telosys.tools.dsl.parser.model.DomainEntityType;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralType;
@@ -317,7 +318,7 @@ public class ConverterTest {
 		
 		driverEntity.addField( new DomainField("firstName", new DomainNeutralType("string") ) );
 		driverEntity.addField( new DomainField("lastName",  new DomainNeutralType("string") ) );
-		driverEntity.addField( new DomainField(0, "car",  carEntity, 1 ) );
+		driverEntity.addField( new DomainField(0, "car",  new DomainEntityType("Car") , 1 ) );
 
 		//--- "Car" entity referencing "Driver" entity
 		DomainField carId = new DomainField("id",     new DomainNeutralType("short") );
@@ -325,7 +326,7 @@ public class ConverterTest {
 		carEntity.addField(carId);
 		
 		carEntity.addField(new DomainField("name",   new DomainNeutralType("string")) );
-		carEntity.addField(new DomainField("driver", driverEntity) ); // Reference to "Driver"
+		carEntity.addField(new DomainField("driver", new DomainEntityType("Driver")) ); // Reference to "Driver"
 		
 		//--- "Group" entity referencing N "Driver" entity
 		DomainField groupId = new DomainField("id",     new DomainNeutralType("int"));
@@ -333,7 +334,7 @@ public class ConverterTest {
 		groupEntity.addField(groupId);
 		
 		groupEntity.addField(new DomainField("name",   new DomainNeutralType("string")) );
-		groupEntity.addField(new DomainField(0, "drivers", driverEntity, -1) ); // Reference to "Driver"
+		groupEntity.addField(new DomainField(0, "drivers", new DomainEntityType("Driver"), -1) ); // Reference to "Driver"
 		
 		//--- Add entities to model
 		domainModel.addEntity(carEntity);

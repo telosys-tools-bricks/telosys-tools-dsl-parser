@@ -4,6 +4,6 @@ Person {
 	firstName : string {@SizeMax( 3)} ;
 	lastName : string;
 	birthDate : date ;
-	country : Country[ 999]; 
+	country : Country[]; 
 	gender : Gender;
 }

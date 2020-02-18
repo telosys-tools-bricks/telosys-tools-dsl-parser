@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 import java.util.Map;
 
@@ -15,7 +16,7 @@ import org.telosys.tools.generic.model.Model;
 
 public class DslModelManagerTest {
     
-	private Model loadModel(String modelFileName) throws EntityParsingError {
+	private Model loadModel(String modelFileName) {
 		System.out.println("Loading model : " + modelFileName );
         DslModelManager modelLoader = new DslModelManager();
         Model model = modelLoader.loadModel(modelFileName);
@@ -23,18 +24,16 @@ public class DslModelManagerTest {
 			System.out.println("ERROR : cannot load model");
 			System.out.println(modelLoader.getErrorMessage());
 			//modelLoader.getParsingErrors()
-			for ( Map.Entry<String, String> entry : modelLoader.getParsingErrors().entrySet() )
-			{
+			for ( Map.Entry<String, String> entry : modelLoader.getParsingErrors().entrySet() ) {
 				System.out.println(" . " + entry.getKey() + " : " + entry.getValue() );
 			}
-			throw new RuntimeException("TEST ERROR");
+			throw new RuntimeException("Cannot load model : " + modelLoader.getErrorMessage());
 		}
-		System.out.println("Model loaded." );
 		return model ;
     }
     
     @Test
-    public void testModel1() throws EntityParsingError {
+    public void test_ValidModel_OneEntity_Model() {
         Model model = loadModel("src/test/resources/model_test/valid/OneEntity.model");
         
         assertNotNull(model);
@@ -82,7 +81,7 @@ public class DslModelManagerTest {
     }
 
     @Test
-    public void test2() throws EntityParsingError {
+    public void test_ValidModel_Types_Model()  {
         Model model = loadModel("src/test/resources/model_test/valid/types.model");
         
         assertNotNull(model);
@@ -212,4 +211,126 @@ public class DslModelManagerTest {
         	}
         }
     }
+    
+    @Test
+    public void test_ValidModel_TwoEntity_Model() throws EntityParsingError {
+        Model model = loadModel("src/test/resources/model_test/valid/TwoEntities.model");
+        
+        assertNotNull(model);
+        
+        assertEquals(2, model.getEntities().size() ); // 2 entities
+        
+        //----- ENTITY "Employee"
+        Entity employeeEntity = model.getEntityByClassName("Employee");
+        assertNotNull(employeeEntity);
+        
+        assertEquals(4, employeeEntity.getAttributes().size());    
+        int i = 0 ;
+        Attribute attrib = null ;
+        
+        // Attributes in their original order :
+        
+        attrib = employeeEntity.getAttributes().get(i++);
+        assertEquals("id", attrib.getName() ) ;
+		assertEquals("int", attrib.getNeutralType() ); 
+        assertTrue(attrib.isKeyElement());
+        assertTrue(attrib.isNotNull()); // If "@Id" => "@NotNull"
+        assertTrue(attrib.isDatabaseNotNull() ); // If "@Id" => "@NotNull"
+        assertFalse(attrib.isFK());
+        assertFalse(attrib.isFKSimple());
+        assertFalse(attrib.isFKComposite());
+
+        // TODO : null or "" ?????
+//        assertEquals("", attrib.getPattern() );
+//        assertEquals("", attrib.getInputType() );
+//        assertEquals("", attrib.getDefaultValue() );
+        assertNull(attrib.getInitialValue() );
+        assertNull(attrib.getPattern() );
+        assertNull(attrib.getInputType() );
+        assertNull(attrib.getDefaultValue() );
+        
+        attrib = employeeEntity.getAttributes().get(i++);
+        assertEquals("firstName", attrib.getName() ) ;
+		assertEquals("string", attrib.getNeutralType() ); 
+        assertFalse(attrib.isKeyElement());
+        assertFalse(attrib.isNotNull());
+        assertFalse(attrib.isDatabaseNotNull());
+        assertFalse(attrib.isFK());
+        assertFalse(attrib.isFKSimple());
+        assertFalse(attrib.isFKComposite());
+
+        attrib = employeeEntity.getAttributes().get(i++);
+        assertEquals("birthDate", attrib.getName() ) ;
+		assertEquals("date", attrib.getNeutralType() ); 
+        assertFalse(attrib.isKeyElement());
+        assertFalse(attrib.isNotNull());
+        assertFalse(attrib.isDatabaseNotNull());
+        assertFalse(attrib.isFK());
+        assertFalse(attrib.isFKSimple());
+        assertFalse(attrib.isFKComposite());
+
+        attrib = employeeEntity.getAttributes().get(i++);
+        assertEquals("country", attrib.getName() ) ;
+        assertEquals("int", attrib.getNeutralType() ); // country PK is "id : int" 
+        assertFalse(attrib.isKeyElement());
+        assertFalse(attrib.isNotNull());
+        assertFalse(attrib.isDatabaseNotNull());
+        assertTrue(attrib.isFK());
+        assertTrue(attrib.isFKSimple());
+        assertFalse(attrib.isFKComposite());
+
+    }
+
+    @Test
+    public void test_ValidModel_FourEntity_Model() throws EntityParsingError {
+        Model model = loadModel("src/test/resources/model_test/valid/FourEntities.model");
+        
+        assertNotNull(model);
+        
+        assertEquals(4, model.getEntities().size() ); // 2 entities
+        
+        //----- ENTITY "Employee"
+        Entity employeeEntity = model.getEntityByClassName("Employee");
+        assertNotNull(employeeEntity);
+        
+        //----- ENTITY "Country"
+        Entity countryEntity = model.getEntityByClassName("Country");
+        assertNotNull(countryEntity);
+        
+        //----- ENTITY "Gender"
+        Entity genderEntity = model.getEntityByClassName("Gender");
+        assertNotNull(genderEntity);
+        
+        //----- ENTITY "Person"
+        Entity personEntity = model.getEntityByClassName("Person");
+        assertNotNull(personEntity);
+        assertEquals(5, personEntity.getAttributes().size());
+        Attribute attrib ;
+        int i = 0 ;
+        
+        attrib = personEntity.getAttributes().get(i++);
+        assertEquals("id", attrib.getName() ) ;
+
+        attrib = personEntity.getAttributes().get(i++);
+        assertEquals("firstName", attrib.getName() ) ;
+
+        attrib = personEntity.getAttributes().get(i++);
+        assertEquals("lastName", attrib.getName() ) ;
+
+        attrib = personEntity.getAttributes().get(i++);
+        assertEquals("birthDate", attrib.getName() ) ;
+
+        // country is a OneToMay links => not in the attributes 
+        
+        attrib = personEntity.getAttributes().get(i++);
+        assertEquals("gender", attrib.getName() ) ;
+        assertEquals("string", attrib.getNeutralType() ); // gender PK is "id : string" 
+        assertFalse(attrib.isKeyElement());
+        assertFalse(attrib.isNotNull());
+        assertFalse(attrib.isDatabaseNotNull());
+        assertTrue(attrib.isFK());
+        assertTrue(attrib.isFKSimple());
+        assertFalse(attrib.isFKComposite());
+
+    }    
 }
