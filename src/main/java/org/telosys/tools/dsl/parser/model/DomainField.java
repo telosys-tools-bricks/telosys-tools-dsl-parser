@@ -115,10 +115,6 @@ public class DomainField {
     	errors.add(error);
     }
     
-    public boolean hasError() {
-    	return ! errors.isEmpty();
-    }
-    
     public final int getLineNumber() {
         return lineNumber;
     }
@@ -165,6 +161,9 @@ public class DomainField {
         return type.isEnumeration();
     }
 
+    //------------------------------------------------------------------------
+    // ANNOTATIONS
+    //------------------------------------------------------------------------
     /**
      * Returns all the annotation names (in alphabetical order)
      *
@@ -184,6 +183,22 @@ public class DomainField {
         return this.annotations;
     }
 
+    //------------------------------------------------------------------------
+    // TAGS
+    //------------------------------------------------------------------------
+    public final List<String> getTagNames() {
+        List<String> names = new LinkedList<>(tags.keySet());
+        Collections.sort(names);
+        return names;
+    }
+
+    public Map<String, DomainTag> getTags() {
+        return this.tags;
+    }
+
+    //------------------------------------------------------------------------
+    // ERRORS
+    //------------------------------------------------------------------------
     public boolean hasErrors() {
     	return ! this.errors.isEmpty();
     }
@@ -192,6 +207,7 @@ public class DomainField {
     	return this.errors;
     }
     
+    //------------------------------------------------------------------------
     @Override
     public String toString() {
     	
