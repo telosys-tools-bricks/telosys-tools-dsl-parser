@@ -1,11 +1,8 @@
-        // TODO : null or "" ?????
-//        assertEquals("", attrib.getPattern() );
-//        assertEquals("", attrib.getInputType() );
-//        assertEquals("", attrib.getDefaultValue() );
-        assertNull(attrib.getInitialValue() );
-        assertNull(attrib.getPattern() );
-        assertNull(attrib.getInputType() );
-        assertNull(attrib.getDefaultValue() );
+
+-------------------------------------------------------
+
+Throw ERROR if invalid annotation ( eg @Xxxx )
+
 -------------------------------------------------------
 
 All links out of attributes ????
@@ -15,18 +12,6 @@ All links out of attributes ????
 	country : Country[];  // not in attributes ( due to OneToMay cardinality )
 
 -------------------------------------------------------
-
-String getLabel();
-    @Label(abc)  // trim
-    @Label(" abc ")  // no trim inside ""  
-
-String getInputType();  
-    @InputType(abc)   // trim
-    @InputType("abc") // no trim inside "" 
-
-String getPattern(); 
-    @Pattern(abc)   // trim
-    @Pattern("abc") // no trim inside "" 
 
 String getDateAfterValue() ;
     @After(2012-05-23) // ISO format (fixed)
@@ -39,6 +24,8 @@ String getDateBeforeValue() ;
  @IdPart 
  or 
  @Id multiple 
+ or 
+ @Id1, @Id2, @Id3, @Id4
  
 -------------------------------------------------------
 
@@ -62,9 +49,19 @@ String getDatabaseName();
 String getDatabaseType();
     @DbType(abc) 
 
-Integer getDatabaseSize();
-    @DbSize(123) 
+Integer getDatabaseSize(); // or BigDecimal ??  => Change existing generic model + db-model 
+    @DbSize(6) 
+    @DbSize(6.2)  // BigDecimal for "CREATE TABLE demo ( aa NUMERIC(6,2) ) ;"
+                  // Doc Oracle : NUMBER[(precision [, scale])]
+                  // DECIMAL(10,4) etc
 
+    or @DbSize(6) + @DbSizeScale(2)      // JDBC metadata : cols.getInt("DECIMAL_DIGITS");
+       @DbSize(6) + @DbDecimalDigits(2)  // JDBC metadata : cols.getInt("DECIMAL_DIGITS");
+       + hasDbDecimalDigits()
+    
+    or @DbSize(6,2)  with specific parameter => check validity for this name "DbSize"
+       getDatabaseSize() : return String eg "12" or "12,45"
+    
 -------------------------------------------------------
 JPA ???
   @OneToMany(xxxx)
@@ -75,8 +72,6 @@ JPA ???
 
 Fix code gen with jpa.xxx when mappedBy="null" !
 
--------------------------------------------------------
-',' optional between annotations 
 -------------------------------------------------------
 
 Change Licence header
@@ -100,3 +95,20 @@ String getInitialValue() ;
     @InitialValue(true)  // trim
     @InitialValue(" ab c ") // no trim inside ""  
 
+String getLabel();
+    @Label(abc)  // trim
+    @Label(" abc ")  // no trim inside ""  
+
+String getInputType();  
+    @InputType(abc)   // trim
+    @InputType("abc") // no trim inside "" 
+
+String getPattern(); 
+    @Pattern(abc)   // trim
+    @Pattern("abc") // no trim inside "" 
+
+-------------------------------------------------------
+
+',' optional between annotations 
+
+-------------------------------------------------------

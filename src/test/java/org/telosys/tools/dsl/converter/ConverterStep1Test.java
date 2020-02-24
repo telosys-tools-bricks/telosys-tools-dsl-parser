@@ -47,16 +47,34 @@ public class ConverterStep1Test {
 				assertEquals("id", a.getName() );
 				assertTrue(a.isKeyElement());
 				assertEquals("int", a.getNeutralType() );
+				// Annotations with string parameter
+				assertEquals("Identifier", a.getLabel());
+				assertEquals("", a.getDefaultValue()); // not defined => ""
+				assertEquals("", a.getInitialValue()); // not defined => "" 
+				assertEquals("", a.getPattern()); // not defined => "" 
+				assertEquals("", a.getInputType()); // not defined => "" 
 			}
 			if ( i == 2 ) {
 				assertEquals("firstName", a.getName() );
 				assertFalse(a.isKeyElement());
 				assertEquals("string", a.getNeutralType() );
+				// Annotations with string parameter
+				assertEquals("firstName", a.getLabel());
+				assertEquals("Bart", a.getDefaultValue());
+				assertEquals("xxx", a.getInitialValue());
+				assertEquals("", a.getPattern()); // not defined => "" 
+				assertEquals("", a.getInputType()); // not defined => "" 
 			}
 			if ( i == 3 ) {
 				assertEquals("birthDate", a.getName() );
 				assertFalse(a.isKeyElement());
 				assertEquals("date", a.getNeutralType() );
+				// Annotations with string parameter
+				assertEquals("birthDate", a.getLabel());
+				assertEquals("", a.getDefaultValue());
+				assertEquals("", a.getInitialValue());
+				assertEquals("date", a.getInputType()); 
+				assertEquals("", a.getPattern()); // not defined => "" 
 			}
 		}
 	}

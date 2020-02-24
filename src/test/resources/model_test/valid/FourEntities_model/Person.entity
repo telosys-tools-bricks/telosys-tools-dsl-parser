@@ -5,5 +5,5 @@ Person {
 	lastName : string;
 	birthDate : date ;
 	country : Country[]; 
-	gender : Gender;
+	gender : Gender; // Pseudo FK => field definition replaced by Gender.id 
 }

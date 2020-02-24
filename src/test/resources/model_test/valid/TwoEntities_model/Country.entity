@@ -1,4 +1,4 @@
 Country {
-	id : int {@Id};
+	id : int {@Id, @SizeMax(5)};
 	name : string;
 }

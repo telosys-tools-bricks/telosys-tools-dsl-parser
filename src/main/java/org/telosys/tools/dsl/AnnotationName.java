@@ -56,15 +56,16 @@ public class AnnotationName {
 	public static final String INPUT_TYPE      = "InputType"; // v 3.2.0
 	public static final String PATTERN         = "Pattern";   // v 3.2.0
 	
+	public static final String DB_NAME          = "DbName"; // v 3.2.0
+	public static final String DB_TYPE          = "DbType"; // v 3.2.0
+	public static final String DB_COMMENT       = "DbComment"; // v 3.2.0
+	public static final String DB_DEFAULT_VALUE = "DbDefaultValue"; // v 3.2.0
+
+	public static final String DB_SIZE          = "DbSize"; // v 3.2.0
+
 	// TODO 
     // @Comment(xxx) --> used as DbComment ?
     // @After(DateISO)
     // @Before(DateISO)
     //
-    // @Pattern(xxx) or @RegExp(xxx) ???
-    //
-    // @DbColumn(xxx)
-    // @DbType(xxx)
-    // @DbDefaultValue(xxx)
-	
 }

@@ -1,0 +1,17 @@
+               DB MODEL                           DSL MODEL
+
+.label         never null                         never null 
+@Label         init from column name              "" if not set 
+
+.inputType     never null                         never null 
+@InputType     init from column type              "" if not set 
+
+.pattern       not init in dbrep                  never null 
+@Pattern       never null ( "" void string )      "" if not set 
+             
+.defaultValue  not init in dbrep                  never null 
+@DefaultValue  never null ( "" void string )      "" if not set 
+
+.initialValue  not init in dbrep                  never null 
+@InitialValue  never null ( "" void string )      "" if not set 
+             

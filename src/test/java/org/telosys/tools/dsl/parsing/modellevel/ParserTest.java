@@ -87,7 +87,7 @@ public class ParserTest {
 		assertNotNull(field);
 		assertEquals("date", field.getTypeName());
 		annotations = field.getAnnotations();
-		assertEquals(0, annotations.size() );
+		assertEquals(1, annotations.size() );
 
 		//		List<String> annotNames = id.getAnnotationNames();
 //		for ( DomainField field : entity.getFields() ) {

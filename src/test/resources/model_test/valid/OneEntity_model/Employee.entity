@@ -1,5 +1,5 @@
 Employee {
-	id : int { @Id, @Min(1), @Max(9999), @Label("Identifier") #Foo(abc) #Id #Bar(12.34)    }; // the id
-	firstName : string { @DefaultValue("Bart"),  @InitialValue("xxx") , @Xxxx , #tag   , } ;
-	birthDate : date ;
+	id : int { @Id, @Min(1), @Max(9999), @Label( Identifier  ) #Foo(abc) #Id #Bar(12.34)    }; // the id
+	firstName : string { @DefaultValue("Bart")  @InitialValue("xxx")  @Xxxx , #tag   , } ;
+	birthDate : date { @InputType(date) } ;
 }

@@ -239,15 +239,11 @@ public class DslModelManagerTest {
         assertFalse(attrib.isFK());
         assertFalse(attrib.isFKSimple());
         assertFalse(attrib.isFKComposite());
-
-        // TODO : null or "" ?????
-//        assertEquals("", attrib.getPattern() );
-//        assertEquals("", attrib.getInputType() );
-//        assertEquals("", attrib.getDefaultValue() );
-        assertNull(attrib.getInitialValue() );
-        assertNull(attrib.getPattern() );
-        assertNull(attrib.getInputType() );
-        assertNull(attrib.getDefaultValue() );
+        // Annotations with string paramater : "" if not set
+        assertEquals("", attrib.getInitialValue() );
+        assertEquals("", attrib.getPattern() );
+        assertEquals("", attrib.getInputType() );
+        assertEquals("", attrib.getDefaultValue() );
         
         attrib = employeeEntity.getAttributes().get(i++);
         assertEquals("firstName", attrib.getName() ) ;
@@ -274,7 +270,7 @@ public class DslModelManagerTest {
         assertEquals("int", attrib.getNeutralType() ); // country PK is "id : int" 
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
-        assertFalse(attrib.isDatabaseNotNull());
+        assertTrue(attrib.isDatabaseNotNull()); // country PK has "@Id" => not null 
         assertTrue(attrib.isFK());
         assertTrue(attrib.isFKSimple());
         assertFalse(attrib.isFKComposite());
@@ -325,9 +321,12 @@ public class DslModelManagerTest {
         attrib = personEntity.getAttributes().get(i++);
         assertEquals("gender", attrib.getName() ) ;
         assertEquals("string", attrib.getNeutralType() ); // gender PK is "id : string" 
+        // Annotations come from "Gender.id" (instead original field)
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
-        assertFalse(attrib.isDatabaseNotNull());
+        assertTrue(attrib.isDatabaseNotNull()); // gender PK has "@Id" => not null 
+        assertEquals(Integer.valueOf(2), attrib.getMaxLength()); // gender PK has "@SizeMax(2)" 
+        // Foreign Key (simple, not composite)
         assertTrue(attrib.isFK());
         assertTrue(attrib.isFKSimple());
         assertFalse(attrib.isFKComposite());

@@ -32,7 +32,10 @@ public class KeyWords {
 	private static final String SINGLE_LINE_COMMENT = "//" ;
 	
 	/**
-	 * List annotations names (# means numeric parameter required)
+	 * List of annotations names ending with parameter type if any 
+	 *  % : means integer parameter required ( Integer )
+	 *  # : means numeric parameter required ( BigDecimal )
+	 *  $ : means string parameter required ( String )
 	 */
 	private static final String[] annotations = { 
 		
@@ -67,6 +70,13 @@ public class KeyWords {
 		AnnotationName.INPUT_TYPE    + "$", // $ means string parameter  @InputType(xx)
 		AnnotationName.PATTERN       + "$", // $ means string parameter  @Pattern(xxx)
 
+		AnnotationName.DB_NAME          + "$",
+		AnnotationName.DB_TYPE          + "$",
+		AnnotationName.DB_DEFAULT_VALUE + "$",
+		AnnotationName.DB_COMMENT       + "$",
+
+		AnnotationName.DB_SIZE          + "%"  // # means decimal parameter 
+		
 		// In the future 
 		// "DbColumn$" // $ means string parameter
 		// "DbTable$"  // $ means string parameter

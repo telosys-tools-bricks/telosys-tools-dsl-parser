@@ -23,9 +23,6 @@ import org.telosys.tools.generic.model.Entity;
 
 public class DslModelAttribute implements Attribute {
 	
-	// Use Java type converter by default
-//	private final static TypeConverter typeConverter = new TypeConverterForJava() ;
-	
 	private String name = "";
 	private String neutralType = "";
 	
@@ -39,32 +36,28 @@ public class DslModelAttribute implements Attribute {
 	private String dateAfterValue;
 	private String dateBeforeValue;
 	private DateType dateType;
-	private String defaultValue;
+	private String defaultValue = "" ; // ver 3.2.0
 	private Entity entity;
-//	private String fullType = "";
 	private String generatedValueGenerator;
 	private String generatedValueStrategy;
-	private String initialValue;
-	private String inputType;
+	private String initialValue = "" ; // ver 3.2.0
+	private String inputType = "" ; // ver 3.2.0
 	private Integer jdbcTypeCode;
 	private String jdbcTypeName;
-	private String label;
+	private String label = "" ; // ver 3.2.0
 	private Integer maxLength;
 	private Integer minLength;
 	private BigDecimal maxValue;
 	private BigDecimal minValue;
-	private String pattern;
+	private String pattern = "" ; // ver 3.2.0
 	private Integer sequenceGeneratorAllocationSize;
 	private String sequenceGeneratorName;
 	private String sequenceGeneratorSequenceName;
-//	private String simpleType = "";
 	private String tableGeneratorName;
 	private String tableGeneratorPkColumnName;
 	private String tableGeneratorPkColumnValue;
 	private String tableGeneratorTable;
 	private String tableGeneratorValueColumnName;
-//	private String type = "";
-//	private String wrapperType = "";
 	private boolean autoIncremented = false ;
 	private boolean databaseNotNull = false ;
 	private boolean generatedValue = false;
@@ -81,12 +74,10 @@ public class DslModelAttribute implements Attribute {
 	private boolean isDateFuture = false;
 	private boolean isDatePast = false;
 	
-	//private boolean isUsedInForeignKey = false;
 	// An attribute can be involved in many FK, it can be both in a SIMPLE FK and in a COMPOSITE FK 
 	private boolean isForeignKeySimple     = false ; // ( false by default )
 	private boolean isForeignKeyComposite  = false ; // ( always false in the DSL model )
 	private String  referencedEntityClassName = null ; // no reference by default
-
 
 	// Annotations added for types
 	private boolean isPrimitiveTypeExpected = false ;
