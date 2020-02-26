@@ -1,4 +1,5 @@
-// Entity name 'E#n_titéid:integer;' different from file name
-E#n_tité {
- id:integer;
+// qlkdj lqjdlqsk dqslk l jd
+Employee4 {
+  id : integer { @Id  @DbSize(-10,2)  } ;
+  name : string ;
 }

@@ -18,6 +18,7 @@ package org.telosys.tools.dsl.parser;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.KeyWords;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
@@ -62,7 +63,9 @@ public class FieldAnnotationOrTagParser {
 
 		char firstChar = annotationOrTagString.charAt(0);
 		if (firstChar == '@') {
-			return parseAnnotation(annotationOrTagString);
+			DomainAnnotation annotation = parseAnnotation(annotationOrTagString);
+			checkAnnotation(annotation);
+			return annotation;
 		} else if (firstChar == '#') {
 			return parseTag(annotationOrTagString);
 		} else {
@@ -132,6 +135,33 @@ public class FieldAnnotationOrTagParser {
 			}
 		}
 		throw new AnnotationOrTagError(entityName, fieldName, annotation, "unknown annotation");
+	}
+
+	protected void checkAnnotation(DomainAnnotation annotation) throws AnnotationOrTagError  {
+		if ( annotation.getName().equals(AnnotationName.DB_SIZE) ) {
+			String p = annotation.getParameterAsString();
+			if ( p.contains(",")) {
+				String[] parts = p.split(",");
+				if (parts.length  != 2) {
+					throw new AnnotationOrTagError(entityName, fieldName, AnnotationName.DB_SIZE, "invalid parameter '" + p + "'");
+				}
+				checkSizeInteger(AnnotationName.DB_SIZE, parts[0]);
+				checkSizeInteger(AnnotationName.DB_SIZE, parts[1]);
+			}
+			else {
+				checkSizeInteger(AnnotationName.DB_SIZE, p);
+			}
+		}
+	}
+	private void checkSizeInteger(String annotationOrTag, String parameterValue) throws AnnotationOrTagError {
+		try {
+			Integer i = new Integer(parameterValue);
+			if ( i < 0 ) {
+				throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "negative size '" + parameterValue + "'");
+			}
+		} catch (NumberFormatException e) {
+			throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "invalid size '" + parameterValue + "'");
+		}
 	}
 
 	protected DomainTag parseTag(String tagString) throws AnnotationOrTagError  {

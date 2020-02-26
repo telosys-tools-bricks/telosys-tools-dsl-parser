@@ -75,7 +75,7 @@ public class KeyWords {
 		AnnotationName.DB_DEFAULT_VALUE + "$",
 		AnnotationName.DB_COMMENT       + "$",
 
-		AnnotationName.DB_SIZE          + "%"  // # means decimal parameter 
+		AnnotationName.DB_SIZE          + "$"  // special paramete checking (based on string param)  
 		
 		// In the future 
 		// "DbColumn$" // $ means string parameter

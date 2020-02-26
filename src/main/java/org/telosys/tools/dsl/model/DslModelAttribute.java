@@ -31,7 +31,7 @@ public class DslModelAttribute implements Attribute {
 	private String databaseComment = "";
 	private String databaseDefaultValue;
 	private String databaseName;
-	private Integer databaseSize;
+	private String databaseSize; // String for size with comma ( eg "8,2" )
 	private String databaseType;
 	private String dateAfterValue;
 	private String dateBeforeValue;
@@ -142,10 +142,10 @@ public class DslModelAttribute implements Attribute {
 	}
 
 	@Override
-	public Integer getDatabaseSize() {
+	public String getDatabaseSize() {
 		return databaseSize;
 	}
-	public void setDatabaseSize(Integer databaseSize) {
+	public void setDatabaseSize(String databaseSize) {
 		this.databaseSize = databaseSize;
 	}
 

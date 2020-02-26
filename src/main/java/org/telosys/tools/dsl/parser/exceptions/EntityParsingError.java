@@ -15,6 +15,9 @@
  */
 package org.telosys.tools.dsl.parser.exceptions;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Entity Parsing Error
  * 
@@ -29,6 +32,7 @@ public class EntityParsingError extends Exception {
 	private final String error ;
 	private final int lineNumber;
 	private final String detailMessage ;
+    private final List<FieldParsingError> fieldsErrors ;
 
     public EntityParsingError(String entityName, String error) {
         super();
@@ -36,6 +40,7 @@ public class EntityParsingError extends Exception {
         this.error = error;
         this.lineNumber = 0 ;
 		this.detailMessage = "entity '" + entityName + "' : " + error ;
+		this.fieldsErrors = new LinkedList<>() ;
     }
 
     public EntityParsingError(String entityName, String error, int lineNumber) {
@@ -44,6 +49,21 @@ public class EntityParsingError extends Exception {
         this.error = error;
         this.lineNumber = lineNumber ;
 		this.detailMessage = entityName + " : " + error + "(line " + lineNumber + ")";
+		this.fieldsErrors = new LinkedList<>() ;
+    }
+    
+    public EntityParsingError(String entityName, String error, List<FieldParsingError> fieldsErrors) {
+        super();
+        this.entityName = entityName ;
+        this.error = error;
+        this.lineNumber = 0 ;
+		this.detailMessage = "entity '" + entityName + "' : " + error ;
+		this.fieldsErrors = fieldsErrors ;
+    }
+
+    @Override
+    public String getMessage() {
+        return detailMessage;
     }
     
     public String getEntityName() {
@@ -54,13 +74,8 @@ public class EntityParsingError extends Exception {
     	return lineNumber;
     }
     
-    public String getError() {
-    	return error;
-    }
-        
-    @Override
-    public String getMessage() {
-        return detailMessage;
+    public List<FieldParsingError> getFieldsErrors() {
+    	return fieldsErrors ;
     }
     
 }

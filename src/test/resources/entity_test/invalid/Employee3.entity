@@ -1,3 +1,4 @@
-Employee3xxx { // name diferent from file name
-id : short { @Id @NotNull } ;
+
+Employee3xxx { // entity name diferent from file name
+  id : short { @Id @NotNull } ;
 }

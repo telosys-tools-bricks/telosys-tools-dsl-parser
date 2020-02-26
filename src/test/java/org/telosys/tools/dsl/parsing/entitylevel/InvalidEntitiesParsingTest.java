@@ -11,9 +11,10 @@ import org.telosys.tools.dsl.parser.model.DomainEntity;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class InvalidEntitiesParsingTest {
-	
+
 	private File getEntityFile(String entityName) {
 		return new File("src/test/resources/entity_test/invalid/" + entityName + ".entity");
 	}
@@ -22,24 +23,25 @@ public class InvalidEntitiesParsingTest {
 		EntityParsingError error = null;
 		Parser parser = new Parser();
 		try {
-			parser.parseEntity(getEntityFile(entityName), entitiesNames );
+			parser.parseEntity(getEntityFile(entityName), entitiesNames);
+			fail(); // Exception expected 
 		} catch (EntityParsingError e) {
-			error = e ;
-			System.out.println("ERROR : " + error.getMessage());
+			error = e;
+//			System.out.println("ERROR : " + error.getMessage());
+			ErrorsReport.print(e);
 		}
 		assertNotNull(error);
 	}
-	
-	
+
 	@Test
-	public void testParseEmployee0FileNotFound() throws EntityParsingError {		
-//		List<String> entitiesNames = new LinkedList<>();
-//		Parser parser = new Parser();
-//		// supposed to throw EntityParsingError ( File not found )
-//		parser.parseEntity(getEntityFile("Employee0"), entitiesNames );
+	public void testParseEmployee0FileNotFound() throws EntityParsingError {
+		// List<String> entitiesNames = new LinkedList<>();
+		// Parser parser = new Parser();
+		// // supposed to throw EntityParsingError ( File not found )
+		// parser.parseEntity(getEntityFile("Employee0"), entitiesNames );
 		parseWithErrorExpected("Employee0", new LinkedList<String>());
 	}
-	
+
 	@Test
 	public void testParseEmployee1() throws EntityParsingError {
 		parseWithErrorExpected("Employee1", new LinkedList<String>());
@@ -77,16 +79,21 @@ public class InvalidEntitiesParsingTest {
 
 	@Test
 	public void testParseEmployee8() throws EntityParsingError {
-		
-		List<String> entitiesNames = new LinkedList<>();
-		entitiesNames.add("Car");
-		Parser parser = new Parser();
-		// fields errors
-		DomainEntity entity = parser.parseEntity(getEntityFile("Employee8"), entitiesNames );
-		
-		EntityReport.print(entity);
-		
-		assertTrue(entity.hasError());
+
+//		List<String> entitiesNames = new LinkedList<>();
+//		entitiesNames.add("Car");
+//		EntityParsingError error = null;		
+//		Parser parser = new Parser();
+//		try {
+//			// fields errors
+//			DomainEntity entity = parser.parseEntity(getEntityFile("Employee8"), entitiesNames);
+//			EntityReport.print(entity);
+//			assertTrue(entity.hasError());
+//		} catch (EntityParsingError e) {
+//			error = e;
+//			System.out.println("ERROR : " + error.getMessage());
+//		}
+		parseWithErrorExpected("Employee8", new LinkedList<String>());		
 	}
 
 	@Test

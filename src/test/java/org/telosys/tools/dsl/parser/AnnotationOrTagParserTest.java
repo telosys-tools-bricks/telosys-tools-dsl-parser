@@ -10,6 +10,7 @@ import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class AnnotationOrTagParserTest {
@@ -83,7 +84,7 @@ public class AnnotationOrTagParserTest {
 	}
 
 	@Test
-	public void testParseAnnotation() throws AnnotationOrTagError {
+	public void testParseAnnotations() throws AnnotationOrTagError {
 
 		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");
 
@@ -127,6 +128,21 @@ public class AnnotationOrTagParserTest {
 		assertNull(annotation.getParameterAsBigDecimal());
 		assertEquals(new Integer("22"), annotation.getParameterAsInteger());
 
+		annotation = parser.parse("@DbSize(22)");
+		assertEquals("DbSize", annotation.getName());
+		assertTrue(annotation.hasParameter());
+		assertNotNull(annotation.getParameterAsString());
+
+		annotation = parser.parse("@DbSize(22,4)");
+		annotation = parser.parse("@DbSize(22,0)");
+		//annotation = parser.parse("@DbSize(-22,2)"); // ERR : negative size
+		//annotation = parser.parse("@DbSize(22,-2)"); // ERR : negative size
+		//annotation = parser.parse("@DbSize(22,)"); // ERR
+		//annotation = parser.parse("@DbSize(,)"); // ERR
+		//annotation = parser.parse("@DbSize()"); // ERR
+		//annotation = parser.parse("@DbSize(aa,2)"); // ERR
+		//annotation = parser.parse("@DbSize(aa)"); //ERR
+		
 	}
 
 	@Test(expected = AnnotationOrTagError.class)
@@ -176,5 +192,53 @@ public class AnnotationOrTagParserTest {
 	public void testParseAnnotationError8() throws AnnotationOrTagError {
 		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");
 		parser.parse("@SizeMax(44.55)"); // integer parameter required
+	}
+	
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseDbSizeError1() throws AnnotationOrTagError {
+		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");
+		parser.parse("@DbSize(10.2)"); 
+	}
+
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseDbSizeError2() throws AnnotationOrTagError {
+		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");
+		parser.parse("@DbSize(-22,2)"); 
+	}
+
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseDbSizeError3() throws AnnotationOrTagError {
+		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");
+		parser.parse("@DbSize(22,-4)"); 
+	}
+
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseDbSizeError4() throws AnnotationOrTagError {
+		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");
+		parser.parse("@DbSize(22,)"); 
+	}
+
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseDbSizeError5() throws AnnotationOrTagError {
+		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");
+		parser.parse("@DbSize(,4)"); 
+	}
+
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseDbSizeError6() throws AnnotationOrTagError {
+		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");
+		parser.parse("@DbSize(,)"); 
+	}
+
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseDbSizeError7() throws AnnotationOrTagError {
+		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");
+		parser.parse("@DbSize()"); 
+	}
+
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseDbSizeError8() throws AnnotationOrTagError {
+		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");
+		parser.parse("@DbSize(aa,2)"); 
 	}
 }

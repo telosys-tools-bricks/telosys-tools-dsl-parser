@@ -454,7 +454,7 @@ public class Converter {
 			// Database annotations ( @DbXxxx ) :
 			if (AnnotationName.DB_SIZE.equals(annotation.getName())) {
 				log(msg + AnnotationName.DB_SIZE );
-				genericAttribute.setDatabaseSize(annotation.getParameterAsInteger());
+				genericAttribute.setDatabaseSize(annotation.getParameterAsString());
 			}
 			if (AnnotationName.DB_NAME.equals(annotation.getName())) {
 				log(msg + AnnotationName.DB_NAME );
@@ -489,7 +489,7 @@ public class Converter {
 		}
 		// Complete with other field annotations
 		if ( genericAttribute.getDatabaseSize() == null && fieldSizeMax != null ) {
-			genericAttribute.setDatabaseSize(fieldSizeMax);
+			genericAttribute.setDatabaseSize(""+fieldSizeMax);
 		}
 		if ( fieldNotNull ) {
 			genericAttribute.setDatabaseNotNull(true);
@@ -548,10 +548,6 @@ public class Converter {
 		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
 		DomainEntity domainEntityTarget = domainModel.getEntity(domainFieldType.getName());
 		return domainEntityTarget;
-	}
-
-	private DomainEntity getReferencedEntity(DomainType domainFieldType, DomainModel domainModel) {
-		return domainModel.getEntity(domainFieldType.getName());
 	}
 
 	/**
