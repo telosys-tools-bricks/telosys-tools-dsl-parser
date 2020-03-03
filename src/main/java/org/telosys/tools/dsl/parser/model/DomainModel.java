@@ -37,10 +37,10 @@ public class DomainModel {
 	 */
 	private final DomainModelInfo domainModelInfo ;
 
-    /**
-     * Entity errors detected during the parsing
-     */
-    private final List<EntityParsingError> entityErrors = new LinkedList<>();
+//    /**
+//     * Entity errors detected during the parsing
+//     */
+//    private final List<EntityParsingError> entityErrors = new LinkedList<>();
 
     /**
      * Map of all the entities (key is the entity name) 
@@ -91,24 +91,24 @@ public class DomainModel {
 		return domainModelInfo.getDescription();
 	}
 	
-	//---------------------------------------------------------------------
-	// Model ERRORS 
-	//---------------------------------------------------------------------
-    /**
-     * Add a new error to the field 
-     * @param error
-     */
-    public void addError(EntityParsingError error) {
-    	entityErrors.add(error);
-    }
-    
-    public boolean hasError() {
-    	return ! entityErrors.isEmpty();
-    }
-    
-   public List<EntityParsingError> getErrors() {
-        return entityErrors;
-    }
+//	//---------------------------------------------------------------------
+//	// Model ERRORS 
+//	//---------------------------------------------------------------------
+//    /**
+//     * Add a new error to the field 
+//     * @param error
+//     */
+//    public void addError(EntityParsingError error) {
+//    	entityErrors.add(error);
+//    }
+//    
+//    public boolean hasError() {
+//    	return ! entityErrors.isEmpty();
+//    }
+//    
+//   public List<EntityParsingError> getErrors() {
+//        return entityErrors;
+//    }
 
 
 //	private final void checkName(String name) {

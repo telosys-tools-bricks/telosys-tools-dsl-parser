@@ -31,6 +31,12 @@ class FieldParts {
 	private final String nameAndTypePart ;
 	private final String annotationsPart ;
 	
+	/**
+	 * Constructor
+	 * @param lineNumber
+	 * @param nameAndTypePart ( eg "name : string" )
+	 * @param annotationsPart annotations and tags ( eg "@Id #Tag" )
+	 */
 	protected FieldParts(int lineNumber, String nameAndTypePart, String annotationsPart) {
 		super();
 		this.lineNumber = lineNumber ;

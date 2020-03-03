@@ -1,4 +1,4 @@
-Country { // Bad name
+Country1 { // Bad name
 	id : int {@Id};
 	name : string { @FooBarZzz };
 	foo : long ;

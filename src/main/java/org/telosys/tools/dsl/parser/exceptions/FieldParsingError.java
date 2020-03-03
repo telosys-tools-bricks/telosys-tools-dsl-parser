@@ -29,7 +29,13 @@ public abstract class FieldParsingError extends Exception {
 	private final String error ;
 	private final String detailMessage ;
 
-    public FieldParsingError(String entityName, String error, String detailMessage) {
+    /**
+     * Constructor
+     * @param entityName
+     * @param error
+     * @param detailMessage
+     */
+    protected FieldParsingError(String entityName, String error, String detailMessage) {
         super();
         this.entityName = entityName ;
         this.error = error;

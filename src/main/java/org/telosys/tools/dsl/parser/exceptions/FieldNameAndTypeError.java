@@ -25,12 +25,14 @@ public class FieldNameAndTypeError extends FieldParsingError {
 
     private static final long serialVersionUID = 1L;
     
-//	private final String entityName;
-////	private final String fieldName;
 	private final String fieldNameAndType;
-//	private final String error ;
-//	private final String detailMessage ;
 
+    /**
+     * Constructor
+     * @param entityName
+     * @param fieldNameAndType
+     * @param error
+     */
     public FieldNameAndTypeError(String entityName, String fieldNameAndType, String error) {
         super(entityName, error, entityName + " : '" + fieldNameAndType + "' (" + error + ")");
         this.fieldNameAndType = fieldNameAndType ;

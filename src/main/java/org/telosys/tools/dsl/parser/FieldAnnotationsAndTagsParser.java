@@ -24,15 +24,32 @@ public class FieldAnnotationsAndTagsParser {
 
 	private final String entityNameFromFileName;
 
+	/**
+	 * Constructor
+	 * @param entityNameFromFileName
+	 */
 	public FieldAnnotationsAndTagsParser(String entityNameFromFileName) {
 		this.entityNameFromFileName = entityNameFromFileName;
 	}
 	
+	/**
+	 * Parse the annotations and tags of the given FieldParts 
+	 * @param fieldName
+	 * @param field
+	 * @return
+	 * @throws AnnotationOrTagError
+	 */
 	public FieldAnnotationsAndTags parse(String fieldName, FieldParts field) throws AnnotationOrTagError {
 		return parse( fieldName, field.getAnnotationsPart());
 	}
 
-	public FieldAnnotationsAndTags parse(String fieldName, String annotationsAndTags) throws AnnotationOrTagError {
+	/**
+	 * @param fieldName
+	 * @param annotationsAndTags
+	 * @return
+	 * @throws AnnotationOrTagError
+	 */
+	private FieldAnnotationsAndTags parse(String fieldName, String annotationsAndTags) throws AnnotationOrTagError {
 		FieldAnnotationsAndTags result = new FieldAnnotationsAndTags();
 
     	if ( annotationsAndTags == null || "".equals(annotationsAndTags) ) {

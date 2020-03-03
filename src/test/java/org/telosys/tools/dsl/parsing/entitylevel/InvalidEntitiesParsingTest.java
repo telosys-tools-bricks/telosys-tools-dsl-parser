@@ -7,10 +7,8 @@ import java.util.List;
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.Parser;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.model.DomainEntity;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class InvalidEntitiesParsingTest {
@@ -35,10 +33,6 @@ public class InvalidEntitiesParsingTest {
 
 	@Test
 	public void testParseEmployee0FileNotFound() throws EntityParsingError {
-		// List<String> entitiesNames = new LinkedList<>();
-		// Parser parser = new Parser();
-		// // supposed to throw EntityParsingError ( File not found )
-		// parser.parseEntity(getEntityFile("Employee0"), entitiesNames );
 		parseWithErrorExpected("Employee0", new LinkedList<String>());
 	}
 
@@ -78,27 +72,18 @@ public class InvalidEntitiesParsingTest {
 	}
 
 	@Test
-	public void testParseEmployee8() throws EntityParsingError {
-
-//		List<String> entitiesNames = new LinkedList<>();
-//		entitiesNames.add("Car");
-//		EntityParsingError error = null;		
-//		Parser parser = new Parser();
-//		try {
-//			// fields errors
-//			DomainEntity entity = parser.parseEntity(getEntityFile("Employee8"), entitiesNames);
-//			EntityReport.print(entity);
-//			assertTrue(entity.hasError());
-//		} catch (EntityParsingError e) {
-//			error = e;
-//			System.out.println("ERROR : " + error.getMessage());
-//		}
+	public void testParseEmployee8() {
 		parseWithErrorExpected("Employee8", new LinkedList<String>());		
 	}
 
 	@Test
-	public void testParseEmployee9() throws EntityParsingError {
+	public void testParseEmployee9() {
 		parseWithErrorExpected("Employee9", new LinkedList<String>());
+	}
+
+	@Test
+	public void testParseCountry1()  {
+		parseWithErrorExpected("Country1", new LinkedList<String>());
 	}
 
 }

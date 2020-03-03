@@ -17,7 +17,6 @@ package org.telosys.tools.dsl;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -66,11 +65,13 @@ public class DslModelManager {
 	}
 
 	/**
-     * Loads (parse) the given model file
+     * Loads (parse and convert) the given model file <br>
+     * If errors occured this method returns null <br>
+     * and the errors can be retrieved from this instance ( parsingErrorMessage and parsingErrors ) 
      *
      * @param modelFile the ".model" file 
      * 
-     * @return the model or null if errors detected during parsing 
+     * @return the generic model or null if errors detected during parsing 
      */
     public Model loadModel(File modelFile) {
     	
@@ -87,16 +88,17 @@ public class DslModelManager {
         if ( modelParsingError != null ) {
         	//--- 2) Keep error information
         	parsingErrorMessage = modelParsingError.getMessage();
+        	buildErrorsMap(modelParsingError.getEntitiesErrors());
             return null;
         }
         else {
-        	if ( domainModel.hasError() ) {
-            	parsingErrorMessage = "Parsing error(s) : " + domainModel.getErrors().size() + " invalid entity(ies) ";
-
-            	buildErrorsMap(domainModel.getErrors()); 
-                return null;
-        	}
-        	else {
+//        	if ( domainModel.hasError() ) {
+//            	parsingErrorMessage = "Parsing error(s) : " + domainModel.getErrors().size() + " invalid entity(ies) ";
+//
+//            	buildErrorsMap(domainModel.getErrors()); 
+//                return null;
+//        	}
+//        	else {
                 //--- 2) Convert the "domain model" to "generic model" 
                 Converter converter = new Converter();
     			try {
@@ -107,7 +109,7 @@ public class DslModelManager {
 //    				parsingErrors.put("", parsingErrorMessage );
     				return null ;
     			}
-        	}
+//        	}
         }
     }
 

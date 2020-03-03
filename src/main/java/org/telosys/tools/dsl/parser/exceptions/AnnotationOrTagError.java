@@ -28,6 +28,13 @@ public class AnnotationOrTagError extends FieldParsingError {
 	private final String fieldName;
 	private final String annotationOrTag;
 
+    /**
+     * Constructor
+     * @param entityName
+     * @param fieldName
+     * @param annotationOrTag
+     * @param error
+     */
     public AnnotationOrTagError(String entityName, String fieldName, String annotationOrTag, String error) {
         super(entityName, error, entityName + " : field '" + fieldName + "' : '" + annotationOrTag + "' (" + error + ")");
         this.fieldName = fieldName ;

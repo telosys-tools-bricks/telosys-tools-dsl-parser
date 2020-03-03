@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
-public class ParserTest {
+public class ParserModelLevelTest {
 	
 	@Test
 	public void test1() throws ModelParsingError {
@@ -39,6 +39,7 @@ public class ParserTest {
 		Map<String,DomainAnnotation> annotations ;
 		Map<String,DomainTag> tags ;
 		
+		//---------- FIELD : id
 		field = entity.getField("id") ;
 		assertNotNull(field);
 		assertEquals("int", field.getTypeName());
@@ -65,6 +66,7 @@ public class ParserTest {
 		// Field errors
 		assertFalse(field.hasErrors());
 		
+		//---------- FIELD : firstName
 		field = entity.getField("firstName") ;
 		assertNotNull(field);
 		assertEquals("string", field.getTypeName());
@@ -81,13 +83,16 @@ public class ParserTest {
 		assertEquals(1, tags.size() );
 		assertNotNull(tags.get("tag"));
 		// Field errors
-		assertTrue(field.hasErrors());
-		
+		assertFalse(field.hasErrors());
+
+		//---------- FIELD : birthDate
 		field = entity.getField("birthDate") ;
 		assertNotNull(field);
 		assertEquals("date", field.getTypeName());
 		annotations = field.getAnnotations();
 		assertEquals(1, annotations.size() );
+		// Field errors
+		assertFalse(field.hasErrors());
 
 		//		List<String> annotNames = id.getAnnotationNames();
 //		for ( DomainField field : entity.getFields() ) {

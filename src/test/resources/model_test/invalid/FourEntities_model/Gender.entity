@@ -1,4 +1,4 @@
 Gender { 
 	id : string{@Ident}; // Bad annotation
-	name : string;
+	name : eee ;
 }

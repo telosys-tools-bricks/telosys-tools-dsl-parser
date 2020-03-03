@@ -30,4 +30,19 @@ public class EntityFileParserTest {
 		}
 	}
 
+	@Test
+	public void testEntityFileParser_invalidEntity() throws EntityParsingError {
+		
+		EntityFileParser entityFileParser = new EntityFileParser(
+		"src/test/resources/model_test/invalid/FourEntities_model/Gender.entity");
+		//entityFileParser.parse();
+		EntityFileParsingResult result = entityFileParser.parse();
+		System.out.println("\nPARSING RESULT :");
+		System.out.println(" Entity name : " + result.getEntityNameParsed() );
+		System.out.println("\nFIELDS PARSED :");
+		for ( FieldParts field : result.getFields() ) {
+			System.out.println(" . " + field);
+		}
+	}
+
 }

@@ -1,7 +1,6 @@
 package org.telosys.tools.dsl.parser;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
@@ -9,23 +8,11 @@ import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class AnnotationOrTagParserTest {
-
-	private void print(List<String> list) {
-		System.out.println("\n-----");
-		for (String s : list) {
-			System.out.println(" . [" + s + "]");
-		}
-	}
-
-	private void print(Exception e) {
-		System.out.println("\n----- EXCEPTION ");
-		System.out.println(e.getClass().getName() + " : " + e.getMessage());
-	}
 
 	@Test
 	public void testGetName() throws AnnotationOrTagError {
@@ -194,6 +181,13 @@ public class AnnotationOrTagParserTest {
 		parser.parse("@SizeMax(44.55)"); // integer parameter required
 	}
 	
+	@Test(expected = AnnotationOrTagError.class)
+	public void testParseAnnotationError9() throws AnnotationOrTagError {
+		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");
+		parser.parse("@FooBar"); // unhknown annotation
+	}
+
+
 	@Test(expected = AnnotationOrTagError.class)
 	public void testParseDbSizeError1() throws AnnotationOrTagError {
 		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");

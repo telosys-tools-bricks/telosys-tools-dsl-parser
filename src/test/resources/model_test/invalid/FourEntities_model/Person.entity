@@ -1,8 +1,8 @@
 Person {
 	id : int {@Id}; // the id
-	firstName : string {@SizeMax( 3)} ;
-	lastName : string;
-	birthDate : date ;
+	firstName : string { @SizeMax(xx) } ;
+	lastName : string { @Min } ;
+	birthDate : date { @DefaultValue } ;
 	country : Country[ 999]; 
-	gender : Gender;
+	gender : Gender { @NotNull @NotNull } ;
 }

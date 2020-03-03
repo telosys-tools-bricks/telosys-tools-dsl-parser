@@ -1,22 +1,27 @@
 package org.telosys.tools.dsl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
-
+import java.io.File;
 import java.util.Map;
 
 import org.junit.Test;
+import org.telosys.tools.dsl.parser.Parser;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
+import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
+import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
+import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 public class DslModelManagerTest {
     
-	private Model loadModel(String modelFileName) {
+	private Model loadValidModel(String modelFileName) {
 		System.out.println("Loading model : " + modelFileName );
         DslModelManager modelLoader = new DslModelManager();
         Model model = modelLoader.loadModel(modelFileName);
@@ -34,7 +39,7 @@ public class DslModelManagerTest {
     
     @Test
     public void test_ValidModel_OneEntity_Model() {
-        Model model = loadModel("src/test/resources/model_test/valid/OneEntity.model");
+        Model model = loadValidModel("src/test/resources/model_test/valid/OneEntity.model");
         
         assertNotNull(model);
         
@@ -82,7 +87,7 @@ public class DslModelManagerTest {
 
     @Test
     public void test_ValidModel_Types_Model()  {
-        Model model = loadModel("src/test/resources/model_test/valid/types.model");
+        Model model = loadValidModel("src/test/resources/model_test/valid/types.model");
         
         assertNotNull(model);
         assertEquals(1, model.getEntities().size() );
@@ -214,7 +219,7 @@ public class DslModelManagerTest {
     
     @Test
     public void test_ValidModel_TwoEntity_Model() throws EntityParsingError {
-        Model model = loadModel("src/test/resources/model_test/valid/TwoEntities.model");
+        Model model = loadValidModel("src/test/resources/model_test/valid/TwoEntities.model");
         
         assertNotNull(model);
         
@@ -279,7 +284,7 @@ public class DslModelManagerTest {
 
     @Test
     public void test_ValidModel_FourEntity_Model() throws EntityParsingError {
-        Model model = loadModel("src/test/resources/model_test/valid/FourEntities.model");
+        Model model = loadValidModel("src/test/resources/model_test/valid/FourEntities.model");
         
         assertNotNull(model);
         
@@ -331,5 +336,47 @@ public class DslModelManagerTest {
         assertTrue(attrib.isFKSimple());
         assertFalse(attrib.isFKComposite());
 
+    }    
+    
+    private void testParserWithInvalidModel(String modelFile) {
+        Parser dslParser = new Parser();
+        DomainModel domainModel = null ;
+        ModelParsingError modelParsingError = null ;
+		try {
+			domainModel = dslParser.parseModel(new File(modelFile));
+		} catch (ModelParsingError e) {
+			modelParsingError = e ;
+		}    	
+        assertNull(domainModel);
+        assertNotNull(modelParsingError);
+		System.out.println("ModelParsingError message : " + modelParsingError.getMessage() );
+		for ( EntityParsingError entityError : modelParsingError.getEntitiesErrors() ) {
+			System.out.println(" . EntityParsingError : " + entityError.getEntityName() + " : " + entityError.getMessage() );
+			for ( FieldParsingError fieldError : entityError.getFieldsErrors() ) {
+				System.out.println(" . . FieldParsingError : " + fieldError.getEntityName() + " : " + fieldError.getMessage() );
+			}
+		}
+    }
+
+    @Test
+    public void testParser_InvalidModel_FourEntity_Model() { 
+    	testParserWithInvalidModel("src/test/resources/model_test/invalid/FourEntities.model") ;
+//		System.out.println("Loading model : " + modelFile );
+    }
+    
+    @Test
+    public void test_InvalidModel_FourEntity_Model() { 
+    	String modelFile = "src/test/resources/model_test/invalid/FourEntities.model" ;
+		System.out.println("Loading model : " + modelFile );
+        DslModelManager dslModelManager = new DslModelManager();
+        Model model = dslModelManager.loadModel(modelFile);
+        assertNull(model);
+        assertNotNull(dslModelManager.getErrorMessage());
+        assertNotNull(dslModelManager.getParsingErrors());
+        assertTrue( dslModelManager.getParsingErrors().size() > 0 );
+        Map<String,String> errors = dslModelManager.getParsingErrors();
+        for ( Map.Entry<String,String> entry : errors.entrySet() ) {
+        	System.out.println(" . " + entry.getKey() + " : " + entry.getValue() );
+        }
     }    
 }

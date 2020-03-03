@@ -28,7 +28,6 @@ public class FieldNameAndTypeParserTest {
     
 	@Test
     public void testCheckFieldNameAndType() throws FieldNameAndTypeError {
-		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 
 		fieldParser.checkFieldNameAndType("aa:string");
@@ -44,7 +43,6 @@ public class FieldNameAndTypeParserTest {
 	//----------------------------------------------------------------------
 	@Test
     public void testCheckFieldName() throws FieldNameAndTypeError {
-		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 
 		fieldParser.checkFieldName("", "aaa");
@@ -54,19 +52,16 @@ public class FieldNameAndTypeParserTest {
 
 	@Test(expected=FieldNameAndTypeError.class)
 	public void testCheckFieldNameWithError1() throws FieldNameAndTypeError {
-		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 		fieldParser.checkFieldName("", "");
 	}
 	@Test(expected=FieldNameAndTypeError.class)
 	public void testCheckFieldNameWithError2() throws FieldNameAndTypeError {
-		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 		fieldParser.checkFieldName("", "   ");
 	}
 	@Test(expected=FieldNameAndTypeError.class)
 	public void testCheckFieldNameWithError3() throws FieldNameAndTypeError {
-		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 		fieldParser.checkFieldName("", "aa bb");
 	}
@@ -76,7 +71,6 @@ public class FieldNameAndTypeParserTest {
 	//----------------------------------------------------------------------
 	@Test
     public void testCheckFieldType() throws FieldNameAndTypeError {
-		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 
 		fieldParser.checkFieldTypeWithCardinality("", "aaa");
@@ -89,7 +83,6 @@ public class FieldNameAndTypeParserTest {
 	}
 	@Test(expected=FieldNameAndTypeError.class) 
 	public void testCheckFieldTypeError1() throws FieldNameAndTypeError  {
-		FieldParts field = new FieldParts(12, "", "");
 		FieldNameAndTypeParser fieldParser = getParser();
 		fieldParser.checkFieldTypeWithCardinality("", "");
 	}
@@ -146,7 +139,6 @@ public class FieldNameAndTypeParserTest {
 
 	@Test
     public void testGetCardinality() throws FieldNameAndTypeError {
-		FieldNameAndTypeParser fieldParser = getParser();
     	Assert.assertEquals( 1, parseFieldTypeCardinality("string") );
     	Assert.assertEquals( 2, parseFieldTypeCardinality("string [2]") );
     	Assert.assertEquals( 2, parseFieldTypeCardinality("string [ 2 ]") );

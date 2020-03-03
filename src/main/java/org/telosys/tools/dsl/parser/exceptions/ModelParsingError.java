@@ -16,6 +16,7 @@
 package org.telosys.tools.dsl.parser.exceptions;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -31,20 +32,22 @@ public class ModelParsingError extends Exception {
     
 	private final File modelFile;
 //	private final String error ;
+	private final List<EntityParsingError> errors ;
 	private final String detailMessage ;
 
-//    public ModelParsingError(File modelFile, String errorMessage, List<EntityParsingError> entityErrors) {
-//        super();
-//        this.modelFile = modelFile ;
-////        this.error = error;
-//		this.detailMessage = modelFile.getName() + " : " + errorMessage ;
-//		this.entityErrors = entityErrors ;
-//    }
+    public ModelParsingError(File modelFile, String errorMessage, List<EntityParsingError> errors) {
+        super();
+        this.modelFile = modelFile ;
+//        this.error = error;
+		this.detailMessage = modelFile.getName() + " : " + errorMessage ;
+		this.errors = errors ;
+    }
 
     public ModelParsingError(File modelFile, String errorMessage) {
         super();
         this.modelFile = modelFile ;
 		this.detailMessage = modelFile.getName() + " : " + errorMessage ;
+		this.errors = new LinkedList<>() ; // void list
     }
 
     public File getModelFile() {
@@ -56,4 +59,8 @@ public class ModelParsingError extends Exception {
         return detailMessage;
     }
     
+    public List<EntityParsingError> getEntitiesErrors() {
+    	return errors ;
+    }
+
 }
