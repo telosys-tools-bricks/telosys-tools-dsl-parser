@@ -1,4 +1,0 @@
-Country {
-	id : int {@Id};
-	name : string;
-}
