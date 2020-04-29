@@ -1,6 +1,25 @@
 Employee {
-	id :                                       int {@Id}; // the id
-	  	firstName  :  string ;
-			birthDate :   	  date ;
-	country    :			 Country   ;
+
+// Field "id"
+	id :                                       int {@Id @Min(1  ) 
+	  
+	  
+	  #Bar  (  12.34  )     
+	  @Max(   9999) 
+	
+	@Label ( "Identifier" )    #Foo(   'abc '  )  #Id
+	}; 
+	
+	
+// Field "firstName"
+	  	firstName  :  string  {  @DefaultValue(  'Bart')   #tag
+	  			@InitialValue   (   "xxx"   ) } ;
+	  	    
+// Field "birthDate"
+			birthDate :   	  date { @Future } ;
+			
+// Field "country"
+	country    :			 Country  {     @Max(3)  #Foo  @Embedded    #MyTag(   123   )  }  ;  
+	
+	
 }

@@ -1,4 +1,4 @@
 Employee {
-	id : int { @Id , @NotNull }; // the id
-	poste : string [ 4 ] { @NotNull };
+	id : int { @Id  @NotNull }; // the id
+	firstName : string { @NotNull @SizeMin(1)  @SizeMax(30) };
 }
