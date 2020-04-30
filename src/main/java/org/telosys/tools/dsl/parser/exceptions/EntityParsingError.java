@@ -74,4 +74,7 @@ public class EntityParsingError extends Exception {
     	return fieldsErrors ;
     }
     
+    public int getErrorsCount() {
+    	return fieldsErrors.size();
+    }
 }

@@ -15,7 +15,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
 
-public class ParserEntityLevelTest {
+public class InvalidModelFourEntitiesTest {
 	
 	private DomainEntity parseEntityFile(String entityFileName) throws EntityParsingError {
 		File file = new File(entityFileName);
@@ -30,14 +30,19 @@ public class ParserEntityLevelTest {
 	}
 	
 	private void print(EntityParsingError exception) {
-		System.out.println("EntityParsingError : " + exception.getMessage() );
-		for ( FieldParsingError error : exception.getFieldsErrors() ) {
-			System.out.println(" . FieldParsingError : " + error.getMessage() + " [" + error.getEntityName() + "]");
+		if ( exception != null ) {
+			System.out.println("EntityParsingError : " + exception.getMessage() );
+			for ( FieldParsingError error : exception.getFieldsErrors() ) {
+				System.out.println(" . FieldParsingError : " + error.getMessage() + " [" + error.getEntityName() + "]");
+			}
+		}
+		else {
+			System.out.println("EntityParsingError = null (no exception) "  );
 		}
 	}
 
 	@Test
-	public void parseEntity_Employee_OK() {
+	public void parseEntity_Employee_ERR() {
 		DomainEntity entity = null ;
 		EntityParsingError exception = null;
 		try {
@@ -45,10 +50,14 @@ public class ParserEntityLevelTest {
 		} catch (EntityParsingError e) {
 			exception = e;
 		}
-		// "Entity OK" expected 
-		assertNull(exception);
-		assertNotNull(entity);
-		assertFalse(entity.hasError());
+//		// "Entity OK" expected 
+//		assertNull(exception);
+//		assertNotNull(entity);
+//		assertFalse(entity.hasError());
+		assertNotNull(exception);
+		assertNull(entity);
+		print(exception);
+		assertEquals(1, exception.getFieldsErrors().size() );		
 	}
 
 	@Test

@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
-public class ParserModelWithSpacesTest {
+public class ValidModelWithSpacesTest {
 	
 	@Test
 	public void test() throws ModelParsingError {

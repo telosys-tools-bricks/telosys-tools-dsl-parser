@@ -1,7 +1,6 @@
 package org.telosys.tools.dsl;
 
 import java.io.File;
-import java.util.Map;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.Parser;
@@ -22,18 +21,22 @@ import static org.junit.Assert.assertTrue;
 public class DslModelManagerTest {
     
 	private Model loadValidModel(String modelFileName) {
-		System.out.println("Loading model : " + modelFileName );
-        DslModelManager modelLoader = new DslModelManager();
-        Model model = modelLoader.loadModel(modelFileName);
+		System.out.println("----- " );
+		System.out.println("Loading valid model : " + modelFileName );
+        DslModelManager dslModelManager = new DslModelManager();
+        Model model = dslModelManager.loadModel(modelFileName);
+		printErrors(dslModelManager);
 		if ( model == null ) {
 			System.out.println("ERROR : cannot load model");
-			System.out.println(modelLoader.getErrorMessage());
-			//modelLoader.getParsingErrors()
-			for ( Map.Entry<String, String> entry : modelLoader.getParsingErrors().entrySet() ) {
-				System.out.println(" . " + entry.getKey() + " : " + entry.getValue() );
-			}
-			throw new RuntimeException("Cannot load model : " + modelLoader.getErrorMessage());
+			System.out.println(dslModelManager.getErrorMessage());
+//			for ( Map.Entry<String, String> entry : modelLoader.getParsingErrors().entrySet() ) {
+//				System.out.println(" . " + entry.getKey() + " : " + entry.getValue() );
+//			}
+			throw new RuntimeException("Cannot load model : " + dslModelManager.getErrorMessage());
 		}
+		// No error expected
+		assertEquals(0, dslModelManager.getErrorMessage().length() );
+		assertEquals(0, dslModelManager.getErrors().getAllErrorsCount() );
 		return model ;
     }
     
@@ -351,9 +354,11 @@ public class DslModelManagerTest {
         assertNotNull(modelParsingError);
 		System.out.println("ModelParsingError message : " + modelParsingError.getMessage() );
 		for ( EntityParsingError entityError : modelParsingError.getEntitiesErrors() ) {
-			System.out.println(" . EntityParsingError : " + entityError.getEntityName() + " : " + entityError.getMessage() );
+			//System.out.println(" . EntityParsingError : " + entityError.getEntityName() + " : " + entityError.getMessage() );
+			System.out.println(" . EntityParsingError : " + entityError.getMessage() );
 			for ( FieldParsingError fieldError : entityError.getFieldsErrors() ) {
-				System.out.println(" . . FieldParsingError : " + fieldError.getEntityName() + " : " + fieldError.getMessage() );
+				//System.out.println(" . . FieldParsingError : " + fieldError.getEntityName() + " : " + fieldError.getMessage() );
+				System.out.println(" . . FieldParsingError : " + fieldError.getMessage() );
 			}
 		}
     }
@@ -372,11 +377,27 @@ public class DslModelManagerTest {
         Model model = dslModelManager.loadModel(modelFile);
         assertNull(model);
         assertNotNull(dslModelManager.getErrorMessage());
-        assertNotNull(dslModelManager.getParsingErrors());
-        assertTrue( dslModelManager.getParsingErrors().size() > 0 );
-        Map<String,String> errors = dslModelManager.getParsingErrors();
-        for ( Map.Entry<String,String> entry : errors.entrySet() ) {
-        	System.out.println(" . " + entry.getKey() + " : " + entry.getValue() );
-        }
-    }    
+        assertNotNull(dslModelManager.getErrors());
+        assertTrue( dslModelManager.getErrors().getAllErrorsCount() > 0 );
+//        Map<String,String> errors = dslModelManager.getParsingErrors();
+//        for ( Map.Entry<String,String> entry : errors.entrySet() ) {
+//        	System.out.println(" . " + entry.getKey() + " : " + entry.getValue() );
+//        }
+        printErrors(dslModelManager);
+    }
+    
+    private void printErrors(DslModelManager dslModelManager) {
+    	System.out.println("DslModelManager errors : " );
+    	System.out.println(" . Error message : " + dslModelManager.getErrorMessage() );
+    	DslModelErrors errors = dslModelManager.getErrors();
+    	if ( errors != null ) {
+        	System.out.println(" . All Errors Count : " + errors.getAllErrorsCount() );
+    		for ( String entityName : errors.getEntities() ) {
+            	System.out.println(" --> Entity '" + entityName + "' : " );
+        		for ( FieldParsingError fpe : errors.getErrors(entityName) ) {
+                	System.out.println("   . [" + fpe.getEntityName() + "] "+ fpe.getMessage() );
+        		}
+    		}
+    	}
+    }
 }

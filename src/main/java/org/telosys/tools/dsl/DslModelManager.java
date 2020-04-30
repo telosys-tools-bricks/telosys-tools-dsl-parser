@@ -16,15 +16,15 @@
 package org.telosys.tools.dsl;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.converter.Converter;
 import org.telosys.tools.dsl.parser.Parser;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
+import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainModelInfo;
@@ -34,7 +34,8 @@ public class DslModelManager {
 
 	private String parsingErrorMessage = null;
 
-	private Map<String, String> parsingErrors = null;
+	//private Map<String, String> parsingErrors = null;
+	private DslModelErrors errors ;
 
 	/**
 	 * Constructor
@@ -42,11 +43,15 @@ public class DslModelManager {
 	public DslModelManager() {
 		super();
 		parsingErrorMessage = "";
-		parsingErrors = new HashMap<>();
+//		parsingErrors = new HashMap<>();
+		errors = new DslModelErrors();
 	}
 
-	public Map<String, String> getParsingErrors() {
-		return parsingErrors;
+//	public Map<String, String> getParsingErrors() {
+//		return parsingErrors;
+//	}
+	public DslModelErrors getErrors() {
+		return errors;
 	}
 
 	public String getErrorMessage() {
@@ -88,7 +93,9 @@ public class DslModelManager {
         if ( modelParsingError != null ) {
         	//--- 2) Keep error information
         	parsingErrorMessage = modelParsingError.getMessage();
-        	buildErrorsMap(modelParsingError.getEntitiesErrors());
+        	//buildErrorsMap(modelParsingError.getEntitiesErrors());
+        	//new DslModelErrors(List<EntityParsingError> entityParsingErrors)
+        	errors = new DslModelErrors(modelParsingError.getEntitiesErrors());
             return null;
         }
         else {
@@ -113,11 +120,18 @@ public class DslModelManager {
         }
     }
 
-    private void buildErrorsMap(List<EntityParsingError> errors) {
-    	for ( EntityParsingError err : errors ) {
-    		parsingErrors.put(err.getEntityName(), err.getMessage());
-    	}
-    }
+//    private void buildModelErrors(List<EntityParsingError> entityParsingErrors) {
+//    	for ( EntityParsingError entityParsingError : entityParsingErrors ) {
+//    		String entityName = entityParsingError.getEntityName();
+//    		List<DslModelError> entityErrors = errors.getEntityErrors(entityName);
+//    		if ( entityErrors == null ) {
+//    			entityErrors = new LinkedList<>();
+//    		}
+//    		for ( FieldParsingError fieldParsingError : entityParsingError.getFieldsErrors() ) {
+//    			entityErrors.add( new DslModelError(fieldParsingError) );
+//    		}
+//    	}
+//    }
     
 	/**
 	 * Loads the model information from the given file
