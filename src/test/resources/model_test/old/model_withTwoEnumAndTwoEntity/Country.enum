@@ -1,7 +1,0 @@
-// My comment
-
-Country : string { // My comment
-	FR = "France",
-	EN = "Angleterre", // My comment
-	ES = "Espagne"
-}

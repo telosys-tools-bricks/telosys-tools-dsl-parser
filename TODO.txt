@@ -1,5 +1,5 @@
 ======================================================================
-   TO DO 
+   W I P
 ======================================================================
 
 DslModelManager : errors detail for each entity 
@@ -7,9 +7,15 @@ DslModelManager : errors detail for each entity
    Map<String, String> parsingErrors  Map<String, List> ?
    buildErrorsMap(...)
 
--------------------------------------------------------
+======================================================================
+   TO DO 
+======================================================================
 
 Fix bug in code gen with jpa.xxx when mappedBy="null" !
+
+-------------------------------------------------------
+
+Annotations and tags at Entity level
 
 -------------------------------------------------------
 

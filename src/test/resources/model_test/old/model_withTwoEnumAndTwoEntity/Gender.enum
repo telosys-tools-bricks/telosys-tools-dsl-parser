@@ -1,8 +1,0 @@
-/*
-My multi-line comment
-Bla bla
-*/
-Gender : string {
-	H = "Homme", /* comment */
-	F = "Femme"
-}

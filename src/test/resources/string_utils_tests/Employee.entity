@@ -1,5 +1,0 @@
-Employee {
-	id : integer {@Id}; // the id
-	firstName : string ;
-	birthDate : date ;
-}
