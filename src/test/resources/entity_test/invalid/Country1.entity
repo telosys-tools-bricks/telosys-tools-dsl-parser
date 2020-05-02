@@ -1,5 +1,6 @@
-Country1 { // Bad name
+
+Country1 { 
 	id : int {@Id};
-	name : string { @FooBarZzz };
+	name : string { @FooBarZzz };   // field 'name' : '@FooBarZzz' (unknown annotation)
 	foo : long ;
 }

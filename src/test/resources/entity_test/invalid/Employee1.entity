@@ -1,2 +1,4 @@
-Employee1 // no { } 
+// no { } 
+// Unexpected char(s) after entity name (line 4)
+Employee1 
     id : integer {@Id};  
