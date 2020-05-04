@@ -28,44 +28,88 @@ public class EntityParsingError extends Exception {
 
     private static final long serialVersionUID = 1L;
     
-	private final String entityName;
-	private final int lineNumber;
-	private final String message ;
-    private final List<FieldParsingError> fieldsErrors ;
+    // Standard exception message
+	private final String exceptionMessage ;
 
-    public EntityParsingError(String entityName, String error) {
+    // Error details (for reporting)
+	private final String entityName;
+
+	// Entity error
+	private final int lineNumber;
+	private final String entityError;
+    
+	// Fields errors
+	private final List<FieldParsingError> fieldsErrors ;
+
+    /**
+     * Entity error due to entity level error 
+     * @param entityName
+     * @param errorMessage
+     */
+    public EntityParsingError(String entityName, String errorMessage) {
         super();
+		this.exceptionMessage = "entity '" + entityName + "' : " + errorMessage ;
+	    // Error details (for reporting)
         this.entityName = entityName ;
-        this.lineNumber = 0 ;
-		this.message = "entity '" + entityName + "' : " + error ;
-		this.fieldsErrors = new LinkedList<>() ;
+    	// Entity error
+        this.lineNumber = 0 ; // unknown line number
+        this.entityError = errorMessage ;
+    	// Fields errors
+		this.fieldsErrors = new LinkedList<>() ; // no fields errors 
     }
 
-    public EntityParsingError(String entityName, String error, int lineNumber) {
+    /**
+     * Entity error due to entity level error
+     * @param entityName
+     * @param errorMessage
+     * @param lineNumber
+     */
+    public EntityParsingError(String entityName, String errorMessage, int lineNumber) {
         super();
+		this.exceptionMessage = entityName + " : " + errorMessage + "(line " + lineNumber + ")";
+        // Error details (for reporting)
         this.entityName = entityName ;
+    	// Entity error
+        this.entityError = errorMessage ;
         this.lineNumber = lineNumber ;
-		this.message = entityName + " : " + error + "(line " + lineNumber + ")";
-		this.fieldsErrors = new LinkedList<>() ;
+    	// Fields errors
+		this.fieldsErrors = new LinkedList<>() ; // no fields errors 
     }
     
-    public EntityParsingError(String entityName, String error, List<FieldParsingError> fieldsErrors) {
+    /**
+     * Entity error due to 1 to N invalid fields
+     * @param entityName
+     * @param fieldsErrors
+     */
+    public EntityParsingError(String entityName, List<FieldParsingError> fieldsErrors) {
         super();
+        if ( fieldsErrors == null ) {
+        	throw new IllegalArgumentException("fieldsErrors is null");
+        }
+		this.exceptionMessage = "entity '" + entityName + "' : " + fieldsErrors.size() + " field error(s)" ;
+        // Error details (for reporting)
         this.entityName = entityName ;
+        // No entity level error
         this.lineNumber = 0 ;
-		this.message = "entity '" + entityName + "' : " + error ;
-		this.fieldsErrors = fieldsErrors ;
+        this.entityError = null ;
+        // Only fields errors
+   		this.fieldsErrors = fieldsErrors ;
     }
 
+    // Standard exception message
     @Override
     public String getMessage() {
-        return message;
+        return exceptionMessage;
     }
     
+    // Error details (for reporting)
     public String getEntityName() {
     	return entityName;
     }
 
+    public String getError() {
+    	return entityError;
+    }
     public int getLineNumber() {
     	return lineNumber;
     }
@@ -75,6 +119,10 @@ public class EntityParsingError extends Exception {
     }
     
     public int getErrorsCount() {
-    	return fieldsErrors.size();
+    	int n = fieldsErrors.size(); // 0 or N 
+    	if ( this.entityError != null ) {
+    		n++;
+    	}
+    	return n ;
     }
 }

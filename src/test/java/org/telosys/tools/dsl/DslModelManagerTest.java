@@ -1,6 +1,7 @@
 package org.telosys.tools.dsl;
 
 import java.io.File;
+import java.util.List;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.Parser;
@@ -370,33 +371,56 @@ public class DslModelManagerTest {
     }
     
     @Test
+    public void test_InvalidModel_TwoEntity_Model() { 
+    	String modelFile = "src/test/resources/model_test/invalid/TwoEntities.model" ;
+		System.out.println("Loading model : " + modelFile );
+        DslModelManager dslModelManager = new DslModelManager();
+        Model model = dslModelManager.loadModel(modelFile);
+        printErrors(dslModelManager);
+
+        assertNull(model);
+        assertNotNull(dslModelManager.getErrorMessage());
+        assertNotNull(dslModelManager.getErrors());
+        assertTrue( dslModelManager.getErrors().getAllErrorsCount() > 0 );
+    }
+    
+    @Test
     public void test_InvalidModel_FourEntity_Model() { 
     	String modelFile = "src/test/resources/model_test/invalid/FourEntities.model" ;
 		System.out.println("Loading model : " + modelFile );
         DslModelManager dslModelManager = new DslModelManager();
         Model model = dslModelManager.loadModel(modelFile);
+        printErrors(dslModelManager);
+        
         assertNull(model);
         assertNotNull(dslModelManager.getErrorMessage());
         assertNotNull(dslModelManager.getErrors());
         assertTrue( dslModelManager.getErrors().getAllErrorsCount() > 0 );
-//        Map<String,String> errors = dslModelManager.getParsingErrors();
-//        for ( Map.Entry<String,String> entry : errors.entrySet() ) {
-//        	System.out.println(" . " + entry.getKey() + " : " + entry.getValue() );
-//        }
-        printErrors(dslModelManager);
     }
     
     private void printErrors(DslModelManager dslModelManager) {
     	System.out.println("DslModelManager errors : " );
-    	System.out.println(" . Error message : " + dslModelManager.getErrorMessage() );
+    	System.out.println(" Error message : " + dslModelManager.getErrorMessage() );
     	DslModelErrors errors = dslModelManager.getErrors();
     	if ( errors != null ) {
-        	System.out.println(" . All Errors Count : " + errors.getAllErrorsCount() );
+        	System.out.println(" All Errors Count : " + errors.getAllErrorsCount() );
+//    		for ( String entityName : errors.getEntities() ) {
+//            	System.out.println(" --> Entity '" + entityName + "' : " );
+//        		for ( FieldParsingError fpe : errors.getErrors(entityName) ) {
+//                	// System.out.println("   . [" + fpe.getEntityName() + "] "+ fpe.getMessage() );
+//                	System.out.println("   . [" + fpe.getEntityName() + "] field '"+ fpe.getFieldName() + "' : " + fpe.getError() );
+//        		}
+//    		}
+        	System.out.println(" All Errors : " );
+    		for ( String err : errors.getAllErrors() ) {
+            	System.out.println(" . " + err );
+    		}
+        	System.out.println(" Errors for each entity : " );
     		for ( String entityName : errors.getEntities() ) {
-            	System.out.println(" --> Entity '" + entityName + "' : " );
-        		for ( FieldParsingError fpe : errors.getErrors(entityName) ) {
-                	System.out.println("   . [" + fpe.getEntityName() + "] "+ fpe.getMessage() );
-        		}
+    			System.out.println(" --> Entity '" + entityName + "' : " );
+    			for ( String err : errors.getErrors(entityName) ) {
+                	System.out.println(" . " + err );
+    			}
     		}
     	}
     }

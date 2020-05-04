@@ -1,4 +1,6 @@
-Gender { 
+Gender 
+
+{ 
 	id : string { @Id  @SizeMax(2) };
 	name : string;
 }

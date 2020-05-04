@@ -25,7 +25,7 @@ public class FieldNameAndTypeError extends FieldParsingError {
 
     private static final long serialVersionUID = 1L;
     
-	private final String fieldNameAndType;
+//	private final String fieldNameAndType;
 
     /**
      * Constructor
@@ -34,12 +34,13 @@ public class FieldNameAndTypeError extends FieldParsingError {
      * @param error
      */
     public FieldNameAndTypeError(String entityName, String fieldNameAndType, String error) {
-        super(entityName, error, entityName + " : '" + fieldNameAndType + "' (" + error + ")");
-        this.fieldNameAndType = fieldNameAndType ;
+//        super(entityName, fieldNameAndType, entityName + " : '" + fieldNameAndType + "' (" + error + ")");
+        super(entityName, fieldNameAndType, error );
+//        this.fieldNameAndType = fieldNameAndType ;
     }
 
-	public String getFieldNameAndType() {
-		return fieldNameAndType;
-	}
+//	public String getFieldNameAndType() {
+//		return fieldNameAndType;
+//	}
     
 }

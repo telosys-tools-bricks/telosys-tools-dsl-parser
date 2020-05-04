@@ -25,7 +25,7 @@ public class AnnotationOrTagError extends FieldParsingError {
 
     private static final long serialVersionUID = 1L;
     
-	private final String fieldName;
+//	private final String fieldName;
 	private final String annotationOrTag;
 
     /**
@@ -36,14 +36,15 @@ public class AnnotationOrTagError extends FieldParsingError {
      * @param error
      */
     public AnnotationOrTagError(String entityName, String fieldName, String annotationOrTag, String error) {
-        super(entityName, error, entityName + " : field '" + fieldName + "' : '" + annotationOrTag + "' (" + error + ")");
-        this.fieldName = fieldName ;
+//        super(entityName, fieldName, entityName + " : field '" + fieldName + "' : '" + annotationOrTag + "' (" + error + ")");
+        super(entityName, fieldName, "'" + annotationOrTag + "' (" + error + ")");
+//        this.fieldName = fieldName ;
         this.annotationOrTag = annotationOrTag ;
     }
 
-	public String getFieldName() {
-		return fieldName;
-	}
+//	public String getFieldName() {
+//		return fieldName;
+//	}
 
 	public String getAnnotationOrTag() {
 		return annotationOrTag;

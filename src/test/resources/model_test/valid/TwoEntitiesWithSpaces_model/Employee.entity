@@ -1,4 +1,6 @@
-Employee {
+Employee 
+
+{
 
 // Field "id"
 	id :                                       int {@Id @Min(1  ) 

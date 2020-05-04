@@ -91,14 +91,13 @@ public class Parser {
 			try {
 				domainEntity = parseEntity(entityFileName, entitiesNames);
 				if ( domainEntity.hasError() ) {
-					int n = domainEntity.getErrors().size() ;
-//					model.addError(new EntityParsingError(domainEntity.getName(), n + " error(s)", domainEntity.getErrors() ) );
-					errors.add(new EntityParsingError(domainEntity.getName(), n + " error(s)", domainEntity.getErrors() ) );
+					//int n = domainEntity.getErrors().size() ;
+					//errors.add(new EntityParsingError(domainEntity.getName(), n + " error(s)", domainEntity.getErrors() ) );
+					errors.add(new EntityParsingError(domainEntity.getName(), domainEntity.getErrors() ) );
 				}
 				//--- Replace VOID ENTITY by REAL ENTITY
 				model.setEntity(domainEntity);
 			} catch (EntityParsingError entityParsingError) {
-//				model.addError(entityParsingError);
 				errors.add(entityParsingError);
 			}
 		}
@@ -206,8 +205,9 @@ public class Parser {
 			parseField(domainEntity, field, entitiesNames );
 		}
 		if ( domainEntity.hasError() ) {
-			String msg = domainEntity.getErrors().size() + " error(s)" ;
-			throw new EntityParsingError(domainEntity.getName(), msg, domainEntity.getErrors() );
+//			String msg = domainEntity.getErrors().size() + " error(s)" ;
+//			throw new EntityParsingError(domainEntity.getName(), msg, domainEntity.getErrors() );
+			throw new EntityParsingError(domainEntity.getName(), domainEntity.getErrors() );
 		}
 		return domainEntity;
 	}
@@ -279,7 +279,7 @@ public class Parser {
 		for (DomainAnnotation annotation : fieldAnnotationsAndTags.getAnnotations()) {
 			if (domainField.hasAnnotation(annotation)) {
 				// Already defined => Error
-				domainField.addError(new AnnotationOrTagError(entityName, fieldName, annotation.getName(),
+				domainField.addError(new AnnotationOrTagError(entityName, fieldName, "@"+annotation.getName(),
 						"annotation defined more than once"));
 			} else {
 				domainField.addAnnotation(annotation);
@@ -290,7 +290,7 @@ public class Parser {
 		for (DomainTag tag : fieldAnnotationsAndTags.getTags()) {
 			if (domainField.hasTag(tag)) {
 				// Already defined => Error
-				domainField.addError(new AnnotationOrTagError(entityName, fieldName, tag.getName(),
+				domainField.addError(new AnnotationOrTagError(entityName, fieldName, "#"+tag.getName(),
 						"tag defined more than once"));
 			} else {
 				domainField.addTag(tag);

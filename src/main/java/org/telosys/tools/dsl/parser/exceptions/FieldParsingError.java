@@ -16,43 +16,51 @@
 package org.telosys.tools.dsl.parser.exceptions;
 
 /**
- * DSL Parser Exception 
+ * DSL Parser Exception
  * 
  * @author Laurent GUERIN
  *
  */
 public abstract class FieldParsingError extends Exception {
 
-    private static final long serialVersionUID = 1L;
-    
-	private final String entityName;
-	private final String error ;
-	private final String detailMessage ;
+	private static final long serialVersionUID = 1L;
 
-    /**
-     * Constructor
-     * @param entityName
-     * @param error
-     * @param detailMessage
-     */
-    protected FieldParsingError(String entityName, String error, String detailMessage) {
-        super();
-        this.entityName = entityName ;
-        this.error = error;
-		this.detailMessage = detailMessage;
-    }
-    
-    public String getEntityName() {
-		return entityName;
+	// Standard exception message
+	private final String exceptionMessage;
+
+	// Error details (for reporting)
+	private final String entityName;
+	private final String fieldName;
+	private final String error;
+
+	/**
+	 * Constructor
+	 * @param entityName
+	 * @param fieldName
+	 * @param error
+	 */
+	protected FieldParsingError(String entityName, String fieldName, String error) {
+		super();
+		this.exceptionMessage = entityName + " : field '" + fieldName + "' : " + error ;
+		this.entityName = entityName;
+		this.fieldName = fieldName;
+		this.error = error;
 	}
 
+	// Standard exception message
+	@Override
+	public String getMessage() {
+		return exceptionMessage;
+	}
+
+	// Error details (for reporting)
+	public String getEntityName() {
+		return entityName;
+	}
+	public String getFieldName() {
+		return fieldName;
+	}
 	public String getError() {
 		return error;
 	}
-
-	@Override
-    public String getMessage() {
-        return detailMessage;
-    }
-    
 }
