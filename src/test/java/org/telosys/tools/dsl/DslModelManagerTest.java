@@ -1,7 +1,6 @@
 package org.telosys.tools.dsl;
 
 import java.io.File;
-import java.util.List;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.Parser;
@@ -412,7 +411,7 @@ public class DslModelManagerTest {
 //        		}
 //    		}
         	System.out.println(" All Errors : " );
-    		for ( String err : errors.getAllErrors() ) {
+    		for ( String err : errors.getAllErrorsList() ) {
             	System.out.println(" . " + err );
     		}
         	System.out.println(" Errors for each entity : " );

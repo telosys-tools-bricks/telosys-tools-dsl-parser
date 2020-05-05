@@ -13,20 +13,18 @@
 
 	<name>telosys-tools-dsl-parser</name>
 	<artifactId>telosys-tools-dsl-parser</artifactId>
-	<version>${telosys-tools-dsl-parser.version}</version> <!-- Version defined in parent -->
+	<version>3.2.2</version>  <!-- also update version in DslModelVersion.java  -->
 	<packaging>jar</packaging>
 
 	<dependencies>
 		<!-- For compilation -->
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>org.telosys</groupId>
 			<artifactId>telosys-tools-generic-model</artifactId>
-			<version>${telosys-tools-generic-model.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>org.telosys</groupId>
 			<artifactId>telosys-tools-commons</artifactId>
-			<version>${telosys-tools-commons.version}</version>
 		</dependency>
 		
 		<!-- For tests -->

@@ -16,25 +16,31 @@
 package org.telosys.tools.dsl;
 
 import java.io.File;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.converter.Converter;
 import org.telosys.tools.dsl.parser.Parser;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainModelInfo;
 import org.telosys.tools.generic.model.Model;
 
+/**
+ * DSL Model manager 
+ * 
+ * @author Laurent Guerin
+ *
+ */
 public class DslModelManager {
 
 	private String parsingErrorMessage = null;
 
-	//private Map<String, String> parsingErrors = null;
+	/**
+	 * All errors detected during model loading
+	 */
 	private DslModelErrors errors ;
 
 	/**
@@ -43,20 +49,29 @@ public class DslModelManager {
 	public DslModelManager() {
 		super();
 		parsingErrorMessage = "";
-//		parsingErrors = new HashMap<>();
 		errors = new DslModelErrors();
 	}
 
-//	public Map<String, String> getParsingErrors() {
-//		return parsingErrors;
-//	}
+	/**
+	 * Returns main error message (or void if no error)
+	 * @return
+	 */
+	public String getErrorMessage() {
+		return parsingErrorMessage;
+	}
+
+	/**
+	 * Returns object containing all errors 
+	 * @return
+	 */
 	public DslModelErrors getErrors() {
 		return errors;
 	}
 
-	public String getErrorMessage() {
-		return parsingErrorMessage;
+	public Map<String, List<String>> getErrorsMap() {
+		return errors.getAllErrorsMap();
 	}
+
 
 	/**
 	 * Loads (parse) the given model file
@@ -91,48 +106,23 @@ public class DslModelManager {
 		}
 		
         if ( modelParsingError != null ) {
-        	//--- 2) Keep error information
+        	//--- 2) Parsing ERRORS => Keep errors information
         	parsingErrorMessage = modelParsingError.getMessage();
-        	//buildErrorsMap(modelParsingError.getEntitiesErrors());
-        	//new DslModelErrors(List<EntityParsingError> entityParsingErrors)
         	errors = new DslModelErrors(modelParsingError.getEntitiesErrors());
             return null;
         }
         else {
-//        	if ( domainModel.hasError() ) {
-//            	parsingErrorMessage = "Parsing error(s) : " + domainModel.getErrors().size() + " invalid entity(ies) ";
-//
-//            	buildErrorsMap(domainModel.getErrors()); 
-//                return null;
-//        	}
-//        	else {
-                //--- 2) Convert the "domain model" to "generic model" 
-                Converter converter = new Converter();
-    			try {
-    				return converter.convertToGenericModel(domainModel);
-    			} catch (Exception e) {
-    				parsingErrorMessage = "Converter error : " + e.getMessage() ;
-//    				parsingErrors = new Hashtable<>();
-//    				parsingErrors.put("", parsingErrorMessage );
-    				return null ;
-    			}
-//        	}
+            //--- 2) Parsing OK : Convert the "domain model" to "generic model" 
+            Converter converter = new Converter();
+			try {
+				return converter.convertToGenericModel(domainModel);
+			} catch (Exception e) {
+				parsingErrorMessage = "Converter error : " + e.getMessage() ;
+				return null ;
+			}
         }
     }
 
-//    private void buildModelErrors(List<EntityParsingError> entityParsingErrors) {
-//    	for ( EntityParsingError entityParsingError : entityParsingErrors ) {
-//    		String entityName = entityParsingError.getEntityName();
-//    		List<DslModelError> entityErrors = errors.getEntityErrors(entityName);
-//    		if ( entityErrors == null ) {
-//    			entityErrors = new LinkedList<>();
-//    		}
-//    		for ( FieldParsingError fieldParsingError : entityParsingError.getFieldsErrors() ) {
-//    			entityErrors.add( new DslModelError(fieldParsingError) );
-//    		}
-//    	}
-//    }
-    
 	/**
 	 * Loads the model information from the given file
 	 * 
