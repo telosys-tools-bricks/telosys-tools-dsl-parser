@@ -526,7 +526,7 @@ public class Converter {
 			}
 			if (AnnotationName.PATTERN.equals(annotation.getName())) {
 				log("Converter : annotation @Pattern");
-				genericAttribute.setInputType(annotation.getParameterAsString());
+				genericAttribute.setPattern(annotation.getParameterAsString());
 			}
 
 			// TODO :
