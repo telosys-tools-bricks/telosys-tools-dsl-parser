@@ -1,0 +1,4 @@
+
+employee3Bis { // entity name diferent from file name
+  id : short { @Id @NotNull } ;
+}

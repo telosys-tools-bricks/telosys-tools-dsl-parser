@@ -52,6 +52,11 @@ public class InvalidEntitiesParsingTest {
 	}
 
 	@Test
+	public void testParseEmployee3Bis() {
+		parseWithErrorExpected("Employee3Bis", new LinkedList<String>());
+	}
+
+	@Test
 	public void testParseEmployee4() {
 		parseWithErrorExpected("Employee4", new LinkedList<String>());
 	}
