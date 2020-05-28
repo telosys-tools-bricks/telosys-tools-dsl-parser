@@ -16,6 +16,7 @@
 package org.telosys.tools.dsl.model;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.DateType;
@@ -84,6 +85,8 @@ public class DslModelAttribute implements Attribute {
 	private boolean isUnsignedTypeExpected = false ;
 	private boolean isObjectTypeExpected = false ;
 	private boolean isSqlTypeExpected = false ;
+	
+	private Map<String, String> tagsMap = null ; // Tags added in v 3.3.0
 	
 	@Override
 	public String getName() {
@@ -196,17 +199,6 @@ public class DslModelAttribute implements Attribute {
 		this.entity = entity;
 	}
 	
-	// Removed in v 3.0.0
-//	@Override
-//	public String getFullType() {
-////		return fullType;
-//		LanguageType languageType = typeConverter.getType(this);
-//		return languageType.getFullType();
-//	}
-//	public void setFullType(String fullType) {
-//		this.fullType = fullType;
-//	}
-
 	@Override
 	public String getGeneratedValueGenerator() {
 		return generatedValueGenerator;
@@ -329,20 +321,6 @@ public class DslModelAttribute implements Attribute {
 		this.sequenceGeneratorSequenceName = sequenceGeneratorSequenceName;
 	}
 
-	// Removed in v 3.0.0
-//	@Override
-//	public String getSimpleType() {
-////		return simpleType;
-//		LanguageType languageType = typeConverter.getType(this);
-//		if ( languageType == null ) {			
-//			throw new EntityParserException("Invalid type '" + this.getNeutralType() + "'");
-//		}
-//		return languageType.getSimpleType();
-//	}
-//	public void setSimpleType(String simpleType) {
-//		this.simpleType = simpleType;
-//	}
-
 	@Override
 	public String getTableGeneratorName() {
 		return tableGeneratorName;
@@ -384,19 +362,6 @@ public class DslModelAttribute implements Attribute {
 		this.tableGeneratorValueColumnName = tableGeneratorValueColumnName;
 	}
 	
-//	public String getType() {
-//		return type;
-//	}
-//	public void setType(String type) {
-//		this.type = type;
-//	}
-//	public String getWrapperType() {
-//		return wrapperType;
-//	}
-//	public void setWrapperType(String wrapperType) {
-//		this.wrapperType = wrapperType;
-//	}
-
 	@Override
 	public boolean hasSequenceGenerator() {
 		return hasSequenceGenerator;
@@ -518,14 +483,6 @@ public class DslModelAttribute implements Attribute {
 	}
 
 
-// Replaced by "isFK" in v 3.0.0
-//	@Override
-//	public boolean isUsedInForeignKey() {
-//		return isUsedInForeignKey;
-//	}
-//	public void setUsedInForeignKey(boolean isUsedInForeignKey) {
-//		this.isUsedInForeignKey = isUsedInForeignKey;
-//	}
 	@Override
 	public boolean isFK() {
 		return isForeignKeySimple || isForeignKeyComposite ;
@@ -539,10 +496,6 @@ public class DslModelAttribute implements Attribute {
 		return isForeignKeySimple;
 	}
 
-// Never "Composite" in this model (DSL)
-//	public void setFKComposite(boolean flag) {
-//		_bForeignKeyComposite = flag ;
-//	}
 	@Override
 	public boolean isFKComposite() {
 		return isForeignKeyComposite; // Always FALSE (never "Composite" in a DSL model)
@@ -605,5 +558,22 @@ public class DslModelAttribute implements Attribute {
 		// No "link selection" in this model 
 		// Then all links are considered as "selected" => same as "isUsedInLinks()"
 		return isUsedInLinks();
+	}
+	
+	//-----------------------------------------------------------------------------------------
+	// ATTRIBUTE TAGS  (added in v 3.3.0) 
+	//-----------------------------------------------------------------------------------------
+	public void setTags(Map<String,String> tags) {
+		this.tagsMap = tags;
+	}
+	
+	@Override
+	public String getTagValue(String tagName) {
+		String v = this.tagsMap.get(tagName);
+		return ( v != null ? v : "" );
+	}
+	@Override
+	public boolean hasTag(String tagName) {
+		return this.tagsMap.containsKey(tagName);
 	}
 }

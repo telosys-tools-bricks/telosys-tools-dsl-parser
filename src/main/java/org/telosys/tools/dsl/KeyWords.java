@@ -106,7 +106,7 @@ public class KeyWords {
 	 * @return
 	 */
 	public static final List<String> getAnnotations() {
-		return new LinkedList<String>(Arrays.asList(annotations));
+		return new LinkedList<>(Arrays.asList(annotations));
 	}
 	
 }

@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-
 /**
  * Root class for a Domain Model built after Domain Specific Language text file parsing
  *
@@ -36,11 +34,6 @@ public class DomainModel {
 	 * Model description and information (from the ".model" file)
 	 */
 	private final DomainModelInfo domainModelInfo ;
-
-//    /**
-//     * Entity errors detected during the parsing
-//     */
-//    private final List<EntityParsingError> entityErrors = new LinkedList<>();
 
     /**
      * Map of all the entities (key is the entity name) 
@@ -91,41 +84,6 @@ public class DomainModel {
 		return domainModelInfo.getDescription();
 	}
 	
-//	//---------------------------------------------------------------------
-//	// Model ERRORS 
-//	//---------------------------------------------------------------------
-//    /**
-//     * Add a new error to the field 
-//     * @param error
-//     */
-//    public void addError(EntityParsingError error) {
-//    	entityErrors.add(error);
-//    }
-//    
-//    public boolean hasError() {
-//    	return ! entityErrors.isEmpty();
-//    }
-//    
-//   public List<EntityParsingError> getErrors() {
-//        return entityErrors;
-//    }
-
-
-//	private final void checkName(String name) {
-//        // Do not accept an entity/enumeration with a "neutral type" name
-//        if (DomainNeutralTypes.exists(name)) {
-//            throw new DslParserException("Reserved name '" + name + "' (neutral type)");
-//        }
-//
-//        // Do not accept an entity and an enumeration with the same name /!\
-//        if (entities.get(name) != null) {
-//            throw new DslParserException("An entity already exists with name '" + name + "'");
-//        }
-////        if (enumerations.get(name) != null) {
-////            throw new EntityParserException("An enumeration already exists with name '" + name + "'");
-////        }
-//    }
-
 	//---------------------------------------------------------------------
 	// Model ENTITIES 
 	//---------------------------------------------------------------------
@@ -137,7 +95,6 @@ public class DomainModel {
      * @param entity
      */
     public final void addEntity(DomainEntity entity) {
-//        checkName(entity.getName());
         entities.put(entity.getName(), entity);
     }
 
@@ -178,114 +135,29 @@ public class DomainModel {
      * @return
      */
     public final List<String> getEntityNames() {
-        List<String> names = new LinkedList<String>(entities.keySet());
+        List<String> names = new LinkedList<>(entities.keySet());
         Collections.sort(names);
         return names;
     }
 
-//    /*------------------------------------------------------------------------------------------
-//     ENUMERATION
-//    ------------------------------------------------------------------------------------------*/
-//
-//    /**
-//     * Stores a new enumeration <br>
-//     * Supposed to be called once for each enumeration
-//     *
-//     * @param enumeration
-//     */
-//    public final void addEnumeration(DomainEnumeration<?> enumeration) {
-//        checkName(enumeration.getName());
-//        enumerations.put(enumeration.getName(), enumeration);
-//    }
-//
-//    /**
-//     * Returns an enumeration for the given name (or null if not found)
-//     *
-//     * @param enumerationName
-//     * @return
-//     */
-//    public final DomainEnumeration<?> getEnumeration(String enumerationName) {
-//        return enumerations.get(enumerationName);
-//    }
-//
-//    /**
-//     * Returns the number of enumerations currently defined in the model
-//     *
-//     * @return
-//     */
-//    public final int getNumberOfEnumerations() {
-//        return enumerations.size();
-//    }
-//
-//    /**
-//     * Returns all the enumeration names (in alphabetical order)
-//     *
-//     * @return
-//     */
-//    public final List<String> getEnumerationNames() {
-//        List<String> names = new LinkedList<String>(enumerations.keySet());
-//        Collections.sort(names);
-//        return names;
-//    }
-
-
     @Override
     public String toString() {
-    	String enumerationsString= "";
-    	
-//    	for (String mapKey : enumerations.keySet()) {
-//    		enumerationsString += "\n\t "+mapKey + enumerations.get(mapKey);
-//    	}
-    	
-    	String entitiesString= "";
-    	
-    	for (String mapKey : entities.keySet()) {
-    		entitiesString += "\n\t" + entities.get(mapKey);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Model : ");
+        sb.append(this.getName());
+        sb.append("\n");
+        sb.append("Entities : \n");
+    	for (Map.Entry<String, DomainEntity> e : entities.entrySet()) {
+    		DomainEntity entity = e.getValue();
+            sb.append(" . ");
+            sb.append(entity.getName());
+            sb.append(" : ");
+            sb.append(entity.getNumberOfFields());
+            sb.append(" field(s) ");
+            sb.append(entity.getNumberOfErrors());
+            sb.append(" errors(s) ");
+            sb.append("\n");
     	}
-        return this.getName()+"[\n"
-        				+ "entities=" + entitiesString + ","
-        						+ "\n enumerations=" + enumerationsString + "]";
+    	return sb.toString();
     }
-
-//    @Override
-//    public int hashCode() {
-//    	String modelName = this.getName();
-//        final int prime = 31;
-//        int result = 1;
-//        result = prime * result + ((entities == null) ? 0 : entities.hashCode());
-//        result = prime * result + ((modelName == null) ? 0 : modelName.hashCode());
-//        return result;
-//    }
-
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (this == obj) {
-//            return true;
-//        }
-//        if (obj == null) {
-//            return false;
-//        }
-//        if (getClass() != obj.getClass()) {
-//            return false;
-//        }
-//        DomainModel other = (DomainModel) obj;
-//        if (entities == null) {
-//            if (other.entities != null) {
-//                return false;
-//            }
-//        } else if (!entities.equals(other.entities)) {
-//            return false;
-//        }
-//        String thisModelName = this.getName();
-//        String otherModelName = other.getName();
-//        if (thisModelName == null) {
-//            if (otherModelName != null) {
-//                return false;
-//            }
-//        } else if (!thisModelName.equals(otherModelName)) {
-//            return false;
-//        }
-//        return true;
-//    }
-
 }

@@ -44,7 +44,6 @@ public final class DomainNeutralTypes {
     public static final String TIMESTAMP = "timestamp";
     
     public static final String BINARY_BLOB = "binary"; // BLOB
-    //public static final String LONGTEXT_CLOB = "longtext"; // CLOB ( removed : string is sufficient )
 
 
     private static final String[] NAMES = {
@@ -54,7 +53,6 @@ public final class DomainNeutralTypes {
     	BOOLEAN, 
     	DATE, TIME, TIMESTAMP, 
     	BINARY_BLOB };
-    	//, LONGTEXT_CLOB};
 
     private static final Map<String, DomainNeutralType> NEUTRAL_TYPES = new HashMap<>();
 
@@ -76,11 +74,6 @@ public final class DomainNeutralTypes {
      * @return
      */
     public static final DomainNeutralType getType(String typeName) {
-//        if (NEUTRAL_TYPES.containsKey(typeName)) {
-//            return NEUTRAL_TYPES.get(typeName);
-//        } else {
-//            throw new DslParserException("Invalid neutral type name '" + typeName + "'");
-//        }
         return NEUTRAL_TYPES.get(typeName);
     }
 

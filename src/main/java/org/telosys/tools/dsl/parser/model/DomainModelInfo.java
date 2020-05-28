@@ -25,9 +25,9 @@ import java.util.Properties;
  */
 public class DomainModelInfo {
 
-	private final static String NAME        = "name" ;
-	private final static String VERSION     = "version" ;
-	private final static String DESCRIPTION = "description" ;
+	private static final String NAME        = "name" ;
+	private static final String VERSION     = "version" ;
+	private static final String DESCRIPTION = "description" ;
 	
     private String modelName;
     private String modelVersion;

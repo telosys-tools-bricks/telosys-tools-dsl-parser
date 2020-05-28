@@ -77,20 +77,6 @@ public class DomainField {
     	annotations.put(annotation.getName(), annotation);
     }
         
-//    /**
-//     * Add a new annotation to the field <br>
-//     * Throws an exception if the given annotation is already defined
-//     * @param annotation
-//     */
-//    public void addAnnotation(DomainAnnotation annotation) throws AnnotationOrTagError {
-//        if (!annotations.containsKey(annotation.getName())) {
-//            annotations.put(annotation.getName(), annotation);
-//        } else {
-////            throw new DslParserException("Annotation '" + annotation.getName() + "' already define in field '" + this.getName() + "'");
-//            throw new AnnotationOrTagError("", this.name, annotation.getName(), "annotation defined more than once" );
-//        }
-//    }
-
     /**
      * Check if the given tag is already defined in the field
      * @param tag
@@ -210,75 +196,44 @@ public class DomainField {
     //------------------------------------------------------------------------
     @Override
     public String toString() {
-    	
-    	String fieldString= "'"+name+"'";
-    	if(isEntity()){
-    		fieldString += ": Entity";
-    	} else if(isEnumeration()){
-    		fieldString += ": Enumeration";
-    	} else {
-    		fieldString += ": ";
+    	StringBuilder sb = new StringBuilder();
+    	// name
+    	sb.append(name);
+		sb.append( " : ");
+    	// entity or enum
+    	if(isEntity()) {
+    		sb.append("(entity) ");
+    	} else if(isEnumeration()) {
+    		sb.append("(enum) ");
     	}
-    	
-    	fieldString += "("+type.getName()+")";
+    	// type with cardinality
+    	sb.append( type.getName() );
     	if(cardinality != 1) {
     		if(cardinality == -1){
-    			fieldString+="[]";
+    			sb.append("[]");
     		} else {
-    			fieldString+="["+cardinality+"]";
+    			sb.append("["+cardinality+"]");
     		}
     	}
-    	
-    	String annotationsString= "";    	
-    	for (String mapKey : annotations.keySet()) {
-    		DomainAnnotation annotation = annotations.get(mapKey);
-    		String parameter = "";
+    	sb.append(" {");
+    	// annotations
+    	for (Map.Entry<String, DomainAnnotation> e : annotations.entrySet()) {
+    		DomainAnnotation annotation = e.getValue();
+    		sb.append(" @").append(annotation.getName());
     		if(annotation.hasParameter()){
-    			parameter = "("+ annotation.getParameter() +")";
+    			sb.append("(").append(annotation.getParameter()).append(")");
     		}
-    		annotationsString += "\n\t\t" + annotation.getName()+parameter;
     	}
-    	// TODO : tags 
-        return  fieldString + '{' +
-                 	annotationsString +
-                '}';
+    	// tags 
+    	for (Map.Entry<String, DomainTag> e : tags.entrySet()) {
+    		DomainTag tag = e.getValue();
+    		sb.append(" #").append(tag.getName());
+    		if(tag.hasParameter()){
+    			sb.append("(").append(tag.getParameter()).append(")");
+    		}
+    	}
+    	sb.append(" }");
+    	return sb.toString();
     }
-
-    //------------------------------------------------------------------------------------------
-    
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) {
-//            return true;
-//        }
-//        if (o == null || getClass() != o.getClass()) {
-//            return false;
-//        }
-//
-//        DomainField field = (DomainField) o;
-//
-//        if (!annotations.equals(field.annotations)) {
-//            return false;
-//        }
-//        if (!name.equals(field.name)) {
-//            return false;
-//        }
-//        if (!type.equals(field.type)) {
-//            return false;
-//        }
-//        if (cardinality != (field.cardinality)) {
-//        	return false;
-//        }
-//
-//        return true;
-//    }
-
-//    @Override
-//    public int hashCode() {
-//        int result = name != null ? name.hashCode() : 0;
-//        result = THIRTY_ONE * result + (type != null ? type.hashCode() : 0);
-//        result = THIRTY_ONE * result + (annotations != null ? annotations.hashCode() : 0);
-//        return result;
-//    }
 
 }

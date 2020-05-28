@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 
-public class DomainEntity { // extends DomainType {
+public class DomainEntity {
 
     /**
      * Entity name
@@ -42,23 +42,26 @@ public class DomainEntity { // extends DomainType {
      * @param name
      */
     public DomainEntity(String name) {
-//        super(name, DomainTypeNature.ENTITY);
         this.name = name ;
         // LinkedHashMap to keep the original order
         this.fieldsMap = new LinkedHashMap<>(); 
     }
     
+    /**
+     * Returns the entity name
+     * @return
+     */
     public final String getName() {
         return name;
     }
 
+    //-------------------------------------------------------------------------------------
+    // FIELDS
+    //-------------------------------------------------------------------------------------
     public boolean hasField(DomainField field) {
     	return fieldsMap.containsKey(field.getName());
     }
     public void addField(DomainField field) {
-//        if (fieldsMap.containsKey(field.getName())) {
-//            throw new DslParserException("Field '" + field.getName() + "' already defined");
-//        }
         fieldsMap.put(field.getName(), field);
     }
 
@@ -87,6 +90,9 @@ public class DomainEntity { // extends DomainType {
         return fieldsMap.size();
     }
     
+    //-------------------------------------------------------------------------------------
+    // ERRORS
+    //-------------------------------------------------------------------------------------
     /**
      * Add a new error to the field 
      * @param error
@@ -99,62 +105,44 @@ public class DomainEntity { // extends DomainType {
     	return ! errors.isEmpty();
     }
     
-//    public List<FieldParsingError> getErrors() {
-//    	List<FieldParsingError> allErrors = new LinkedList<>();
-//    	// Errors at Entity level
-//    	for ( FieldParsingError err : errors ) {
-//    		allErrors.add(err);
-//    	}
-//    	// Errors at Field level
-//    	for ( DomainField f : getFields()  ) {
-//        	for ( FieldParsingError err : f.getErrors() ) {
-//        		allErrors.add(err);
-//        	}
-//    	}
-//    	return allErrors;
-//    }
     public List<FieldParsingError> getErrors() {
     	return errors;
+    }
+    
+    /**
+     * Returns the number of errors
+     * @return
+     */
+    public int getNumberOfErrors() {
+        return errors.size();
     }
 
     //-------------------------------------------------------------------------------------
     public String toString() {
-        String fieldRet = "";
-        for (DomainField f : fieldsMap.values()) {
-            fieldRet += "\n\t\t"+f.toString();
+    	StringBuilder sb = new StringBuilder();
+    	sb.append(this.name);
+    	sb.append(" {");
+        for (DomainField field : fieldsMap.values()) {
+        	sb.append("\n");
+        	sb.append(field.toString());
         }
-        return this.getName() + " {" + fieldRet + "}";
+    	sb.append("\n");
+    	sb.append("}");
+    	sb.append("\n");
+    	if ( errors.isEmpty() ) {
+        	sb.append("OK (no error) \n");
+    	} else {
+        	sb.append(errors.size());
+        	sb.append(" error(s) : \n");
+    		for ( FieldParsingError e : errors ) {
+    	    	sb.append(" . " );
+    	    	sb.append(e.getFieldName() );
+    	    	sb.append(" : " );
+    	    	sb.append(e.getMessage() );
+    	    	sb.append("\n");
+    		}
+    	}
+        return sb.toString();
     }
-
-//    @Override
-//    public boolean equals(Object other) {
-//        if (other == null) {
-//            return false;
-//        }
-//        if (other == this) {
-//            return true;
-//        }
-//        if (!(other instanceof DomainEntity)) {
-//            return false;
-//        }
-//        DomainEntity otherEntity = (DomainEntity) other;
-//        if (!otherEntity.getName().equals(this.getName())) {
-//            return false;
-//        }
-//        if (otherEntity.fieldsMap.size() != fieldsMap.size()) {
-//            return false;
-//        }
-//        if (!otherEntity.fieldsMap.equals(fieldsMap)) {
-//            return false;
-//        }
-//        return true;
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        int result = this.getName() != null ? this.getName().hashCode() : 0;
-//        result = THIRTY_ONE_HASH_CODE * result + (fieldsMap != null ? fieldsMap.hashCode() : 0);
-//        return result;
-//    }
 
 }

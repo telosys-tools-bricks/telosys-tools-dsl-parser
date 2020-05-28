@@ -50,7 +50,17 @@ public class Converter {
 		}
 	}
 
+	private final AnnotationsConverter annotationsConverter ;
 	private int linkIdCounter = 0;
+
+	
+	/**
+	 * Constructor
+	 */
+	public Converter() {
+		super();
+		this.annotationsConverter = new AnnotationsConverter();
+	}
 
 	/**
 	 * Converts PARSER MODEL to DSL/Generic model <br>
@@ -125,9 +135,9 @@ public class Converter {
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
 			// Get the GenericEntity built previously
 			DslModelEntity genericEntity = (DslModelEntity) dslModel.getEntityByClassName(domainEntity.getName());
-			// Convert all attributes to "basic type" or "void pseudo FK
-			// attribute" (to keep the initial attributes order)
-			convertAttributes(domainEntity, genericEntity, dslModel);
+			// Convert all attributes to "basic type" 
+			// or "void pseudo FK attribute" (to keep the initial attributes order)
+			convertAttributes(domainEntity, genericEntity);
 		}
 
 		return dslModel;
@@ -135,16 +145,15 @@ public class Converter {
 
 	protected void step2CreateAllLinks(DomainModel domainModel, DslModel genericModel) {
 
-		// STEP x : Create the links ( from attributes referencing an entity )
+		// STEP 2.1 : Create the links ( from attributes referencing an entity )
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
 			// Get the GenericEntity built previously
 			DslModelEntity genericEntity = (DslModelEntity) genericModel.getEntityByClassName(domainEntity.getName());
 			// Creates a link for each field referencing an entity
-			// createLinks(domainEntity, genericEntity, genericModel);
 			createLinks(domainEntity, genericEntity, domainModel);
 		}
 
-		// STEP 3 : Build and set "pseudo Foreign Key Attributes"
+		// STEP 2.2 : Build and set "pseudo Foreign Key Attributes"
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
 			// Get the GenericEntity built previously
 			DslModelEntity genericEntity = (DslModelEntity) genericModel.getEntityByClassName(domainEntity.getName());
@@ -152,8 +161,6 @@ public class Converter {
 			for (DomainField field : domainEntity.getFields()) {
 				if (isPseudoForeignKey(field)) {
 					// Build the "pseudo FK attribute"
-					// DslModelAttribute pseudoFKAttribute =
-					// convertAttributePseudoForeignKey(field);
 					DslModelAttribute pseudoFKAttribute = convertAttributePseudoForeignKey(field, domainModel);
 
 					// Search the original "void attribute" in the
@@ -196,13 +203,9 @@ public class Converter {
 	 * generic model for links resolution
 	 * 
 	 * @param domainEntity
-	 *            DSL entity
 	 * @param genericEntity
-	 *            Generic entity
-	 * @param genericModel
-	 *            Generic model
 	 */
-	private void convertAttributes(DomainEntity domainEntity, DslModelEntity genericEntity, DslModel genericModel) {
+	private void convertAttributes(DomainEntity domainEntity, DslModelEntity genericEntity) {
 		log("convertEntityAttributes()...");
 		if (domainEntity.getFields() == null) {
 			return;
@@ -218,22 +221,12 @@ public class Converter {
 				// STANDARD NEUTRAL TYPE = BASIC ATTRIBUTE
 				log("convertEntityAttributes() : " + domainEntityField.getName() + " : neutral type");
 				// Simple type attribute
-				// DslModelAttribute genericAttribute =
-				// convertAttributeNeutralType( domainEntityField );
 				convertAttributeNeutralType(domainEntityField, genericAttribute);
-				// check(genericAttribute != null, "convertAttributeNeutralType
-				// returns null");
 				// Add the new "basic attribute" to the entity
 				genericEntity.getAttributes().add(genericAttribute);
 			} else {
 				// Not a "neutral type" ==> "entity reference" ?
 				if (isPseudoForeignKey(domainEntityField)) {
-					// // Add a "temporary void attribute" at the expected
-					// position in the attributes list
-					// DslModelAttribute genericAttribute = new
-					// DslModelAttribute();
-					// genericAttribute.setName(
-					// notNull(domainEntityField.getName()) );
 					// Add the new attribute to the entity
 					genericEntity.getAttributes().add(genericAttribute);
 				}
@@ -241,8 +234,6 @@ public class Converter {
 		}
 	}
 
-	// private void createLinks(DomainEntity domainEntity, DslModelEntity
-	// genericEntity, DslModel genericModel) {
 	private void createLinks(DomainEntity domainEntity, DslModelEntity genericEntity, DomainModel domainModel) {
 		log("createLinks()...");
 		if (domainEntity.getFields() == null) {
@@ -257,8 +248,6 @@ public class Converter {
 				log("createLinks() : " + domainEntityField.getName() + " : entity type (link)");
 				// Link type attribute (reference to 1 or N other entity )
 				linkIdCounter++;
-				// DslModelLink genericLink = convertAttributeLink(
-				// domainEntityField, genericModel );
 				DslModelLink genericLink = convertAttributeLink(domainEntityField, domainModel);
 				// Add the new link to the entity
 				genericEntity.getLinks().add(genericLink);
@@ -280,20 +269,12 @@ public class Converter {
 		check(domainFieldType.isNeutralType(), "Invalid field type. Neutral type expected");
 		DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
 
-		// DslModelAttribute genericAttribute = new DslModelAttribute();
-		// genericAttribute.setName( notNull(domainEntityField.getName()) );
-
 		// the "neutral type" is now the only type managed at this level
-		// genericAttribute.setSimpleType(convertNeutralTypeToSimpleType(domainNeutralType)
-		// );
-		// genericAttribute.setFullType(convertNeutralTypeToFullType(domainNeutralType)
-		// );
 		genericAttribute.setNeutralType(domainNeutralType.getName());
 
 		// If the attribute has a "binary" type
 		if (domainEntityField.getType() == DomainNeutralTypes.getType(DomainNeutralTypes.BINARY_BLOB)) {
-			// TODO
-			// genericAttribute.setBinary(true);
+			// TODO : genericAttribute.setBinary(true);
 		}
 
 		initAttributeDefaultValues(genericAttribute, domainEntityField);
@@ -302,238 +283,46 @@ public class Converter {
 		if (domainEntityField.getAnnotations() != null) {
 			log("Converter : annotations found");
 			Collection<DomainAnnotation> fieldAnnotations = domainEntityField.getAnnotations().values();
-			for (DomainAnnotation annotation : fieldAnnotations) {
-				log("Converter : annotation '" + annotation.getName() + "'");
-				// The annotation name is like "Id", "NotNull", "Max", etc
-				// without "@" at the beginning and without "#" at the end
-				if (AnnotationName.ID.equals(annotation.getName())) {
-					log("Converter : annotation @Id");
-					genericAttribute.setKeyElement(true);
-					// If "@Id" => "@NotNull"
-					genericAttribute.setNotNull(true);
-				}
-				if (AnnotationName.AUTO_INCREMENTED.equals(annotation.getName())) {
-					log("Converter : annotation @AutoIncremented");
-					genericAttribute.setAutoIncremented(true);
-				}
-			}
-//			applyAnnotationsAboutValue(genericAttribute, fieldAnnotations);
-//			applyAnnotationsAboutType(genericAttribute, fieldAnnotations);
-//			applyAnnotationsAboutDatabase(genericAttribute, fieldAnnotations);
-			applyAnnotations(genericAttribute, fieldAnnotations);
+//			for (DomainAnnotation annotation : fieldAnnotations) {
+//				log("Converter : annotation '" + annotation.getName() + "'");
+//				// The annotation name is like "Id", "NotNull", "Max", etc
+//				// without "@" at the beginning and without "#" at the end
+//				if (AnnotationName.ID.equals(annotation.getName())) {
+//					log("Converter : annotation @Id");
+//					genericAttribute.setKeyElement(true);
+//					// If "@Id" => "@NotNull"
+//					genericAttribute.setNotNull(true);
+//				}
+//				if (AnnotationName.AUTO_INCREMENTED.equals(annotation.getName())) {
+//					log("Converter : annotation @AutoIncremented");
+//					genericAttribute.setAutoIncremented(true);
+//				}
+//			}
+			annotationsConverter.applyAnnotationsForNeutralType(genericAttribute, fieldAnnotations);
 		} else {
 			log("Converter : no annotation");
 		}
-		// return genericAttribute;
 	}
 
+	/**
+	 * Initializes default values according with the given attribute
+	 * @param genericAttribute
+	 * @param domainEntityField
+	 */
 	private void initAttributeDefaultValues(DslModelAttribute genericAttribute, DomainField domainEntityField) {
-		// genericAttribute.setBooleanFalseValue(booleanFalseValue);
-		// genericAttribute.setBooleanTrueValue(booleanTrueValue);
-		genericAttribute.setDatabaseComment(""); // TODO with @DbComment(xxx)
-		genericAttribute.setDatabaseName(domainEntityField.getName()); // TODO
-																		// with
-																		// @DbColumn(xxx)
-		genericAttribute.setDatabaseDefaultValue(null); // TODO with
-														// @DbDefaultValue(xxx)
-		// genericAttribute.setDatabaseType(databaseType);
-		// genericAttribute.setDateAfter(isDateAfter);
-		// genericAttribute.setDateAfterValue(dateAfterValue);
-		// genericAttribute.setDateBefore(isDateBefore);
-		// genericAttribute.setDateBeforeValue(dateBeforeValue);
-		// genericAttribute.setDateType(dateType);
-		// genericAttribute.setDefaultValue(defaultValue); // only set by
-		// annotation
-		genericAttribute.setLabel(domainEntityField.getName()); // overridden by
-																// @Label(xxx)
-																// if any
-		// genericAttribute.setInputType(inputType); // only set by annotation
-		genericAttribute.setSelected(true);
-		// genericAttribute.setPattern(pattern); // only set by annotation
 
-	}
+		// All the default attribute values are set in the attribute class
+		// Here some default values can are set depending on other attribute information 
+		
+		// By default the database name is the attribute name 
+		// it will be overridden by @DbName(xxx) if any
+		genericAttribute.setDatabaseName(domainEntityField.getName()); 
 
-	private void applyAnnotations(DslModelAttribute attribute, Collection<DomainAnnotation> annotations) {
-		applyAnnotationsAboutValue(attribute, annotations);
-		applyAnnotationsAboutType(attribute, annotations);
-		applyAnnotationsAboutDatabase(attribute, annotations);
-		applyAnnotationsWithStringParameter(attribute, annotations);
-	}
-
-	/**
-	 * Apply annotations about field value constraints 
-	 * 
-	 * @param genericAttribute
-	 * @param fieldAnnotations
-	 */
-	private void applyAnnotationsAboutValue(DslModelAttribute genericAttribute,
-			Collection<DomainAnnotation> fieldAnnotations) {
-		for (DomainAnnotation annotation : fieldAnnotations) {
-
-			if (AnnotationName.NOT_NULL.equals(annotation.getName())) {
-				log("Converter : annotation @NotNull ");
-				genericAttribute.setNotNull(true);
-				// genericAttribute.setDatabaseNotNull(true);
-			}
-			if (AnnotationName.NOT_EMPTY.equals(annotation.getName())) {
-				log("Converter : annotation @NotEmpty ");
-				genericAttribute.setNotEmpty(true);
-			}
-			if (AnnotationName.NOT_BLANK.equals(annotation.getName())) {
-				log("Converter : annotation @NotBlank ");
-				genericAttribute.setNotBlank(true);
-			}
-			if (AnnotationName.MIN.equals(annotation.getName())) {
-				log("Converter : annotation @Min ");
-				genericAttribute.setMinValue(annotation.getParameterAsBigDecimal());
-			}
-			if (AnnotationName.MAX.equals(annotation.getName())) {
-				log("Converter : annotation @Max ");
-				genericAttribute.setMaxValue(annotation.getParameterAsBigDecimal());
-			}
-			if (AnnotationName.SIZE_MIN.equals(annotation.getName())) {
-				log("Converter : annotation @SizeMin ");
-				genericAttribute.setMinLength(annotation.getParameterAsInteger());
-			}
-			if (AnnotationName.SIZE_MAX.equals(annotation.getName())) {
-				log("Converter : annotation @SizeMax ");
-				genericAttribute.setMaxLength(annotation.getParameterAsInteger());
-			}
-			if (AnnotationName.PAST.equals(annotation.getName())) {
-				log("Converter : annotation @Past ");
-				genericAttribute.setDatePast(true);
-			}
-			if (AnnotationName.FUTURE.equals(annotation.getName())) {
-				log("Converter : annotation @Future ");
-				genericAttribute.setDateFuture(true);
-			}
-			if (AnnotationName.LONG_TEXT.equals(annotation.getName())) {
-				log("Converter : annotation @LongText");
-				genericAttribute.setLongText(true);
-			}
-
-		}
-	}
-
-	/**
-	 * Populates generic attribute type information from the given annotations
-	 * 
-	 * @param genericAttribute
-	 * @param fieldAnnotations
-	 */
-	private void applyAnnotationsAboutType(DslModelAttribute genericAttribute,
-			Collection<DomainAnnotation> fieldAnnotations) {
-		for (DomainAnnotation annotation : fieldAnnotations) {
-
-			if (AnnotationName.PRIMITIVE_TYPE.equals(annotation.getName())) {
-				log("Converter : annotation @PrimitiveType");
-				genericAttribute.setPrimitiveTypeExpected(true);
-			}
-			if (AnnotationName.UNSIGNED_TYPE.equals(annotation.getName())) {
-				log("Converter : annotation @UnsignedType");
-				genericAttribute.setUnsignedTypeExpected(true);
-			}
-			if (AnnotationName.OBJECT_TYPE.equals(annotation.getName())) {
-				log("Converter : annotation @ObjectType");
-				genericAttribute.setObjectTypeExpected(true);
-			}
-			if (AnnotationName.SQL_TYPE.equals(annotation.getName())) {
-				log("Converter : annotation @SqlType");
-				genericAttribute.setSqlTypeExpected(true);
-			}
-		}
-	}
-
-	private void applyAnnotationsAboutDatabase(DslModelAttribute genericAttribute,
-			Collection<DomainAnnotation> fieldAnnotations) {
-		final String msg = "Converter : annotations for databse : @" ;
-		boolean fieldNotNull = false;
-		Integer fieldSizeMax = 0;
-		for (DomainAnnotation annotation : fieldAnnotations) {
-
-			// Database annotations ( @DbXxxx ) :
-			if (AnnotationName.DB_SIZE.equals(annotation.getName())) {
-				log(msg + AnnotationName.DB_SIZE );
-				genericAttribute.setDatabaseSize(annotation.getParameterAsString());
-			}
-			if (AnnotationName.DB_NAME.equals(annotation.getName())) {
-				log(msg + AnnotationName.DB_NAME );
-				genericAttribute.setDatabaseName(annotation.getParameterAsString());
-			}
-			if (AnnotationName.DB_TYPE.equals(annotation.getName())) {
-				log(msg + AnnotationName.DB_TYPE );
-				genericAttribute.setDatabaseType(annotation.getParameterAsString());
-			}
-			if (AnnotationName.DB_COMMENT.equals(annotation.getName())) {
-				log(msg + AnnotationName.DB_COMMENT );
-				genericAttribute.setDatabaseComment(annotation.getParameterAsString());
-			}
-			if (AnnotationName.DB_DEFAULT_VALUE.equals(annotation.getName())) {
-				log(msg + AnnotationName.DB_DEFAULT_VALUE );
-				genericAttribute.setDatabaseDefaultValue(annotation.getParameterAsString());
-			}
-			
-			// Other annotations :
-			if (AnnotationName.ID.equals(annotation.getName())) {
-				log(msg + AnnotationName.ID );
-				fieldNotNull = true;
-			}
-			if (AnnotationName.NOT_NULL.equals(annotation.getName())) {
-				log(msg + AnnotationName.NOT_NULL );
-				fieldNotNull = true;
-			}
-			if (AnnotationName.SIZE_MAX.equals(annotation.getName())) {
-				log(msg + AnnotationName.SIZE_MAX );
-				fieldSizeMax = annotation.getParameterAsInteger();
-			}
-		}
-		// Complete with other field annotations
-		if ( genericAttribute.getDatabaseSize() == null && fieldSizeMax != null ) {
-			genericAttribute.setDatabaseSize(""+fieldSizeMax);
-		}
-		if ( fieldNotNull ) {
-			genericAttribute.setDatabaseNotNull(true);
-		}
-	}
-
-	/**
-	 * Apply annotations having a string parameter (new annotations added in
-	 * version 3.2.0)
-	 * 
-	 * @param genericAttribute
-	 * @param annotations
-	 */
-	private void applyAnnotationsWithStringParameter(DslModelAttribute genericAttribute,
-			Collection<DomainAnnotation> annotations) {
-		for (DomainAnnotation annotation : annotations) {
-			log("Converter / populateAttributeDbInfo : annotation '" + annotation.getName() + "'");
-			// --- Added in ver 3.2.0
-			if (AnnotationName.DEFAULT_VALUE.equals(annotation.getName())) {
-				log("Converter : annotation @DefaultValue");
-				genericAttribute.setDefaultValue(annotation.getParameterAsString());
-			}
-			if (AnnotationName.INITIAL_VALUE.equals(annotation.getName())) {
-				log("Converter : annotation @InitialValue");
-				genericAttribute.setInitialValue(annotation.getParameterAsString());
-			}
-			if (AnnotationName.LABEL.equals(annotation.getName())) {
-				log("Converter : annotation @Label");
-				genericAttribute.setLabel(annotation.getParameterAsString());
-			}
-			if (AnnotationName.INPUT_TYPE.equals(annotation.getName())) {
-				log("Converter : annotation @InputType");
-				genericAttribute.setInputType(annotation.getParameterAsString());
-			}
-			if (AnnotationName.PATTERN.equals(annotation.getName())) {
-				log("Converter : annotation @Pattern");
-				genericAttribute.setPattern(annotation.getParameterAsString());
-			}
-
-			// TODO :
-			// @After(DateISO/TimeISO)
-			// @Before(DateISO/TimeISO)
-			// @Pattern(xxx) or @RegExp ???
-		}
+		// By default the label is the attribute name 
+		// it will be overridden by @Label(xxx) if any
+		genericAttribute.setLabel(domainEntityField.getName());
+		
+		// genericAttribute.setSelected(true); // allready set in attribute class
 	}
 
 	/**
@@ -561,19 +350,12 @@ public class Converter {
 	private DslModelAttribute convertAttributePseudoForeignKey(DomainField domainEntityField, DomainModel domainModel) {
 		log("convertAttributePseudoForeignKey() : name = " + domainEntityField.getName());
 
-		// DomainType domainFieldType = domainEntityField.getType();
-		// check(domainFieldType.isEntity(), "Invalid field type. Entity type
-		// expected");
-		// // DomainEntity referencedEntity = (DomainEntity) domainFieldType;
 		DomainEntity referencedEntity = getReferencedEntity(domainEntityField, domainModel);
 
 		DomainField referencedEntityIdField = getReferencedEntityIdField(referencedEntity);
 
-		// --- Attribute name
-		String attributeName = domainEntityField.getName(); // Keep the same
-															// name to avoid
-															// potential naming
-															// collision
+		// --- Attribute name (keep the same name to avoid potential naming collision) 
+		String attributeName = domainEntityField.getName(); 
 
 		// --- Attribute type
 		check(referencedEntityIdField.getType().isNeutralType(),
@@ -588,21 +370,17 @@ public class Converter {
 
 		// --- Use REFERENCED entity id field annotations
 		Collection<DomainAnnotation> referencedFieldAnnotations = referencedEntityIdField.getAnnotations().values();
-//		applyAnnotationsAboutValue(genericAttribute, fieldAnnotations);
-//		applyAnnotationsAboutType(genericAttribute, fieldAnnotations);
-		
-//		applyAnnotations(genericAttribute, fieldAnnotations);
-		applyAnnotationsAboutValue(genericAttributeForFK, referencedFieldAnnotations);
-		applyAnnotationsAboutType(genericAttributeForFK, referencedFieldAnnotations);
-		applyAnnotationsAboutDatabase(genericAttributeForFK, referencedFieldAnnotations);
-		applyAnnotationsWithStringParameter(genericAttributeForFK, referencedFieldAnnotations);
+//		applyAnnotationsAboutValue(genericAttributeForFK, referencedFieldAnnotations);
+//		applyAnnotationsAboutType(genericAttributeForFK, referencedFieldAnnotations);
+//		applyAnnotationsAboutDatabase(genericAttributeForFK, referencedFieldAnnotations);
+//		applyAnnotationsWithStringParameter(genericAttributeForFK, referencedFieldAnnotations);
+		annotationsConverter.applyAnnotationsForPseudoForeignKey(genericAttributeForFK, referencedFieldAnnotations);
 
 		// --- Set flag as "Pseudo Foreign Key" (Simple FK)
 		genericAttributeForFK.setFKSimple(true);
 		genericAttributeForFK.setReferencedEntityClassName(referencedEntity.getName());
 
 		return genericAttributeForFK;
-
 	}
 
 	/**
@@ -647,22 +425,14 @@ public class Converter {
 	 * @param genericModel
 	 * @return
 	 */
-	// private DslModelLink convertAttributeLink( DomainField domainEntityField,
-	// DslModel genericModel ) {
 	private DslModelLink convertAttributeLink(DomainField domainEntityField, DomainModel domainModel) {
 
 		DomainType domainFieldType = domainEntityField.getType();
 		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
 
-		// DomainEntity domainEntityTarget = (DomainEntity) domainFieldType;
 		DomainEntity domainEntityTarget = domainModel.getEntity(domainFieldType.getName());
 
 		// Check target existence
-		// DslModelEntity genericEntityTarget =
-		// (DslModelEntity)
-		// genericModel.getEntityByClassName(domainEntityTarget.getName());
-		// check( ( genericEntityTarget != null ), "No target entity for field
-		// '" + domainEntityField.getName() + "'. Cannot create Link");
 		check((domainEntityTarget != null),
 				"No target entity for field '" + domainEntityField.getName() + "'. Cannot create Link");
 
@@ -699,7 +469,7 @@ public class Converter {
 			genericLink.setInverseSideLinkId(null);
 		} else {
 			// Reference to only MANY entities => ONE TO MANY
-			genericLink.setFieldType("java.util.List"); // use a COLLECTION type
+			genericLink.setFieldType("java.util.List"); // TODO : fix this Java dependency
 			genericLink.setOwningSide(false);
 			genericLink.setInverseSide(true);
 			genericLink.setInverseSideLinkId(null);
@@ -723,11 +493,12 @@ public class Converter {
 
 		// Annotation
 		if (domainEntityField.getAnnotations() != null) {
-			for (DomainAnnotation annotation : domainEntityField.getAnnotations().values()) {
-				if ("@Embedded".equals(annotation.getName())) {
-					genericLink.setIsEmbedded(true);
-				}
-			}
+//			for (DomainAnnotation annotation : domainEntityField.getAnnotations().values()) {
+//				if ("@Embedded".equals(annotation.getName())) {
+//					genericLink.setIsEmbedded(true);
+//				}
+//			}
+			annotationsConverter.applyAnnotationsForLink(genericLink, domainEntityField.getAnnotations().values());
 		}
 
 		return genericLink;
