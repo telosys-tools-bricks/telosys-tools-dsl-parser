@@ -568,12 +568,8 @@ public class DslModelAttribute implements Attribute {
 	}
 	
 	@Override
-	public String getTagValue(String tagName) {
-		String v = this.tagsMap.get(tagName);
-		return ( v != null ? v : "" );
+	public Map<String, String> getTagsMap() {
+		return this.tagsMap;
 	}
-	@Override
-	public boolean hasTag(String tagName) {
-		return this.tagsMap.containsKey(tagName);
-	}
+	
 }

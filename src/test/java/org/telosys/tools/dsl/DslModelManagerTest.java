@@ -1,6 +1,7 @@
 package org.telosys.tools.dsl;
 
 import java.io.File;
+import java.util.Map;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.Parser;
@@ -56,35 +57,46 @@ public class DslModelManagerTest {
         assertEquals(3, employeeEntity.getAttributes().size());    
         int i = 0 ;
         Attribute attrib = null ;
+        Map<String,String> tagsMap ;
         
         // Attributes in their original order :
         
+        //--- "id" ATTRIBUTE 
         attrib = employeeEntity.getAttributes().get(i++);
         assertEquals("id", attrib.getName() ) ;
 		assertEquals("int", attrib.getNeutralType() ); 
-//        assertEquals("Integer", attrib.getSimpleType() ) ;
-//        assertEquals("java.lang.Integer", attrib.getFullType() ) ;
         assertTrue(attrib.isKeyElement());
         assertTrue(attrib.isNotNull()); // If "@Id" => "@NotNull"
         assertTrue(attrib.isDatabaseNotNull() ); // If "@Id" => "@NotNull"
-        
+        // Tags defined for this attribute
+        tagsMap = attrib.getTagsMap();
+        assertNotNull(tagsMap);
+        assertFalse(tagsMap.isEmpty());
+        assertTrue(tagsMap.containsKey("Id"));
+        assertTrue(tagsMap.containsKey("Foo"));
+        assertEquals("abc",tagsMap.get("Foo"));
+
+        //--- "firstName" ATTRIBUTE 
         attrib = employeeEntity.getAttributes().get(i++);
         assertEquals("firstName", attrib.getName() ) ;
 		assertEquals("string", attrib.getNeutralType() ); 
-//        assertEquals("String", attrib.getSimpleType() ) ;
-//        assertEquals("java.lang.String", attrib.getFullType() ) ;
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
         assertFalse(attrib.isDatabaseNotNull());
+        tagsMap = attrib.getTagsMap();
+        assertNotNull(tagsMap);
+        assertFalse(tagsMap.isEmpty());
+        assertTrue(tagsMap.containsKey("tag"));
 
+        //--- "birthDate" ATTRIBUTE 
         attrib = employeeEntity.getAttributes().get(i++);
         assertEquals("birthDate", attrib.getName() ) ;
 		assertEquals("date", attrib.getNeutralType() ); 
-//        assertEquals("Date", attrib.getSimpleType() ) ;
-//        assertEquals("java.util.Date", attrib.getFullType() ) ;
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
         assertFalse(attrib.isDatabaseNotNull());
+        
+
 
     }
 

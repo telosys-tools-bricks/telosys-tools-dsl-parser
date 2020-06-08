@@ -51,8 +51,9 @@ public class Converter {
 	}
 
 	private final AnnotationsConverter annotationsConverter ;
+	private final TagsConverter tagsConverter ;
+	
 	private int linkIdCounter = 0;
-
 	
 	/**
 	 * Constructor
@@ -60,6 +61,7 @@ public class Converter {
 	public Converter() {
 		super();
 		this.annotationsConverter = new AnnotationsConverter();
+		this.tagsConverter = new TagsConverter();
 	}
 
 	/**
@@ -131,7 +133,7 @@ public class Converter {
 			dslModel.getEntities().add(genericEntity);
 		}
 
-		// STEP 2 : Convert basic attributes ( attributes with neutral type )
+		// convert basic attributes ( attributes with neutral type )
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
 			// Get the GenericEntity built previously
 			DslModelEntity genericEntity = (DslModelEntity) dslModel.getEntityByClassName(domainEntity.getName());
@@ -225,7 +227,7 @@ public class Converter {
 				// Add the new "basic attribute" to the entity
 				genericEntity.getAttributes().add(genericAttribute);
 			} else {
-				// Not a "neutral type" ==> "entity reference" ?
+				// Not a "neutral type" : is "many to one entity reference" ?
 				if (isPseudoForeignKey(domainEntityField)) {
 					// Add the new attribute to the entity
 					genericEntity.getAttributes().add(genericAttribute);
@@ -257,7 +259,7 @@ public class Converter {
 
 	/**
 	 * Converts a "neutral type" attribute <br>
-	 * eg : id : integer {@Id}; <br>
+	 * eg : id : short {@Id}; <br>
 	 * 
 	 * @param domainEntityField
 	 * @return
@@ -279,29 +281,17 @@ public class Converter {
 
 		initAttributeDefaultValues(genericAttribute, domainEntityField);
 
-		// Populate field from annotations if any
+		// Apply annotations if any
 		if (domainEntityField.getAnnotations() != null) {
 			log("Converter : annotations found");
 			Collection<DomainAnnotation> fieldAnnotations = domainEntityField.getAnnotations().values();
-//			for (DomainAnnotation annotation : fieldAnnotations) {
-//				log("Converter : annotation '" + annotation.getName() + "'");
-//				// The annotation name is like "Id", "NotNull", "Max", etc
-//				// without "@" at the beginning and without "#" at the end
-//				if (AnnotationName.ID.equals(annotation.getName())) {
-//					log("Converter : annotation @Id");
-//					genericAttribute.setKeyElement(true);
-//					// If "@Id" => "@NotNull"
-//					genericAttribute.setNotNull(true);
-//				}
-//				if (AnnotationName.AUTO_INCREMENTED.equals(annotation.getName())) {
-//					log("Converter : annotation @AutoIncremented");
-//					genericAttribute.setAutoIncremented(true);
-//				}
-//			}
 			annotationsConverter.applyAnnotationsForNeutralType(genericAttribute, fieldAnnotations);
 		} else {
 			log("Converter : no annotation");
 		}
+		
+		// Apply tags if any
+		tagsConverter.applyTags(genericAttribute, domainEntityField);
 	}
 
 	/**
@@ -491,16 +481,10 @@ public class Converter {
 		genericLink.setOptional(Optional.UNDEFINED);
 		genericLink.setSourceTableName(null);
 
-		// Annotation
+		// Annotations
 		if (domainEntityField.getAnnotations() != null) {
-//			for (DomainAnnotation annotation : domainEntityField.getAnnotations().values()) {
-//				if ("@Embedded".equals(annotation.getName())) {
-//					genericLink.setIsEmbedded(true);
-//				}
-//			}
 			annotationsConverter.applyAnnotationsForLink(genericLink, domainEntityField.getAnnotations().values());
 		}
-
 		return genericLink;
 	}
 
