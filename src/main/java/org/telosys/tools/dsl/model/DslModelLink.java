@@ -26,7 +26,7 @@ public class DslModelLink implements Link {
     private String targetTableName;
     private String targetEntityClassName;
     private String fieldName;
-    private String fieldType;
+//    private String fieldType; // REMOVED in v 3.3.0
     private boolean owningSide;
     private String mappedBy;
     private final boolean selected = true ; // Always considered as "selected" 
@@ -90,14 +90,15 @@ public class DslModelLink implements Link {
         this.fieldName = fieldName;
     }
 
-    @Override
-    public String getFieldType() {
-        return fieldType;
-    }
-
-    public void setFieldType(String fieldType) {
-        this.fieldType = fieldType;
-    }
+// REMOVED in v 3.3.0
+//    @Override
+//    public String getFieldType() {
+//        return fieldType;
+//    }
+// REMOVED in v 3.3.0
+//    public void setFieldType(String fieldType) {
+//        this.fieldType = fieldType;
+//    }
 
     @Override
     public boolean isOwningSide() {

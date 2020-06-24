@@ -29,7 +29,6 @@ import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralType;
-import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.dsl.parser.model.DomainType;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Cardinality;
@@ -93,8 +92,7 @@ public class Converter {
 	}
 
 	/**
-	 * Returns TRUE if the given field can be considered as a "Pseudo Foreign
-	 * Key"
+	 * Returns TRUE if the given field can be considered as a "Pseudo Foreign Key"
 	 * 
 	 * @param domainEntityField
 	 * @return
@@ -113,27 +111,27 @@ public class Converter {
 	}
 
 	/**
-	 * Define all entities and attributes
-	 * 
+	 * Creates and returns a DSL model containing all the converted entities <br>
+	 * The entities contain only "basic attribute"s and "void pseudo FK attributes" <br>
+	 * no links at this step (not yet created) 
 	 * @param domainModel
-	 *            DSL model
-	 * @param genericModel
-	 *            Generic model
+	 * @return
 	 */
 	protected DslModel step1ConvertAllEntities(DomainModel domainModel) {
 		log("convertEntities()...");
 
+		// New DSL model 
 		DslModel dslModel = new DslModel();
 		dslModel.setName(voidIfNull(domainModel.getName()));
 		dslModel.setDescription(voidIfNull(domainModel.getDescription()));
 
-		// for each "DomainEntity" create a void "GenericEntity"
+		// STEP 1.1 : for each "DomainEntity" create a void "DslModelEntity"
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
 			DslModelEntity genericEntity = createVoidEntity(domainEntity);
 			dslModel.getEntities().add(genericEntity);
 		}
 
-		// convert basic attributes ( attributes with neutral type )
+		// SEP 1.2 : for each "DomainEntity" convert attributes 
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
 			// Get the GenericEntity built previously
 			DslModelEntity genericEntity = (DslModelEntity) dslModel.getEntityByClassName(domainEntity.getName());
@@ -176,26 +174,27 @@ public class Converter {
 		}
 	}
 
+	/**
+	 * Creates a void entity (without attribute) <br>
+	 * initialized with only class name and default database information 
+	 * @param domainEntity
+	 * @return
+	 */
 	private DslModelEntity createVoidEntity(DomainEntity domainEntity) {
 		log("convertEntity(" + domainEntity.getName() + ")...");
 		DslModelEntity genericEntity = new DslModelEntity();
 		genericEntity.setClassName(notNull(domainEntity.getName()));
 		genericEntity.setFullName(notNull(domainEntity.getName()));
 
-		// --- NB : Database Table must be set in order to be able do
-		// "getEntityByTableName()"
-		genericEntity.setDatabaseTable(determineTableName(domainEntity)); // Same
-																			// as
-																			// "className"
-																			// (unique)
-		genericEntity.setDatabaseType("TABLE"); // Type is "TABLE" by default
+		//--- init database information 
+		// Default table name is the entity name (unique)
+		genericEntity.setDatabaseTable(determineTableName(domainEntity)); 
+		// Type is "TABLE" by default
+		genericEntity.setDatabaseType("TABLE"); 
 		genericEntity.setDatabaseCatalog("");
 		genericEntity.setDatabaseSchema("");
-		genericEntity.setDatabaseForeignKeys(new LinkedList<ForeignKey>()); // Void
-																			// list
-																			// (No
-																			// Foreign
-																			// keys)
+		// No Foreign Keys => void list
+		genericEntity.setDatabaseForeignKeys(new LinkedList<ForeignKey>()); 
 
 		return genericEntity;
 	}
@@ -242,13 +241,9 @@ public class Converter {
 			return;
 		}
 		for (DomainField domainEntityField : domainEntity.getFields()) {
-
-			if (domainEntityField.getType().isEntity()) { // If this field
-															// references an
-															// entity
-				// REFERENCE TO AN ENTITY = LINK
+			// If this field references an entity then it's a LINK
+			if (domainEntityField.getType().isEntity()) { 
 				log("createLinks() : " + domainEntityField.getName() + " : entity type (link)");
-				// Link type attribute (reference to 1 or N other entity )
 				linkIdCounter++;
 				DslModelLink genericLink = convertAttributeLink(domainEntityField, domainModel);
 				// Add the new link to the entity
@@ -258,11 +253,11 @@ public class Converter {
 	}
 
 	/**
-	 * Converts a "neutral type" attribute <br>
+	 * Converts a basic "neutral type" attribute <br>
 	 * eg : id : short {@Id}; <br>
 	 * 
 	 * @param domainEntityField
-	 * @return
+	 * @param genericAttribute
 	 */
 	private void convertAttributeNeutralType(DomainField domainEntityField, DslModelAttribute genericAttribute) {
 		log("convertAttributeNeutralType() : name = " + domainEntityField.getName());
@@ -273,11 +268,6 @@ public class Converter {
 
 		// the "neutral type" is now the only type managed at this level
 		genericAttribute.setNeutralType(domainNeutralType.getName());
-
-		// If the attribute has a "binary" type
-		if (domainEntityField.getType() == DomainNeutralTypes.getType(DomainNeutralTypes.BINARY_BLOB)) {
-			// TODO : genericAttribute.setBinary(true);
-		}
 
 		initAttributeDefaultValues(genericAttribute, domainEntityField);
 
@@ -428,10 +418,11 @@ public class Converter {
 
 		DslModelLink genericLink = new DslModelLink();
 
-		genericLink.setId("Link" + linkIdCounter); // Link ID : generated (just
-													// to ensure not null )
-		// genericLink.setSelected(true); // nothing for link selection =>
-		// selected by default
+		// Link ID : generated (just to ensure not null )
+		genericLink.setId("Link" + linkIdCounter); 
+		// genericLink.setSelected(true); // selected by default
+
+		genericLink.setFieldName(domainEntityField.getName());
 
 		// Set target entity info
 		genericLink.setTargetEntityClassName(domainEntityField.getType().getName());
@@ -447,27 +438,28 @@ public class Converter {
 		genericLink.setCardinality(cardinality);
 
 		// --- Field info based on cardinality
-		genericLink.setFieldName(domainEntityField.getName());
 		if (domainEntityField.getCardinality() == 1) {
-			// Reference to only ONE entity => MANY TO ONE
-			genericLink.setFieldType(domainEntityField.getType().getName()); // use
-																				// the
-																				// Entity
-																				// name
+			// Reference to only ONE entity => "MANY TO ONE"
+			genericLink.setCardinality(Cardinality.MANY_TO_ONE);
+			// The type is the referenced entity => Entity name 
+//			genericLink.setFieldType(domainEntityField.getType().getName()); // REMOVED in v 3.3.0
+			// Owning side / Inverse side
 			genericLink.setOwningSide(true);
 			genericLink.setInverseSide(false);
 			genericLink.setInverseSideLinkId(null);
 		} else {
-			// Reference to only MANY entities => ONE TO MANY
-			genericLink.setFieldType("java.util.List"); // TODO : fix this Java dependency
+			// Reference to MANY entities => "ONE TO MANY"
+			genericLink.setCardinality(Cardinality.ONE_TO_MANY);
+			// The type is a collection of entity 
+//			genericLink.setFieldType(domainEntityField.getType().getName()); // REMOVED in v 3.3.0
+			// Owning side / Inverse side
 			genericLink.setOwningSide(false);
 			genericLink.setInverseSide(true);
 			genericLink.setInverseSideLinkId(null);
 		}
-		genericLink.setCascadeOptions(new CascadeOptions()); // Void cascade
-																// otions
-																// (default
-																// values)
+		
+		// void "cascade options"  (default values)
+		genericLink.setCascadeOptions(new CascadeOptions()); 
 
 		genericLink.setBasedOnForeignKey(false);
 		genericLink.setBasedOnJoinTable(false);
@@ -489,7 +481,8 @@ public class Converter {
 	}
 
 	/**
-	 * Conversion rule to determine the table name for a given entity
+	 * Conversion rule to determine the table name for a given entity<br>
+	 * The table name is the entity name
 	 * 
 	 * @param domainEntity
 	 * @return
