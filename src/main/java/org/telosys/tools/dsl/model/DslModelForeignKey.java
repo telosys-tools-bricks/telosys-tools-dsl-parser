@@ -15,16 +15,20 @@
  */
 package org.telosys.tools.dsl.model;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.ForeignKeyColumn;
 
-import java.util.List;
-
 public class DslModelForeignKey implements ForeignKey {
-    private String name;
-    private String tableName;
-    private String referencedTableName;
-    private List<ForeignKeyColumn> columns;
+	
+    private final String fkName; 
+    private final String tableName; // table holding this FK
+    private final String referencedTableName; // table referenced by this FK
+    
+    private final List<ForeignKeyColumn> columns;
+    
     private String deferrable;
     private int deferrableCode;
     private String deleteRule;
@@ -32,40 +36,49 @@ public class DslModelForeignKey implements ForeignKey {
     private String updateRule;
     private int updateRuleCode;
 
-    @Override
+    
+    public DslModelForeignKey(String fkName, String tableName, String referencedTableName) {
+		super();
+        this.fkName = fkName;
+        this.tableName = tableName;
+        this.referencedTableName = referencedTableName;
+        this.columns = new LinkedList<>();
+	}
+
+	@Override
     public String getName() {
-        return name;
+        return fkName;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+//    public void setName(String name) {
+//        this.name = name;
+//    }
 
     @Override
     public String getTableName() {
         return tableName;
     }
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
+//    public void setTableName(String tableName) {
+//        this.tableName = tableName;
+//    }
 
     @Override
     public String getReferencedTableName() {
         return referencedTableName;
     }
 
-    public void setReferencedTableName(String referencedTableName) {
-        this.referencedTableName = referencedTableName;
-    }
+//    public void setReferencedTableName(String referencedTableName) {
+//        this.referencedTableName = referencedTableName;
+//    }
 
     @Override
     public List<ForeignKeyColumn> getColumns() {
         return columns;
     }
 
-    public void setColumns(List<ForeignKeyColumn> columns) {
-        this.columns = columns;
+    public void addColumn(ForeignKeyColumn fkCol) {
+        this.columns.add(fkCol);
     }
 
     @Override

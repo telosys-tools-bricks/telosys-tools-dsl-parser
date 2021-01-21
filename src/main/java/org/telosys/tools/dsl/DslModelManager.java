@@ -117,7 +117,11 @@ public class DslModelManager {
 			try {
 				return converter.convertToGenericModel(domainModel);
 			} catch (Exception e) {
-				parsingErrorMessage = "Converter error : " + e.getMessage() ;
+				String msg = e.getMessage();
+				if ( msg == null ) { // eg NullPointerException
+					msg = e.toString();
+				}
+				parsingErrorMessage = "Converter error : " + msg ;
 				return null ;
 			}
         }

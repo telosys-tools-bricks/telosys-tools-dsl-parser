@@ -1,6 +1,10 @@
 Employee {
+
+    // ATTRIBUTES
 	id : int {@Id}; // the id
 	firstName : string ;
 	birthDate : date ;
+
+    // LINKS
 	country : Country {@Max(3)}; // Pseudo FK => field definition replaced by PK Country.id 
 }

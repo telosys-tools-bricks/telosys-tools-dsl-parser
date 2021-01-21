@@ -1,0 +1,6 @@
+
+// Test with composite Primary Key 
+Badge {
+	id : int {  @Id  };  
+	name : string;
+}

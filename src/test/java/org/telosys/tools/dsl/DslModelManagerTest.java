@@ -244,7 +244,8 @@ public class DslModelManagerTest {
         Entity employeeEntity = model.getEntityByClassName("Employee");
         assertNotNull(employeeEntity);
         
-        assertEquals(4, employeeEntity.getAttributes().size());    
+        assertEquals(3, employeeEntity.getAttributes().size());    
+        assertEquals(1, employeeEntity.getLinks().size());    
         int i = 0 ;
         Attribute attrib = null ;
         
@@ -285,15 +286,16 @@ public class DslModelManagerTest {
         assertFalse(attrib.isFKSimple());
         assertFalse(attrib.isFKComposite());
 
-        attrib = employeeEntity.getAttributes().get(i++);
-        assertEquals("country", attrib.getName() ) ;
-        assertEquals("int", attrib.getNeutralType() ); // country PK is "id : int" 
-        assertFalse(attrib.isKeyElement());
-        assertFalse(attrib.isNotNull());
-        assertTrue(attrib.isDatabaseNotNull()); // country PK has "@Id" => not null 
-        assertTrue(attrib.isFK());
-        assertTrue(attrib.isFKSimple());
-        assertFalse(attrib.isFKComposite());
+// since v 3.3 it's a LINK  ( no longer pseudo-FK attribute )
+//        attrib = employeeEntity.getAttributes().get(i++);
+//        assertEquals("country", attrib.getName() ) ;
+//        assertEquals("int", attrib.getNeutralType() ); // country PK is "id : int" 
+//        assertFalse(attrib.isKeyElement());
+//        assertFalse(attrib.isNotNull());
+//        assertTrue(attrib.isDatabaseNotNull()); // country PK has "@Id" => not null 
+//        assertTrue(attrib.isFK());
+//        assertTrue(attrib.isFKSimple());
+//        assertFalse(attrib.isFKComposite());
 
     }
 
@@ -320,7 +322,8 @@ public class DslModelManagerTest {
         //----- ENTITY "Person"
         Entity personEntity = model.getEntityByClassName("Person");
         assertNotNull(personEntity);
-        assertEquals(5, personEntity.getAttributes().size());
+        assertEquals(4, personEntity.getAttributes().size());
+        assertEquals(2, personEntity.getLinks().size());
         Attribute attrib ;
         int i = 0 ;
         
@@ -337,19 +340,20 @@ public class DslModelManagerTest {
         assertEquals("birthDate", attrib.getName() ) ;
 
         // country is a OneToMay links => not in the attributes 
-        
-        attrib = personEntity.getAttributes().get(i++);
-        assertEquals("gender", attrib.getName() ) ;
-        assertEquals("string", attrib.getNeutralType() ); // gender PK is "id : string" 
-        // Annotations come from "Gender.id" (instead original field)
-        assertFalse(attrib.isKeyElement());
-        assertFalse(attrib.isNotNull());
-        assertTrue(attrib.isDatabaseNotNull()); // gender PK has "@Id" => not null 
-        assertEquals(Integer.valueOf(2), attrib.getMaxLength()); // gender PK has "@SizeMax(2)" 
-        // Foreign Key (simple, not composite)
-        assertTrue(attrib.isFK());
-        assertTrue(attrib.isFKSimple());
-        assertFalse(attrib.isFKComposite());
+
+// PSEUDO-FK removed in v 3.3
+//        attrib = personEntity.getAttributes().get(i++);
+//        assertEquals("gender", attrib.getName() ) ;
+//        assertEquals("string", attrib.getNeutralType() ); // gender PK is "id : string" 
+//        // Annotations come from "Gender.id" (instead original field)
+//        assertFalse(attrib.isKeyElement());
+//        assertFalse(attrib.isNotNull());
+//        assertTrue(attrib.isDatabaseNotNull()); // gender PK has "@Id" => not null 
+//        assertEquals(Integer.valueOf(2), attrib.getMaxLength()); // gender PK has "@SizeMax(2)" 
+//        // Foreign Key (simple, not composite)
+//        assertTrue(attrib.isFK());
+//        assertTrue(attrib.isFKSimple());
+//        assertFalse(attrib.isFKComposite());
 
     }    
     

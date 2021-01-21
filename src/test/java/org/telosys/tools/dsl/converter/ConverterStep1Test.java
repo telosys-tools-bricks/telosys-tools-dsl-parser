@@ -24,13 +24,22 @@ public class ConverterStep1Test {
 		return model ;
 	}
 	
+	private DslModel convertModel(DomainModel domainModel) {
+		// Create a new void DSL model 
+		DslModel dslModel = new DslModel();
+		Converter converter = new Converter();
+		converter.createAllVoidEntities(domainModel, dslModel);
+		converter.createAllAttributes(domainModel, dslModel);
+		// stop just after attributes conversion
+		return dslModel;
+	}
+	
 	@Test
 	public void testOneEntityModel() throws ModelParsingError  {
 		DomainModel domainModel = parseModel("src/test/resources/model_test/valid/OneEntity.model");
 		assertEquals(1, domainModel.getNumberOfEntities());
 		
-		Converter converter = new Converter();
-		DslModel dslModel = converter.step1ConvertAllEntities(domainModel);
+		DslModel dslModel = convertModel(domainModel);
 		
 		assertEquals(1, dslModel.getEntities().size() ) ;
 		
@@ -96,8 +105,7 @@ public class ConverterStep1Test {
 		DomainModel domainModel = parseModel("src/test/resources/model_test/valid/TwoEntities.model");
 		assertEquals(2, domainModel.getNumberOfEntities());
 		
-		Converter converter = new Converter();
-		DslModel dslModel = converter.step1ConvertAllEntities(domainModel);
+		DslModel dslModel = convertModel(domainModel);
 		
 		assertEquals(2, dslModel.getEntities().size() ) ;
 		
@@ -106,12 +114,13 @@ public class ConverterStep1Test {
 		entity = dslModel.getEntityByClassName("Employee");
 		assertNotNull(entity);
 		assertEquals("Employee", entity.getClassName() );
+		// ATTRIBUTES
 		assertNotNull(entity.getAttributes() );
-		assertEquals(4, entity.getAttributes().size() );
+		assertEquals(3, entity.getAttributes().size() );
 		for ( Attribute a : entity.getAttributes() ) {
 			printAttribute(entity, a);
 		}
-
+		
 		entity = dslModel.getEntityByClassName("Country");
 		assertNotNull(entity);
 		assertEquals("Country", entity.getClassName() );

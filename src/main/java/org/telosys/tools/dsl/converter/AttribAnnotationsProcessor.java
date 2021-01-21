@@ -20,16 +20,14 @@ import java.util.Collection;
 import org.telosys.tools.commons.logger.ConsoleLogger;
 import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.model.DslModelAttribute;
-import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
-public class AnnotationsConverter {
+public class AttribAnnotationsProcessor {
 
-	private static final boolean LOG = false;
 	private static final ConsoleLogger logger = new ConsoleLogger();
 
 	private void log(String msg) {
-		if (LOG) {
+		if (ConverterLogStatus.LOG) {
 			logger.log(this, msg);
 		}
 	}	
@@ -59,32 +57,20 @@ public class AnnotationsConverter {
 		applyAnnotationsAboutType(attribute, annotations);
 		applyAnnotationsAboutDatabase(attribute, annotations);
 		applyAnnotationsWithStringParameter(attribute, annotations);
+		// Foreign Keys annotations @FK are processed in another step (after)
 	}
 
-	/**
-	 * Apply annotations for a "Pseudo Foreign Key" attribute 
-	 * @param attribute
-	 * @param annotations
-	 */
-	public void applyAnnotationsForPseudoForeignKey(DslModelAttribute attribute, Collection<DomainAnnotation> annotations) {
-		applyAnnotationsAboutValue(attribute, annotations);
-		applyAnnotationsAboutType(attribute, annotations);
-		applyAnnotationsAboutDatabase(attribute, annotations);
-		applyAnnotationsWithStringParameter(attribute, annotations);
-	}
-	
-	/**
-	 * Apply annotations for a "Link"  
-	 * @param attribute
-	 * @param annotations
-	 */
-	public void applyAnnotationsForLink(DslModelLink link, Collection<DomainAnnotation> annotations) {
-		for (DomainAnnotation annotation : annotations ) {
-			if ("@Embedded".equals(annotation.getName())) {
-				link.setIsEmbedded(true);
-			}
-		}
-	}
+//	/**
+//	 * Apply annotations for a "Pseudo Foreign Key" attribute 
+//	 * @param attribute
+//	 * @param annotations
+//	 */
+//	public void applyAnnotationsForPseudoForeignKey(DslModelAttribute attribute, Collection<DomainAnnotation> annotations) {
+//		applyAnnotationsAboutValue(attribute, annotations);
+//		applyAnnotationsAboutType(attribute, annotations);
+//		applyAnnotationsAboutDatabase(attribute, annotations);
+//		applyAnnotationsWithStringParameter(attribute, annotations);
+//	}
 	
 	/**
 	 * Apply annotations about field value constraints 

@@ -29,6 +29,8 @@ public class DomainEntity {
      */
     private final String name;
     
+    private String databaseTable = "";
+    
     /**
      * Map of fields used for direct access by field name and to check uniqueness 
      */
@@ -42,7 +44,11 @@ public class DomainEntity {
      * @param name
      */
     public DomainEntity(String name) {
+		if (name == null) {
+			throw new IllegalStateException("DomainEntity name is null");
+		}
         this.name = name ;
+        this.databaseTable = name ; // by default 
         // LinkedHashMap to keep the original order
         this.fieldsMap = new LinkedHashMap<>(); 
     }
@@ -54,6 +60,13 @@ public class DomainEntity {
     public final String getName() {
         return name;
     }
+    
+	public String getDatabaseTable() {
+		return databaseTable;
+	}
+	public void setDatabaseTable(String databaseTable) {
+		this.databaseTable = databaseTable;
+	}
 
     //-------------------------------------------------------------------------------------
     // FIELDS

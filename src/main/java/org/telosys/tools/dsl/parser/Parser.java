@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.telosys.tools.commons.PropertiesManager;
+import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
@@ -29,6 +30,7 @@ import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
+import org.telosys.tools.dsl.parser.model.DomainFK;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainTag;
@@ -64,10 +66,10 @@ public class Parser {
 	 */
 	public DomainModel parseModel(File file) throws ModelParsingError {
 
-		// --- Step 0 : check model file validity
+		//--- Step 0 : check model file validity
 		checkModelFile(file);
 
-		// --- Step 1 : init a void model using the ".model" file
+		//--- Step 1 : init a void model using the ".model" file
 		PropertiesManager propertiesManager = new PropertiesManager(file);
 		Properties properties = propertiesManager.load();
 		DomainModel model = new DomainModel(properties);
@@ -75,7 +77,7 @@ public class Parser {
 		List<String> entitiesFileNames = DslModelUtil.getEntitiesAbsoluteFileNames(file);
 		List<String> entitiesNames = new LinkedList<>();
 
-		// --- Step 2 : build VOID entities (1 instance for each entity defined
+		//--- Step 2 : build VOID entities (1 instance for each entity defined
 		// in the model)
 		for (String entityFileName : entitiesFileNames) {
 			String entityName = DslModelUtil.getEntityName(new File(entityFileName));
@@ -83,7 +85,7 @@ public class Parser {
 			model.addEntity(new DomainEntity(entityName));
 		}
 
-		// --- Step 3 : parse each entity and populate it in the model
+		//--- Step 3 : parse each entity and populate it in the model
 		List<EntityParsingError> errors = new LinkedList<>();
 		for (String entityFileName : entitiesFileNames) {
 			// --- Parse
@@ -101,12 +103,13 @@ public class Parser {
 				errors.add(entityParsingError);
 			}
 		}
-//		if ( model.hasError() ) {
+		
+		//--- Step 4 : search duplicated FK names in the model
+		ParserFKChecker parserFKChecker = new ParserFKChecker();
+		parserFKChecker.checkNoDuplicateFK(model, errors);
+		
 		if ( ! errors.isEmpty()) {
-			String msg = "Parsing error(s) : " + errors.size() + " invalid entity(ies)" ;
-//			throw new EntityParsingError(domainEntity.getName(), msg, domainEntity.getErrors() );
-			
-//			throw new ModelParsingError(file, "Parsing error(s) : " + errorsCount + " invalid entity(ies) ");
+			String msg = errors.size() + " parsing error(s)" ;
 			throw new ModelParsingError(file, msg, errors);
 		} else {
 			return model;
@@ -275,19 +278,32 @@ public class Parser {
 			domainField.addError(error);
 		}
 
-		// Annotations found
-		for (DomainAnnotation annotation : fieldAnnotationsAndTags.getAnnotations()) {
-			if (domainField.hasAnnotation(annotation)) {
-				// Already defined => Error
-				domainField.addError(new AnnotationOrTagError(entityName, fieldName, "@"+annotation.getName(),
-						"annotation defined more than once"));
-			} else {
-				domainField.addAnnotation(annotation);
+		// Process all ANNOTATIONS found for this field
+		for ( DomainAnnotation annotation : fieldAnnotationsAndTags.getAnnotations() ) {
+			if ( AnnotationName.FK.equals( annotation.getName() ) ) { // v 3.3.0
+				// Special processing for "@FK" annotation (can be used 1..N times in a field )
+				try {
+					FieldFKAnnotationParser fkParser = new FieldFKAnnotationParser(entityName, fieldName);
+					DomainFK fk = fkParser.parse(annotation);
+					domainField.addFKDeclaration(fk);
+				} catch (AnnotationOrTagError err) {
+					domainField.addError(err);
+				}
+			}
+			else {
+				// Standard processing for other annotations
+				if (domainField.hasAnnotation(annotation)) {
+					// Already defined => Error
+					domainField.addError(new AnnotationOrTagError(entityName, fieldName, "@"+annotation.getName(),
+							"annotation defined more than once"));
+				} else {
+					domainField.addAnnotation(annotation);
+				}
 			}
 		}
 
-		// Tags found
-		for (DomainTag tag : fieldAnnotationsAndTags.getTags()) {
+		// Process all TAGS found for this field
+		for ( DomainTag tag : fieldAnnotationsAndTags.getTags() ) {
 			if (domainField.hasTag(tag)) {
 				// Already defined => Error
 				domainField.addError(new AnnotationOrTagError(entityName, fieldName, "#"+tag.getName(),

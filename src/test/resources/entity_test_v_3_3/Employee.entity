@@ -1,0 +1,24 @@
+// test v 3.3 swith FOREIGN KEY
+Employee 
+{ 
+	id 		: int {@Id , @AutoIncremented, @Embedded , @Max(800)}; // the id
+	
+	firstName : string   { @DefaultValue( "   a b") #MyTag(qqq) #foo(12) } ;
+	lastName : string {  @NotBlank,  @Embedded  	 } ;
+	    
+	birthDate : date { @Future  @NotEmpty } ;
+	
+	hour:time ;
+	foo : string { @NotBlank, }; 
+	count : int { @Max(12), @Min(  0 ), @NotNull , @SizeMax(12)};
+	
+	badgeId : int  { @FK(Badge)  @FK(Toto.code) } ; // FK 
+	
+	countryId1 : int  { @FK(FK_EMP_COUNTRY,   Country.id1) } ; // FK : entity name could be checked at parsing level
+	countryId2 : short  { @FK("FK_EMP_COUNTRY, Country.id2") } ; // FK 
+	
+	// Links
+	country : Country ; // OK 
+	// foo : Foo ;  // ERR : checked at parsing level 
+}
+ 

@@ -34,6 +34,7 @@ public class DomainField {
 
     private final Map<String, DomainAnnotation> annotations = new HashMap<>();
     private final Map<String, DomainTag> tags = new HashMap<>();
+    private final List<DomainFK> fkDeclarations = new LinkedList<>() ; // v 3.3.0
 	private final List<AnnotationOrTagError> errors = new LinkedList<>() ;
 
     /**
@@ -182,6 +183,16 @@ public class DomainField {
         return this.tags;
     }
 
+    //------------------------------------------------------------------------
+    // FOREIGN KEYS DECLARATIONS ( v 3.3.0 )
+    //------------------------------------------------------------------------
+    public List<DomainFK> getFKDeclarations() {
+    	return fkDeclarations;
+    }
+    public void addFKDeclaration(DomainFK fk) {
+    	fkDeclarations.add(fk);
+    }
+    
     //------------------------------------------------------------------------
     // ERRORS
     //------------------------------------------------------------------------

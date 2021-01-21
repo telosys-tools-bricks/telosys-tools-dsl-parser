@@ -1,0 +1,21 @@
+Person {
+
+	// ATTRIBUTES
+	// Basic attributes 
+	id : int {@Id}; 
+	firstName : string {@SizeMax( 3)} ;
+	lastName : string   { } ;
+	birthDate : date ;
+	
+	// Foreing Keys 
+	countryCode : string {                     @FK(Country) } ;
+	genderId    : short  { @DbName(GENDER_ID)  @FK(Gender) } ;
+	
+	// LINKS
+	country : Country  { @FetchTypeLazy  @Optional } ; // FK inference
+	gender  : Gender   { @Embedded } ;  // FK inference
+	
+	department : Department { @LinkByCol(deptGrpCode, deptDivCode) }; // 
+	//department : Department { @LinkByCol(grpCode) }; // ERR : 1 col for 2 expected
+	//department : Department { @LinkByCol(grpCode,grpCode) }; // Link error : 1 duplicated join column(s)
+}

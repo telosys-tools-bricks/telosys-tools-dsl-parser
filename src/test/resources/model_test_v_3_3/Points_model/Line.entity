@@ -1,0 +1,18 @@
+// Entity 
+
+Line {
+	// ATTRIBUTES 
+	id : int { @Id } ;
+	color : string ;
+	
+	point1X : int  { @FK(fk_line_point1, Point.x) @DbName(X1) } ;
+	point1Y : int  { @FK(fk_line_point1, Point.y) @DbName(Y1) } ;
+	
+	point2X : int  { @FK(fk_line_point2, Point.x) @DbName(X2) } ;
+	point2Y : int  { @FK(fk_line_point2, Point.y) @DbName(Y2) } ;
+
+	// LINKS 
+	point1 : Point { @LinkByFK(fk_line_point1) } ;
+	point2 : Point { @LinkByFK(fk_line_point2) @Embedded } ;
+	
+}

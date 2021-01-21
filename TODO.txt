@@ -1,9 +1,28 @@
 
 ======================================================================
+   W I P  
+======================================================================
+@FK(xx,xxx.xx)  ( WIP )
+  . Test JUnit / Parser : OK
+  . Convert : 
+   DONE / - Parser.java : @FK not unique for each field ( no error if already defined )
+
+======================================================================
    TO DO 
 ======================================================================
 
-Fix bug in code gen with jpa.xxx when mappedBy="null" !
+   
+
+TODO :
+  attribute.isFK() ; 
+  attribute.isFKSimple() ; 
+  attribute.isFKComposite() ; 
+
+cf DB MODEL 
+
+-------------------------------------------------------
+
+Fix bug in code gen with jpa.xxx when mappedBy="null" !   ( WIP )
 
 -------------------------------------------------------
 
@@ -16,7 +35,7 @@ Change Licence header
 ======================================================================
 ======================================================================
 
-All links out of attributes ????
+All links out of attributes ????  ( with @FK )
 
 	gender : Gender; // in attributes ( "pseudo FK" )
 
@@ -30,14 +49,6 @@ String getDateAfterValue() ;
 String getDateBeforeValue() ;
     @Before(2012-05-23) // ISO format (fixed)
 
--------------------------------------------------------
-
- @IdPart 
- or 
- @Id multiple 
- or 
- @Id1, @Id2, @Id3, @Id4, ... @Id9
- 
 -------------------------------------------------------
 
 Integer   getMaxLength() ; ???  @SizeMax
@@ -58,6 +69,15 @@ JPA ???
 ======================================================================
    DONE 
 ======================================================================
+
+Allow composite ID / Primary Key :
+   @IdPart 
+   or 
+x  @Id multiple 
+   or 
+   @Id1, @Id2, @Id3, @Id4, ... @Id9
+ 
+-------------------------------------------------------
 String getDefaultValue();    
     @DefaultValue(ab c)  // trim
     @DefaultValue(123)   // trim

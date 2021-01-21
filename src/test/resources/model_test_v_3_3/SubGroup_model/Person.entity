@@ -1,0 +1,20 @@
+Person {
+
+	//--- ATTRIBUTES
+	// Basic attributes 
+	id : int {@Id}; 
+	firstName : string {@SizeMax( 3)} ;
+	lastName : string;
+	birthDate : date ;
+	
+	// Foreing Keys 
+	groupCode  : string { @FK(FK_PERSON_SUBGROUP, SubGroup.groupCode ) @FK(Group) #Foo} ;
+	subgroupId : int    { @FK(FK_PERSON_SUBGROUP, SubGroup.subgroupId) #Bar(12) } ;
+	
+	groupCode1 : string { @FK(FK1, Group) } ;
+	groupCode2 : string { @FK(FK2, Group) } ;
+	
+	//--- LINKS
+	group    : Group  ;   // Search a unique FK targeting Group (if multiple FK = not found = no join columns )
+	subgroup : SubGroup { @LinkByFK(FK_PERSON_SUBGROUP) }  ; 
+}

@@ -22,26 +22,35 @@ import org.telosys.tools.generic.model.Optional;
 
 public class DslModelLink implements Link {
     private String id;
+    
+    private String fieldName; 
+    private final boolean selected = true ; // Always considered as "selected" 
+
     private List<JoinColumn> joinColumns;
-    private String targetTableName;
+    
+    private String sourceTableName; // table associated with the entity holding the link
     private String targetEntityClassName;
-    private String fieldName;
+    private String targetTableName; // table associated with the target entity 
+    
 //    private String fieldType; // REMOVED in v 3.3.0
     private boolean owningSide;
     private String mappedBy;
-    private final boolean selected = true ; // Always considered as "selected" 
-    private String sourceTableName;
+    
     private boolean inverseSide;
     private String inverseSideLinkId;
+    
     private Optional optional;
     private Cardinality cardinality;
     private CascadeOptions cascadeOptions;
     private FetchType fetchType;
+    
     private boolean basedOnForeignKey;
     private String foreignKeyName;
+    
     private boolean basedOnJoinTable;
     private JoinTable joinTable;
     private String joinTableName;
+    
     private String comparableString;
     private boolean isEmbedded;
 
@@ -58,9 +67,14 @@ public class DslModelLink implements Link {
     public List<JoinColumn> getJoinColumns() {
         return joinColumns;
     }
-
     public void setJoinColumns(List<JoinColumn> joinColumns) {
         this.joinColumns = joinColumns;
+    }
+    public boolean hasJoinColumns() {
+        if ( this.joinColumns != null ) {
+        	return ! this.joinColumns.isEmpty() ;
+        }
+        return false;
     }
 
     @Override
@@ -136,7 +150,6 @@ public class DslModelLink implements Link {
     public boolean isInverseSide() {
         return inverseSide;
     }
-
     public void setInverseSide(boolean inverseSide) {
         this.inverseSide = inverseSide;
     }
@@ -145,7 +158,6 @@ public class DslModelLink implements Link {
     public String getInverseSideLinkId() {
         return inverseSideLinkId;
     }
-
     public void setInverseSideLinkId(String inverseSideLinkId) {
         this.inverseSideLinkId = inverseSideLinkId;
     }
@@ -154,7 +166,6 @@ public class DslModelLink implements Link {
     public Optional getOptional() {
         return optional;
     }
-
     public void setOptional(Optional optional) {
         this.optional = optional;
     }
@@ -163,7 +174,6 @@ public class DslModelLink implements Link {
     public Cardinality getCardinality() {
         return cardinality;
     }
-
     public void setCardinality(Cardinality cardinality) {
         this.cardinality = cardinality;
     }
@@ -240,12 +250,12 @@ public class DslModelLink implements Link {
         this.comparableString = comparableString;
     }
 
-    public void setIsEmbedded(boolean isEmbedded) {
-        this.isEmbedded = isEmbedded;
-    }
-
     @Override
     public boolean isEmbedded() {
         return this.isEmbedded;
     }
+    public void setEmbedded(boolean b) {
+        this.isEmbedded = b;
+    }
+
 }

@@ -104,6 +104,21 @@ public class SplitterTest {
 		assertEquals("#Bar", list.get(i++));
 	}
 
+	@Test
+	public void test4() throws AnnotationOrTagError {
+		int i = 0 ;
+		List<String> list ;
+
+		list = split("@NotBlank, #Test @Foo1( ab cd ), @Foo2( ab,cd ) @Foo3(  'ab,cd') ");
+		i = 0 ;
+		//assertEquals(4, list.size());
+		assertEquals("@NotBlank", list.get(i++));
+		assertEquals("#Test", list.get(i++));
+		assertEquals("@Foo1( ab cd )", list.get(i++));
+		assertEquals("@Foo2( ab,cd )", list.get(i++));
+		assertEquals("@Foo3(  'ab,cd')", list.get(i++));
+	}
+
 	@Test(expected = AnnotationOrTagError.class)
 	public void testError1() throws AnnotationOrTagError  {
 		// unexpected '(' 

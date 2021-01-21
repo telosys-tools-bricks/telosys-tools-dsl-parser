@@ -16,11 +16,14 @@
 package org.telosys.tools.dsl.model;
 
 import java.math.BigDecimal;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.DateType;
 import org.telosys.tools.generic.model.Entity;
+import org.telosys.tools.generic.model.ForeignKeyPart;
 
 public class DslModelAttribute implements Attribute {
 	
@@ -77,9 +80,10 @@ public class DslModelAttribute implements Attribute {
 	
 	// An attribute can be involved in many FK, it can be both in a SIMPLE FK and in a COMPOSITE FK 
 	private boolean isForeignKeySimple     = false ; // ( false by default )
-	private boolean isForeignKeyComposite  = false ; // ( always false in the DSL model )
+	private boolean isForeignKeyComposite  = false ; // ( false by default )
 	private String  referencedEntityClassName = null ; // no reference by default
-
+	private List<ForeignKeyPart> fkParts = new LinkedList<>(); // Added in ver 3.3.0
+	
 	// Annotations added for types
 	private boolean isPrimitiveTypeExpected = false ;
 	private boolean isUnsignedTypeExpected = false ;
@@ -483,6 +487,9 @@ public class DslModelAttribute implements Attribute {
 	}
 
 
+	//----------------------------------------------------------------------------------
+	// FOREIGN KEY (simple or composite)
+	//----------------------------------------------------------------------------------
 	@Override
 	public boolean isFK() {
 		return isForeignKeySimple || isForeignKeyComposite ;
@@ -496,9 +503,12 @@ public class DslModelAttribute implements Attribute {
 		return isForeignKeySimple;
 	}
 
+	public void setFKComposite(boolean flag) {
+		isForeignKeyComposite = flag ;
+	}
 	@Override
 	public boolean isFKComposite() {
-		return isForeignKeyComposite; // Always FALSE (never "Composite" in a DSL model)
+		return isForeignKeyComposite;
 	}
 
 	public void setReferencedEntityClassName(String entityClassName) {
@@ -572,4 +582,21 @@ public class DslModelAttribute implements Attribute {
 		return this.tagsMap;
 	}
 	
+	//-----------------------------------------------------------------------------------------
+	// FOREIGN KEYS in which the attribute is involved ( ver 3.3.0 )
+	//-----------------------------------------------------------------------------------------	
+	public void addFKPart(ForeignKeyPart fkPart) {
+		fkParts.add(fkPart);
+	}
+
+	@Override
+	public List<ForeignKeyPart> getFKParts() {
+		return fkParts;
+	}
+
+	@Override
+	public boolean hasFKParts() {
+		return  ! fkParts.isEmpty() ;
+	}
+
 }

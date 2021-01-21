@@ -16,18 +16,31 @@ public class EntityFileParserTest {
 //		parser.parse(file);
 //	}
 
-	@Test
-	public void testEntityFileParser() throws EntityParsingError {
-		
-		EntityFileParser entityFileParser = new EntityFileParser("src/test/resources/entity_test_v_3_2/Employee.entity");
-		//entityFileParser.parse();
+	private void log(String msg) {
+		System.out.println(msg);
+	}
+	
+	private void parseEntityFile(String entityFile) throws EntityParsingError {
+		log("\nENTITY FILE : " + entityFile);
+		EntityFileParser entityFileParser = new EntityFileParser(entityFile);
 		EntityFileParsingResult result = entityFileParser.parse();
-		System.out.println("\nPARSING RESULT :");
-		System.out.println(" Entity name : " + result.getEntityNameParsed() );
-		System.out.println("\nFIELDS PARSED :");
+		log("PARSING RESULT :");
+		log(" Entity name : " + result.getEntityNameParsed() );
+		log(" Fields :");
 		for ( FieldParts field : result.getFields() ) {
-			System.out.println(" . " + field);
+			log(" . " + field);
 		}
+	}
+
+	@Test
+	public void testEntityFileParserV33() throws EntityParsingError {
+		parseEntityFile("src/test/resources/entity_test_v_3_3/Country.entity");
+		parseEntityFile("src/test/resources/entity_test_v_3_3/Employee.entity");
+	}
+
+	@Test
+	public void testEntityFileParserV32() throws EntityParsingError {
+		parseEntityFile("src/test/resources/entity_test_v_3_2/Employee.entity");
 	}
 
 	@Test
@@ -35,7 +48,6 @@ public class EntityFileParserTest {
 		
 		EntityFileParser entityFileParser = new EntityFileParser(
 		"src/test/resources/model_test/invalid/FourEntities_model/Gender.entity");
-		//entityFileParser.parse();
 		EntityFileParsingResult result = entityFileParser.parse();
 		System.out.println("\nPARSING RESULT :");
 		System.out.println(" Entity name : " + result.getEntityNameParsed() );

@@ -1,0 +1,7 @@
+Department {
+
+	grpCode : string {@Id, @SizeMax(2)};
+	divCode : int    {@Id };
+	
+	name : string;
+}

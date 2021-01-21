@@ -1,0 +1,10 @@
+// Entity Point
+
+Point {
+	// ATTRIBUTES 
+	x : int { @Id @DbName(X) @DbComment(X coordinate) }  ;   // PK 
+ 	y : int { @Id @DbName(Y) @DbComment(Y coordinate)}  ;   // PK
+ 	
+ 	name : string ;
+ 	
+}

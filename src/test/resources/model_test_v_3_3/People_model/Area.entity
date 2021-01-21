@@ -1,0 +1,18 @@
+
+Area {
+
+	// ATTRIBUTES
+	id : int { @Id } ; 
+	name : string ;
+	
+	// Link by implicit FK
+	countryCode : string    { @DbName(COUNTRY_CODE) @FK(FK_COUNTRY2, Country) } ;
+	//countryCode2 : string   { @DbName(COUNTRY_CODE) @FK(FK_COUNTRY2, Country) } ;
+	
+	country     : Country  ;  // Search a unique FK targeting Country (if multiple FK = not found = no join columns )
+
+	// Link by explicit FK
+	// countryCode : string   { @DbName(COUNTRY_CODE) @FK(FK_AREA_COUNTRY, Country) } ;
+	// country     : Country  { @LinkByFK(FK_AREA_COUNTRY) } ;  // Search FK targeting Country
+	
+}

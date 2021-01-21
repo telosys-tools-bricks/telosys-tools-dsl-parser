@@ -26,16 +26,16 @@ import org.telosys.tools.generic.model.Link;
 
 public class DslModelEntity implements Entity {
 
-	private String className;
-	private String fullName;
+	private final String className; // Entity name = entity class name
+	
+	private String fullName = "";
 
-	private String packageName;
+	private String packageName = "";
 
 	private List<Attribute> attributes = new ArrayList<>();
 	private List<ForeignKey> databaseForeignKeys = new ArrayList<>();
 
 	private List<Link> links = new ArrayList<>();
-//	private String _package;
 
 	// Database 
 	private String databaseTable   = ""; // set to 'entity name' by Converter 
@@ -46,6 +46,14 @@ public class DslModelEntity implements Entity {
 	private Boolean tableType = true ;
 	private Boolean viewType  = false;
 
+	/**
+	 * Constructor
+	 * @param className
+	 */
+	public DslModelEntity(String className) {
+		super();
+		this.className = className;
+	}
 	//--------------------------------------------------------------------------
 	@Override
 	public List<Attribute> getAttributes() {
@@ -55,13 +63,25 @@ public class DslModelEntity implements Entity {
 		this.attributes = attributes;
 	}
 	
+	/**
+	 * Returns all attributes being part of the PK 
+	 * @return
+	 * @since  3.3.x
+	 */
+	public List<Attribute> getKeyAttributes() {
+		LinkedList<Attribute> attributesList = new LinkedList<>();
+		for ( Attribute a : this.attributes ) {
+			if ( a.isKeyElement() ) {
+            	attributesList.add(a);
+			}
+		}
+		return attributesList ;
+	}
+
 	//--------------------------------------------------------------------------
 	@Override
 	public String getClassName() {
 		return className;
-	}
-	public void setClassName(String className) {
-		this.className = className;
 	}
 
 	//--------------------------------------------------------------------------
@@ -87,7 +107,20 @@ public class DslModelEntity implements Entity {
 	public void setDatabaseForeignKeys(List<ForeignKey> databaseForeignKeys) {
 		this.databaseForeignKeys = databaseForeignKeys;
 	}
-	
+	/**
+	 * Try to found a Foreign Key with the given name
+	 * @param name
+	 * @return
+	 */
+	public ForeignKey getDatabaseForeignKeyByName(String name) {
+		for(ForeignKey fk : this.databaseForeignKeys ) {
+			if(name.equals(fk.getName())) {
+				return fk;
+			}
+		}
+		return null;
+	}
+
 	//--------------------------------------------------------------------------
 	@Override
 	public String getDatabaseSchema() {
@@ -138,6 +171,14 @@ public class DslModelEntity implements Entity {
 	public void setLinks(List<Link> links) {
 		this.links = links;
 	}
+	public Link getLinkByFieldName(String fieldName) {
+		for(Link link : links) {
+			if(fieldName.equals(link.getFieldName())) {
+				return link;
+			}
+		}
+		return null;
+	}
 	
 //	public String getPackage() {
 //		return _package;
@@ -187,6 +228,28 @@ public class DslModelEntity implements Entity {
 		return false ; // No attribute with "@Id"
 	}
 	
+	/**
+	 * Returns the number of attributes having a 'Id' annotation
+	 * @return
+	 */
+	public int getIdCount() {
+		int count = 0 ;
+		for ( Attribute attribute : this.attributes ) {
+			if ( attribute.isKeyElement() ) {
+				count++ ;
+			}
+		}
+		return count ;
+	}
+	
+	/**
+	 * Returns true if this entity has a composite ID (multiple fields with 'Id' annotation)
+	 * @return
+	 */
+	public boolean hasCompositeId() {
+		return getIdCount() > 1 ;
+	}
+	
 	//--------------------------------------------------------------------------
 	//--------------------------------------------------------------------------
 	public Attribute getAttributeByName(String name) {
@@ -198,6 +261,14 @@ public class DslModelEntity implements Entity {
 		return null;
 	}
 
+	public DslModelAttribute getAttributeByDatabaseName(String dbName) {
+		for(Attribute attribute : getAttributes()) {
+			if(dbName.equals(attribute.getDatabaseName())) {
+				return (DslModelAttribute) attribute;
+			}
+		}
+		return null;
+	}
 	//--------------------------------------------------------------------------
 	/**
 	 * Replaces the attribute identified by the given name by another one

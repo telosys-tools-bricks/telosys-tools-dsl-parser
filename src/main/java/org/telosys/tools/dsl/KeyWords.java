@@ -75,10 +75,18 @@ public class KeyWords {
 		AnnotationName.DB_DEFAULT_VALUE + "$",
 		AnnotationName.DB_COMMENT       + "$",
 
-		AnnotationName.DB_SIZE          + "$"  // special paramete checking (based on string param)  
+		AnnotationName.DB_SIZE          + "$",  // special paramete checking (based on string param)  
 		
+		//--- Added in ver 3.3.0
+		AnnotationName.FK          + "$",  // special paramete checking (based on string param)  
+		AnnotationName.OPTIONAL,
+		AnnotationName.FETCH_TYPE_EAGER,
+		AnnotationName.FETCH_TYPE_LAZY,
+		AnnotationName.MAPPED_BY    + "$",
+		AnnotationName.LINK_BY_COL  + "$",
+		AnnotationName.LINK_BY_FK   + "$"
+
 		// In the future 
-		// "DbColumn$" // $ means string parameter
 		// "DbTable$"  // $ means string parameter
 		// etc
 	} ;

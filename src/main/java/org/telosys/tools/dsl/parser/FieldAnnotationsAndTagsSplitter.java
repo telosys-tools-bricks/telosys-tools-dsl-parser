@@ -131,19 +131,14 @@ public class FieldAnnotationsAndTagsSplitter {
 				}
 			}
 			else if ( c == ',' ) {
-				if ( inQuote() ) {
+				// if ( inQuote() ) { 
+				if ( inQuote() || inParentheses() ) { // since v 3.3.0 keep ',' if in parentheses
 					keepChar(c);
 				}
 				// else ignore this char
 			}
 			else {
 				keepChar(c);
-//				if ( inElement ) {
-//					keepChar(c);
-//				}
-//				else {
-//					// 
-//				}
 			}
 		}
 		// end 

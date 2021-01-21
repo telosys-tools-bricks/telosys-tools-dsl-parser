@@ -439,10 +439,10 @@ public class ConverterTest {
 		for ( Attribute attribute : carEntity.getAttributes() ) {
 			System.out.println(" . " + attribute.getName() );
 		}
-		assertEquals(3, carEntity.getAttributes().size() );
+		assertEquals(2, carEntity.getAttributes().size() );
 		assertNotNull(carEntity.getAttributeByName("id"));
 		assertNotNull(carEntity.getAttributeByName("name"));
-		assertNotNull(carEntity.getAttributeByName("driver"));
+		//assertNotNull(carEntity.getAttributeByName("driver")); // LINK
 
 		//--- "Car" - "name" attribute
 		Attribute car_nameAttribute = carEntity.getAttributeByName("name");
@@ -452,26 +452,26 @@ public class ConverterTest {
 		assertFalse(car_nameAttribute.isFKSimple()); 
 		assertFalse(car_nameAttribute.isFKComposite());
 		
-		//--- "Car" - "driver" attribute ( "pseudo FK" )
-		Attribute car_driverAttribute = carEntity.getAttributeByName("driver");
-		assertNotNull(car_driverAttribute);
-		assertEquals("long", car_driverAttribute.getNeutralType() );
-		//assertEquals("driverCode", driverAttribute.getLabel() ); // "driver" --> "driverCode" TODO ?
-		assertEquals(Integer.valueOf(20), car_driverAttribute.getMaxLength() );
-		assertEquals("long", car_driverAttribute.getNeutralType() ); // same as original attribute
-		assertEquals(car_driverAttribute.getName(), car_driverAttribute.getLabel() ); 
-		assertEquals(Integer.valueOf(20), car_driverAttribute.getMaxLength() ); // same as original attribute
-		
-		assertTrue(car_driverAttribute.isFK()); // is "FK"
-		assertTrue(car_driverAttribute.isFKSimple()); // is "Simple FK" (is the only attribute in the FK)
-		assertFalse(car_driverAttribute.isFKComposite());
+//		//--- "Car" - "driver" attribute ( "pseudo FK" )
+//		Attribute car_driverAttribute = carEntity.getAttributeByName("driver");
+//		assertNotNull(car_driverAttribute);
+//		assertEquals("long", car_driverAttribute.getNeutralType() );
+//		//assertEquals("driverCode", driverAttribute.getLabel() ); // "driver" --> "driverCode" TODO ?
+//		assertEquals(Integer.valueOf(20), car_driverAttribute.getMaxLength() );
+//		assertEquals("long", car_driverAttribute.getNeutralType() ); // same as original attribute
+//		assertEquals(car_driverAttribute.getName(), car_driverAttribute.getLabel() ); 
+//		assertEquals(Integer.valueOf(20), car_driverAttribute.getMaxLength() ); // same as original attribute
+//		
+//		assertTrue(car_driverAttribute.isFK()); // is "FK"
+//		assertTrue(car_driverAttribute.isFKSimple()); // is "Simple FK" (is the only attribute in the FK)
+//		assertFalse(car_driverAttribute.isFKComposite());
 		
 		//--- "Car" links
 		assertEquals(1, carEntity.getLinks().size()); 
 		
-		Link driver = carEntity.getLinks().get(0);
-		assertEquals(Cardinality.MANY_TO_ONE, driver.getCardinality() );
-		assertEquals("Driver", driver.getTargetEntityClassName());
+		Link driverLink = carEntity.getLinks().get(0);
+		assertEquals(Cardinality.MANY_TO_ONE, driverLink.getCardinality() );
+		assertEquals("Driver", driverLink.getTargetEntityClassName());
 		
 	}
 	

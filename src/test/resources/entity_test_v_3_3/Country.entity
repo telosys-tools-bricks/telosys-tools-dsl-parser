@@ -1,0 +1,7 @@
+
+// Test with composite Primary Key 
+Country {
+	id1 : int {  @Id  };  
+	id2 : short { @Id };
+	name : string;
+}

@@ -63,8 +63,18 @@ public class AnnotationName {
 
 	public static final String DB_SIZE          = "DbSize"; // v 3.2.0
 
+	// Added in ver 3.3.0 : for attributes
+	public static final String FK               = "FK"; // v 3.3.0
+	// Added in ver 3.3.0 : for links
+	public static final String OPTIONAL         = "Optional"; // v 3.3.0
+	public static final String FETCH_TYPE_LAZY  = "FetchTypeLazy"; // v 3.3.0
+	public static final String FETCH_TYPE_EAGER = "FetchTypeEager"; // v 3.3.0
+	public static final String MAPPED_BY        = "MappedBy"; // v 3.3.0
+	public static final String LINK_BY_COL      = "LinkByCol"; // v 3.3.0
+	public static final String LINK_BY_FK       = "LinkByFK"; // v 3.3.0
+
 	// TODO 
-    // @Comment(xxx) --> used as DbComment ?
+    // @Comment(xxx) 
     // @After(DateISO)
     // @Before(DateISO)
     //
