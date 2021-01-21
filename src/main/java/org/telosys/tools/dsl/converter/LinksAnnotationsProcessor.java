@@ -60,8 +60,7 @@ public class LinksAnnotationsProcessor {
 				}
 			}
 			else if (AnnotationName.LINK_BY_COL.equals(annotation.getName())) { // Added in ver 3.3
-				// Example : @LinkByCol(col1,col2)
-				// Work In Progress
+				// Example : @LinkByCol(col1)   @LinkByCol(col1 > ref1 , col2 > ref2 )
 				List<JoinColumn> joinColumns = buildJoinColumnsFromString(annotation.getParameterAsString());
 				link.setJoinColumns(joinColumns);
 			}
