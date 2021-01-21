@@ -148,7 +148,7 @@ public class LinksConverter extends AbstractConverter {
 		}
 		
 		// Join columns already determined from annotations @LinkByFK or @LinkByCol ?
-		if ( ! dslLink.hasJoinColumns() ) {
+		if ( ! dslLink.hasJoinColumns() && dslLink.isOwningSide() ) {
 			// No join columns defined by annotations => try to infer join columns from FK
 			String referencedTableName = dslLink.getTargetTableName(); 
 			List<JoinColumn> joinColumns = JoinColumnsUtil.tryToInferJoinColumns(dslEntity, referencedTableName);

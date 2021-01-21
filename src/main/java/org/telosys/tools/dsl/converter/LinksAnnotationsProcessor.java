@@ -61,6 +61,7 @@ public class LinksAnnotationsProcessor {
 			}
 			else if (AnnotationName.LINK_BY_COL.equals(annotation.getName())) { // Added in ver 3.3
 				// Example : @LinkByCol(col1,col2)
+				// Work In Progress
 				List<JoinColumn> joinColumns = buildJoinColumnsFromString(annotation.getParameterAsString());
 				link.setJoinColumns(joinColumns);
 			}
@@ -77,7 +78,9 @@ public class LinksAnnotationsProcessor {
 	
 	/**
 	 * Build join columns list from the given string
-	 * @param s columns separated by a comma ( eg "col1, col2  , col3 " )
+	 * @param s columns separated by a comma 
+	 * eg "col1" 
+	 *    "col1>ref1 , col2 > ref2 "
 	 * @return
 	 */
 	protected List<JoinColumn> buildJoinColumnsFromString(String s) {
@@ -86,8 +89,29 @@ public class LinksAnnotationsProcessor {
 			String[] parts = StrUtil.split(s, ',');
 			for ( String col : parts ) {
 				if ( ! StrUtil.nullOrVoid(col) ) {
-					joinColumns.add(new DslModelJoinColumn(col.trim()));
-					// No referenced column name in this case
+					if ( col.contains(">") ) {
+						// "col > referencedCol "
+						String[] pair = StrUtil.split(s, '>');
+						String columnName = "" ;
+						String referencedColumnName = "";
+						if ( pair.length > 0 ) {
+							columnName = pair[0].trim();
+						}
+						if ( pair.length > 1 ) {
+							referencedColumnName = pair[1].trim();
+						}
+						if ( ! columnName.isEmpty() ) {
+							DslModelJoinColumn jc = new DslModelJoinColumn(columnName);
+							if ( ! referencedColumnName.isEmpty() ) {
+								jc.setReferencedColumnName(referencedColumnName);
+							}
+							joinColumns.add(jc);
+						}
+					}
+					else {
+						// No referenced column name in this case
+						joinColumns.add(new DslModelJoinColumn(col.trim()));
+					}
 				}
 			}
 		}

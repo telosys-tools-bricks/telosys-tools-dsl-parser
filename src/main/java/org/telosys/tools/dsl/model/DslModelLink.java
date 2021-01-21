@@ -54,7 +54,14 @@ public class DslModelLink implements Link {
     private String comparableString;
     private boolean isEmbedded;
 
-    @Override
+    /**
+     * Constructor
+     */
+    public DslModelLink() {
+		super();
+	}
+
+	@Override
     public String getId() {
         return id;
     }
