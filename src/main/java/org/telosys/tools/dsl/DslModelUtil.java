@@ -67,6 +67,15 @@ public class DslModelUtil {
     }
     
     /**
+     * Returns the model name for the given model file name (short name)
+     * @param shortFileName ( e.g. 'foo.model' ) 
+     * @return
+     */
+    public static String getModelNameFromShortFileName(String shortFileName) {
+    	return removeExtension(shortFileName, DOT_MODEL) ;
+    }
+    
+    /**
      * Returns the entity name for the given entity file name
      * @param entityFile an entity file ( e.g. 'aaa/bbb/Car.entity' ) 
      * @return the entity name ( e.g. 'Car' for 'aaa/bbb/Car.entity' )
@@ -76,7 +85,10 @@ public class DslModelUtil {
     }
 
     private static String getFileNameWithoutExtension(File file, String extension) {
-    	String fileName = file.getName();
+    	return removeExtension(file.getName(), extension);
+    }
+    
+    private static String removeExtension(String fileName, String extension) {
     	int i = fileName.lastIndexOf(extension);
     	if ( i > 0 ) {
     		return fileName.substring(0, i);

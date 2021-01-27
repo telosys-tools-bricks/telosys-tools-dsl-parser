@@ -26,7 +26,7 @@ public class ConverterStep1Test {
 	
 	private DslModel convertModel(DomainModel domainModel) {
 		// Create a new void DSL model 
-		DslModel dslModel = new DslModel();
+		DslModel dslModel = new DslModel("test-model");
 		Converter converter = new Converter();
 		converter.createAllVoidEntities(domainModel, dslModel);
 		converter.createAllAttributes(domainModel, dslModel);

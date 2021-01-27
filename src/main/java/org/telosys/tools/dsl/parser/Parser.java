@@ -72,7 +72,7 @@ public class Parser {
 		//--- Step 1 : init a void model using the ".model" file
 		PropertiesManager propertiesManager = new PropertiesManager(file);
 		Properties properties = propertiesManager.load();
-		DomainModel model = new DomainModel(properties);
+		DomainModel model = new DomainModel(file.getName(), properties);
 
 		List<String> entitiesFileNames = DslModelUtil.getEntitiesAbsoluteFileNames(file);
 		List<String> entitiesNames = new LinkedList<>();

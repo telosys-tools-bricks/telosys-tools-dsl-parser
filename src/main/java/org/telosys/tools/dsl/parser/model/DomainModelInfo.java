@@ -29,9 +29,9 @@ public class DomainModelInfo {
 	private static final String VERSION     = "version" ;
 	private static final String DESCRIPTION = "description" ;
 	
-    private String modelName;
-    private String modelVersion;
-    private String modelDescription;
+    private String modelName = "";
+    private String modelVersion = "";
+    private String modelDescription = "";
 
     /**
      * Default constructor
@@ -50,9 +50,11 @@ public class DomainModelInfo {
      */
     public DomainModelInfo(Properties properties) {
         super();
-        this.modelName = properties.getProperty(NAME, "");
-        this.modelVersion = properties.getProperty(VERSION, "");
-        this.modelDescription = properties.getProperty(DESCRIPTION, "");
+        if ( properties != null ) {
+            this.modelName = properties.getProperty(NAME, "");
+            this.modelVersion = properties.getProperty(VERSION, "");
+            this.modelDescription = properties.getProperty(DESCRIPTION, "");
+        }
     }
 
     /**

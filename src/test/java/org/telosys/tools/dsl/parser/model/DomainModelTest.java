@@ -1,6 +1,7 @@
 package org.telosys.tools.dsl.parser.model;
 
 import java.util.List;
+import java.util.Properties;
 
 import org.junit.Test;
 
@@ -9,10 +10,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class DomainModelTest {
+	
+	private final static String     MODEL_FILE_NAME = "test.model" ;
+	private final static Properties MODEL_PROPERTIES = null ;
 
 	@Test
 	public void testEntity() {
-		DomainModel model = new DomainModel();
+		DomainModel model = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
 		assertTrue( model.getNumberOfEntities() == 0 ) ;
 		
 		model.addEntity( new DomainEntity("Book") );
@@ -40,67 +44,15 @@ public class DomainModelTest {
 //	@Test ( expected = DslParserException.class )
 	@Test
 	public void testEntityDuplicated() {
-		DomainModel model = new DomainModel();
+		DomainModel model = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
 		model.addEntity( new DomainEntity("Book") );
 		model.addEntity( new DomainEntity("Book") ); // ERROR expected
 	}
 
-//	@Test ( expected = DslParserException.class )
 	@Test
 	public void testEntityWithNeutralTypeName() {
-		DomainModel model = new DomainModel();
+		DomainModel model = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
 		model.addEntity( new DomainEntity("string") ); // ERROR expected
 	}
-
-//	@Test
-//	public void testEnumeration() {
-//		DomainModel model = new DomainModel("mymodel");
-//		assertTrue( model.getNumberOfEnumerations() == 0 ) ;
-//		
-//		model.addEnumeration( new DomainEnumerationForInteger("BookType") );
-//		assertTrue( model.getNumberOfEnumerations() == 1 ) ;
-//
-//		model.addEnumeration( new DomainEnumerationForString("Country") );
-//		assertTrue( model.getNumberOfEnumerations() == 2 ) ;
-//
-//		model.addEnumeration( new DomainEnumerationForString("String") ); // "string" neutral type is case sensitive => No error
-//
-//		DomainEnumeration<?> country = model.getEnumeration("Country");
-//		assertNotNull(country);
-//
-//		DomainEnumeration<?> bookType = model.getEnumeration("BookType");
-//		assertNotNull(bookType);
-//
-//		DomainEnumeration<?> tmp = model.getEnumeration("NotDefined");
-//		assertNull(tmp);
-//		
-//		List<String> enumerationNames = model.getEnumerationNames();
-//		assertTrue(enumerationNames.size() == 3 ) ;		
-//		System.out.println("Enumeration names : ");
-//		for ( String name : enumerationNames ) {
-//			System.out.println(" . " + name);
-//		}
-//		
-//	}
-
-//	@Test ( expected = EntityParserException.class )
-//	public void testEnumerationDuplicated() {
-//		DomainModel model = new DomainModel("mymodel");		
-//		model.addEnumeration( new DomainEnumerationForInteger("BookType") );
-//		model.addEnumeration( new DomainEnumerationForInteger("BookType") ); // ERROR expected
-//	}
-
-//	@Test ( expected = EntityParserException.class )
-//	public void testEnumerationWithNeutralTypeName() {
-//		DomainModel model = new DomainModel("mymodel");		
-//		model.addEnumeration( new DomainEnumerationForString("string") ); // ERROR expected
-//	}
-	
-//	@Test ( expected = EntityParserException.class )
-//	public void testEntityAndEnumerationDuplicated() {
-//		DomainModel model = new DomainModel("mymodel");
-//		model.addEntity( new DomainEntity("Book") );
-//		model.addEnumeration( new DomainEnumerationForString("Book") ); // ERROR expected
-//	}
 
 }

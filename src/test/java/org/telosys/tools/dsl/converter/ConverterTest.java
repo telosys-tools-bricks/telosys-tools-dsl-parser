@@ -1,6 +1,7 @@
 package org.telosys.tools.dsl.converter;
 
 import java.math.BigDecimal;
+import java.util.Properties;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.AnnotationName;
@@ -26,30 +27,25 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-//@RunWith(MockitoJUnitRunner.class)
 public class ConverterTest {
 
-//	@InjectMocks
-//	Converter converter;
-	Converter converter = new Converter();
+	private final static String     MODEL_FILE_NAME = "test.model" ;
+	private final static Properties MODEL_PROPERTIES = null ;
+	
+	private Converter converter = new Converter();
 
 	@Test
 	public void testEmptyModel() {
-		// Given
-		DomainModel domainModel = new DomainModel();
-		
-		// When
+		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
 		Model model = converter.convertToGenericModel(domainModel);
 		
-		// Then
-		assertEquals("", model.getName());
-		assertTrue(model.getEntities().isEmpty());
-		
+		assertEquals("test", model.getName());
+		assertTrue(model.getEntities().isEmpty());		
 		assertEquals(ModelType.DOMAIN_SPECIFIC_LANGUAGE, model.getType() );
 	}
 	
 	private Model buildModelWithTwoEmptyEntities() {
-		DomainModel domainModel = new DomainModel();
+		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
 		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
 		domainModel.addEntity(domainEntity_1);
 		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
@@ -93,7 +89,7 @@ public class ConverterTest {
 	@Test
 	public void testAttributeWithNeutralTypes() {
 		// Given
-		DomainModel domainModel = new DomainModel();
+		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
 		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
 
 		domainModel.addEntity(domainEntity_1);
@@ -173,8 +169,7 @@ public class ConverterTest {
 
 	@Test
 	public void testAttributeWithAnnotations() throws AnnotationOrTagError {
-		// Given
-		DomainModel domainModel = new DomainModel();
+		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
 		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
 
 		domainModel.addEntity(domainEntity_1);
@@ -214,10 +209,8 @@ public class ConverterTest {
 		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
 		domainModel.addEntity(domainEntity_2);
 
-		// When
 		Model model = converter.convertToGenericModel(domainModel);
 
-		// Then
 		assertEquals(2, model.getEntities().size());
 
 		// entity 1
@@ -227,7 +220,6 @@ public class ConverterTest {
 
 		// attributes of entity 1
 		assertEquals(8, entity_1.getAttributes().size());
-
 
 		Attribute attribute_1_1 = getAttributeByName(entity_1, "field_1_1");
 		Attribute attribute_1_2 = getAttributeByName(entity_1, "field_1_2");
@@ -240,15 +232,9 @@ public class ConverterTest {
 		
 		// boolean @Id 
 		assertTrue(attribute_1_1.isKeyElement());
-		//assertEquals("java.lang.Boolean", getAttributeByName(entity_1, "field_1_2").getFullType());
-//		assertEquals("java.lang.Boolean", attribute_1_1.getFullType() );
-//		assertEquals("Boolean", attribute_1_1.getSimpleType() );
 		
 		// boolean @NotNull => primitive type
 		assertTrue(attribute_1_2.isNotNull());
-//		assertEquals("boolean", attribute_1_2.getFullType());
-//		assertEquals("boolean", attribute_1_2.getSimpleType());
-
 		
 		assertEquals(new BigDecimal( 1), attribute_1_3.getMinValue());
 		
@@ -261,7 +247,6 @@ public class ConverterTest {
 		assertTrue(attribute_1_8.isDateFuture());
 
 		// entity 2
-//		Entity entity_2 = getEntityByClassName(model, "domainEntity_2");
 		Entity entity_2 = model.getEntityByClassName("domainEntity_2");
 		assertEquals("domainEntity_2", entity_2.getClassName());
 
@@ -269,41 +254,8 @@ public class ConverterTest {
 		assertTrue(entity_2.getAttributes().isEmpty());
 	}
 
-//	// @Test
-//	public void testAttributeWithEnumeration() {
-//		// Given
-//		DomainModel domainModel = new DomainModel("domainModel");
-//		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
-//
-//		domainModel.addEntity(domainEntity_1);
-//		DomainEntityField domainEntityField_1_1 = new DomainEntityField("field_1_1", new DomainEnumerationForString("enum_string"));
-//		DomainEntityField domainEntityField_1_2 = new DomainEntityField("field_1_2", new DomainEnumerationForInteger("enum_integer"));
-//		DomainEntityField domainEntityField_1_3 = new DomainEntityField("field_1_3", new DomainEnumerationForDecimal("enum_decimal"));
-//		domainEntity_1.addField(domainEntityField_1_1);
-//		domainEntity_1.addField(domainEntityField_1_2);
-//		domainEntity_1.addField(domainEntityField_1_3);
-//		
-//		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
-//		domainModel.addEntity(domainEntity_2);
-//		
-//		// When
-//		Model model = converter.convertToGenericModel(domainModel);
-//		
-//		// Then
-//		assertEquals("domainModel", model.getName());
-//		assertEquals(2, model.getEntities().size());
-//		
-//		// entity 1
-//		Entity entity_1 = getEntityByClassName(model, "domainEntity_1");
-//		assertEquals("domainEntity_1", entity_1.getClassName());
-//		
-//		// TODO
-//		fail("TODO : Enumerations");
-//
-//	}
-	
 	private DomainModel buildFullModel() throws AnnotationOrTagError {
-		DomainModel domainModel = new DomainModel();
+		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
 
 		DomainEntity carEntity = new DomainEntity("Car");
 		DomainEntity driverEntity = new DomainEntity("Driver");
@@ -354,14 +306,8 @@ public class ConverterTest {
 	
 	@Test
 	public void testFullModel() throws AnnotationOrTagError {
-		// Given		
 		DomainModel domainModel = buildFullModel() ;
-		
-		// When
 		Model model = converter.convertToGenericModel(domainModel);
-		
-		// Then
-		
 		
 		//--- "Car" entity
 		checkCarEntity((DslModelEntity) model.getEntityByClassName("Car"));

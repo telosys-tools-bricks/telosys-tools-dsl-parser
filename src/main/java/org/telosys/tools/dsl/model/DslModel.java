@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
 import org.telosys.tools.generic.model.ModelType;
@@ -29,12 +30,25 @@ public class DslModel implements Model {
 	private static final ModelType MODEL_TYPE    = ModelType.DOMAIN_SPECIFIC_LANGUAGE ;
 	private static final String    MODEL_VERSION = DslModelVersion.VERSION ;
 
-	private String name = "";
+	private final String nameFromFile ;
+
+	private String nameProperty = "";
 	private String description = "";
 	private Integer databaseId;
 	private String databaseProductName	;
 	private List<Entity> entities = new ArrayList<>();
 
+	/**
+	 * Constructor
+	 */
+	public DslModel(String nameFromFile) {
+		super();
+		if ( StrUtil.nullOrVoid(nameFromFile) ) {
+			throw new IllegalArgumentException("Model name is undefined (null or void)");
+		}
+		this.nameFromFile = nameFromFile ;
+	}
+	
 	@Override
 	public Entity getEntityByClassName(String entityClassName) {
 		for(Entity entity : getEntities()) {
@@ -56,10 +70,17 @@ public class DslModel implements Model {
 
 	@Override
 	public String getName() {
-		return name;
+		if ( StrUtil.nullOrVoid(nameProperty) ) {
+			// Model name not defined in model properties => use name from file
+			return nameFromFile ;
+		}
+		else {
+			// Model name is defined in model properties => use it
+			return nameProperty;
+		}
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setNameProperty(String nameProperty) {
+		this.nameProperty = nameProperty;
 	}
 
 	@Override

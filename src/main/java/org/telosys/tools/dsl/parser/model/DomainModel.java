@@ -23,13 +23,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.dsl.DslModelUtil;
+
 /**
- * Root class for a Domain Model built after Domain Specific Language text file parsing
+ * Root class for a Domain Model built after DSL files parsing
  *
  * @author L.Guerin
  */
 public class DomainModel {
 
+	/**
+	 * Name of the file from which the model was loaded
+	 */
+	private final String modelFileName ; // v 3.3.0
+	
+	/**
+	 * Name of the file from which the model was loaded
+	 */
+	private final String modelNameFromFile ; // v 3.3.0
+	
 	/**
 	 * Model description and information (from the ".model" file)
 	 */
@@ -41,21 +54,43 @@ public class DomainModel {
      */
     private final Map<String, DomainEntity> entities = new HashMap<>();
 
-    /**
-     * Constructor
-     */
-    public DomainModel() {
-        super();
-        domainModelInfo = new DomainModelInfo();
-    }
+//    /**
+//     * Constructor
+//     */
+//    public DomainModel() {
+//        super();
+//        domainModelInfo = new DomainModelInfo();
+//    }
 
     /**
      * Constructor
-     * @param properties
+     * @param modelFileName file name from which the model is loaded
+     * @param modelProperties properties loaded from the model file
      */
-    public DomainModel(Properties properties) {
+    public DomainModel(String modelFileName, Properties modelProperties) {
     	super();
-        domainModelInfo = new DomainModelInfo(properties);
+		if ( StrUtil.nullOrVoid(modelFileName) ) {
+			throw new IllegalArgumentException("Model file name is undefined (null or void)");
+		}    	
+    	this.modelFileName = modelFileName ;
+    	this.modelNameFromFile = DslModelUtil.getModelNameFromShortFileName(modelFileName);
+        this.domainModelInfo = new DomainModelInfo(modelProperties);
+    }
+
+    /**
+     * Returns the model file name 
+     * @return
+     */
+    public final String getModelFileName() { // v 3.3.0
+        return modelFileName;
+    }
+
+    /**
+     * Returns the model name built from original model file name
+     * @return
+     */
+    public final String getModelNameFromFile() { // v 3.3.0
+        return modelNameFromFile;
     }
 
     /**
@@ -67,7 +102,6 @@ public class DomainModel {
         return domainModelInfo.getName();
     }
 
-    
     /**
      * Returns the model version
      * @return
@@ -83,7 +117,7 @@ public class DomainModel {
 	public String getDescription() {
 		return domainModelInfo.getDescription();
 	}
-	
+
 	//---------------------------------------------------------------------
 	// Model ENTITIES 
 	//---------------------------------------------------------------------

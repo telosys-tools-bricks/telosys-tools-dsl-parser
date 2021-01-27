@@ -17,6 +17,7 @@ package org.telosys.tools.dsl.converter;
 
 import java.util.LinkedList;
 
+import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
@@ -51,8 +52,9 @@ public class Converter extends AbstractConverter {
 	public Model convertToGenericModel(DomainModel domainModel) {
 
 		// Create a new void DSL model 
-		DslModel dslModel = new DslModel();
-		dslModel.setName(voidIfNull(domainModel.getName()));
+		// DslModel dslModel = new DslModel();
+		DslModel dslModel = new DslModel(domainModel.getModelNameFromFile()); // v 3.3.0
+		dslModel.setNameProperty(voidIfNull(domainModel.getName()));
 		dslModel.setDescription(voidIfNull(domainModel.getDescription()));
 
 		// Create void entities (without attribute)
