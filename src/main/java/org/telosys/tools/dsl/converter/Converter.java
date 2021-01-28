@@ -54,7 +54,7 @@ public class Converter extends AbstractConverter {
 		// Create a new void DSL model 
 		// DslModel dslModel = new DslModel();
 		DslModel dslModel = new DslModel(domainModel.getModelNameFromFile()); // v 3.3.0
-		dslModel.setNameProperty(voidIfNull(domainModel.getName()));
+		dslModel.setTitle(voidIfNull(domainModel.getTitle()));
 		dslModel.setDescription(voidIfNull(domainModel.getDescription()));
 
 		// Create void entities (without attribute)

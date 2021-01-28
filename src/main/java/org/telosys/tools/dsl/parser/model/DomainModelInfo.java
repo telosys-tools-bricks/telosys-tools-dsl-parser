@@ -25,12 +25,14 @@ import java.util.Properties;
  */
 public class DomainModelInfo {
 
-	private static final String NAME        = "name" ;
-	private static final String VERSION     = "version" ;
+	//private static final String NAME        = "name" ; // v 3.3.0
+	private static final String TITLE       = "title" ; // v 3.3.0
+	//private static final String VERSION     = "version" ;  
 	private static final String DESCRIPTION = "description" ;
 	
-    private String modelName = "";
-    private String modelVersion = "";
+    // private String modelName = ""; // v 3.3.0
+    private String modelTitle = ""; // v 3.3.0
+    //private String modelVersion = ""; // v 3.3.0
     private String modelDescription = "";
 
     /**
@@ -38,8 +40,9 @@ public class DomainModelInfo {
      */
     public DomainModelInfo() {
         super();
-        this.modelName = "" ;
-        this.modelVersion = "" ;
+        // this.modelName = "" ; // v 3.3.0
+        this.modelTitle = "" ; // v 3.3.0
+        // this.modelVersion = "" ; // v 3.3.0
         this.modelDescription = "" ;
     }
 
@@ -51,8 +54,9 @@ public class DomainModelInfo {
     public DomainModelInfo(Properties properties) {
         super();
         if ( properties != null ) {
-            this.modelName = properties.getProperty(NAME, "");
-            this.modelVersion = properties.getProperty(VERSION, "");
+            //this.modelName = properties.getProperty(NAME, ""); // v 3.3.0
+            this.modelTitle = properties.getProperty(TITLE, ""); // v 3.3.0
+            //this.modelVersion = properties.getProperty(VERSION, ""); // v 3.3.0
             this.modelDescription = properties.getProperty(DESCRIPTION, "");
         }
     }
@@ -63,47 +67,66 @@ public class DomainModelInfo {
      */
     public Properties getProperties() {
     	Properties properties = new Properties();
-    	properties.put(NAME, modelName);
-    	properties.put(VERSION, modelVersion);
+    	//properties.put(NAME, modelName); // v 3.3.0
+    	properties.put(TITLE, modelTitle); // v 3.3.0
+    	//properties.put(VERSION, modelVersion); // v 3.3.0
     	properties.put(DESCRIPTION, modelDescription);
     	return properties ;
     }
     
+//    //-----------------------------------------------------------------------------
+//    /**
+//     * Returns the model name
+//     *
+//     * @return
+//     */
+//    public final String getName() {
+//        return modelName;
+//    }
+//
+//    /**
+//     * Set the model name
+//     * @param modelName
+//     */
+//    public final void setName(String modelName) {
+//        this.modelName = modelName ;
+//    }
+//
     //-----------------------------------------------------------------------------
     /**
-     * Returns the model name
+     * Returns the model title
      *
      * @return
      */
-    public final String getName() {
-        return modelName;
+    public final String getTitle() {
+        return modelTitle;
     }
 
     /**
-     * Set the model name
-     * @param modelName
+     * Set the model title
+     * @param modelTitle
      */
-    public final void setName(String modelName) {
-        this.modelName = modelName ;
+    public final void setTitle(String modelTitle) {
+        this.modelTitle = modelTitle ;
     }
 
-    //-----------------------------------------------------------------------------
-    /**
-     * Returns the model version
-     * @return
-     */
-    public String getVersion() {
-		return modelVersion;
-	}
-    
-    /**
-     * Set the model version
-     * @param modelVersion
-     */
-    public final void setVersion(String modelVersion) {
-    	this.modelVersion = modelVersion ;
-    }
-
+//    //-----------------------------------------------------------------------------
+//    /**
+//     * Returns the model version
+//     * @return
+//     */
+//    public String getVersion() {
+//		return modelVersion;
+//	}
+//    
+//    /**
+//     * Set the model version
+//     * @param modelVersion
+//     */
+//    public final void setVersion(String modelVersion) {
+//    	this.modelVersion = modelVersion ;
+//    }
+//
     //-----------------------------------------------------------------------------
 	/**
      * Returns the model description
@@ -124,8 +147,10 @@ public class DomainModelInfo {
     //-----------------------------------------------------------------------------
     @Override
     public String toString() {
-        return "modelName='" + this.modelName 
-        		+ "' modelVersion='" + this.modelVersion 
+//        return "modelName='" + this.modelName 
+//        		+ "' modelVersion='" + this.modelVersion 
+//        		+ "' modelDescription='" + this.modelDescription + "'";
+        return "modelTitle='" + this.modelTitle
         		+ "' modelDescription='" + this.modelDescription + "'";
     }
 

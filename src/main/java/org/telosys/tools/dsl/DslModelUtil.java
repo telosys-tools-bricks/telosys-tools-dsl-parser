@@ -112,6 +112,15 @@ public class DslModelUtil {
     }
     
     /**
+     * Returns the model folder name "xxx_model" for the given model name "xxx"
+     * @param modelName
+     * @return
+     */
+    public static String getModelFolderName(String modelName){
+    	return modelName + MODEL_FOLDER_SUFFIX ;
+    }
+    
+    /**
      * Returns a list of entities absolute file names <br>
      * List of all the files located in the model folder and ending with ".entity" <br>
      * 
@@ -206,8 +215,9 @@ public class DslModelUtil {
 		
 		//--- File creation
 		DomainModelInfo domainModelInfo = new DomainModelInfo();
-		domainModelInfo.setName(getModelName(modelFile));
-		domainModelInfo.setVersion("1.0");
+//		domainModelInfo.setName(getModelName(modelFile)); // v 3.3.0
+		domainModelInfo.setTitle(getModelName(modelFile)); // v 3.3.0
+//		domainModelInfo.setVersion("1.0"); // v 3.3.0
 		domainModelInfo.setDescription("");
 		DslModelManager modelManager = new DslModelManager();
 		modelManager.saveModelInformation(modelFile, domainModelInfo);

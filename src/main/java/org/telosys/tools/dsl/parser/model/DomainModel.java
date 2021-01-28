@@ -98,17 +98,17 @@ public class DomainModel {
      *
      * @return
      */
-    public final String getName() {
-        return domainModelInfo.getName();
+    public final String getTitle() {
+        return domainModelInfo.getTitle();
     }
 
-    /**
-     * Returns the model version
-     * @return
-     */
-    public String getVersion() {
-		return domainModelInfo.getVersion();
-	}
+//    /**
+//     * Returns the model version
+//     * @return
+//     */
+//    public String getVersion() {
+//		return domainModelInfo.getVersion();
+//	}
 
 	/**
      * Returns the model description
@@ -178,7 +178,7 @@ public class DomainModel {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Model : ");
-        sb.append(this.getName());
+        sb.append(this.getModelFileName());
         sb.append("\n");
         sb.append("Entities : \n");
     	for (Map.Entry<String, DomainEntity> e : entities.entrySet()) {

@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
 import org.telosys.tools.generic.model.ModelType;
@@ -32,7 +33,7 @@ public class DslModel implements Model {
 
 	private final String nameFromFile ;
 
-	private String nameProperty = "";
+	private String title = "";
 	private String description = "";
 	private Integer databaseId;
 	private String databaseProductName	;
@@ -40,6 +41,7 @@ public class DslModel implements Model {
 
 	/**
 	 * Constructor
+	 * @param nameFromFile the model name extracted from 'xxx.model'
 	 */
 	public DslModel(String nameFromFile) {
 		super();
@@ -50,37 +52,14 @@ public class DslModel implements Model {
 	}
 	
 	@Override
-	public Entity getEntityByClassName(String entityClassName) {
-		for(Entity entity : getEntities()) {
-			if ( entityClassName.equals(entity.getClassName()) ) {
-				return entity;
-			}
-		}
-		return null;
-	}
-	@Override
-	public Entity getEntityByTableName(String entityTableName) {
-		for(Entity entity : getEntities()) {
-			if ( entityTableName.equals(entity.getDatabaseTable() ) ) {
-				return entity;
-			}
-		}
-		return null;
+	public String getName() {
+		// Model name not defined in model properties => use name from file
+		return nameFromFile ;
 	}
 
 	@Override
-	public String getName() {
-		if ( StrUtil.nullOrVoid(nameProperty) ) {
-			// Model name not defined in model properties => use name from file
-			return nameFromFile ;
-		}
-		else {
-			// Model name is defined in model properties => use it
-			return nameProperty;
-		}
-	}
-	public void setNameProperty(String nameProperty) {
-		this.nameProperty = nameProperty;
+	public String getFolderName() {  // v 3.3.0
+		return DslModelUtil.getModelFolderName(nameFromFile);
 	}
 
 	@Override
@@ -89,6 +68,21 @@ public class DslModel implements Model {
 	}
 
 	@Override
+	public ModelType getType() {
+		return MODEL_TYPE;
+	}
+	
+	//----------------------------------------------------------------------------------------
+
+	@Override
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -96,11 +90,6 @@ public class DslModel implements Model {
 		this.description = description;
 	}
 
-	@Override
-	public ModelType getType() {
-		return MODEL_TYPE;
-	}
-	
 	@Override
 	public Integer getDatabaseId() {
 		return databaseId;
@@ -117,9 +106,31 @@ public class DslModel implements Model {
 		this.databaseProductName = databaseProductName;
 	}
 
+	//----------------------------------------------------------------------------------------
+
 	@Override
 	public List<Entity> getEntities() {
 		return entities;
+	}
+
+	@Override
+	public Entity getEntityByClassName(String entityClassName) {
+		for(Entity entity : getEntities()) {
+			if ( entityClassName.equals(entity.getClassName()) ) {
+				return entity;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Entity getEntityByTableName(String entityTableName) {
+		for(Entity entity : getEntities()) {
+			if ( entityTableName.equals(entity.getDatabaseTable() ) ) {
+				return entity;
+			}
+		}
+		return null;
 	}
 
 	public void sortEntitiesByClassName() {
