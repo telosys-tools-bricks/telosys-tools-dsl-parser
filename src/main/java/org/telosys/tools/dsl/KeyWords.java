@@ -83,6 +83,7 @@ public class KeyWords {
 		AnnotationName.FETCH_TYPE_EAGER,
 		AnnotationName.FETCH_TYPE_LAZY,
 		AnnotationName.MAPPED_BY    + "$",
+		AnnotationName.LINK_BY_ATTR + "$",
 		AnnotationName.LINK_BY_COL  + "$",
 		AnnotationName.LINK_BY_FK   + "$"
 

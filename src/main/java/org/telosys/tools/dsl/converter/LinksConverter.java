@@ -22,30 +22,27 @@ import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
-import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainType;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Cardinality;
 import org.telosys.tools.generic.model.CascadeOptions;
+import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.FetchType;
 import org.telosys.tools.generic.model.JoinColumn;
 import org.telosys.tools.generic.model.Optional;
 
 public class LinksConverter extends AbstractConverter {
 
-	private final DomainModel domainModel;
 	private final DslModel    dslModel;
 	
 	private int linkIdCounter = 0;
 
 	/**
 	 * Constructor
-	 * @param domainModel
 	 * @param dslModel
 	 */
-	public LinksConverter(DomainModel domainModel, DslModel dslModel) {
+	public LinksConverter(DslModel dslModel) {
 		super();
-		this.domainModel = domainModel;
 		this.dslModel = dslModel;
 	}
 
@@ -76,10 +73,8 @@ public class LinksConverter extends AbstractConverter {
 		DomainType domainFieldType = domainEntityField.getType();
 		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
 
-		DomainEntity domainEntityTarget = domainModel.getEntity(domainFieldType.getName());
-
-		// Check target existence
-		check((domainEntityTarget != null),
+		Entity referencedEntity = dslModel.getEntityByClassName(domainFieldType.getName());
+		check((referencedEntity != null),
 				"No target entity for field '" + domainEntityField.getName() + "'. Cannot create Link");
 
 		DslModelLink dslLink = new DslModelLink();
@@ -93,16 +88,7 @@ public class LinksConverter extends AbstractConverter {
 
 		// Set target entity info
 		dslLink.setTargetEntityClassName(domainEntityField.getType().getName());
-		dslLink.setTargetTableName(notNull(domainEntityTarget.getDatabaseTable())); // v 3.3.0
-
-//		// --- Cardinality
-//		Cardinality cardinality;
-//		if (domainEntityField.getCardinality() == 1) {
-//			cardinality = Cardinality.MANY_TO_ONE;
-//		} else {
-//			cardinality = Cardinality.ONE_TO_MANY;
-//		}
-//		dslLink.setCardinality(cardinality);
+		dslLink.setTargetTableName(notNull(referencedEntity.getDatabaseTable())); // v 3.3.0
 
 		// Cardinality and owning/inverse side
 		if (domainEntityField.getCardinality() == 1) {
@@ -143,7 +129,7 @@ public class LinksConverter extends AbstractConverter {
 
 		// Apply annotations usable for link ( @Embedded @Optional @FetchTypeLazy @FetchTypeEager etc ) 
 		if (domainEntityField.getAnnotations() != null) {
-			LinksAnnotationsProcessor annotationsConverter = new LinksAnnotationsProcessor();
+			LinksAnnotationsProcessor annotationsConverter = new LinksAnnotationsProcessor(this.dslModel);
 			annotationsConverter.applyAnnotationsForLink(dslEntity, dslLink, domainEntityField.getAnnotations().values());
 		}
 		

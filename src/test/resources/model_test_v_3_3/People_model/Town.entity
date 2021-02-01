@@ -3,7 +3,7 @@
 Town {
 
 	// ATTRIBUTES
-	id : int { @Id } ; 
+	id : int { @Id  @DbName(ID) } ; 
 	name : string ;
 	
 	//--- Link by "join column(s)" : columns in the table associated with the entity (not visible in DSL model)
@@ -12,11 +12,6 @@ Town {
 	//country     : Country  { @LinkByCol(COUNTRY_CODE1, COUNTRY_CODE2) } ;  // Error : nb join columns != nb key fields in Country
 
 	//--------------------------------------------
-	
-//	// Link by field(s)
-//	countryCode : string ;
-//	country : Country { @LinkByField (countryCode) } ;  // Search FIELD by name and use the associated column 
-//	country : Country { @LinkByFields(countryCode1, countryCode2) } ;
 	
 	
 //	// Link by "join table" (for "Many To Many" links) 

@@ -1,7 +1,5 @@
 package org.telosys.tools.dsl;
 
-import java.util.List;
-
 import org.junit.Test;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
@@ -10,8 +8,6 @@ import org.telosys.tools.generic.model.Cardinality;
 import org.telosys.tools.generic.model.CascadeOptions;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.FetchType;
-import org.telosys.tools.generic.model.ForeignKey;
-import org.telosys.tools.generic.model.ForeignKeyColumn;
 import org.telosys.tools.generic.model.JoinColumn;
 import org.telosys.tools.generic.model.Link;
 import org.telosys.tools.generic.model.Model;
@@ -102,7 +98,6 @@ public class DslModelManagerV33Test {
     	JoinColumn jc ;
 
     	assertNotNull(personEntity);
-        assertEquals(6, personEntity.getAttributes().size());
         
         //--- 
         PrintUtil.printForeignKeys(personEntity);
@@ -129,7 +124,7 @@ public class DslModelManagerV33Test {
 
 		//----- LINKS
 		assertNotNull(personEntity.getLinks() );
-		assertEquals(3, personEntity.getLinks().size() );
+		assertEquals(4, personEntity.getLinks().size() );
 		
         //--- Link 'country'
         link = personEntity.getLinkByFieldName("country");
@@ -168,10 +163,25 @@ public class DslModelManagerV33Test {
         // Join columns 
         assertEquals(2, link.getJoinColumns().size() );
         jc = link.getJoinColumns().get(0);
-        assertEquals("deptGrpCode", jc.getName());            	
+        assertEquals("DEP_GROUP_CODE", jc.getName());
+        assertEquals("GROUP_CODE",     jc.getReferencedColumnName());
         jc = link.getJoinColumns().get(1);
-        assertEquals("deptDivCode", jc.getName());            	
+        assertEquals("DEP_DIVISION_CODE", jc.getName());
+        assertEquals("DIVISION_CODE",     jc.getReferencedColumnName());
+
+        //--- Link 'Town'
+        link = personEntity.getLinkByFieldName("town");
+        assertEquals(Cardinality.MANY_TO_ONE, link.getCardinality());
+        assertEquals("Person", link.getSourceTableName() ); 
+        assertEquals("Town", link.getTargetEntityClassName() );
+        assertEquals("Town", link.getTargetTableName() );
+        // Join columns 
+        assertEquals(1, link.getJoinColumns().size() );
+        jc = link.getJoinColumns().get(0);
+        assertEquals("TOWN_ID", jc.getName());
+        //assertEquals("ID",      jc.getReferencedColumnName());
     }
+    
     private void test1CheckTownEntity(DslModelEntity entity ) {
     	Link link;
     	JoinColumn jc ;

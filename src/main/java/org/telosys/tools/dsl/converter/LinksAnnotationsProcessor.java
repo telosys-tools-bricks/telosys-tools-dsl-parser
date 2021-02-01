@@ -21,16 +21,28 @@ import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.AnnotationName;
+import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelJoinColumn;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
+import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.FetchType;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.JoinColumn;
 import org.telosys.tools.generic.model.Optional;
 
 public class LinksAnnotationsProcessor {
+
+	private final DslModel    dslModel;
+
+	/**
+	 * Constructor
+	 */
+	public LinksAnnotationsProcessor(DslModel dslModel) {
+		super();
+		this.dslModel = dslModel;
+	}
 
 	/**
 	 * Apply annotations for the given link in the given entity
@@ -59,10 +71,13 @@ public class LinksAnnotationsProcessor {
 					link.setInverseSide(true);
 				}
 			}
+			else if (AnnotationName.LINK_BY_ATTR.equals(annotation.getName())) { // Added in ver 3.3
+				// Example : @LinkByAttr(attr1)   @LinkByAttr(attr1 > ref1 , attr2 > ref2 )
+				processLinkByAttr(entity, link, annotation);
+			}
 			else if (AnnotationName.LINK_BY_COL.equals(annotation.getName())) { // Added in ver 3.3
 				// Example : @LinkByCol(col1)   @LinkByCol(col1 > ref1 , col2 > ref2 )
-				List<JoinColumn> joinColumns = buildJoinColumnsFromString(annotation.getParameterAsString());
-				link.setJoinColumns(joinColumns);
+				processLinkByCol(link, annotation);
 			}
 			else if (AnnotationName.LINK_BY_FK.equals(annotation.getName())) { // Added in ver 3.3
 				// Example : @LinkByFK(FK_BOOK_AUTHOR) 
@@ -76,47 +91,180 @@ public class LinksAnnotationsProcessor {
 	}
 	
 	/**
-	 * Build join columns list from the given string
-	 * @param s columns separated by a comma 
-	 * eg "col1" 
-	 *    "col1>ref1 , col2 > ref2 "
+	 * Process '@LinkByAttr(xxx)' annotation <br>
+	 * @param entity
+	 * @param link
+	 * @param annotation
+	 */
+	private void processLinkByAttr(DslModelEntity entity, DslModelLink link, DomainAnnotation annotation) {
+		String referencedEntityName = link.getTargetEntityClassName();
+		DslModelEntity referencedEntity = (DslModelEntity) dslModel.getEntityByClassName(referencedEntityName);
+		if ( referencedEntity == null ) {
+			throw new IllegalStateException("@"+ AnnotationName.LINK_BY_ATTR 
+					+ " : cannot found referenced entity '"+ referencedEntityName + "'");
+		}
+		ReferenceDefinitions attributesRefDef = buildReferenceDefinitions(annotation);
+		ReferenceDefinitions columnsRefDef = convertAttribRefToColRef(entity, referencedEntity, attributesRefDef);
+		List<JoinColumn> joinColumns = buildJoinColumns(columnsRefDef); 
+		link.setJoinColumns(joinColumns);
+	}
+	
+	/**
+	 * Process '@LinkByCol(xxx)' annotation <br>
+	 * Examples : <br> 
+	 * . @LinkByCol(col1) <br> 
+	 * . @LinkByCol(col1 > referencedCol1 , col2 > referencedCol2 ) <br> 
+	 * 
+	 * @param link
+	 * @param annotation
+	 */
+	private void processLinkByCol(DslModelLink link, DomainAnnotation annotation) {
+		ReferenceDefinitions columnsRefDef = buildReferenceDefinitions(annotation);
+		List<JoinColumn> joinColumns = buildJoinColumns(columnsRefDef); 
+		link.setJoinColumns(joinColumns);
+	}
+
+	protected ReferenceDefinitions buildReferenceDefinitions(DomainAnnotation annotation) {
+		ReferenceDefinitions rd = buildReferenceDefinitions(annotation.getParameterAsString());
+		checkReferenceDefinitions(annotation, rd);
+		return rd;
+	}
+	
+	/**
+	 * Builds all references definitions (for columns references or attributes references)<br>
+	 * Input examples : <br>
+	 *   "col1",  "col1>refCol1 , col2 > refCol2 " <br>
+	 *   "attr1", "att1>refAtt1 , att2 > refAtt2 " <br>
+	 * @param s  
 	 * @return
 	 */
-	protected List<JoinColumn> buildJoinColumnsFromString(String s) {
-		List<JoinColumn> joinColumns = new LinkedList<>();
+	protected ReferenceDefinitions buildReferenceDefinitions(String s) {
+		ReferenceDefinitions refDefinitions = new ReferenceDefinitions();
 		if ( ! StrUtil.nullOrVoid(s) ) {
 			String[] parts = StrUtil.split(s, ',');
-			for ( String col : parts ) {
-				if ( ! StrUtil.nullOrVoid(col) ) {
-					if ( col.contains(">") ) {
-						// "col > referencedCol "
-						String[] pair = StrUtil.split(s, '>');
-						String columnName = "" ;
-						String referencedColumnName = "";
+			for ( String part : parts ) {
+				if ( ! StrUtil.nullOrVoid(part) ) {
+					if ( part.contains(">") ) {
+						// "name > referencedName "
+						String[] pair = StrUtil.split(part, '>');
+						String name = "" ;
+						String referencedName = "";
 						if ( pair.length > 0 ) {
-							columnName = pair[0].trim();
+							name = pair[0].trim();
 						}
 						if ( pair.length > 1 ) {
-							referencedColumnName = pair[1].trim();
+							referencedName = pair[1].trim();
 						}
-						if ( ! columnName.isEmpty() ) {
-							DslModelJoinColumn jc = new DslModelJoinColumn(columnName);
-							if ( ! referencedColumnName.isEmpty() ) {
-								jc.setReferencedColumnName(referencedColumnName);
-							}
-							joinColumns.add(jc);
+						if ( ! name.isEmpty() ) {
+							refDefinitions.add( new ReferenceDefinition(name, referencedName));
 						}
 					}
 					else {
-						// No referenced column name in this case
-						joinColumns.add(new DslModelJoinColumn(col.trim()));
+						// "name" only (without referencedName)
+						String name = part.trim();
+						refDefinitions.add( new ReferenceDefinition(name));
 					}
 				}
 			}
 		}
-		return joinColumns;
+		return refDefinitions;
+	}
+	
+	private void checkReferenceDefinitions(DomainAnnotation annotation, ReferenceDefinitions referenceDefinitions ) {
+		if ( referenceDefinitions.count() == 0 ) {
+			throw new IllegalStateException("@" + annotation.getName() 
+						+ " : no reference definition");
+		}
+		else {
+			if ( referenceDefinitions.count() > 1 ) {
+				int referencedCount = 0;
+				for ( ReferenceDefinition rd : referenceDefinitions.getList() ) {
+					if ( rd.hasReferencedName() ) {
+						referencedCount++;
+					}
+				}
+				if ( referencedCount < referenceDefinitions.count() ) {
+					throw new IllegalStateException("@" + annotation.getName() 
+					+ " : missing referenced name(s)");
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Converts attributes references definitions ( "attr", "attr > referencedAttr" ) <br>
+	 * to columns references definitions ( "col", "col > referencedCol" ) <br>
+	 * @param entity
+	 * @param referencedEntity
+	 * @param referenceDefinitions
+	 * @return
+	 */
+	private ReferenceDefinitions convertAttribRefToColRef(DslModelEntity entity, 
+			DslModelEntity referencedEntity, ReferenceDefinitions referenceDefinitions) {
+		ReferenceDefinitions referenceDefinitionsForColumns = new ReferenceDefinitions();
+		for ( ReferenceDefinition rd : referenceDefinitions.getList()) {
+			String columnName = getAttribColumnName(entity, rd.getName());
+			if ( rd.getReferencedName().isEmpty() ) {
+				referenceDefinitionsForColumns.add(new ReferenceDefinition(columnName));
+			}
+			else {
+				String referencedColumnName = getAttribColumnName(referencedEntity, rd.getReferencedName());
+				referenceDefinitionsForColumns.add(new ReferenceDefinition(columnName,referencedColumnName));
+			}
+		}
+		return referenceDefinitionsForColumns;
+	}
+	
+	/**
+	 * Returns the database column name associated with the given attribute name
+	 * @param entity
+	 * @param attribName
+	 * @return
+	 */
+	private String getAttribColumnName(DslModelEntity entity, String attribName) {
+		if ( ! StrUtil.nullOrVoid(attribName) ) {
+			Attribute attrib = entity.getAttributeByName(attribName);
+			if ( attrib != null ) {
+				String columnName = attrib.getDatabaseName();
+				if ( ! StrUtil.nullOrVoid(columnName) ) {
+					return columnName;
+				}
+				else {
+					throw new IllegalStateException("@LinkByAttr : no database column for attribute '" + attribName + "'");
+				}
+			}
+			else {
+				throw new IllegalStateException("@LinkByAttr : unknown attribute '" + attribName + "'");
+			}
+		}
+		return "";
 	}
 
+	protected List<JoinColumn> buildJoinColumns(ReferenceDefinitions referenceDefinitions) {
+		List<ReferenceDefinition> refDefList = referenceDefinitions.getList();
+		int nbCol = refDefList.size();
+		List<JoinColumn> joinColumns = new LinkedList<>();
+		for ( ReferenceDefinition rd : refDefList) {
+		    String columnName = rd.getName();
+		    String referencedColumnName = rd.getReferencedName();
+		    if ( ! columnName.isEmpty() ) {
+		    	// col
+				DslModelJoinColumn jc = new DslModelJoinColumn(columnName);
+				if ( ! referencedColumnName.isEmpty() ) {
+			    	// col > refCol
+					jc.setReferencedColumnName(referencedColumnName);
+				}
+				else {
+					if ( nbCol > 1 ) {
+						// ERROR : referenced column mandatory for each column !
+					}
+				}
+				joinColumns.add(jc);
+		    }
+		}
+		return joinColumns;
+	}
+	
 	/**
 	 * Build join columns from the given Foreign Key name
 	 * @param entity current entity (holding the foreign keys)

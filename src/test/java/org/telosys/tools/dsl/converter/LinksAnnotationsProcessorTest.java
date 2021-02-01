@@ -1,57 +1,126 @@
 package org.telosys.tools.dsl.converter;
 
-import java.util.List;
-
 import org.junit.Test;
-import org.telosys.tools.generic.model.JoinColumn;
+import org.telosys.tools.dsl.model.DslModel;
+import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class LinksAnnotationsProcessorTest {
 
+	private static final DslModel VOID_MODEL = new DslModel("test.model");
+	
 	@Test
 	public void test0() {
-		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor() ;
-		List<JoinColumn> list ;
+		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor(VOID_MODEL) ;
+		ReferenceDefinitions rd;
 		
-		list = p.buildJoinColumnsFromString(null);
-		assertEquals(0, list.size());
+		rd = p.buildReferenceDefinitions((String)null);
+		assertEquals(0, rd.count());
 		
-		list = p.buildJoinColumnsFromString("");
-		assertEquals(0, list.size());
+		rd = p.buildReferenceDefinitions("");
+		assertEquals(0, rd.count());
 
-		list = p.buildJoinColumnsFromString("    ");
-		assertEquals(0, list.size());
+		rd = p.buildReferenceDefinitions("    ");
+		assertEquals(0, rd.count());
 
-		list = p.buildJoinColumnsFromString(" , ,,,   ");
-		assertEquals(0, list.size());
+		rd = p.buildReferenceDefinitions(" , ,,,   ");
+		assertEquals(0, rd.count());
 	}
 
 	@Test
 	public void test1() {
-		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor() ;
-		List<JoinColumn> list = p.buildJoinColumnsFromString(" firstName ");
-		assertEquals(1, list.size());
-		
-		JoinColumn jc = list.get(0);
-		assertEquals("firstName", jc.getName());
-		// Default values :
-		assertEquals("", jc.getReferencedColumnName());
-		assertFalse(jc.isUnique());
-		assertTrue(jc.isNullable());
-		assertTrue(jc.isInsertable());
-		assertTrue(jc.isUpdatable());
+		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor(VOID_MODEL) ;
+		ReferenceDefinitions rd = p.buildReferenceDefinitions(" firstName ");
+		assertEquals(1, rd.count());
+		assertEquals("firstName", rd.get(0).getName());
+		assertEquals("", rd.get(0).getReferencedName());
 	}
 
 	@Test
 	public void test2() {
-		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor() ;
-		List<JoinColumn> list = p.buildJoinColumnsFromString(" aaa, bbb ");
-		assertEquals(2, list.size());
-		assertEquals("aaa", list.get(0).getName());
-		assertEquals("bbb", list.get(1).getName());
+		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor(VOID_MODEL) ;
+		ReferenceDefinitions rd = p.buildReferenceDefinitions(" aa > refAA ,  bb>refBB ");
+		assertEquals(2, rd.count());
+		assertEquals("aa", rd.get(0).getName());
+		assertEquals("refAA", rd.get(0).getReferencedName());
+		assertEquals("bb", rd.get(1).getName());
+		assertEquals("refBB", rd.get(1).getReferencedName());
+	}
+	
+	@Test
+	public void test3() {
+		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor(VOID_MODEL) ;
+		ReferenceDefinitions rd = p.buildReferenceDefinitions("aa>refAA,bb>refBB,  cc   > refCC  ");
+		assertEquals(3, rd.count());
+		assertEquals("aa", rd.get(0).getName());
+		assertEquals("refAA", rd.get(0).getReferencedName());
+		assertEquals("bb", rd.get(1).getName());
+		assertEquals("refBB", rd.get(1).getReferencedName());
+		assertEquals("cc", rd.get(2).getName());
+		assertEquals("refCC", rd.get(2).getReferencedName());
+	}
+	
+	@Test
+	public void test4() {
+		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor(VOID_MODEL) ;
+		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", " aa > refAA ,  bb>refBB ");
+		ReferenceDefinitions rd = p.buildReferenceDefinitions(annotation);
+		assertEquals(2, rd.count());
+		assertEquals("aa", rd.get(0).getName());
+		assertEquals("refAA", rd.get(0).getReferencedName());
+		assertEquals("bb", rd.get(1).getName());
+		assertEquals("refBB", rd.get(1).getReferencedName());
+	}
+	
+	@Test
+	public void testAnnotOK1() {
+		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor(VOID_MODEL) ;
+		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", "aa ");
+		ReferenceDefinitions rd = p.buildReferenceDefinitions(annotation);
+		assertEquals(1, rd.count());
+		assertEquals("aa", rd.get(0).getName());
+		assertEquals("", rd.get(0).getReferencedName());
+	}
+	
+	@Test
+	public void testAnnotOK2() {
+		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor(VOID_MODEL) ;
+		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", "aa > refAA ,  bb>refBB ");
+		ReferenceDefinitions rd = p.buildReferenceDefinitions(annotation);
+		assertEquals(2, rd.count());
+		assertEquals("aa", rd.get(0).getName());
+		assertEquals("refAA", rd.get(0).getReferencedName());
+		assertEquals("bb", rd.get(1).getName());
+		assertEquals("refBB", rd.get(1).getReferencedName());
+	}
+	
+	@Test (expected=RuntimeException.class)
+	public void testAnnotErr1() {
+		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor(VOID_MODEL) ;
+		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", " ");
+		p.buildReferenceDefinitions(annotation);
+	}
+	
+	@Test (expected=RuntimeException.class)
+	public void testAnnotErr2() {
+		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor(VOID_MODEL) ;
+		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", " aa  ,  bb ");
+		p.buildReferenceDefinitions(annotation);
+	}
+	
+	@Test (expected=RuntimeException.class)
+	public void testAnnotErr3() {
+		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor(VOID_MODEL) ;
+		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", " aa  ,  bb > RBB ");
+		p.buildReferenceDefinitions(annotation);
+	}
+	
+	@Test (expected=RuntimeException.class)
+	public void testAnnotErr4() {
+		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor(VOID_MODEL) ;
+		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", "  > refAA ");
+		p.buildReferenceDefinitions(annotation);
 	}
 	
 }

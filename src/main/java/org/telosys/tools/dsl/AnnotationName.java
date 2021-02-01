@@ -70,6 +70,7 @@ public class AnnotationName {
 	public static final String FETCH_TYPE_LAZY  = "FetchTypeLazy"; // v 3.3.0
 	public static final String FETCH_TYPE_EAGER = "FetchTypeEager"; // v 3.3.0
 	public static final String MAPPED_BY        = "MappedBy"; // v 3.3.0
+	public static final String LINK_BY_ATTR     = "LinkByAttr"; // v 3.3.0
 	public static final String LINK_BY_COL      = "LinkByCol"; // v 3.3.0
 	public static final String LINK_BY_FK       = "LinkByFK"; // v 3.3.0
 

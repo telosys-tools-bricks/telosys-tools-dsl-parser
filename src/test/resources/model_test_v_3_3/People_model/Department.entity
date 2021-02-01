@@ -1,7 +1,7 @@
 Department {
 
-	grpCode : string {@Id, @SizeMax(2)};
-	divCode : int    {@Id };
+	grpCode : string {@Id @DbName(GROUP_CODE)    @SizeMax(2) };
+	divCode : int    {@Id @DbName(DIVISION_CODE) };
 	
 	name : string;
 }

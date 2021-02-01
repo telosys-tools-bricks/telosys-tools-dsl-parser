@@ -17,7 +17,6 @@ package org.telosys.tools.dsl.converter;
 
 import java.util.LinkedList;
 
-import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
@@ -110,7 +109,7 @@ public class Converter extends AbstractConverter {
 	 */
 	protected void createAllLinks(DomainModel domainModel, DslModel dslModel) {
 
-		LinksConverter linksConverter = new LinksConverter(domainModel, dslModel);
+		LinksConverter linksConverter = new LinksConverter(dslModel);
 		
 		// Create the links 
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
