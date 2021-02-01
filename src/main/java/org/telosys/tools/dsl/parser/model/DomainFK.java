@@ -15,8 +15,6 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
-import org.telosys.tools.commons.StrUtil;
-
 public class DomainFK {
 
 	private final String fkName ;
@@ -34,17 +32,7 @@ public class DomainFK {
 		this.referencedEntityName = referencedEntityName ;
 		this.referencedFieldName = referencedFieldName ;
     }
-
-//	/**
-//	 * Copy Constructor
-//	 * @param fk
-//	 */
-//	public DomainFK(DomainFK fk) {
-//		this.fkName = fk.getFkName() ;
-//		this.referencedEntityName = fk.getReferencedEntityName() ;
-//		this.referencedFieldName = fk.getReferencedFieldName() ;
-//    }
-    
+   
     public String getFkName() {
 		return fkName;
 	}
