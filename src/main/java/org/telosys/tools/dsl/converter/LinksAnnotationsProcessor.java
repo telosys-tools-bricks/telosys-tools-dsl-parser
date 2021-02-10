@@ -24,12 +24,15 @@ import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelJoinColumn;
+import org.telosys.tools.dsl.model.DslModelJoinTable;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.generic.model.Attribute;
+import org.telosys.tools.generic.model.Cardinality;
 import org.telosys.tools.generic.model.FetchType;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.JoinColumn;
+import org.telosys.tools.generic.model.JoinTable;
 import org.telosys.tools.generic.model.Optional;
 
 public class LinksAnnotationsProcessor {
@@ -55,6 +58,9 @@ public class LinksAnnotationsProcessor {
 			if (AnnotationName.EMBEDDED.equals(annotation.getName())) {
 				link.setEmbedded(true);
 			}
+			else if (AnnotationName.MANY_TO_MANY.equals(annotation.getName())) { // Added in ver 3.3
+				link.setCardinality(Cardinality.MANY_TO_MANY);
+			}
 			else if (AnnotationName.OPTIONAL.equals(annotation.getName())) { // Added in ver 3.3
 				link.setOptional(Optional.TRUE);
 			}
@@ -65,11 +71,7 @@ public class LinksAnnotationsProcessor {
 				link.setFetchType(FetchType.EAGER);
 			}
 			else if (AnnotationName.MAPPED_BY.equals(annotation.getName())) { // Added in ver 3.3
-				String mappedByValue = annotation.getParameterAsString();
-				if ( ! StrUtil.nullOrVoid(mappedByValue) ) {
-					link.setMappedBy(mappedByValue.trim());
-					link.setInverseSide(true);
-				}
+				processMappedBy(link, annotation);
 			}
 			else if (AnnotationName.LINK_BY_ATTR.equals(annotation.getName())) { // Added in ver 3.3
 				// Example : @LinkByAttr(attr1)   @LinkByAttr(attr1 > ref1 , attr2 > ref2 )
@@ -81,12 +83,88 @@ public class LinksAnnotationsProcessor {
 			}
 			else if (AnnotationName.LINK_BY_FK.equals(annotation.getName())) { // Added in ver 3.3
 				// Example : @LinkByFK(FK_BOOK_AUTHOR) 
-				String fkName = annotation.getParameterAsString();
-				List<JoinColumn> joinColumns = buildJoinColumnsFromForeignKey(entity, link, fkName);
-				link.setJoinColumns(joinColumns);
-				link.setBasedOnForeignKey(true);
-				link.setForeignKeyName(fkName);
+				processLinkByFK(entity, link, annotation);
 			}
+			else if (AnnotationName.LINK_BY_JOIN_ENTITY.equals(annotation.getName())) { // Added in ver 3.3
+				processLinkByJoinEntity(link, annotation);
+			}
+		}
+	}
+	
+	/**
+	 * Process '@MappedBy(EntityName)' annotation <br>
+	 * @param link
+	 * @param annotation
+	 */
+	private void processMappedBy(DslModelLink link, DomainAnnotation annotation) {
+		String mappedByValue = annotation.getParameterAsString();
+		if ( ! StrUtil.nullOrVoid(mappedByValue) ) {
+			String entityName = mappedByValue.trim();
+			if ( dslModel.getEntityByClassName(entityName) != null ) {
+				// the MappedBy value is correct
+				link.setMappedBy(entityName);
+				// has MappedBy => inverse side
+				link.setInverseSide(true);
+				link.setOwningSide(false);
+			}
+			else {
+				throw new IllegalStateException("@"+ AnnotationName.MAPPED_BY 
+						+ " : cannot found entity '"+ entityName + "'");
+			}
+		}
+		else {
+			throw new IllegalStateException("@"+ AnnotationName.MAPPED_BY 
+					+ " : invalid value (entity name expected)");
+		}
+	}
+	
+	/**
+	 * Process '@LinkByJoinEntity(EntityName)' annotation <br>
+	 * @param link
+	 * @param annotation
+	 */
+	// cf https://vladmihalcea.com/the-best-way-to-use-the-manytomany-annotation-with-jpa-and-hibernate/
+	private void processLinkByJoinEntity(DslModelLink link, DomainAnnotation annotation) {
+		String joinEntityName = annotation.getParameterAsString();
+		DslModelEntity joinEntity = (DslModelEntity) dslModel.getEntityByClassName(joinEntityName);
+		if ( joinEntity == null ) {
+			throw new IllegalStateException("@"+ AnnotationName.LINK_BY_JOIN_ENTITY 
+					+ " : cannot found join entity '"+ joinEntityName + "'");
+		}
+		List<ForeignKey> foreignKeys = joinEntity.getDatabaseForeignKeys();
+		if ( foreignKeys != null && foreignKeys.size() == 2 ) {
+			ForeignKey fk1 = foreignKeys.get(0);
+			ForeignKey fk2 = foreignKeys.get(1);
+			ForeignKey joinColumnsFK = getFKReferencingTable(link.getSourceTableName(), fk1, fk2 );
+			ForeignKey inverseJoinColumnsFK = getFKReferencingTable(link.getTargetTableName(), fk1, fk2 );
+			if ( joinColumnsFK.getName().equals(inverseJoinColumnsFK.getName()) ) {
+				throw new IllegalStateException("@"+ AnnotationName.LINK_BY_JOIN_ENTITY 
+						+ " : the 2 foreign keys are identical");
+			}
+			List<JoinColumn> joinColumns = JoinColumnsUtil.buildJoinColumnsFromForeignKey(joinColumnsFK);
+			List<JoinColumn> inverseJoinColumns = JoinColumnsUtil.buildJoinColumnsFromForeignKey(inverseJoinColumnsFK);
+			JoinTable joinTable =  new DslModelJoinTable(joinEntity, joinColumns, inverseJoinColumns);
+			link.setJoinTable(joinTable);
+			// has Join Table => owning side
+			link.setOwningSide(true);
+			link.setInverseSide(false);
+		}
+		else {
+			throw new IllegalStateException("@"+ AnnotationName.LINK_BY_JOIN_ENTITY 
+					+ " : join entity '"+ joinEntity + "' does not have 2 foreign keys");
+		}
+	}
+	
+	private ForeignKey getFKReferencingTable(String tableName, ForeignKey fk1, ForeignKey fk2 ) {
+		if ( tableName.equals(fk1.getReferencedTableName()) ) {
+			return fk1 ;
+		}
+		else if ( tableName.equals(fk2.getReferencedTableName()) ) {
+			return fk2 ;
+		}
+		else {
+			throw new IllegalStateException("@"+ AnnotationName.LINK_BY_JOIN_ENTITY 
+					+ " : join entity does not have FK referencing table '" + tableName + "'");
 		}
 	}
 	
@@ -124,6 +202,20 @@ public class LinksAnnotationsProcessor {
 		link.setJoinColumns(joinColumns);
 	}
 
+	/**
+	 * Process '@LinkByFK(FKName)' annotation <br>
+	 * @param entity
+	 * @param link
+	 * @param annotation
+	 */
+	private void processLinkByFK(DslModelEntity entity, DslModelLink link, DomainAnnotation annotation) {
+		String fkName = annotation.getParameterAsString();
+		List<JoinColumn> joinColumns = buildJoinColumnsFromForeignKey(entity, link, fkName);
+		link.setJoinColumns(joinColumns);
+		link.setBasedOnForeignKey(true);
+		link.setForeignKeyName(fkName);
+	}
+	
 	protected ReferenceDefinitions buildReferenceDefinitions(DomainAnnotation annotation) {
 		ReferenceDefinitions rd = buildReferenceDefinitions(annotation.getParameterAsString());
 		checkReferenceDefinitions(annotation, rd);

@@ -73,6 +73,8 @@ public class AnnotationName {
 	public static final String LINK_BY_ATTR     = "LinkByAttr"; // v 3.3.0
 	public static final String LINK_BY_COL      = "LinkByCol"; // v 3.3.0
 	public static final String LINK_BY_FK       = "LinkByFK"; // v 3.3.0
+	public static final String MANY_TO_MANY        = "ManyToMany"; // v 3.3.0
+	public static final String LINK_BY_JOIN_ENTITY = "LinkByJoinEntity"; // v 3.3.0
 
 	// TODO 
     // @Comment(xxx) 

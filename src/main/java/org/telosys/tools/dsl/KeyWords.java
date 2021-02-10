@@ -85,7 +85,9 @@ public class KeyWords {
 		AnnotationName.MAPPED_BY    + "$",
 		AnnotationName.LINK_BY_ATTR + "$",
 		AnnotationName.LINK_BY_COL  + "$",
-		AnnotationName.LINK_BY_FK   + "$"
+		AnnotationName.LINK_BY_FK   + "$",
+		AnnotationName.MANY_TO_MANY,
+		AnnotationName.LINK_BY_JOIN_ENTITY + "$"
 
 		// In the future 
 		// "DbTable$"  // $ means string parameter
