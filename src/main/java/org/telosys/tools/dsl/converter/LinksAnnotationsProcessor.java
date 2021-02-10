@@ -29,6 +29,7 @@ import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Cardinality;
+import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.FetchType;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.JoinColumn;
@@ -71,7 +72,7 @@ public class LinksAnnotationsProcessor {
 				link.setFetchType(FetchType.EAGER);
 			}
 			else if (AnnotationName.MAPPED_BY.equals(annotation.getName())) { // Added in ver 3.3
-				processMappedBy(link, annotation);
+				processMappedBy(entity, link, annotation);
 			}
 			else if (AnnotationName.LINK_BY_ATTR.equals(annotation.getName())) { // Added in ver 3.3
 				// Example : @LinkByAttr(attr1)   @LinkByAttr(attr1 > ref1 , attr2 > ref2 )
@@ -92,30 +93,49 @@ public class LinksAnnotationsProcessor {
 	}
 	
 	/**
-	 * Process '@MappedBy(EntityName)' annotation <br>
+	 * Process '@MappedBy(attributeName)' annotation <br>
+	 * @param entity
 	 * @param link
 	 * @param annotation
 	 */
-	private void processMappedBy(DslModelLink link, DomainAnnotation annotation) {
+	private void processMappedBy(DslModelEntity entity, DslModelLink link, DomainAnnotation annotation) {
 		String mappedByValue = annotation.getParameterAsString();
 		if ( ! StrUtil.nullOrVoid(mappedByValue) ) {
-			String entityName = mappedByValue.trim();
-			if ( dslModel.getEntityByClassName(entityName) != null ) {
-				// the MappedBy value is correct
-				link.setMappedBy(entityName);
+			String targetEntityName = link.getTargetEntityClassName();
+			DslModelEntity targetEntity = (DslModelEntity) dslModel.getEntityByClassName(targetEntityName);
+			if ( targetEntity != null ) {
+				String attributeName = mappedByValue.trim();
+// All links are not yet build => cannot check validity				
+//				// check owning side link existence in the target entity
+//				if ( targetEntity.getLinkByFieldName(attributeName) != null ) {
+//					// the MappedBy value is correct
+//					link.setMappedBy(attributeName);
+//					// has MappedBy => inverse side
+//					link.setInverseSide(true);
+//					link.setOwningSide(false);
+//				}
+//				else {
+//					throw mappedByError(entity, link, 
+//							"cannot found owning side link '"+ targetEntityName + "." + attributeName + "'") ;
+//				}
+				link.setMappedBy(attributeName);
 				// has MappedBy => inverse side
 				link.setInverseSide(true);
 				link.setOwningSide(false);
 			}
 			else {
-				throw new IllegalStateException("@"+ AnnotationName.MAPPED_BY 
-						+ " : cannot found entity '"+ entityName + "'");
+				throw mappedByError(entity, link, "cannot found referenced entity '"+ targetEntityName + "'") ;
 			}
 		}
 		else {
-			throw new IllegalStateException("@"+ AnnotationName.MAPPED_BY 
-					+ " : invalid value (entity name expected)");
+			throw mappedByError(entity, link, "invalid value (attribute name expected)") ;
 		}
+	}
+	private RuntimeException mappedByError(Entity entity, DslModelLink link, String msg) {
+		return new IllegalStateException( entity.getClassName() 
+				+ "." + link.getFieldName() 
+				+ " : @"+ AnnotationName.MAPPED_BY 
+				+ " : " + msg );
 	}
 	
 	/**
