@@ -49,53 +49,33 @@ public class DslModelJoinTable implements JoinTable
 		this.inverseJoinColumns = inverseJoinColumns;
 	}
 	
-	//--------------------------------------------------------------------------
 	@Override
 	public String getName() {
 		return name;
 	}
-//	public void setName(String name) {
-//		this.name = name;
-//	}
 
-	//--------------------------------------------------------------------------
 	@Override
 	public String getSchema() {
 		return schema;
 	}
-//	public void setSchema(String schema) {
-//		this.schema = schema;
-//	}
 
-	//--------------------------------------------------------------------------
 	@Override
 	public String getCatalog() {
 		return catalog;
 	}
-//	public void setCatalog(String catalog) {
-//		this.catalog = catalog;
-//	}
 
-	//--------------------------------------------------------------------------
-//	public void setJoinColumns( List<JoinColumn> joinColumns ) 	{
-//		this.joinColumns = joinColumns ;
-//	}
 	@Override
 	public List<JoinColumn> getJoinColumns() {
 		return this.joinColumns;
 	}
 	
-	//--------------------------------------------------------------------------
-//	public void setInverseJoinColumns( List<JoinColumn> inverseJoinColumns ) {
-//		this.inverseJoinColumns = inverseJoinColumns ;
-//	}
 	@Override
 	public List<JoinColumn> getInverseJoinColumns() {
 		return this.inverseJoinColumns;		
 	}
-	
-	//--------------------------------------------------------------------------
-//	public String getCheckSum() {
-//		return name;
-//	}
+
+	@Override
+	public String toString() {
+		return name ;
+	}
 }
