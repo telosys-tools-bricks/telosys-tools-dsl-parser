@@ -40,6 +40,20 @@ public class Converter extends AbstractConverter {
 	}
 
 	/**
+	 * Re-throw the given exception by adding a prefix to the message 
+	 * @param e
+	 * @param messagePrefix
+	 */
+	private void rethrowException(Exception e, String messagePrefix) {
+		String msg = e.getMessage();
+		if ( msg == null ) { // eg NullPointerException
+			msg = e.toString();
+		}
+		String newMessage = messagePrefix + msg ;
+		throw new RuntimeException(newMessage, e);
+	}
+
+	/**
 	 * Converts PARSER MODEL to DSL/Generic model <br>
 	 * 
 	 * @param domainModel
@@ -95,11 +109,17 @@ public class Converter extends AbstractConverter {
 		AttribConverter attribConverter = new AttribConverter();
 		// for each "DomainEntity" convert attributes 
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
-			// Get the GenericEntity built previously
-			DslModelEntity genericEntity = (DslModelEntity) dslModel.getEntityByClassName(domainEntity.getName());
-			// Convert all attributes to "basic type" 
-			// or "void pseudo FK attribute" (to keep the initial attributes order)
-			attribConverter.convertAttributes(domainEntity, genericEntity);
+			String entityName = domainEntity.getName();
+			try {
+				// Get the GenericEntity built previously
+				DslModelEntity genericEntity = (DslModelEntity) dslModel.getEntityByClassName(domainEntity.getName());
+				// Convert all attributes to "basic type" 
+				// or "void pseudo FK attribute" (to keep the initial attributes order)
+				attribConverter.convertAttributes(domainEntity, genericEntity);
+			}
+			catch(Exception e) {
+				rethrowException(e,"Entity " + entityName + " : ");
+			}			
 		}
 	}
 
@@ -113,10 +133,16 @@ public class Converter extends AbstractConverter {
 		
 		// Create the links 
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
-			// Get the GenericEntity built previously
-			DslModelEntity genericEntity = (DslModelEntity) dslModel.getEntityByClassName(domainEntity.getName());
-			// Creates a link for each field referencing an entity
-			linksConverter.createLinks(domainEntity, genericEntity);
+			String entityName = domainEntity.getName();
+			try {
+				// Get the GenericEntity built previously
+				DslModelEntity genericEntity = (DslModelEntity) dslModel.getEntityByClassName(entityName);
+				// Creates a link for each field referencing an entity
+				linksConverter.createLinks(domainEntity, genericEntity);
+			}
+			catch(Exception e) {
+				rethrowException(e,"Entity " + entityName + " : ");
+			}
 		}
 	}
 	
@@ -127,9 +153,15 @@ public class Converter extends AbstractConverter {
 	 */
 	protected void createAllForeignKeys(DomainModel domainModel, DslModel dslModel) {
 		ForeignKeysBuilder fkBuilder = new ForeignKeysBuilder(dslModel);
-		// for each entity in 
+		// for each entity in the model
 		for (DomainEntity entity : domainModel.getEntities()) {
-			fkBuilder.buildForeignKeys(entity);
+			String entityName = entity.getName();
+			try {
+				fkBuilder.buildForeignKeys(entity);
+			}
+			catch(Exception e) {
+				rethrowException(e,"Entity " + entityName + " : ");
+			}
 		}
 	}
 

@@ -17,12 +17,27 @@ package org.telosys.tools.dsl.converter;
 
 import org.telosys.tools.commons.StrUtil;
 
+/**
+ * Object holding a reference between 2 items names
+ * It can be 
+ * - an attribute referencing another attribute (based on attribute names)
+ * - a column referencing another column (based on column names)
+ * The referenced part can be "EMPTY"
+ * Examples :
+ *  - "attr" ( no ref )
+ *  - "attr" -> "referencedAttr"
+ *  - "column"  ( no ref )
+ *  - "column" -> "referencedColumn"
+ *  
+ * @author Laurent Guerin
+ *
+ */
 public class ReferenceDefinition {
 
 	private static final String EMPTY = "" ;
 	
-	private final String name ;
-	private final String referencedName ;
+	private final String name ; // attribute name or column name
+	private final String referencedName ; // attribute name or column name
 	
 	public ReferenceDefinition(String name, String referencedName) {
 		super();

@@ -1,0 +1,18 @@
+// Entity 
+
+Line2 {
+	// ATTRIBUTES 
+	id : int { @Id } ;
+	color : string ;
+	
+	point1X : int  { @DbName(X1) } ;
+	point1Y : int  { @DbName(Y1) } ;
+	
+	point2X : int  { @DbName(X2) } ;
+	point2Y : int  { @DbName(Y2) } ;
+
+	// LINKS 
+	point1 : Point { @LinkByAttr(point1X > x, point1Y > y) } ;
+	point2 : Point { @LinkByAttr(point2X > x, point2Y > y) } ;
+	
+}

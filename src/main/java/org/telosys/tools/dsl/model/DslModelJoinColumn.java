@@ -44,7 +44,8 @@ public class DslModelJoinColumn implements JoinColumn {
 	private final String name;
 
 	// JPA doc : (Optional) The name of the column referenced by this foreign key column.
-	private String referencedColumnName = ""; // JPA doc : Default: ""
+	//private String referencedColumnName = ""; // JPA doc : Default: ""
+	private final String referencedColumnName ; 
 
 	// JPA doc : (Optional) Whether the property is a unique key.
 	private boolean unique = false; // JPA doc : Default: false
@@ -68,27 +69,31 @@ public class DslModelJoinColumn implements JoinColumn {
 	 */
 	public DslModelJoinColumn(String name) {
 		this.name = name;
+		this.referencedColumnName = ""; // JPA doc : Default: ""
+	}
+
+	/**
+	 * Constructor
+	 * @param name
+	 * @param referencedColumnName
+	 */
+	public DslModelJoinColumn(String name, String referencedColumnName) {
+		this.name = name;
+		this.referencedColumnName = referencedColumnName;
 	}
 	
-//	public String getCheckSum() {
-//		return name + "#" + referencedColumnName;
-//	}
-
 	@Override
 	public String getName() {
 		return name;
 	}
-//	public void setName(String name) {
-//		this.name = name;
-//	}
 
 	@Override
 	public String getReferencedColumnName() {
 		return referencedColumnName;
 	}
-	public void setReferencedColumnName(String referencedColumnName) {
-		this.referencedColumnName = referencedColumnName;
-	}
+//	public void setReferencedColumnName(String referencedColumnName) {
+//		this.referencedColumnName = referencedColumnName;
+//	}
 
 	@Override
 	public boolean isUnique() {

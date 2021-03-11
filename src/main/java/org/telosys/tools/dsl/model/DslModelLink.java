@@ -37,12 +37,12 @@ public class DslModelLink implements Link {
     private String mappedBy;
     
     private boolean inverseSide;
-    private String inverseSideLinkId;
+    private String  inverseSideLinkId;
     
-    private Optional optional;
-    private Cardinality cardinality;
+    private Optional       optional    = Optional.UNDEFINED;
+    private Cardinality    cardinality = Cardinality.UNDEFINED;
+    private FetchType      fetchType   = FetchType.UNDEFINED;
     private CascadeOptions cascadeOptions;
-    private FetchType fetchType;
     
     private boolean basedOnForeignKey;
     private String foreignKeyName;

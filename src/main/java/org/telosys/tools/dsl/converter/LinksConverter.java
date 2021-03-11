@@ -133,11 +133,13 @@ public class LinksConverter extends AbstractConverter {
 			annotationsConverter.applyAnnotationsForLink(dslEntity, dslLink, domainEntityField.getAnnotations().values());
 		}
 		
-		// Join columns already determined from annotations @LinkByFK or @LinkByCol ?
+		// Join columns not already determined from annotations @LinkByFK or @LinkByCol ?
 		if ( ! dslLink.hasJoinColumns() && dslLink.isOwningSide() ) {
 			// No join columns defined by annotations => try to infer join columns from FK
 			String referencedTableName = dslLink.getTargetTableName(); 
-			List<JoinColumn> joinColumns = JoinColumnsUtil.tryToInferJoinColumns(dslEntity, referencedTableName);
+//			List<JoinColumn> joinColumns = JoinColumnsUtil.tryToInferJoinColumns(dslEntity, referencedTableName);
+			JoinColumnsBuilder jcb = new JoinColumnsBuilder("Infer Join Columns");
+			List<JoinColumn> joinColumns = jcb.tryToInferJoinColumns(dslEntity, referencedTableName);
 			if ( joinColumns != null ) {
 				dslLink.setJoinColumns(joinColumns);
 			}

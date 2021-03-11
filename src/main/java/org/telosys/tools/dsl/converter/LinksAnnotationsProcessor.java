@@ -161,8 +161,14 @@ public class LinksAnnotationsProcessor {
 				throw new IllegalStateException("@"+ AnnotationName.LINK_BY_JOIN_ENTITY 
 						+ " : the 2 foreign keys are identical");
 			}
-			List<JoinColumn> joinColumns = JoinColumnsUtil.buildJoinColumnsFromForeignKey(joinColumnsFK);
-			List<JoinColumn> inverseJoinColumns = JoinColumnsUtil.buildJoinColumnsFromForeignKey(inverseJoinColumnsFK);
+//			List<JoinColumn> joinColumns = JoinColumnsUtil.buildJoinColumnsFromForeignKey(joinColumnsFK);
+			JoinColumnsBuilder jcb = new JoinColumnsBuilder("@"+ AnnotationName.LINK_BY_JOIN_ENTITY ) ;
+			List<JoinColumn> joinColumns = jcb.buildJoinColumnsFromForeignKey(joinColumnsFK);
+
+//			List<JoinColumn> inverseJoinColumns = JoinColumnsUtil.buildJoinColumnsFromForeignKey(inverseJoinColumnsFK);
+			List<JoinColumn> inverseJoinColumns = jcb.buildJoinColumnsFromForeignKey(inverseJoinColumnsFK);
+			
+			
 			JoinTable joinTable =  new DslModelJoinTable(joinEntity, joinColumns, inverseJoinColumns);
 			link.setJoinTable(joinTable);
 			// has Join Table => owning side
@@ -172,6 +178,23 @@ public class LinksAnnotationsProcessor {
 		else {
 			throw new IllegalStateException("@"+ AnnotationName.LINK_BY_JOIN_ENTITY 
 					+ " : join entity '"+ joinEntity + "' does not have 2 foreign keys");
+		}
+	}
+	
+	private ForeignKey getForeignKeyByName(DslModelEntity entity, String fkName) {
+		if ( ! StrUtil.nullOrVoid(fkName) ) {
+			ForeignKey fk = entity.getDatabaseForeignKeyByName(fkName);
+			if ( fk != null ) {
+				return fk;
+			}
+			else {
+				// FK not found => ERROR
+				throw new IllegalStateException("@LinkByFK : cannot found Foreign Key '" + fkName + "' in entity" );
+			}
+		}
+		else {
+			// no FK name => ERROR
+			throw new IllegalStateException("@LinkByFK : no Foreign Key name");
 		}
 	}
 	
@@ -203,7 +226,9 @@ public class LinksAnnotationsProcessor {
 		}
 		ReferenceDefinitions attributesRefDef = buildReferenceDefinitions(annotation);
 		ReferenceDefinitions columnsRefDef = convertAttribRefToColRef(entity, referencedEntity, attributesRefDef);
-		List<JoinColumn> joinColumns = buildJoinColumns(columnsRefDef); 
+//		List<JoinColumn> joinColumns = buildJoinColumns(columnsRefDef, AnnotationName.LINK_BY_ATTR); 
+		JoinColumnsBuilder jcb = new JoinColumnsBuilder("@"+AnnotationName.LINK_BY_ATTR) ;
+		List<JoinColumn> joinColumns = jcb.buildJoinColumnsFromRefDef(columnsRefDef); 
 		link.setJoinColumns(joinColumns);
 	}
 	
@@ -218,7 +243,9 @@ public class LinksAnnotationsProcessor {
 	 */
 	private void processLinkByCol(DslModelLink link, DomainAnnotation annotation) {
 		ReferenceDefinitions columnsRefDef = buildReferenceDefinitions(annotation);
-		List<JoinColumn> joinColumns = buildJoinColumns(columnsRefDef); 
+//		List<JoinColumn> joinColumns = buildJoinColumns(columnsRefDef, annotation.getName()); 
+		JoinColumnsBuilder jcb = new JoinColumnsBuilder("@"+annotation.getName()) ;
+		List<JoinColumn> joinColumns = jcb.buildJoinColumnsFromRefDef(columnsRefDef); 		
 		link.setJoinColumns(joinColumns);
 	}
 
@@ -230,7 +257,13 @@ public class LinksAnnotationsProcessor {
 	 */
 	private void processLinkByFK(DslModelEntity entity, DslModelLink link, DomainAnnotation annotation) {
 		String fkName = annotation.getParameterAsString();
-		List<JoinColumn> joinColumns = buildJoinColumnsFromForeignKey(entity, link, fkName);
+		
+//		List<JoinColumn> joinColumns = buildJoinColumnsFromForeignKey(entity, link, fkName);
+		ForeignKey fk = getForeignKeyByName(entity, fkName);
+		checkIfForeignKeyIsCompatible(link, fk);
+		JoinColumnsBuilder jcb = new JoinColumnsBuilder("@LinkByFK("+fkName+")") ;
+		List<JoinColumn> joinColumns = jcb.buildJoinColumnsFromForeignKey(fk);
+
 		link.setJoinColumns(joinColumns);
 		link.setBasedOnForeignKey(true);
 		link.setForeignKeyName(fkName);
@@ -352,55 +385,76 @@ public class LinksAnnotationsProcessor {
 		return "";
 	}
 
-	protected List<JoinColumn> buildJoinColumns(ReferenceDefinitions referenceDefinitions) {
-		List<ReferenceDefinition> refDefList = referenceDefinitions.getList();
-		int nbCol = refDefList.size();
-		List<JoinColumn> joinColumns = new LinkedList<>();
-		for ( ReferenceDefinition rd : refDefList) {
-		    String columnName = rd.getName();
-		    String referencedColumnName = rd.getReferencedName();
-		    if ( ! columnName.isEmpty() ) {
-		    	// col
-				DslModelJoinColumn jc = new DslModelJoinColumn(columnName);
-				if ( ! referencedColumnName.isEmpty() ) {
-			    	// col > refCol
-					jc.setReferencedColumnName(referencedColumnName);
-				}
-				else {
-					if ( nbCol > 1 ) {
-						// ERROR : referenced column mandatory for each column !
-					}
-				}
-				joinColumns.add(jc);
-		    }
-		}
-		return joinColumns;
-	}
+//	private List<JoinColumn> buildJoinColumns(ReferenceDefinitions referenceDefinitions, String annotationName) {
+//		List<ReferenceDefinition> refDefList = referenceDefinitions.getList();
+////		int nbCol = refDefList.size();
+//	    if ( refDefList.isEmpty() ) {
+//	    	throw new IllegalStateException("@"+annotationName+" : no join column (empty list)");
+//	    }
+//		List<JoinColumn> joinColumns = new LinkedList<>();
+//		for ( ReferenceDefinition rd : refDefList) {
+//		    String columnName = rd.getName();
+//		    String referencedColumnName = rd.getReferencedName();
+//	    	/**
+//		    if ( ! columnName.isEmpty() ) {
+//		    	// col
+//				DslModelJoinColumn jc = new DslModelJoinColumn(columnName);
+//				if ( ! referencedColumnName.isEmpty() ) {
+//			    	// col > refCol
+//					jc.setReferencedColumnName(referencedColumnName);
+//				}
+//				else {
+//					if ( nbCol > 1 ) {
+//						// ERROR : referenced column mandatory for each column !
+//					}
+//				}
+//				joinColumns.add(jc);
+//		    }
+//			**/
+//		    if ( StrUtil.nullOrVoid(columnName) ) {
+//		    	throw new IllegalStateException("@"+annotationName+" : column name null or void");
+//		    }
+//		    if ( StrUtil.nullOrVoid(referencedColumnName) ) {
+//		    	throw new IllegalStateException("@"+annotationName+" : referenced column name null or void");
+//		    }
+//			DslModelJoinColumn jc = new DslModelJoinColumn(columnName, referencedColumnName);
+//			
+//			// TODO
+////			jc.setInsertable(insertable);
+////			jc.setUpdatable(updatable);
+////			jc.setNullable(nullable);
+//			
+//			joinColumns.add(jc);
+//		}
+//		return joinColumns;
+//	}
 	
-	/**
-	 * Build join columns from the given Foreign Key name
-	 * @param entity current entity (holding the foreign keys)
-	 * @param link
-	 * @param fkName foreign key name
-	 * @return
-	 */
-	protected List<JoinColumn> buildJoinColumnsFromForeignKey(DslModelEntity entity, DslModelLink link, String fkName) {
-		if ( ! StrUtil.nullOrVoid(fkName) ) {
-			ForeignKey fk = entity.getDatabaseForeignKeyByName(fkName);
-			if ( fk != null ) {
-				checkIfForeignKeyIsCompatible(link, fk);
-				return JoinColumnsUtil.buildJoinColumnsFromForeignKey(fk);
-			}
-			else {
-				// FK not found => ERROR
-				throw new IllegalStateException("@LinkByFK : cannot found Foreign Key '" + fkName + "' in entity" );
-			}
-		}
-		else {
-			// no FK name => ERROR
-			throw new IllegalStateException("@LinkByFK : no Foreign Key name");
-		}
-	}
+//	/**
+//	 * Build join columns from the given Foreign Key name
+//	 * @param entity current entity (holding the foreign keys)
+//	 * @param link
+//	 * @param fkName foreign key name
+//	 * @return
+//	 */
+//	private List<JoinColumn> buildJoinColumnsFromForeignKey(DslModelEntity entity, DslModelLink link, String fkName) {
+//		if ( ! StrUtil.nullOrVoid(fkName) ) {
+//			ForeignKey fk = entity.getDatabaseForeignKeyByName(fkName);
+//			if ( fk != null ) {
+//				checkIfForeignKeyIsCompatible(link, fk);
+////				return JoinColumnsUtil.buildJoinColumnsFromForeignKey(fk);
+//				JoinColumnsBuilder jcb = new JoinColumnsBuilder("@LinkByFK("+fkName+")") ;
+//				return jcb.buildJoinColumnsFromForeignKey(fk);
+//			}
+//			else {
+//				// FK not found => ERROR
+//				throw new IllegalStateException("@LinkByFK : cannot found Foreign Key '" + fkName + "' in entity" );
+//			}
+//		}
+//		else {
+//			// no FK name => ERROR
+//			throw new IllegalStateException("@LinkByFK : no Foreign Key name");
+//		}
+//	}
 
 	private void checkIfForeignKeyIsCompatible(DslModelLink link, ForeignKey fk) {
 		String linkTable = link.getTargetTableName();

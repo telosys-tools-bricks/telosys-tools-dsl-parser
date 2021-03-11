@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelJoinColumn;
 import org.telosys.tools.generic.model.ForeignKey;
@@ -32,53 +33,65 @@ public class JoinColumnsUtil {
 	private JoinColumnsUtil() {
 		super();
 	}
-
-	/**
-	 * Build join columns list from the given Foreign Key
-	 * @param fk
-	 * @return
-	 */
-	public static List<JoinColumn> buildJoinColumnsFromForeignKey(ForeignKey fk) {
-		List<JoinColumn> joinColumns = new LinkedList<>();
-		if ( fk != null ) {
-			for ( ForeignKeyColumn fkCol : fk.getColumns() ) {
-				DslModelJoinColumn jc = new DslModelJoinColumn(fkCol.getColumnName());
-				jc.setReferencedColumnName(fkCol.getReferencedColumnName());
-				joinColumns.add(jc);
-			}
-		}
-		return joinColumns;
-	}
-
-	/**
-	 * Try to infer join columns from the given referenced table <br>
-	 * by searching in the entity a unique FK targeting this table 
-	 * @param entity
-	 * @param referencedTableName
-	 * @return
-	 */
-	public static List<JoinColumn> tryToInferJoinColumns(DslModelEntity entity, String referencedTableName) {
-		ForeignKey fk = findUniqueFKByReferencedTableName(entity, referencedTableName);
-		if ( fk != null ) {
-			return buildJoinColumnsFromForeignKey(fk);
-		}
-		return null;
-	}
 	
-	private static ForeignKey findUniqueFKByReferencedTableName(DslModelEntity entity, String refTableName) {
-		ForeignKey fkFound = null ;
-		int count = 0 ;
-		for(ForeignKey fk : entity.getDatabaseForeignKeys() ) {
-			if(refTableName.equals(fk.getReferencedTableName())) {
-				fkFound = fk;
-				count++;
-			}
-		}
-		if ( fkFound != null && count == 1 ) {
-			return fkFound ;
-		}
-		return null;
-	}
+//	public static DslModelJoinColumn buildJoinColumn(String columnName, String referencedColumnName) {
+//	    if ( StrUtil.nullOrVoid(columnName) ) {
+//	    	throw new IllegalStateException("Cannot build JoinColumn : column name is null or void");
+//	    }
+//	    if ( StrUtil.nullOrVoid(referencedColumnName) ) {
+//	    	throw new IllegalStateException("Cannot build JoinColumn : referenced column name is null or void");
+//	    }
+//	    return new DslModelJoinColumn(columnName, referencedColumnName);
+//	}
+//	
+//	/**
+//	 * Build join columns list from the given Foreign Key
+//	 * @param fk
+//	 * @return
+//	 */
+//	public static List<JoinColumn> buildJoinColumnsFromForeignKey(ForeignKey fk) {
+//		List<JoinColumn> joinColumns = new LinkedList<>();
+//		if ( fk != null ) {
+//			for ( ForeignKeyColumn fkCol : fk.getColumns() ) {
+////				DslModelJoinColumn jc = new DslModelJoinColumn(fkCol.getColumnName());
+////				jc.setReferencedColumnName(fkCol.getReferencedColumnName());
+//				DslModelJoinColumn jc = buildJoinColumn(fkCol.getColumnName(), 
+//						fkCol.getReferencedColumnName());
+//				joinColumns.add(jc);
+//			}
+//		}
+//		return joinColumns;
+//	}
+
+//	/**
+//	 * Try to infer join columns from the given referenced table <br>
+//	 * by searching in the entity a unique FK targeting this table 
+//	 * @param entity
+//	 * @param referencedTableName
+//	 * @return
+//	 */
+//	public static List<JoinColumn> tryToInferJoinColumns(DslModelEntity entity, String referencedTableName) {
+//		ForeignKey fk = findUniqueFKByReferencedTableName(entity, referencedTableName);
+//		if ( fk != null ) {
+//			return buildJoinColumnsFromForeignKey(fk);
+//		}
+//		return null;
+//	}
+//	
+//	private static ForeignKey findUniqueFKByReferencedTableName(DslModelEntity entity, String refTableName) {
+//		ForeignKey fkFound = null ;
+//		int count = 0 ;
+//		for(ForeignKey fk : entity.getDatabaseForeignKeys() ) {
+//			if(refTableName.equals(fk.getReferencedTableName())) {
+//				fkFound = fk;
+//				count++;
+//			}
+//		}
+//		if ( fkFound != null && count == 1 ) {
+//			return fkFound ;
+//		}
+//		return null;
+//	}
 	
 	public static int numberOfDuplicates(List<JoinColumn> list) {
 		List<String> jcNames = new LinkedList<>();
