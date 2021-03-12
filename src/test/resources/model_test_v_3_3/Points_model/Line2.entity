@@ -12,7 +12,7 @@ Line2 {
 	point2Y : int  { @DbName(Y2) } ;
 
 	// LINKS 
-	point1 : Point { @LinkByAttr(point1X > x, point1Y > y) } ;
-	point2 : Point { @LinkByAttr(point2X > x, point2Y > y) } ;
+	point1 : Point { @LinkByAttr(point1X > x, point1Y > y) @FetchTypeEager } ;
+	point2 : Point { @LinkByAttr(point2X > x, point2Y > y) @FetchTypeLazy  } ;
 	
 }
