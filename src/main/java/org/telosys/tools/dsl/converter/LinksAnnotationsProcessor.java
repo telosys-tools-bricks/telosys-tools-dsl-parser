@@ -16,18 +16,17 @@
 package org.telosys.tools.dsl.converter;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
-import org.telosys.tools.dsl.model.DslModelJoinColumn;
 import org.telosys.tools.dsl.model.DslModelJoinTable;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.generic.model.Attribute;
+import org.telosys.tools.generic.model.BooleanValue;
 import org.telosys.tools.generic.model.Cardinality;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.FetchType;
@@ -62,6 +61,9 @@ public class LinksAnnotationsProcessor {
 			else if (AnnotationName.MANY_TO_MANY.equals(annotation.getName())) { // Added in ver 3.3
 				link.setCardinality(Cardinality.MANY_TO_MANY);
 			}
+			else if (AnnotationName.ONE_TO_ONE.equals(annotation.getName())) { // Added in ver 3.3
+				link.setCardinality(Cardinality.ONE_TO_ONE);
+			}
 			else if (AnnotationName.OPTIONAL.equals(annotation.getName())) { // Added in ver 3.3
 				link.setOptional(Optional.TRUE);
 			}
@@ -70,6 +72,12 @@ public class LinksAnnotationsProcessor {
 			}
 			else if (AnnotationName.FETCH_TYPE_EAGER.equals(annotation.getName())) { // Added in ver 3.3
 				link.setFetchType(FetchType.EAGER);
+			}
+			else if (AnnotationName.INSERTABLE.equals(annotation.getName())) { // Added in ver 3.3
+				processInsertable(entity, link, annotation);
+			}
+			else if (AnnotationName.UPDATABLE.equals(annotation.getName())) { // Added in ver 3.3
+				processUpdatable(entity, link, annotation);
 			}
 			else if (AnnotationName.MAPPED_BY.equals(annotation.getName())) { // Added in ver 3.3
 				processMappedBy(entity, link, annotation);
@@ -137,6 +145,46 @@ public class LinksAnnotationsProcessor {
 				+ " : @"+ AnnotationName.MAPPED_BY 
 				+ " : " + msg );
 	}
+	
+	/**
+	 * Process '@Insertable(true|false)' annotation <br>
+	 * @param entity
+	 * @param link
+	 * @param annotation
+	 */
+	private void processInsertable(DslModelEntity entity, DslModelLink link, DomainAnnotation annotation) {
+		String value = annotation.getParameterAsString();
+		BooleanValue v = Util.getBooleanValue(entity, link.getFieldName(), annotation.getName(), value);
+		link.setInsertable(v);
+	}
+	
+	/**
+	 * Process '@Updatable(true|false)' annotation <br>
+	 * @param entity
+	 * @param link
+	 * @param annotation
+	 */
+	private void processUpdatable(DslModelEntity entity, DslModelLink link, DomainAnnotation annotation) {
+		String value = annotation.getParameterAsString();
+		BooleanValue v = Util.getBooleanValue(entity, link.getFieldName(), annotation.getName(), value);
+		link.setUpdatable(v);
+	}
+	
+//	private boolean getBooleanValue(Entity entity, String fieldName, String annotationName, String value) {
+//		if ( ! StrUtil.nullOrVoid(value) ) {
+//			String v = value.trim().toUpperCase();
+//			if ("TRUE".equals(v)) {
+//				return true;
+//			}
+//			else if ("FALSE".equals(v)) {
+//				return true;
+//			}
+//		}
+//		throw new IllegalStateException( entity.getClassName() 
+//				+ "." + fieldName
+//				+ " : @"+ annotationName
+//				+ " : " + "invalid boolean value " + value + " ('true' or 'false' expected)" );
+//	}
 	
 	/**
 	 * Process '@LinkByJoinEntity(EntityName)' annotation <br>

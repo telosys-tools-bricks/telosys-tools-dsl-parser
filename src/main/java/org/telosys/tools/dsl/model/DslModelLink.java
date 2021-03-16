@@ -15,9 +15,15 @@
  */
 package org.telosys.tools.dsl.model;
 
-import org.telosys.tools.generic.model.*;
-
 import java.util.List;
+
+import org.telosys.tools.generic.model.BooleanValue;
+import org.telosys.tools.generic.model.Cardinality;
+import org.telosys.tools.generic.model.CascadeOptions;
+import org.telosys.tools.generic.model.FetchType;
+import org.telosys.tools.generic.model.JoinColumn;
+import org.telosys.tools.generic.model.JoinTable;
+import org.telosys.tools.generic.model.Link;
 import org.telosys.tools.generic.model.Optional;
 
 public class DslModelLink implements Link {
@@ -53,6 +59,9 @@ public class DslModelLink implements Link {
     
     private String comparableString;
     private boolean isEmbedded;
+    
+    private BooleanValue isInsertable = BooleanValue.UNDEFINED; // Added in v 3.3.0
+    private BooleanValue isUpdatable  = BooleanValue.UNDEFINED; // Added in v 3.3.0
 
     /**
      * Constructor
@@ -263,6 +272,22 @@ public class DslModelLink implements Link {
     }
     public void setEmbedded(boolean b) {
         this.isEmbedded = b;
+    }
+
+    @Override
+    public BooleanValue getInsertable() {
+        return this.isInsertable;
+    }
+    public void setInsertable(BooleanValue b) {
+        this.isInsertable = b;
+    }
+
+    @Override
+    public BooleanValue getUpdatable() {
+        return this.isUpdatable;
+    }
+    public void setUpdatable(BooleanValue b) {
+        this.isUpdatable = b;
     }
 
 }
