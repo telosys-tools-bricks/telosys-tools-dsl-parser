@@ -16,12 +16,14 @@
 package org.telosys.tools.dsl.converter;
 
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.generic.model.BooleanValue;
-import org.telosys.tools.generic.model.Entity;
 
 public class Util {
 
-	public static BooleanValue getBooleanValue(Entity entity, String fieldName, String annotationName, String value) {
+	public static BooleanValue getBooleanValue(String entityName, String fieldName, DomainAnnotation annotation) {
+		String value = annotation.getParameterAsString();
+
 		if ( ! StrUtil.nullOrVoid(value) ) {
 			String v = value.trim().toUpperCase();
 			if ("TRUE".equals(v)) {
@@ -31,9 +33,9 @@ public class Util {
 				return BooleanValue.FALSE;
 			}
 		}
-		throw new IllegalStateException( entity.getClassName() 
+		throw new IllegalStateException( entityName
 				+ "." + fieldName
-				+ " : @"+ annotationName
+				+ " : @"+ annotation.getName()
 				+ " : " + "invalid boolean value " + value + " ('true' or 'false' expected)" );
 	}
 }

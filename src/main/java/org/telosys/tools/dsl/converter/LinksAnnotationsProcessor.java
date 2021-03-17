@@ -153,8 +153,7 @@ public class LinksAnnotationsProcessor {
 	 * @param annotation
 	 */
 	private void processInsertable(DslModelEntity entity, DslModelLink link, DomainAnnotation annotation) {
-		String value = annotation.getParameterAsString();
-		BooleanValue v = Util.getBooleanValue(entity, link.getFieldName(), annotation.getName(), value);
+		BooleanValue v = Util.getBooleanValue(entity.getClassName(), link.getFieldName(), annotation );
 		link.setInsertable(v);
 	}
 	
@@ -165,26 +164,9 @@ public class LinksAnnotationsProcessor {
 	 * @param annotation
 	 */
 	private void processUpdatable(DslModelEntity entity, DslModelLink link, DomainAnnotation annotation) {
-		String value = annotation.getParameterAsString();
-		BooleanValue v = Util.getBooleanValue(entity, link.getFieldName(), annotation.getName(), value);
+		BooleanValue v = Util.getBooleanValue(entity.getClassName(), link.getFieldName(), annotation );
 		link.setUpdatable(v);
 	}
-	
-//	private boolean getBooleanValue(Entity entity, String fieldName, String annotationName, String value) {
-//		if ( ! StrUtil.nullOrVoid(value) ) {
-//			String v = value.trim().toUpperCase();
-//			if ("TRUE".equals(v)) {
-//				return true;
-//			}
-//			else if ("FALSE".equals(v)) {
-//				return true;
-//			}
-//		}
-//		throw new IllegalStateException( entity.getClassName() 
-//				+ "." + fieldName
-//				+ " : @"+ annotationName
-//				+ " : " + "invalid boolean value " + value + " ('true' or 'false' expected)" );
-//	}
 	
 	/**
 	 * Process '@LinkByJoinEntity(EntityName)' annotation <br>

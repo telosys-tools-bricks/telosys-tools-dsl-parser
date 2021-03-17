@@ -60,8 +60,8 @@ public class DslModelLink implements Link {
     private String comparableString;
     private boolean isEmbedded;
     
-    private BooleanValue isInsertable = BooleanValue.UNDEFINED; // Added in v 3.3.0
-    private BooleanValue isUpdatable  = BooleanValue.UNDEFINED; // Added in v 3.3.0
+    private BooleanValue insertable = BooleanValue.UNDEFINED; // Added in v 3.3.0
+    private BooleanValue updatable  = BooleanValue.UNDEFINED; // Added in v 3.3.0
 
     /**
      * Constructor
@@ -276,18 +276,18 @@ public class DslModelLink implements Link {
 
     @Override
     public BooleanValue getInsertable() {
-        return this.isInsertable;
+        return this.insertable;
     }
     public void setInsertable(BooleanValue b) {
-        this.isInsertable = b;
+        this.insertable = b;
     }
 
     @Override
     public BooleanValue getUpdatable() {
-        return this.isUpdatable;
+        return this.updatable;
     }
     public void setUpdatable(BooleanValue b) {
-        this.isUpdatable = b;
+        this.updatable = b;
     }
 
 }

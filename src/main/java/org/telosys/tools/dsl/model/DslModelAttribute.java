@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.telosys.tools.generic.model.Attribute;
+import org.telosys.tools.generic.model.BooleanValue;
 import org.telosys.tools.generic.model.DateType;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKeyPart;
@@ -92,6 +93,9 @@ public class DslModelAttribute implements Attribute {
 	
 	private Map<String, String> tagsMap = null ; // Tags added in v 3.3.0
 	
+    private BooleanValue insertable = BooleanValue.UNDEFINED; // Added in v 3.3.0
+    private BooleanValue updatable  = BooleanValue.UNDEFINED; // Added in v 3.3.0
+
 	@Override
 	public String getName() {
 		return name;
@@ -598,5 +602,21 @@ public class DslModelAttribute implements Attribute {
 	public boolean hasFKParts() {
 		return  ! fkParts.isEmpty() ;
 	}
+	
+    @Override
+    public BooleanValue getInsertable() {  // v 3.3.0
+        return this.insertable;
+    }
+    public void setInsertable(BooleanValue b) {  // v 3.3.0
+        this.insertable = b;
+    }
+
+    @Override
+    public BooleanValue getUpdatable() {  // v 3.3.0
+        return this.updatable;
+    }
+    public void setUpdatable(BooleanValue b) {  // v 3.3.0
+        this.updatable = b;
+    }
 
 }

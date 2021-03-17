@@ -21,10 +21,21 @@ import org.telosys.tools.commons.logger.ConsoleLogger;
 import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
+import org.telosys.tools.generic.model.BooleanValue;
 
 public class AttribAnnotationsProcessor {
 
 	private static final ConsoleLogger logger = new ConsoleLogger();
+
+	private final String entityName ;
+
+	/**
+	 * Constructor
+	 */
+	public AttribAnnotationsProcessor(String entityName) {
+		super();
+		this.entityName = entityName;
+	}
 
 	private void log(String msg) {
 		if (ConverterLogStatus.LOG) {
@@ -196,6 +207,15 @@ public class AttribAnnotationsProcessor {
 				log(msg + AnnotationName.SIZE_MAX );
 				fieldSizeMax = annotation.getParameterAsInteger();
 			}
+			
+			if (AnnotationName.INSERTABLE.equals(annotation.getName())) { // Added in ver 3.3
+				processInsertable(this.entityName, genericAttribute, annotation);
+			}
+			if (AnnotationName.UPDATABLE.equals(annotation.getName())) { // Added in ver 3.3
+				processUpdatable(this.entityName, genericAttribute, annotation);
+			}
+
+			
 		}
 		// Complete with other field annotations
 		if ( genericAttribute.getDatabaseSize() == null && fieldSizeMax != null ) {
@@ -243,5 +263,28 @@ public class AttribAnnotationsProcessor {
 			// TODO : @Before(DateISO/TimeISO)
 		}
 	}
+	
+	/**
+	 * Process '@Insertable(true|false)' annotation <br>
+	 * @param entityName
+	 * @param attribute
+	 * @param annotation
+	 */
+	private void processInsertable(String entityName, DslModelAttribute attribute, DomainAnnotation annotation) {
+		BooleanValue v = Util.getBooleanValue(entityName, attribute.getName(), annotation );
+		attribute.setInsertable(v);
+	}
+	
+	/**
+	 * Process '@Updatable(true|false)' annotation <br>
+	 * @param entityName
+	 * @param attribute
+	 * @param annotation
+	 */
+	private void processUpdatable(String entityName, DslModelAttribute attribute, DomainAnnotation annotation) {
+		BooleanValue v = Util.getBooleanValue(entityName, attribute.getName(), annotation );
+		attribute.setUpdatable(v);
+	}
+	
 
 }

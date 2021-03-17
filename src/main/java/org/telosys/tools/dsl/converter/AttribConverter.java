@@ -33,7 +33,7 @@ import org.telosys.tools.dsl.parser.model.DomainType;
  */
 public class AttribConverter extends AbstractConverter {
 
-	private final AttribAnnotationsProcessor annotationsConverter = new AttribAnnotationsProcessor();
+	//private final AttribAnnotationsProcessor annotationsConverter = new AttribAnnotationsProcessor();
 	
 	private final TagsConverter tagsConverter = new TagsConverter();
 	
@@ -66,7 +66,7 @@ public class AttribConverter extends AbstractConverter {
 				// STANDARD NEUTRAL TYPE = BASIC ATTRIBUTE
 				log("convertEntityAttributes() : " + domainEntityField.getName() + " : neutral type");
 				// Simple type attribute
-				convertAttributeNeutralType(domainEntityField, genericAttribute);
+				convertAttributeNeutralType(domainEntity, domainEntityField, genericAttribute);
 				// Add the new "basic attribute" to the entity
 				dslEntity.getAttributes().add(genericAttribute);
 			}
@@ -76,11 +76,12 @@ public class AttribConverter extends AbstractConverter {
 	/**
 	 * Converts a basic "neutral type" attribute <br>
 	 * eg : id : short {@Id}; <br>
-	 * 
+	 * @param domainEntity
 	 * @param domainEntityField
 	 * @param genericAttribute
 	 */
-	private void convertAttributeNeutralType(DomainField domainEntityField, DslModelAttribute genericAttribute) {
+	private void convertAttributeNeutralType(DomainEntity domainEntity, 
+			DomainField domainEntityField, DslModelAttribute genericAttribute) {
 		log("convertAttributeNeutralType() : name = " + domainEntityField.getName());
 
 		DomainType domainFieldType = domainEntityField.getType();
@@ -96,6 +97,7 @@ public class AttribConverter extends AbstractConverter {
 		if (domainEntityField.getAnnotations() != null) {
 			log("Converter : annotations found");
 			Collection<DomainAnnotation> fieldAnnotations = domainEntityField.getAnnotations().values();
+			AttribAnnotationsProcessor annotationsConverter = new AttribAnnotationsProcessor(domainEntity.getName());
 			annotationsConverter.applyAnnotationsForNeutralType(genericAttribute, fieldAnnotations);
 		} else {
 			log("Converter : no annotation");
