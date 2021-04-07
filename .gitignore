@@ -2,8 +2,6 @@
 /.settings
 /.classpath
 /.project
-/.idea
-*.iml
-/target
+/dependency-reduced-pom.xml
 /old/
 /old2/
