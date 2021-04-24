@@ -89,7 +89,7 @@ public class DslModelAttribute implements Attribute {
 	private boolean isPrimitiveTypeExpected = false ;
 	private boolean isUnsignedTypeExpected = false ;
 	private boolean isObjectTypeExpected = false ;
-	private boolean isSqlTypeExpected = false ;
+	// private boolean isSqlTypeExpected = false ; // Removed in v 3.3.0
 	
 	private Map<String, String> tagsMap = null ; // Tags added in v 3.3.0
 	
@@ -545,13 +545,14 @@ public class DslModelAttribute implements Attribute {
 		this.isPrimitiveTypeExpected = v ;
 	}
 	
-	@Override
-	public boolean isSqlTypeExpected() {
-		return isSqlTypeExpected;
-	}
-	public void setSqlTypeExpected(boolean v) {
-		this.isSqlTypeExpected = v ;
-	}
+	// Removed in v 3.3.0
+//	@Override
+//	public boolean isSqlTypeExpected() {
+//		return isSqlTypeExpected;
+//	}
+//	public void setSqlTypeExpected(boolean v) {
+//		this.isSqlTypeExpected = v ;
+//	}
 	
 	@Override
 	public boolean isUnsignedTypeExpected() {

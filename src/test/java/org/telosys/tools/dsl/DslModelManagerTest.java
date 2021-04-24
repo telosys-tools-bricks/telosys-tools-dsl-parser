@@ -126,7 +126,7 @@ public class DslModelManagerTest {
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		assertFalse(attribute.isObjectTypeExpected());
-        		assertFalse(attribute.isSqlTypeExpected());
+//        		assertFalse(attribute.isSqlTypeExpected());
         	}
         	else if ( attribute.getName().equals("firstName") ) {
         		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
@@ -165,7 +165,7 @@ public class DslModelManagerTest {
         		assertTrue(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		assertFalse(attribute.isObjectTypeExpected());
-        		assertFalse(attribute.isSqlTypeExpected());
+//        		assertFalse(attribute.isSqlTypeExpected());
 
 //        		assertEquals("short", attribute.getSimpleType() ); 
 //        		assertEquals("short", attribute.getFullType() ); 
@@ -178,7 +178,7 @@ public class DslModelManagerTest {
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		assertTrue(attribute.isObjectTypeExpected());
-        		assertFalse(attribute.isSqlTypeExpected());
+//        		assertFalse(attribute.isSqlTypeExpected());
 
 //        		assertEquals("Short", attribute.getSimpleType() ); 
 //        		assertEquals("java.lang.Short", attribute.getFullType() ); 
@@ -192,7 +192,7 @@ public class DslModelManagerTest {
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		//assertTrue(attribute.isObjectTypeExpected());
-        		assertTrue(attribute.isSqlTypeExpected());
+//        		assertTrue(attribute.isSqlTypeExpected());
 
 //        		assertEquals("Short", attribute.getSimpleType() ); 
 //        		assertEquals("java.lang.Short", attribute.getFullType() ); 
@@ -207,7 +207,7 @@ public class DslModelManagerTest {
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		assertTrue(attribute.isObjectTypeExpected());
-        		assertFalse(attribute.isSqlTypeExpected());
+//        		assertFalse(attribute.isSqlTypeExpected());
 
 //        		assertEquals("Short", attribute.getSimpleType() ); 
 //        		assertEquals("java.lang.Short", attribute.getFullType() ); 
@@ -223,7 +223,7 @@ public class DslModelManagerTest {
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		assertFalse(attribute.isObjectTypeExpected());
-        		assertTrue(attribute.isSqlTypeExpected());
+//        		assertTrue(attribute.isSqlTypeExpected());
 
 //        		assertEquals("Short", attribute.getSimpleType() ); 
 //        		assertEquals("java.lang.Short", attribute.getFullType() ); 

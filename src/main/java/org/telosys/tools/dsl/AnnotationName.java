@@ -47,7 +47,7 @@ public class AnnotationName {
 	public static final String PRIMITIVE_TYPE = "PrimitiveType" ;
 	public static final String OBJECT_TYPE    = "ObjectType" ;
 	public static final String UNSIGNED_TYPE  = "UnsignedType" ;
-	public static final String SQL_TYPE       = "SqlType" ;
+	// public static final String SQL_TYPE       = "SqlType" ; // Removed in v 3.3.0
 
 	// Added in ver 3.2.0
 	public static final String DEFAULT_VALUE   = "DefaultValue" ; // v 3.2.0

@@ -7,8 +7,6 @@
 	counter2  : short { @AutoIncremented, @NotNull } ;
 	counter3  : short { @PrimitiveType, @AutoIncremented } ;
 	counter4  : short { @ObjectType } ;
-	counter5  : short { @SqlType } ;
 	counter6  : short { @ObjectType, @NotNull } ;
-	counter7  : short { @SqlType, @NotNull } ;
 	birthDate : date ;
 }

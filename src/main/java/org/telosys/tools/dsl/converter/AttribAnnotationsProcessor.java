@@ -158,10 +158,10 @@ public class AttribAnnotationsProcessor {
 				log("Converter : annotation @ObjectType");
 				genericAttribute.setObjectTypeExpected(true);
 			}
-			if (AnnotationName.SQL_TYPE.equals(annotation.getName())) {
-				log("Converter : annotation @SqlType");
-				genericAttribute.setSqlTypeExpected(true);
-			}
+//			if (AnnotationName.SQL_TYPE.equals(annotation.getName())) { // removed in v 3.3.0
+//				log("Converter : annotation @SqlType");
+//				genericAttribute.setSqlTypeExpected(true);
+//			}
 		}
 	}
 

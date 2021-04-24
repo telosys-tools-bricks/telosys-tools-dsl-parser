@@ -57,7 +57,7 @@ public class KeyWords {
 		AnnotationName.PRIMITIVE_TYPE,
 		AnnotationName.UNSIGNED_TYPE,
 		AnnotationName.OBJECT_TYPE,
-		AnnotationName.SQL_TYPE,
+		// AnnotationName.SQL_TYPE, // Removed in v 3.3.0
 
 		AnnotationName.LONG_TEXT,
 		
