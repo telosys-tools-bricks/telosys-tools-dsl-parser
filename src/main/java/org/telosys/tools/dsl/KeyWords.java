@@ -88,8 +88,8 @@ public class KeyWords {
 		AnnotationName.LINK_BY_FK   + "$",
 		AnnotationName.MANY_TO_MANY,
 		AnnotationName.ONE_TO_ONE,
-		AnnotationName.INSERTABLE + "$",
-		AnnotationName.UPDATABLE  + "$",
+		AnnotationName.INSERTABLE + "$",  // Boolean @Insertable(true|false)
+		AnnotationName.UPDATABLE  + "$",  // Boolean @Updatable(true|false)
 		AnnotationName.LINK_BY_JOIN_ENTITY + "$"
 
 		// In the future 
