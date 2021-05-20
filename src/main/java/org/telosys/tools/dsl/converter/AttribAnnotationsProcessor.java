@@ -169,7 +169,7 @@ public class AttribAnnotationsProcessor {
 			Collection<DomainAnnotation> fieldAnnotations) {
 		final String msg = "Converter : annotations for databse : @" ;
 		boolean fieldNotNull = false;
-		Integer fieldSizeMax = 0;
+		Integer fieldSizeMax = null; // not set by default
 		for (DomainAnnotation annotation : fieldAnnotations) {
 
 			// Database annotations ( @DbXxxx ) :
