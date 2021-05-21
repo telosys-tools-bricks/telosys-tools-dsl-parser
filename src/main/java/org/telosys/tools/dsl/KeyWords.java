@@ -80,6 +80,7 @@ public class KeyWords {
 		//--- Added in ver 3.3.0
 		AnnotationName.FK          + "$",  // special paramete checking (based on string param)  
 		AnnotationName.OPTIONAL,
+		AnnotationName.TRANSIENT,
 		AnnotationName.FETCH_TYPE_EAGER,
 		AnnotationName.FETCH_TYPE_LAZY,
 		AnnotationName.MAPPED_BY    + "$",

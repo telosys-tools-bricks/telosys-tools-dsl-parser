@@ -67,6 +67,9 @@ public class LinksAnnotationsProcessor {
 			else if (AnnotationName.OPTIONAL.equals(annotation.getName())) { // Added in ver 3.3
 				link.setOptional(Optional.TRUE);
 			}
+			else if (AnnotationName.TRANSIENT.equals(annotation.getName())) { // Added in ver 3.3
+				link.setTransient(true);
+			}
 			else if (AnnotationName.FETCH_TYPE_LAZY.equals(annotation.getName())) { // Added in ver 3.3
 				link.setFetchType(FetchType.LAZY);
 			}

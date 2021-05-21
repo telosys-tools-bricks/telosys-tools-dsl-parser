@@ -158,10 +158,6 @@ public class AttribAnnotationsProcessor {
 				log("Converter : annotation @ObjectType");
 				genericAttribute.setObjectTypeExpected(true);
 			}
-//			if (AnnotationName.SQL_TYPE.equals(annotation.getName())) { // removed in v 3.3.0
-//				log("Converter : annotation @SqlType");
-//				genericAttribute.setSqlTypeExpected(true);
-//			}
 		}
 	}
 
@@ -193,6 +189,10 @@ public class AttribAnnotationsProcessor {
 				log(msg + AnnotationName.DB_DEFAULT_VALUE );
 				genericAttribute.setDatabaseDefaultValue(annotation.getParameterAsString());
 			}
+			if (AnnotationName.TRANSIENT.equals(annotation.getName())) { // Added in ver 3.3
+				log(msg + AnnotationName.TRANSIENT );
+				genericAttribute.setTransient(true);
+			}
 			
 			// Other annotations :
 			if (AnnotationName.ID.equals(annotation.getName())) {
@@ -215,7 +215,6 @@ public class AttribAnnotationsProcessor {
 				processUpdatable(this.entityName, genericAttribute, annotation);
 			}
 
-			
 		}
 		// Complete with other field annotations
 		if ( genericAttribute.getDatabaseSize() == null && fieldSizeMax != null ) {

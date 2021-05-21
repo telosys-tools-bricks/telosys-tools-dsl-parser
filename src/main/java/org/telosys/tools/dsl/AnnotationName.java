@@ -67,6 +67,7 @@ public class AnnotationName {
 	public static final String FK               = "FK"; // v 3.3.0
 	// Added in ver 3.3.0 : for links
 	public static final String OPTIONAL         = "Optional"; // v 3.3.0
+	public static final String TRANSIENT        = "Transient"; // v 3.3.0
 	public static final String FETCH_TYPE_LAZY  = "FetchTypeLazy"; // v 3.3.0
 	public static final String FETCH_TYPE_EAGER = "FetchTypeEager"; // v 3.3.0
 	public static final String MAPPED_BY        = "MappedBy"; // v 3.3.0

@@ -78,6 +78,7 @@ public class DslModelAttribute implements Attribute {
 	private boolean isDateBefore = false;
 	private boolean isDateFuture = false;
 	private boolean isDatePast = false;
+    private boolean isTransient = false ; // v 3.3.0
 	
 	// An attribute can be involved in many FK, it can be both in a SIMPLE FK and in a COMPOSITE FK 
 	private boolean isForeignKeySimple     = false ; // ( false by default )
@@ -545,15 +546,6 @@ public class DslModelAttribute implements Attribute {
 		this.isPrimitiveTypeExpected = v ;
 	}
 	
-	// Removed in v 3.3.0
-//	@Override
-//	public boolean isSqlTypeExpected() {
-//		return isSqlTypeExpected;
-//	}
-//	public void setSqlTypeExpected(boolean v) {
-//		this.isSqlTypeExpected = v ;
-//	}
-	
 	@Override
 	public boolean isUnsignedTypeExpected() {
 		return isUnsignedTypeExpected;
@@ -619,5 +611,14 @@ public class DslModelAttribute implements Attribute {
     public void setUpdatable(BooleanValue b) {  // v 3.3.0
         this.updatable = b;
     }
+    
+    @Override
+    public boolean isTransient() { // v 3.3.0
+        return this.isTransient;
+    }
+    public void setTransient(boolean b) { // v 3.3.0
+        this.isTransient = b;
+    }
+
 
 }

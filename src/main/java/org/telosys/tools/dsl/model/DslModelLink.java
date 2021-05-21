@@ -58,7 +58,8 @@ public class DslModelLink implements Link {
     private String joinTableName;
     
     private String comparableString;
-    private boolean isEmbedded;
+    private boolean isEmbedded = false ;
+    private boolean isTransient = false ;
     
     private BooleanValue insertable = BooleanValue.UNDEFINED; // Added in v 3.3.0
     private BooleanValue updatable  = BooleanValue.UNDEFINED; // Added in v 3.3.0
@@ -272,6 +273,14 @@ public class DslModelLink implements Link {
     }
     public void setEmbedded(boolean b) {
         this.isEmbedded = b;
+    }
+
+    @Override
+    public boolean isTransient() { // v 3.3.0
+        return this.isTransient;
+    }
+    public void setTransient(boolean b) { // v 3.3.0
+        this.isTransient = b;
     }
 
     @Override
