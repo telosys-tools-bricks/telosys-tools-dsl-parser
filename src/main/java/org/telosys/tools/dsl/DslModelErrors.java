@@ -44,9 +44,7 @@ public class DslModelErrors {
 	 */
 	public DslModelErrors(List<EntityParsingError> entityParsingErrors) {
 		super();
-		for (EntityParsingError e : entityParsingErrors) {
-			//errorsMap.put(e.getEntityName(), buildEntityErrors(e));
-			
+		for (EntityParsingError e : entityParsingErrors) {			
 			String entityName = e.getEntityName();
 			List<String> errors = errorsMap.get(entityName);
 			if ( errors == null ) {
