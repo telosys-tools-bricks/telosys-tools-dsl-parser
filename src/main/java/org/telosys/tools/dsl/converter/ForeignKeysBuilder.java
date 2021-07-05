@@ -31,6 +31,7 @@ import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainFK;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.generic.model.Attribute;
+import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.ForeignKeyColumn;
 import org.telosys.tools.generic.model.ForeignKeyPart;
@@ -93,6 +94,16 @@ public class ForeignKeysBuilder {
 	 */
 	private void updateAttributes(DslModelEntity dslModelEntity) {
 		for ( ForeignKey fk : dslModelEntity.getDatabaseForeignKeys() ) {
+			String referencedTableName = fk.getReferencedTableName();
+			String referencedEntityName = null ;
+			Entity referencedEntity = model.getEntityByTableName(referencedTableName);
+			if (referencedEntity != null) {
+				referencedEntityName = referencedEntity.getClassName();
+			}
+			else {
+				throw new IllegalStateException( "FK error : no table '" + referencedTableName + "' in model" 
+						+ " (FK '" + fk.getName() + "' in entity '" + dslModelEntity.getClassName() +"')");
+			}
 			// Set FK flags for all the attributes concerned by the current FK
 			List<ForeignKeyColumn> fkColumns = fk.getColumns();
 			for ( ForeignKeyColumn fkCol : fkColumns ) {
@@ -100,9 +111,13 @@ public class ForeignKeysBuilder {
 				if ( attribute != null ) {					
 					if ( fkColumns.size() > 1 ) {
 						attribute.setFKComposite(true);
+						// NB : not reliable if attribute involved in multiple FK
+						attribute.setReferencedEntityClassName(referencedEntityName);
 					}
 					else {
 						attribute.setFKSimple(true);
+						// NB : not reliable if attribute involved in multiple FK
+						attribute.setReferencedEntityClassName(referencedEntityName);
 					}
 				}
 				else {
