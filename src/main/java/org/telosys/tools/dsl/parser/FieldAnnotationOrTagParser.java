@@ -18,12 +18,18 @@ package org.telosys.tools.dsl.parser;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.KeyWords;
+import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
+import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationParamValidator;
+import org.telosys.tools.dsl.parser.annotation.Annotations;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 import org.telosys.tools.dsl.parser.model.DomainTag;
+import org.telosys.tools.generic.model.BooleanValue;
 
 /**
  * Field annotations parsing
@@ -37,7 +43,8 @@ public class FieldAnnotationOrTagParser {
 
 	private final String entityName;
 	private final String fieldName;
-
+	private final AnnotationParamValidator paramValidator;
+	
 	/**
 	 * Constructor
 	 * 
@@ -48,6 +55,7 @@ public class FieldAnnotationOrTagParser {
 		super();
 		this.entityName = entityName;
 		this.fieldName = fieldName;
+		this.paramValidator = new AnnotationParamValidator(entityName, fieldName);
 	}
 
 	/**
@@ -81,6 +89,7 @@ public class FieldAnnotationOrTagParser {
 		// get the raw parameter value if any
 		String parameterValue = getParameterValue(annotation);
 
+		/**
 		// check annotation exist
 		List<String> definedAnnotations = KeyWords.getAnnotations();
 
@@ -91,7 +100,7 @@ public class FieldAnnotationOrTagParser {
 																	// "Max#",
 																	// "Min#",
 																	// ""...
-			if (annotationDefinition.startsWith(name)) {
+			if (annotationDefinition.startsWith(name)) { // TODO : Bug "Size" and "SizeMin" all startswith !
 				// Annotation name found in defined annotations
 				if (annotationDefinition.endsWith("%")) { // INTEGER parameter
 															// required
@@ -135,32 +144,47 @@ public class FieldAnnotationOrTagParser {
 			}
 		}
 		throw new AnnotationOrTagError(entityName, fieldName, annotation, "unknown annotation");
+		**/
+		AnnotationDefinition ad = Annotations.get(name);
+		if ( ad != null ) {
+			DomainAnnotation domainAnnotation = null;
+			switch(ad.getParamType()) {
+			case STRING :
+				domainAnnotation = new DomainAnnotation(name, 
+									getParameterValueAsString(annotation, parameterValue) );
+				break;
+			case INTEGER :
+				domainAnnotation = new DomainAnnotation(name, 
+									getParameterValueAsInteger(annotation, parameterValue) );
+				break;
+			case DECIMAL :
+				domainAnnotation = new DomainAnnotation(name, 
+									getParameterValueAsBigDecimal(annotation, parameterValue) );
+				break;
+			case BOOLEAN :
+				domainAnnotation = new DomainAnnotation(name, 
+									getParameterValueAsBoolean(annotation, parameterValue) );
+				break;
+			default :
+				// annotation without parameter
+				if (parameterValue != null) {
+					throw new AnnotationOrTagError(entityName, fieldName, annotation, "unexpected parameter");
+				}
+				domainAnnotation = new DomainAnnotation(name);
+				break;
+			}
+			return domainAnnotation;
+		}
+		else {
+			throw new AnnotationOrTagError(entityName, fieldName, annotation, "unknown annotation");
+		}
 	}
 
 	protected void checkAnnotation(DomainAnnotation annotation) throws AnnotationOrTagError  {
-		if ( annotation.getName().equals(AnnotationName.DB_SIZE) ) {
-			String p = annotation.getParameterAsString();
-			if ( p.contains(",")) {
-				String[] parts = p.split(",");
-				if (parts.length  != 2) {
-					throw new AnnotationOrTagError(entityName, fieldName, AnnotationName.DB_SIZE, "invalid parameter '" + p + "'");
-				}
-				checkSizeInteger(AnnotationName.DB_SIZE, parts[0]);
-				checkSizeInteger(AnnotationName.DB_SIZE, parts[1]);
-			}
-			else {
-				checkSizeInteger(AnnotationName.DB_SIZE, p);
-			}
-		}
-	}
-	private void checkSizeInteger(String annotationOrTag, String parameterValue) throws AnnotationOrTagError {
-		try {
-			Integer i = new Integer(parameterValue);
-			if ( i < 0 ) {
-				throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "negative size '" + parameterValue + "'");
-			}
-		} catch (NumberFormatException e) {
-			throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "invalid size '" + parameterValue + "'");
+		if ( annotation.getName().equals(AnnotationName.DB_SIZE) 
+		  || annotation.getName().equals(AnnotationName.SIZE) ) {
+			
+			paramValidator.checkSize(annotation);
 		}
 	}
 
@@ -275,6 +299,22 @@ public class FieldAnnotationOrTagParser {
 		}
 	}
 
+	protected Boolean getParameterValueAsBoolean(String annotationOrTag, String parameterValue) throws AnnotationOrTagError {
+		// Boolean value
+		checkParameterExistence(annotationOrTag, parameterValue);
+		
+		if ( ! StrUtil.nullOrVoid(parameterValue) ) {
+			String v = parameterValue.trim().toUpperCase();
+			if ("TRUE".equals(v)) {
+				return Boolean.TRUE ;
+			}
+			else if ("FALSE".equals(v)) {
+				return Boolean.FALSE ;
+			}
+		}
+		throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "invalid boolean parameter '" + parameterValue + "'");
+	}
+	
 	protected String getParameterValueAsString(String annotationOrTag, String parameterValue) throws AnnotationOrTagError {
 		checkParameterExistence(annotationOrTag, parameterValue);
 		return getParameterValueAsString(parameterValue);

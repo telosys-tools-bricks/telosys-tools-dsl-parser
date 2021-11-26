@@ -31,12 +31,14 @@ public class KeyWords {
 	 */
 	private static final String SINGLE_LINE_COMMENT = "//" ;
 	
+	
 	/**
 	 * List of annotations names ending with parameter type if any 
 	 *  % : means integer parameter required ( Integer )
 	 *  # : means numeric parameter required ( BigDecimal )
 	 *  $ : means string parameter required ( String )
 	 */
+	/*****
 	private static final String[] annotations = { 
 		
 		AnnotationName.ID, // "Id",
@@ -75,10 +77,10 @@ public class KeyWords {
 		AnnotationName.DB_DEFAULT_VALUE + "$",
 		AnnotationName.DB_COMMENT       + "$",
 
-		AnnotationName.DB_SIZE          + "$",  // special paramete checking (based on string param)  
+		AnnotationName.DB_SIZE          + "$",  // special param checking (based on string param)  
 		
 		//--- Added in ver 3.3.0
-		AnnotationName.FK          + "$",  // special paramete checking (based on string param)  
+		AnnotationName.FK          + "$",  // special param checking (based on string param)  
 		AnnotationName.OPTIONAL,
 		AnnotationName.TRANSIENT,
 		AnnotationName.FETCH_TYPE_EAGER,
@@ -91,12 +93,16 @@ public class KeyWords {
 		AnnotationName.ONE_TO_ONE,
 		AnnotationName.INSERTABLE + "$",  // Boolean @Insertable(true|false)
 		AnnotationName.UPDATABLE  + "$",  // Boolean @Updatable(true|false)
-		AnnotationName.LINK_BY_JOIN_ENTITY + "$"
+		AnnotationName.LINK_BY_JOIN_ENTITY + "$",
 
+		//--- Added in ver 3.4.0
+		AnnotationName.SIZE + "$",  // special param checking (based on string param)  
+		
 		// In the future 
 		// "DbTable$"  // $ means string parameter
 		// etc
 	} ;
+	***/
 	
 	/**
 	 * Return the single line comment string (ie '//' )  <br>
@@ -115,13 +121,16 @@ public class KeyWords {
 		return DomainNeutralTypes.getNames();
 	}
 	
-	/**
-	 * Return the list of annotations keywords with specific ending character if any<br>
-	 * e.g. 'Id', 'NotNull', 'Min#', 'Max#', etc
-	 * @return
-	 */
-	public static final List<String> getAnnotations() {
-		return new LinkedList<>(Arrays.asList(annotations));
-	}
+//	/**
+//	 * Return the list of annotations keywords with specific ending character if any<br>
+//	 * e.g. 'Id', 'NotNull', 'Min#', 'Max#', etc
+//	 * @return
+//	 */
+//	public static final List<String> getAnnotations() {
+//		return new LinkedList<>(Arrays.asList(annotations));
+//	}
 	
+	// TODO : for Eclipse ( cf plugin )
+	// getAnnotationsWithPrefix()   : @Size
+	// getAnnotationsWithPrefixAndParentheses()  : @Size()
 }

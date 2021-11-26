@@ -61,7 +61,7 @@ public class AnnotationName {
 	public static final String DB_COMMENT       = "DbComment"; // v 3.2.0
 	public static final String DB_DEFAULT_VALUE = "DbDefaultValue"; // v 3.2.0
 
-	public static final String DB_SIZE          = "DbSize"; // v 3.2.0
+	public static final String DB_SIZE          = "DbSize"; // v 3.2.0 (!) DEPRECATED in v 3.4.0
 
 	// Added in ver 3.3.0 : for attributes
 	public static final String FK               = "FK"; // v 3.3.0
@@ -79,6 +79,9 @@ public class AnnotationName {
 	public static final String INSERTABLE       = "Insertable"; // v 3.3.0
 	public static final String UPDATABLE        = "Updatable"; // v 3.3.0
 	public static final String LINK_BY_JOIN_ENTITY = "LinkByJoinEntity"; // v 3.3.0
+
+	// Added in ver 3.4.0 : for attributes
+	public static final String SIZE          = "Size"; // v 3.4.0
 
 	// TODO 
     // @Comment(xxx) 

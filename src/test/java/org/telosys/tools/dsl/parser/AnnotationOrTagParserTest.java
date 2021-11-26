@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
+import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 
 import static org.junit.Assert.assertEquals;
@@ -131,7 +132,68 @@ public class AnnotationOrTagParserTest {
 		//annotation = parser.parse("@DbSize(aa)"); //ERR
 		
 	}
+	
+	@Test
+	public void testParseAnnotationDbSize() throws AnnotationOrTagError {
+		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");
+		DomainAnnotationOrTag annotation ;
+		
+		annotation = parser.parse("@DbSize(22)");
+		assertEquals("DbSize", annotation.getName());
+		assertTrue(annotation.hasParameter());
+		assertNotNull(annotation.getParameterAsString());
 
+		annotation = parser.parse("@DbSize(22,4)");
+		annotation = parser.parse("@DbSize(22,0)");
+		
+		parseWithExpectedException("@DbSize(-22,2)", parser); // ERR : negative size
+		parseWithExpectedException("@DbSize(22,-2)", parser); // ERR : negative size
+		parseWithExpectedException("@DbSize(22,)", parser); // ERR
+		parseWithExpectedException("@DbSize(,)", parser); // ERR
+		parseWithExpectedException("@DbSize()", parser); // ERR
+		parseWithExpectedException("@DbSize(aa,2)", parser); // ERR
+		parseWithExpectedException("@DbSize(aa)", parser); //ERR
+	}
+	
+	@Test
+	public void testParseAnnotationSize() throws AnnotationOrTagError {
+		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");
+		DomainAnnotationOrTag annotation ;
+		
+		annotation = parser.parseAnnotation("@Size(22)"); // low level
+		assertNotNull(annotation);
+		assertNotNull(annotation.getName());
+		assertEquals("Size", annotation.getName());
+		assertNotNull(annotation.getParameter());
+		assertEquals("22", annotation.getParameter());
+		
+		annotation = parser.parse("@Size(22)");
+		assertEquals("Size", annotation.getName());
+		assertTrue(annotation.hasParameter());
+		assertNotNull(annotation.getParameterAsString());
+
+		annotation = parser.parse("@Size(22,4)");
+		annotation = parser.parse("@Size(22,0)");
+		
+		parseWithExpectedException("@Size(-22,2)", parser); // ERR : negative size
+		parseWithExpectedException("@Size(22,-2)", parser); // ERR : negative size
+		parseWithExpectedException("@Size(22,)", parser); // ERR
+		parseWithExpectedException("@Size(,)", parser); // ERR
+		parseWithExpectedException("@Size()", parser); // ERR
+		parseWithExpectedException("@Size(aa,2)", parser); // ERR
+		parseWithExpectedException("@Size(aa)", parser); //ERR
+	}
+	
+	private void parseWithExpectedException(String s, FieldAnnotationOrTagParser parser) {
+		AnnotationOrTagError error = null ;
+		try {
+			parser.parse(s);
+		} catch (AnnotationOrTagError e) {
+			error = e;
+		} 
+		assertNotNull(error);
+	}
+	
 	@Test(expected = AnnotationOrTagError.class)
 	public void testParseAnnotationError1() throws AnnotationOrTagError {
 		FieldAnnotationOrTagParser parser = new FieldAnnotationOrTagParser("MyEntity", "myField");

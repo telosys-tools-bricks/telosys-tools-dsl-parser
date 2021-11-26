@@ -22,6 +22,7 @@ public class DomainAnnotationOrTag {
     private final String  name;
     private final String  stringParameter;
     private final Number  numberParameter;
+    private final Boolean booleanParameter;
     private final boolean hasParameter;
 
     /**
@@ -30,32 +31,48 @@ public class DomainAnnotationOrTag {
      */
     public DomainAnnotationOrTag(String name) {
         this.name = name;
-        this.stringParameter = null;
-        this.numberParameter = null;
+        this.stringParameter  = null;
+        this.numberParameter  = null;
+        this.booleanParameter = null;
         this.hasParameter = false;
     }
 
     /**
      * Constructor for annotation with string parameter
      * @param name
-     * @param param
+     * @param stringParameter
      */
-    public DomainAnnotationOrTag(String name, String param) {
+    public DomainAnnotationOrTag(String name, String stringParameter) {
         this.name = name;
-        this.stringParameter = param;
-        this.numberParameter = null;
+        this.stringParameter  = stringParameter;
+        this.numberParameter  = null;
+        this.booleanParameter = null;
         this.hasParameter = true;
     }
 
     /**
      * Constructor for annotation with number parameter
      * @param name
-     * @param param
+     * @param numberParameter
      */
-    public DomainAnnotationOrTag(String name, Number param) {
+    public DomainAnnotationOrTag(String name, Number numberParameter) {
         this.name = name;
-        this.stringParameter = null;
-        this.numberParameter = param;
+        this.stringParameter  = null;
+        this.numberParameter  = numberParameter;
+        this.booleanParameter = null;
+        this.hasParameter = true;
+    }
+
+    /**
+     * Constructor for annotation with boolean parameter
+     * @param name
+     * @param booleanParameter
+     */
+    public DomainAnnotationOrTag(String name, Boolean booleanParameter) {
+        this.name = name;
+        this.stringParameter  = null;
+        this.numberParameter  = null;
+        this.booleanParameter = booleanParameter;
         this.hasParameter = true;
     }
 
@@ -90,7 +107,7 @@ public class DomainAnnotationOrTag {
      * @return
      */
     public BigDecimal getParameterAsBigDecimal() {
-    	if ( numberParameter != null && numberParameter instanceof BigDecimal ) {
+    	if ( numberParameter instanceof BigDecimal ) { // null is not an instanceof anything
             return (BigDecimal) numberParameter;
     	}
     	return null ;
@@ -102,10 +119,19 @@ public class DomainAnnotationOrTag {
      * @return
      */
     public Integer getParameterAsInteger() {
-    	if ( numberParameter != null && numberParameter instanceof Integer ) {
+    	if ( numberParameter instanceof Integer ) { // null is not an instanceof anything
             return (Integer) numberParameter;
     	}
     	return null ;
+    }
+
+    /**
+     * Returns the annotation boolean parameter <br>
+     * or null if none
+     * @return
+     */
+    public Boolean getParameterAsBoolean() {
+        return booleanParameter;
     }
 
     public Object getParameter() {
@@ -115,6 +141,9 @@ public class DomainAnnotationOrTag {
             }
             else if (stringParameter != null ) {
             	return stringParameter;
+            }
+            else if (booleanParameter != null ) {
+            	return booleanParameter;
             }
     	}
     	return null ;
@@ -126,11 +155,14 @@ public class DomainAnnotationOrTag {
     	sb.append(name);
     	if ( this.hasParameter ) {
         	sb.append("(");
+        	if ( stringParameter != null ) {
+            	sb.append(stringParameter);
+        	}
         	if ( numberParameter != null ) {
             	sb.append(numberParameter);
         	}
-        	else {
-            	sb.append(stringParameter);
+        	if ( booleanParameter != null ) {
+            	sb.append(booleanParameter);
         	}
         	sb.append(")");
     	}

@@ -13,29 +13,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.parser.model;
+package org.telosys.tools.dsl.parser.annotation;
 
-public class DomainAnnotation extends DomainAnnotationOrTag {
+public class AnnotationDefinition {
 
-    public DomainAnnotation(String name) {
-    	super(name);
-    }
-    
-    public DomainAnnotation(String name, String param) {
-    	super(name,param);
-    }
-    
-    public DomainAnnotation(String name, Number param) {
-    	super(name,param);
-    }
-    
-    public DomainAnnotation(String name, Boolean param) {
-    	super(name,param);
-    }
-    
-    @Override
-    public String toString() {
-    	return "@" + super.toString();
-    }
+	private final String name;
+	private final AnnotationParamType  type;
 
+	public AnnotationDefinition(String name) {
+		this.name = name ;
+		this.type = AnnotationParamType.NONE ;
+	}
+
+	public AnnotationDefinition(String name, AnnotationParamType type) {
+		this.name = name ;
+		this.type = type ;
+	}
+
+	protected String nameWithoutSuffix(String str) {
+		return str.substring(0, str.length() - 1);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public AnnotationParamType getParamType() {
+		return type;
+	}
+	
 }

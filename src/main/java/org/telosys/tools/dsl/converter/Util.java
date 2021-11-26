@@ -15,12 +15,15 @@
  */
 package org.telosys.tools.dsl.converter;
 
-import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.generic.model.BooleanValue;
 
 public class Util {
 
+	private Util() { 
+	}
+	
+	/***
 	public static BooleanValue getBooleanValue(String entityName, String fieldName, DomainAnnotation annotation) {
 		String value = annotation.getParameterAsString();
 
@@ -37,5 +40,21 @@ public class Util {
 				+ "." + fieldName
 				+ " : @"+ annotation.getName()
 				+ " : " + "invalid boolean value " + value + " ('true' or 'false' expected)" );
+	}
+	***/
+	
+	public static BooleanValue getBooleanValue(String entityName, String fieldName, DomainAnnotation annotation) {
+		if ( Boolean.TRUE.equals( annotation.getParameterAsBoolean() ) ) {
+			return BooleanValue.TRUE;
+		}
+		else if ( Boolean.FALSE.equals( annotation.getParameterAsBoolean() ) ) {
+			return BooleanValue.FALSE;
+		}
+		else {
+			throw new IllegalStateException( entityName
+					+ "." + fieldName
+					+ " : @"+ annotation.getName()
+					+ " : " + "invalid boolean value ('true' or 'false' expected)" );
+		}
 	}
 }
