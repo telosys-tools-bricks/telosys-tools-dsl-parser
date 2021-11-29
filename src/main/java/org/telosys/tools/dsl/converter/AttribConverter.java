@@ -35,13 +35,13 @@ import org.telosys.tools.dsl.parser.model.DomainType;
  */
 public class AttribConverter extends AbstractConverter {
 
-	//private final AttribAnnotationsProcessor annotationsConverter = new AttribAnnotationsProcessor();
 	private final AnnotationApplicator annotationApplicator ;
 
-	private final TagsConverter tagsConverter; // = new TagsConverter();
+	private final TagsConverter tagsConverter;
 	
 	/**
 	 * Constructor
+	 * @param model
 	 */
 	public AttribConverter(DslModel model) {
 		super();
@@ -63,8 +63,8 @@ public class AttribConverter extends AbstractConverter {
 		for (DomainField domainEntityField : domainEntity.getFields()) {
 
 			// Init the new attribute with at least its name
-			DslModelAttribute genericAttribute = new DslModelAttribute();
-			genericAttribute.setName(notNull(domainEntityField.getName()));
+			DslModelAttribute dslAttribute = new DslModelAttribute();
+			dslAttribute.setName(notNull(domainEntityField.getName()));
 
 			DomainType domainFieldType = domainEntityField.getType();
 			if (domainFieldType.isNeutralType()) {
@@ -72,9 +72,9 @@ public class AttribConverter extends AbstractConverter {
 				log("convertEntityAttributes() : " + domainEntityField.getName() + " : neutral type");
 				// Simple type attribute
 //				convertAttributeNeutralType(domainEntity, domainEntityField, genericAttribute);
-				populateAttribute(dslEntity, genericAttribute, domainEntityField );
+				populateAttribute(dslEntity, dslAttribute, domainEntityField );
 				// Add the new "basic attribute" to the entity
-				dslEntity.getAttributes().add(genericAttribute);
+				dslEntity.getAttributes().add(dslAttribute);
 			}
 		}
 	}
@@ -118,89 +118,33 @@ public class AttribConverter extends AbstractConverter {
 		
 		// Apply tags if any
 		tagsConverter.applyTags(dslAttribute, domainField);
+		
+		// Finalize attribute state
+		finalizeAttribute(dslAttribute);
 	}
 
 	/**
 	 * Initializes default values according with the given attribute
-	 * @param genericAttribute
-	 * @param domainEntityField
+	 * @param dslAttribute
+	 * @param domainField
 	 */
-	private void initAttributeDefaultValues(DslModelAttribute genericAttribute, DomainField domainEntityField) {
+	private void initAttributeDefaultValues(DslModelAttribute dslAttribute, DomainField domainField) {
 
 		// All the default attribute values are set in the attribute class
-		// Here some default values can are set depending on other attribute information 
+		// Here some default values can be set depending on other attribute information 
 		
 		// By default the database name is the attribute name 
 		// it will be overridden by @DbName(xxx) if any
-		genericAttribute.setDatabaseName(domainEntityField.getName()); 
+		dslAttribute.setDatabaseName(domainField.getName()); 
 
 		// By default the label is the attribute name 
 		// it will be overridden by @Label(xxx) if any
-		genericAttribute.setLabel(domainEntityField.getName());
-		
-		// genericAttribute.setSelected(true); // allready set in attribute class
+		dslAttribute.setLabel(domainField.getName());
 	}
-
-//	/**
-//	 * Returns the entity referenced par the given field
-//	 * 
-//	 * @param domainField
-//	 * @param domainModel
-//	 * @return
-//	 */
-//	private DomainEntity getReferencedEntity(DomainField domainField, DomainModel domainModel) {
-//		DomainType domainFieldType = domainField.getType();
-//		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
-//		return domainModel.getEntity(domainFieldType.getName());
-//	}
-
-	/**
-	 * Converts a "reference/link" attribute <br>
-	 * eg : car : Car ; <br>
-	 * 
-	 * @param domainEntityField
-	 *            the field to be converted
-	 * @return
-	 */
-/*** 	// PSEUDO FOREIGN KEYS REMOVED IN V 3.3
-
-	private DslModelAttribute convertAttributePseudoForeignKey(DomainField domainEntityField, DomainModel domainModel) {
-		log("convertAttributePseudoForeignKey() : name = " + domainEntityField.getName());
-
-		DomainEntity referencedEntity = getReferencedEntity(domainEntityField, domainModel);
-
-		DomainField referencedEntityIdField = getReferencedEntityIdField(referencedEntity);
-
-		// --- Attribute name (keep the same name to avoid potential naming collision) 
-		String attributeName = domainEntityField.getName(); 
-
-		// --- Attribute type
-		check(referencedEntityIdField.getType().isNeutralType(),
-				"Invalid referenced entity field type. Neutral type expected");
-		String attributeType = referencedEntityIdField.getTypeName();
-
-		// --- Create a new attribute to represent the FK referenciing the entity
-		DslModelAttribute genericAttributeForFK = new DslModelAttribute();
-		genericAttributeForFK.setName(attributeName);
-		genericAttributeForFK.setNeutralType(attributeType);
-		initAttributeDefaultValues(genericAttributeForFK, domainEntityField);
-
-		// --- Use REFERENCED entity id field annotations
-		Collection<DomainAnnotation> referencedFieldAnnotations = referencedEntityIdField.getAnnotations().values();
-//		applyAnnotationsAboutValue(genericAttributeForFK, referencedFieldAnnotations);
-//		applyAnnotationsAboutType(genericAttributeForFK, referencedFieldAnnotations);
-//		applyAnnotationsAboutDatabase(genericAttributeForFK, referencedFieldAnnotations);
-//		applyAnnotationsWithStringParameter(genericAttributeForFK, referencedFieldAnnotations);
-		annotationsConverter.applyAnnotationsForPseudoForeignKey(genericAttributeForFK, referencedFieldAnnotations);
-
-		// --- Set flag as "Pseudo Foreign Key" (Simple FK)
-		genericAttributeForFK.setFKSimple(true);
-		genericAttributeForFK.setReferencedEntityClassName(referencedEntity.getName());
-
-		return genericAttributeForFK;
-	}
-***/
 	
-
-
+	private void finalizeAttribute(DslModelAttribute dslAttribute ) {	
+		if ( dslAttribute.getDatabaseSize() == null && dslAttribute.getMaxLength() != null ) {
+			dslAttribute.setDatabaseSize(dslAttribute.getMaxLength().toString());
+		}
+	}
 }
