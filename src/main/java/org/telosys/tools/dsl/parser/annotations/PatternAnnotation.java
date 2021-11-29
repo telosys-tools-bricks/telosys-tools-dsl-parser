@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class PatternAnnotation extends AnnotationDefinition {
 
 	public PatternAnnotation() {
-		super(AnnotationName.PATTERN, AnnotationParamType.STRING);
+		super(AnnotationName.PATTERN, AnnotationParamType.STRING, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override

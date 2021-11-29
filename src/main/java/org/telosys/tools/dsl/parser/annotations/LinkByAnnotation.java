@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.converter.ReferenceDefinition;
 import org.telosys.tools.dsl.converter.ReferenceDefinitions;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public abstract class LinkByAnnotation extends AnnotationDefinition {
 
 	protected LinkByAnnotation(String name, AnnotationParamType type) {
-		super(name, type);
+		super(name, type, AnnotationScope.LINK);
 	}
 
 	protected IllegalStateException newException(String msg) {

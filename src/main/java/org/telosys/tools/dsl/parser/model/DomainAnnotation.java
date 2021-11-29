@@ -20,6 +20,7 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 import org.telosys.tools.dsl.parser.annotation.Annotations;
 
 public class DomainAnnotation extends DomainAnnotationOrTag {
@@ -51,9 +52,15 @@ public class DomainAnnotation extends DomainAnnotationOrTag {
 	 * @param entity
 	 * @param attribute
 	 */
-	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute ) {
-    	AnnotationDefinition annotationDefinition = getAnnotationDefinition(this.getName());
-    	annotationDefinition.apply(model, entity, attribute, this.getParameter());
+	public void applyToAttribute(DslModel model, DslModelEntity entity, DslModelAttribute attribute ) {
+		String annotationName = this.getName();
+    	AnnotationDefinition annotationDefinition = getAnnotationDefinition(annotationName);
+    	if ( annotationDefinition.getScope() == AnnotationScope.ATTRIBUTE ) {
+        	annotationDefinition.apply(model, entity, attribute, this.getParameter());
+    	}
+    	else {
+    		throw new IllegalStateException("annotation '" + annotationName + "' not applicable on an attribute" );
+    	}
 	}
 
 	/**
@@ -62,11 +69,21 @@ public class DomainAnnotation extends DomainAnnotationOrTag {
 	 * @param entity
 	 * @param link
 	 */
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link ) {
-    	AnnotationDefinition annotationDefinition = getAnnotationDefinition(this.getName());
-    	annotationDefinition.apply(model, entity, link, this.getParameter());
-	}
+	public void applyToLink(DslModel model, DslModelEntity entity, DslModelLink link ) {
+		String annotationName = this.getName();
+    	AnnotationDefinition annotationDefinition = getAnnotationDefinition(annotationName);
+    	if ( annotationDefinition.getScope() == AnnotationScope.LINK ) {
+    		annotationDefinition.apply(model, entity, link, this.getParameter());
+    	}
+    	else {
+    		throw new IllegalStateException("annotation '" + annotationName + "' not applicable on a link" );
+    	}
+    }
 	
+	/**
+	 * @param annotationName
+	 * @return
+	 */
 	private AnnotationDefinition getAnnotationDefinition(String annotationName) {
     	AnnotationDefinition annotationDefinition = Annotations.get(this.getName());
     	if ( annotationDefinition != null ) {

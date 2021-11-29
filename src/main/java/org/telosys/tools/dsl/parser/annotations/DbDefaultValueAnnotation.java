@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class DbDefaultValueAnnotation extends AnnotationDefinition {
 
 	public DbDefaultValueAnnotation() {
-		super(AnnotationName.DB_DEFAULT_VALUE, AnnotationParamType.STRING);
+		super(AnnotationName.DB_DEFAULT_VALUE, AnnotationParamType.STRING, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override

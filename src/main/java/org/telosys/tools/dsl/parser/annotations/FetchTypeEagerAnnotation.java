@@ -21,12 +21,13 @@ import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 import org.telosys.tools.generic.model.FetchType;
 
 public class FetchTypeEagerAnnotation extends AnnotationDefinition {
 
 	public FetchTypeEagerAnnotation() {
-		super(AnnotationName.FETCH_TYPE_EAGER, AnnotationParamType.NONE);
+		super(AnnotationName.FETCH_TYPE_EAGER, AnnotationParamType.NONE, AnnotationScope.LINK);
 	}
 
 	@Override

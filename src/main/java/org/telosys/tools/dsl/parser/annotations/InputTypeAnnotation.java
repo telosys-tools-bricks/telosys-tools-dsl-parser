@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class InputTypeAnnotation extends AnnotationDefinition {
 
 	public InputTypeAnnotation() {
-		super(AnnotationName.INPUT_TYPE, AnnotationParamType.STRING);
+		super(AnnotationName.INPUT_TYPE, AnnotationParamType.STRING, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override

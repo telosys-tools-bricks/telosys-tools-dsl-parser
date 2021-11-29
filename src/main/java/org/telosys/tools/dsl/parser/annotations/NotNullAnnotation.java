@@ -21,16 +21,20 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class NotNullAnnotation extends AnnotationDefinition {
 
 	public NotNullAnnotation() {
-		super(AnnotationName.NOT_NULL, AnnotationParamType.NONE);
+		super(AnnotationName.NOT_NULL, AnnotationParamType.NONE, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override
 	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) {
 		checkParamValue(paramValue);
-		attribute.setNotNull(true);		
+		attribute.setNotNull(true);
+		
+		// if Field Not Null => Database Not Null 
+		attribute.setDatabaseNotNull(true);
 	}
 }

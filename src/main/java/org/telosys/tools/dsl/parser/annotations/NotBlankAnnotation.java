@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class NotBlankAnnotation extends AnnotationDefinition {
 
 	public NotBlankAnnotation() {
-		super(AnnotationName.NOT_BLANK, AnnotationParamType.NONE);
+		super(AnnotationName.NOT_BLANK, AnnotationParamType.NONE, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override

@@ -13,19 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.parser.annotations;
+package org.telosys.tools.dsl.parser.annotation;
 
-import org.telosys.tools.dsl.AnnotationName;
-import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
-import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
-import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
-
-public class FkAnnotation extends AnnotationDefinition {
-
-	public FkAnnotation() {
-		super(AnnotationName.FK, AnnotationParamType.STRING, AnnotationScope.ATTRIBUTE);
-	}
-
-	// No apply for @FK annotation
-	// @FK are not "applied" on field or link but only used to create FK at Entity level 
+public enum AnnotationScope {
+	
+	ATTRIBUTE ,
+	
+	LINK ,
+	
+	ENTITY
 }

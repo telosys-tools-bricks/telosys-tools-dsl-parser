@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class LongTextAnnotation extends AnnotationDefinition {
 
 	public LongTextAnnotation() {
-		super(AnnotationName.LONG_TEXT, AnnotationParamType.NONE);
+		super(AnnotationName.LONG_TEXT, AnnotationParamType.NONE, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override

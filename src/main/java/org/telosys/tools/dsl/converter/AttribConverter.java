@@ -17,8 +17,10 @@ package org.telosys.tools.dsl.converter;
 
 import java.util.Collection;
 
+import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
+import org.telosys.tools.dsl.parser.annotation.AnnotationApplicator;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -34,14 +36,17 @@ import org.telosys.tools.dsl.parser.model.DomainType;
 public class AttribConverter extends AbstractConverter {
 
 	//private final AttribAnnotationsProcessor annotationsConverter = new AttribAnnotationsProcessor();
-	
-	private final TagsConverter tagsConverter = new TagsConverter();
+	private final AnnotationApplicator annotationApplicator ;
+
+	private final TagsConverter tagsConverter; // = new TagsConverter();
 	
 	/**
 	 * Constructor
 	 */
-	public AttribConverter() {
+	public AttribConverter(DslModel model) {
 		super();
+		this.annotationApplicator = new AnnotationApplicator(model);
+		this.tagsConverter = new TagsConverter();
 	}
 
 	/**
@@ -66,7 +71,8 @@ public class AttribConverter extends AbstractConverter {
 				// STANDARD NEUTRAL TYPE = BASIC ATTRIBUTE
 				log("convertEntityAttributes() : " + domainEntityField.getName() + " : neutral type");
 				// Simple type attribute
-				convertAttributeNeutralType(domainEntity, domainEntityField, genericAttribute);
+//				convertAttributeNeutralType(domainEntity, domainEntityField, genericAttribute);
+				populateAttribute(dslEntity, genericAttribute, domainEntityField );
 				// Add the new "basic attribute" to the entity
 				dslEntity.getAttributes().add(genericAttribute);
 			}
@@ -77,34 +83,41 @@ public class AttribConverter extends AbstractConverter {
 	 * Converts a basic "neutral type" attribute <br>
 	 * eg : id : short {@Id}; <br>
 	 * @param domainEntity
-	 * @param domainEntityField
-	 * @param genericAttribute
+	 * @param domainField
+	 * @param dslAttribute
 	 */
-	private void convertAttributeNeutralType(DomainEntity domainEntity, 
-			DomainField domainEntityField, DslModelAttribute genericAttribute) {
-		log("convertAttributeNeutralType() : name = " + domainEntityField.getName());
+//	private void convertAttributeNeutralType(DomainEntity domainEntity, 
+//			DomainField domainEntityField, DslModelAttribute genericAttribute) {
+//	private void convertAttributeNeutralType(DomainField domainEntityField, 
+//			DslModelEntity dslEntity, DslModelAttribute dslAttribute) {
+	private void populateAttribute(DslModelEntity dslEntity, DslModelAttribute dslAttribute, 
+			DomainField domainField ) {	
+		log("convertAttributeNeutralType() : name = " + domainField.getName());
 
-		DomainType domainFieldType = domainEntityField.getType();
+		DomainType domainFieldType = domainField.getType();
 		check(domainFieldType.isNeutralType(), "Invalid field type. Neutral type expected");
 		DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
 
 		// the "neutral type" is now the only type managed at this level
-		genericAttribute.setNeutralType(domainNeutralType.getName());
+		dslAttribute.setNeutralType(domainNeutralType.getName());
 
-		initAttributeDefaultValues(genericAttribute, domainEntityField);
+		initAttributeDefaultValues(dslAttribute, domainField);
 
 		// Apply annotations if any
-		if (domainEntityField.getAnnotations() != null) {
+		if (domainField.getAnnotations() != null) {
 			log("Converter : annotations found");
-			Collection<DomainAnnotation> fieldAnnotations = domainEntityField.getAnnotations().values();
+			Collection<DomainAnnotation> fieldAnnotations = domainField.getAnnotations().values();
+		/***
 			AttribAnnotationsProcessor annotationsConverter = new AttribAnnotationsProcessor(domainEntity.getName());
 			annotationsConverter.applyAnnotationsForNeutralType(genericAttribute, fieldAnnotations);
+		***/
+			annotationApplicator.applyAnnotationsToField(dslEntity, dslAttribute, fieldAnnotations);
 		} else {
 			log("Converter : no annotation");
 		}
 		
 		// Apply tags if any
-		tagsConverter.applyTags(genericAttribute, domainEntityField);
+		tagsConverter.applyTags(dslAttribute, domainField);
 	}
 
 	/**

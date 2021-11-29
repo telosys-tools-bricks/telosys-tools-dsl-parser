@@ -13,26 +13,29 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.parser.annotations;
+package org.telosys.tools.dsl.parser.annotation;
 
-import org.telosys.tools.dsl.AnnotationName;
+import java.util.Collection;
+
 import org.telosys.tools.dsl.model.DslModel;
+import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
-import org.telosys.tools.dsl.model.DslModelLink;
-import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
-import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
-import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
-import org.telosys.tools.generic.model.Optional;
+import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
-public class OptionalAnnotation extends AnnotationDefinition {
+public class AnnotationApplicator {
 
-	public OptionalAnnotation() {
-		super(AnnotationName.OPTIONAL, AnnotationParamType.NONE, AnnotationScope.LINK);
+	private final DslModel model;
+	
+	public AnnotationApplicator(DslModel model) {
+		this.model = model;
 	}
 
-	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
-		checkParamValue(paramValue);
-		link.setOptional(Optional.TRUE);		
+	public void applyAnnotationsToField(DslModelEntity entity, DslModelAttribute attribute, Collection<DomainAnnotation> annotations) {
+		for (DomainAnnotation annotation : annotations) {
+			// log("Converter : annotation '" + annotation.getName() + "'");
+			
+			annotation.applyToAttribute(model, entity, attribute);
+			
+		}		
 	}
 }

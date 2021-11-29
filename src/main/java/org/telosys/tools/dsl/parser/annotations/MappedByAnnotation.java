@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class MappedByAnnotation extends AnnotationDefinition {
 
 	public MappedByAnnotation() {
-		super(AnnotationName.MAPPED_BY, AnnotationParamType.STRING);
+		super(AnnotationName.MAPPED_BY, AnnotationParamType.STRING, AnnotationScope.LINK);
 	}
 
 	@Override

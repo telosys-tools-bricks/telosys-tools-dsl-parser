@@ -23,11 +23,12 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class MinAnnotation extends AnnotationDefinition {
 
 	public MinAnnotation() {
-		super(AnnotationName.MIN, AnnotationParamType.DECIMAL);
+		super(AnnotationName.MIN, AnnotationParamType.DECIMAL, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override

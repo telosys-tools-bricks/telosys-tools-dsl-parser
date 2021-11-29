@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class PrimitiveTypeAnnotation extends AnnotationDefinition {
 
 	public PrimitiveTypeAnnotation() {
-		super(AnnotationName.PRIMITIVE_TYPE, AnnotationParamType.NONE);
+		super(AnnotationName.PRIMITIVE_TYPE, AnnotationParamType.NONE, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override

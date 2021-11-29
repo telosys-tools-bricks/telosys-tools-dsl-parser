@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class TransientAnnotation extends AnnotationDefinition {
 
 	public TransientAnnotation() {
-		super(AnnotationName.TRANSIENT, AnnotationParamType.NONE);
+		super(AnnotationName.TRANSIENT, AnnotationParamType.NONE, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override

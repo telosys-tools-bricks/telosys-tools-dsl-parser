@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class DbSizeAnnotation extends AnnotationDefinition {
 
 	public DbSizeAnnotation() {
-		super(AnnotationName.DB_SIZE, AnnotationParamType.STRING);
+		super(AnnotationName.DB_SIZE, AnnotationParamType.STRING, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override

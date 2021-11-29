@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class SizeMinAnnotation extends AnnotationDefinition {
 
 	public SizeMinAnnotation() {
-		super(AnnotationName.SIZE_MIN, AnnotationParamType.INTEGER);
+		super(AnnotationName.SIZE_MIN, AnnotationParamType.INTEGER, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override

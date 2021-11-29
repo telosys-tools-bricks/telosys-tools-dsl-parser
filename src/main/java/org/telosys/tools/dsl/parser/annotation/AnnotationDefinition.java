@@ -26,11 +26,13 @@ import org.telosys.tools.generic.model.BooleanValue;
 public abstract class AnnotationDefinition {
 
 	private final String name;
-	private final AnnotationParamType  type;
+	private final AnnotationParamType type;
+	private final AnnotationScope     scope;
 
-	protected AnnotationDefinition(String name, AnnotationParamType type) {
+	protected AnnotationDefinition(String name, AnnotationParamType type, AnnotationScope scope) {
 		this.name = name ;
 		this.type = type ;
+		this.scope = scope ;
 	}
 
 	protected String nameWithoutSuffix(String str) {
@@ -43,6 +45,10 @@ public abstract class AnnotationDefinition {
 
 	public AnnotationParamType getParamType() {
 		return type;
+	}
+	
+	public AnnotationScope getScope() {
+		return scope;
 	}
 	
 	protected void checkParamValue(Object paramValue) {

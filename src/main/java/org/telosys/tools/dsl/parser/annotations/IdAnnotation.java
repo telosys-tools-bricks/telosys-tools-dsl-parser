@@ -21,18 +21,21 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class IdAnnotation extends AnnotationDefinition {
 
 	public IdAnnotation() {
-		super(AnnotationName.ID, AnnotationParamType.NONE);
+		super(AnnotationName.ID, AnnotationParamType.NONE, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override
 	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) {
 		checkParamValue(paramValue);
 		attribute.setKeyElement(true);
+		
 		// If "@Id" => "@NotNull"
 		attribute.setNotNull(true);
+		attribute.setDatabaseNotNull(true);
 	}
 }

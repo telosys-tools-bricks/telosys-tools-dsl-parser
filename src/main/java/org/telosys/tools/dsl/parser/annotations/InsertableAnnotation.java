@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class InsertableAnnotation extends AnnotationDefinition {
 
 	public InsertableAnnotation() {
-		super(AnnotationName.INSERTABLE, AnnotationParamType.BOOLEAN);
+		super(AnnotationName.INSERTABLE, AnnotationParamType.BOOLEAN, AnnotationScope.LINK);
 	}
 
 	@Override

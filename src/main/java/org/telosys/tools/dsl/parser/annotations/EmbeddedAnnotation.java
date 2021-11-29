@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class EmbeddedAnnotation extends AnnotationDefinition {
 
 	public EmbeddedAnnotation() {
-		super(AnnotationName.EMBEDDED, AnnotationParamType.NONE);
+		super(AnnotationName.EMBEDDED, AnnotationParamType.NONE, AnnotationScope.LINK);
 	}
 
 	@Override

@@ -23,11 +23,12 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class MaxAnnotation extends AnnotationDefinition {
 
 	public MaxAnnotation() {
-		super(AnnotationName.MAX, AnnotationParamType.DECIMAL);
+		super(AnnotationName.MAX, AnnotationParamType.DECIMAL, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override

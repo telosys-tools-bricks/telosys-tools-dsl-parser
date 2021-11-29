@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class AutoIncrementedAnnotation extends AnnotationDefinition {
 
 	public AutoIncrementedAnnotation() {
-		super(AnnotationName.AUTO_INCREMENTED, AnnotationParamType.NONE);
+		super(AnnotationName.AUTO_INCREMENTED, AnnotationParamType.NONE, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override

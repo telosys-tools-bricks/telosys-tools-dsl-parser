@@ -21,11 +21,12 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
 public class SizeMaxAnnotation extends AnnotationDefinition {
 
 	public SizeMaxAnnotation() {
-		super(AnnotationName.SIZE_MAX, AnnotationParamType.INTEGER);
+		super(AnnotationName.SIZE_MAX, AnnotationParamType.INTEGER, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override

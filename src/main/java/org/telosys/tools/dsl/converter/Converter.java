@@ -106,7 +106,8 @@ public class Converter extends AbstractConverter {
 	 * @param dslModel
 	 */
 	protected void createAllAttributes(DomainModel domainModel, DslModel dslModel) {
-		AttribConverter attribConverter = new AttribConverter();
+//		AttribConverter attribConverter = new AttribConverter();
+		AttribConverter attribConverter = new AttribConverter(dslModel);
 		// for each "DomainEntity" convert attributes 
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
 			String entityName = domainEntity.getName();

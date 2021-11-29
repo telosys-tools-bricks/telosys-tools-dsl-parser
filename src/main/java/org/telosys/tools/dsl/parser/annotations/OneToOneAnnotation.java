@@ -21,12 +21,13 @@ import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 import org.telosys.tools.generic.model.Cardinality;
 
 public class OneToOneAnnotation extends AnnotationDefinition {
 
 	public OneToOneAnnotation() {
-		super(AnnotationName.ONE_TO_ONE, AnnotationParamType.STRING);
+		super(AnnotationName.ONE_TO_ONE, AnnotationParamType.STRING, AnnotationScope.LINK);
 	}
 
 	@Override
