@@ -1,0 +1,58 @@
+
+--------------------------------------------------------------------------
+
+STEP 1 : Files parsing
+ 
+ DslParser : parse files --> DomainModel
+
+    Parser.parseField
+      // 1) Parse the field NAME and TYPE
+       FieldNameAndTypeParser.parseFieldNameAndType(..)
+       
+      // 2) Parse field ANNOTATIONS and TAGS
+       FieldAnnotationsAndTagsParser.parse(...)
+       
+      // Keep Errors found
+      
+      // Process all ANNOTATIONS found for this field
+        // Special processing for "@FK" annotation 
+        FieldFKAnnotationParser
+        domainField.addFKDeclaration(fk);
+
+--------------------------------------------------------------------------
+
+STEP 2 : Conversion from "raw elements" to "DSL model elements"
+ 
+ Converter: ( converts DomainModel to DslModel )
+
+  createAllVoidEntities 
+
+  createAllAttributes (basic fields with neutral type)
+    AttribConverter.convertAttributes(..)
+      .convertAttributeNeutralType 
+>         AttribAnnotationsProcessor.applyAnnotationsForNeutralType(..)
+>            - @Id, @AutoIncremented
+>		     - applyAnnotationsAboutValue(attribute, annotations);
+>		     - applyAnnotationsAboutType(attribute, annotations);
+>		     - applyAnnotationsAboutDatabase(attribute, annotations);
+>		     - applyAnnotationsWithStringParameter(attribute, annotations);
+  
+
+  createAllForeignKeys 
+    //Create all Foreign Keys declared with '@FK' annotations at field level
+    ForeignKeysBuilder.buildForeignKeys(entity);
+
+  createAllLinks 
+    LinksConverter.createLinks(..)
+      . convertAttributeLink()
+        // Init link with default values
+        // Apply annotations
+>        LinksAnnotationsProcessor.applyAnnotationsForLink(..)
+>        @Embedded, @ManyToOne, @OneToOne, etc
+
+--------------------------------------------------------------------------
+
+Note : @FK are not "applied" on field or link but used to create FK at Entity level 
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------

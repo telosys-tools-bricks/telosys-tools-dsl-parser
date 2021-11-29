@@ -146,6 +146,9 @@ public class AttribAnnotationsProcessor {
 			Collection<DomainAnnotation> fieldAnnotations) {
 		for (DomainAnnotation annotation : fieldAnnotations) {
 
+			// TODO
+			// annotation.apply(genericAttribute); 
+			
 			if (AnnotationName.PRIMITIVE_TYPE.equals(annotation.getName())) {
 				log("Converter : annotation @PrimitiveType");
 				genericAttribute.setPrimitiveTypeExpected(true);

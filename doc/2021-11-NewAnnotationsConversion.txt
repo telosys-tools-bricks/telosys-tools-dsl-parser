@@ -1,0 +1,33 @@
+
+In STEP 2 : Conversion from "raw elements" to "DSL model elements"
+ 
+ Converter: ( converts DomainModel to DslModel )
+
+  createAllVoidEntities 
+
+  createAllAttributes
+    AttribConverter.convertAttributes(..)
+      .convertAttributeNeutralType 
+>         AttribAnnotationsProcessor.applyAnnotationsForNeutralType(..)
+>>>>>  Apply here
+>>>>>  + inherit from other annotations 
+>>>>>         Examples :
+>>>>>         . DatabaseSize <- fieldSizeMax 
+>>>>>         . DatabaseNotNull <- fieldNotNull
+Note : @FK are not "applied" on field or link but used to create FK at Entity level  
+
+  createAllForeignKeys
+    //Create all Foreign Keys declared with '@FK' annotations at field level
+    ForeignKeysBuilder.buildForeignKeys(entity);
+
+  createAllLinks 
+    LinksConverter.createLinks(..)
+      . convertAttributeLink()
+        // Init link with default values
+        // Apply annotations
+>        LinksAnnotationsProcessor.applyAnnotationsForLink(..)
+>>>>>  Apply here
+
+>>>>>  + check annotations consistency ?
+         . MappedBy (xx) 
+         . FK

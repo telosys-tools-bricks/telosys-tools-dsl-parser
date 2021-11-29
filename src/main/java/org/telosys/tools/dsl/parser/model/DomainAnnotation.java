@@ -15,6 +15,13 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
+import org.telosys.tools.dsl.model.DslModel;
+import org.telosys.tools.dsl.model.DslModelAttribute;
+import org.telosys.tools.dsl.model.DslModelEntity;
+import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
+import org.telosys.tools.dsl.parser.annotation.Annotations;
+
 public class DomainAnnotation extends DomainAnnotationOrTag {
 
     public DomainAnnotation(String name) {
@@ -38,4 +45,35 @@ public class DomainAnnotation extends DomainAnnotationOrTag {
     	return "@" + super.toString();
     }
 
+	/**
+	 * Apply annotation on the given attribute
+	 * @param model
+	 * @param entity
+	 * @param attribute
+	 */
+	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute ) {
+    	AnnotationDefinition annotationDefinition = getAnnotationDefinition(this.getName());
+    	annotationDefinition.apply(model, entity, attribute, this.getParameter());
+	}
+
+	/**
+	 * Apply annotation on the given link
+	 * @param model
+	 * @param entity
+	 * @param link
+	 */
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link ) {
+    	AnnotationDefinition annotationDefinition = getAnnotationDefinition(this.getName());
+    	annotationDefinition.apply(model, entity, link, this.getParameter());
+	}
+	
+	private AnnotationDefinition getAnnotationDefinition(String annotationName) {
+    	AnnotationDefinition annotationDefinition = Annotations.get(this.getName());
+    	if ( annotationDefinition != null ) {
+    		return annotationDefinition ;
+    	}
+    	else {
+    		throw new IllegalStateException("Unknown annotation '" + annotationName + "'" );
+    	}
+	}
 }

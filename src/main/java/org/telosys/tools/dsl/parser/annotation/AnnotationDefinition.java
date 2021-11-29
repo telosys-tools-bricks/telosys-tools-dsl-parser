@@ -15,17 +15,20 @@
  */
 package org.telosys.tools.dsl.parser.annotation;
 
-public class AnnotationDefinition {
+import java.math.BigDecimal;
+
+import org.telosys.tools.dsl.model.DslModel;
+import org.telosys.tools.dsl.model.DslModelAttribute;
+import org.telosys.tools.dsl.model.DslModelEntity;
+import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.generic.model.BooleanValue;
+
+public abstract class AnnotationDefinition {
 
 	private final String name;
 	private final AnnotationParamType  type;
 
-	public AnnotationDefinition(String name) {
-		this.name = name ;
-		this.type = AnnotationParamType.NONE ;
-	}
-
-	public AnnotationDefinition(String name, AnnotationParamType type) {
+	protected AnnotationDefinition(String name, AnnotationParamType type) {
 		this.name = name ;
 		this.type = type ;
 	}
@@ -40,6 +43,83 @@ public class AnnotationDefinition {
 
 	public AnnotationParamType getParamType() {
 		return type;
+	}
+	
+	protected void checkParamValue(Object paramValue) {
+		switch ( getParamType() ) {
+		case STRING:
+			if ( ! ( paramValue instanceof String ) ) {
+				throw new IllegalStateException("String value expected, actual type is " 
+							+ getParamValueActualType( paramValue));
+			}
+			break;
+		case INTEGER:
+			if ( ! ( paramValue instanceof Integer ) ) {
+				throw new IllegalStateException("Integer value expected, actual type is " 
+							+ getParamValueActualType( paramValue));
+			}
+			break;
+		case DECIMAL:
+			if ( ! ( paramValue instanceof BigDecimal ) ) {
+				throw new IllegalStateException("BigDecimal value expected, actual type is " 
+							+ getParamValueActualType( paramValue));
+			}
+			break;
+		case BOOLEAN:
+			if ( ! ( paramValue instanceof Boolean ) ) {
+				throw new IllegalStateException("Boolean value expected, actual type is " 
+							+ getParamValueActualType( paramValue));
+			}
+			break;
+		case NONE:
+			if ( paramValue != null ) {
+				throw new IllegalStateException("No value expected, actual value is " + paramValue );
+			}
+			break;
+		}
+	}
+	
+	private String getParamValueActualType(Object paramValue) {
+		if ( paramValue != null ) {
+			return paramValue.getClass().getCanonicalName() ;
+		}
+		else {
+			return "null" ;
+		}
+	}
+	
+	protected BooleanValue getBooleanValue(Object paramValue) {
+		Boolean b = (Boolean) paramValue;
+		if ( Boolean.TRUE.equals( b ) ) {
+			return BooleanValue.TRUE;
+		}
+		else {
+			return BooleanValue.FALSE;
+		}
+	}
+	
+	/**
+	 * Apply the current annotation to the given attribute
+	 * (supposed to be overridden in the annotation)
+	 * @param model
+	 * @param entity
+	 * @param attribute
+	 * @param paramValue
+	 */
+	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) {
+		throw new IllegalStateException("apply(attribute) is not implemented");
+	}
+	
+	/**
+	 * Apply the current annotation to the given link
+	 * (supposed to be overridden in the annotation)
+	 * @param model
+	 * @param entity
+	 * @param link
+	 * @param paramValue
+	 */
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
+		throw new IllegalStateException("apply(link) is not implemented");
 	}
 	
 }
