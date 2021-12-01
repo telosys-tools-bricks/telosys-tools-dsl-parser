@@ -21,6 +21,8 @@ import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
+import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.generic.model.BooleanValue;
 
 public abstract class AnnotationDefinition {
@@ -35,9 +37,9 @@ public abstract class AnnotationDefinition {
 		this.scope = scope ;
 	}
 
-	protected String nameWithoutSuffix(String str) {
-		return str.substring(0, str.length() - 1);
-	}
+//	protected String nameWithoutSuffix(String str) {
+//		return str.substring(0, str.length() - 1);
+//	}
 
 	public String getName() {
 		return name;
@@ -50,7 +52,60 @@ public abstract class AnnotationDefinition {
 	public AnnotationScope getScope() {
 		return scope;
 	}
+
+	//-------------------------------------------------------------------------------------------
+	// Annotation parsing 
+	//-------------------------------------------------------------------------------------------
+	/**
+	public DomainAnnotation buildAnnotation() {
+		switch(this.type) {
+		case STRING :
+			return new DomainAnnotation(name, 
+								getParameterValueAsString(annotation, parameterValue) );
+			break;
+		case INTEGER :
+			domainAnnotation = new DomainAnnotation(name, 
+								getParameterValueAsInteger(annotation, parameterValue) );
+			break;
+		case DECIMAL :
+			domainAnnotation = new DomainAnnotation(name, 
+								getParameterValueAsBigDecimal(annotation, parameterValue) );
+			break;
+		case BOOLEAN :
+			domainAnnotation = new DomainAnnotation(name, 
+								getParameterValueAsBoolean(annotation, parameterValue) );
+			break;
+		default :
+			// annotation without parameter
+			if (parameterValue != null) {
+				throw new AnnotationOrTagError(entityName, fieldName, annotation, "unexpected parameter");
+			}
+			domainAnnotation = new DomainAnnotation(name);
+			break;
+		}
+		return domainAnnotation;
+		
+	}
 	
+	protected BigDecimal getParameterValueAsBigDecimal(String annotationOrTag, String parameterValue) throws AnnotationOrTagError {
+		// Decimal value
+		checkParameterExistence(annotationOrTag, parameterValue);
+		try {
+			return new BigDecimal(parameterValue);
+		} catch (NumberFormatException e) {
+			throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "invalid decimal parameter '" + parameterValue + "'");
+		}
+	}
+	
+	private void checkParameterExistence(String annotationOrTag, String parameterValue) throws AnnotationOrTagError { 
+		if (parameterValue == null || parameterValue.length() == 0) {
+			throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "parameter required");
+		}
+	}
+**/
+	//-------------------------------------------------------------------------------------------
+	// Annotation application ( on attribute or link )
+	//-------------------------------------------------------------------------------------------
 	protected void checkParamValue(Object paramValue) {
 		switch ( getParamType() ) {
 		case STRING:
@@ -94,6 +149,11 @@ public abstract class AnnotationDefinition {
 		}
 	}
 	
+	/**
+	 * Returns the special "BooleanValue" tyoe (Telosys type) 
+	 * @param paramValue
+	 * @return
+	 */
 	protected BooleanValue getBooleanValue(Object paramValue) {
 		Boolean b = (Boolean) paramValue;
 		if ( Boolean.TRUE.equals( b ) ) {

@@ -17,7 +17,7 @@ package org.telosys.tools.dsl.parser.model;
 
 import java.math.BigDecimal;
 
-public class DomainAnnotationOrTag {
+public abstract class DomainAnnotationOrTag {
 
     private final String  name;
     private final String  stringParameter;
@@ -29,7 +29,7 @@ public class DomainAnnotationOrTag {
      * Constructor for annotation without parameter
      * @param name
      */
-    public DomainAnnotationOrTag(String name) {
+    protected DomainAnnotationOrTag(String name) {
         this.name = name;
         this.stringParameter  = null;
         this.numberParameter  = null;
@@ -42,7 +42,7 @@ public class DomainAnnotationOrTag {
      * @param name
      * @param stringParameter
      */
-    public DomainAnnotationOrTag(String name, String stringParameter) {
+    protected DomainAnnotationOrTag(String name, String stringParameter) {
         this.name = name;
         this.stringParameter  = stringParameter;
         this.numberParameter  = null;
@@ -55,7 +55,7 @@ public class DomainAnnotationOrTag {
      * @param name
      * @param numberParameter
      */
-    public DomainAnnotationOrTag(String name, Number numberParameter) {
+    protected DomainAnnotationOrTag(String name, Number numberParameter) {
         this.name = name;
         this.stringParameter  = null;
         this.numberParameter  = numberParameter;
@@ -68,7 +68,7 @@ public class DomainAnnotationOrTag {
      * @param name
      * @param booleanParameter
      */
-    public DomainAnnotationOrTag(String name, Boolean booleanParameter) {
+    protected DomainAnnotationOrTag(String name, Boolean booleanParameter) {
         this.name = name;
         this.stringParameter  = null;
         this.numberParameter  = null;

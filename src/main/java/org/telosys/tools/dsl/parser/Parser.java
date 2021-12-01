@@ -25,7 +25,6 @@ import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.FieldNameAndTypeError;
 import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
@@ -229,7 +228,7 @@ public class Parser {
 		// Add field if not already defined
 		if (domainEntity.hasField(domainField)) {
 			// Already defined => Error
-			domainEntity.addError(new FieldNameAndTypeError(domainEntity.getName(), domainField.getName(),
+			domainEntity.addError(new FieldParsingError(domainEntity.getName(), domainField.getName(),
 					"field defined more than once"));
 			return;
 		} else {

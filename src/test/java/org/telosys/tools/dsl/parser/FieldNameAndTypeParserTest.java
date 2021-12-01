@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.exceptions.FieldNameAndTypeError;
+import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 import org.telosys.tools.dsl.parser.model.DomainTypeNature;
 
 public class FieldNameAndTypeParserTest {
@@ -27,7 +27,7 @@ public class FieldNameAndTypeParserTest {
     }
     
 	@Test
-    public void testCheckFieldNameAndType() throws FieldNameAndTypeError {
+    public void testCheckFieldNameAndType() throws FieldParsingError {
 		FieldNameAndTypeParser fieldParser = getParser();
 
 		fieldParser.checkFieldNameAndType("aa:string");
@@ -42,7 +42,7 @@ public class FieldNameAndTypeParserTest {
 	// check field name
 	//----------------------------------------------------------------------
 	@Test
-    public void testCheckFieldName() throws FieldNameAndTypeError {
+    public void testCheckFieldName() throws FieldParsingError {
 		FieldNameAndTypeParser fieldParser = getParser();
 
 		fieldParser.checkFieldName("", "aaa");
@@ -50,18 +50,18 @@ public class FieldNameAndTypeParserTest {
 		fieldParser.checkFieldName("", "aaa%");
 	}
 
-	@Test(expected=FieldNameAndTypeError.class)
-	public void testCheckFieldNameWithError1() throws FieldNameAndTypeError {
+	@Test(expected=FieldParsingError.class)
+	public void testCheckFieldNameWithError1() throws FieldParsingError {
 		FieldNameAndTypeParser fieldParser = getParser();
 		fieldParser.checkFieldName("", "");
 	}
-	@Test(expected=FieldNameAndTypeError.class)
-	public void testCheckFieldNameWithError2() throws FieldNameAndTypeError {
+	@Test(expected=FieldParsingError.class)
+	public void testCheckFieldNameWithError2() throws FieldParsingError {
 		FieldNameAndTypeParser fieldParser = getParser();
 		fieldParser.checkFieldName("", "   ");
 	}
-	@Test(expected=FieldNameAndTypeError.class)
-	public void testCheckFieldNameWithError3() throws FieldNameAndTypeError {
+	@Test(expected=FieldParsingError.class)
+	public void testCheckFieldNameWithError3() throws FieldParsingError {
 		FieldNameAndTypeParser fieldParser = getParser();
 		fieldParser.checkFieldName("", "aa bb");
 	}
@@ -70,7 +70,7 @@ public class FieldNameAndTypeParserTest {
 	// check field type
 	//----------------------------------------------------------------------
 	@Test
-    public void testCheckFieldType() throws FieldNameAndTypeError {
+    public void testCheckFieldType() throws FieldParsingError {
 		FieldNameAndTypeParser fieldParser = getParser();
 
 		fieldParser.checkFieldTypeWithCardinality("", "aaa");
@@ -81,8 +81,8 @@ public class FieldNameAndTypeParserTest {
 		fieldParser.checkFieldTypeWithCardinality("", "aaa$[2]");
 		fieldParser.checkFieldTypeWithCardinality("", "aaa% ");
 	}
-	@Test(expected=FieldNameAndTypeError.class) 
-	public void testCheckFieldTypeError1() throws FieldNameAndTypeError  {
+	@Test(expected=FieldParsingError.class) 
+	public void testCheckFieldTypeError1() throws FieldParsingError  {
 		FieldNameAndTypeParser fieldParser = getParser();
 		fieldParser.checkFieldTypeWithCardinality("", "");
 	}
@@ -102,14 +102,14 @@ public class FieldNameAndTypeParserTest {
 	//----------------------------------------------------------------------
 	// get field type
 	//----------------------------------------------------------------------
-	private String getFieldTypeWithoutCardinality(String fieldTypeWithCardinality) throws FieldNameAndTypeError {
+	private String getFieldTypeWithoutCardinality(String fieldTypeWithCardinality) throws FieldParsingError {
 		FieldNameAndTypeParser fieldParser = getParser();
 		String s = "myField : " + fieldTypeWithCardinality ;
 		return fieldParser.getFieldTypeWithoutCardinality(s, fieldTypeWithCardinality);
 	}
 	
 	@Test
-    public void testGetFieldTypeWithoutCardinality() throws FieldNameAndTypeError {
+    public void testGetFieldTypeWithoutCardinality() throws FieldParsingError {
     	Assert.assertEquals("string",     getFieldTypeWithoutCardinality("aa:string"));
     	Assert.assertEquals("string",     getFieldTypeWithoutCardinality("aa: string"));
     	Assert.assertEquals("string",     getFieldTypeWithoutCardinality("  aa  :  string "));
@@ -131,14 +131,14 @@ public class FieldNameAndTypeParserTest {
 	//----------------------------------------------------------------------
 	// get field type cardinality
 	//----------------------------------------------------------------------
-	private int parseFieldTypeCardinality(String fieldTypeWithCardinality) throws FieldNameAndTypeError {
+	private int parseFieldTypeCardinality(String fieldTypeWithCardinality) throws FieldParsingError {
 		String fieldNameAndType = "myField : " + fieldTypeWithCardinality ;
 		FieldNameAndTypeParser fieldParser = getParser();
 		return fieldParser.getFieldTypeCardinality(fieldNameAndType, fieldTypeWithCardinality);
 	}
 
 	@Test
-    public void testGetCardinality() throws FieldNameAndTypeError {
+    public void testGetCardinality() throws FieldParsingError {
     	Assert.assertEquals( 1, parseFieldTypeCardinality("string") );
     	Assert.assertEquals( 2, parseFieldTypeCardinality("string [2]") );
     	Assert.assertEquals( 2, parseFieldTypeCardinality("string [ 2 ]") );
@@ -151,7 +151,7 @@ public class FieldNameAndTypeParserTest {
 	// test entry point 
 	//----------------------------------------------------------------------
 	@Test
-    public void testParseFieldNameAndType() throws FieldNameAndTypeError {
+    public void testParseFieldNameAndType() throws FieldParsingError {
 		FieldNameAndTypeParser fieldParser = getParser();
 		
 		FieldNameAndType r ;

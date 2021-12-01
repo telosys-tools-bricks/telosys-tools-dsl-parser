@@ -21,7 +21,7 @@ package org.telosys.tools.dsl.parser.exceptions;
  * @author Laurent GUERIN
  *
  */
-public abstract class FieldParsingError extends Exception {
+public class FieldParsingError extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
@@ -39,7 +39,7 @@ public abstract class FieldParsingError extends Exception {
 	 * @param fieldName
 	 * @param error
 	 */
-	protected FieldParsingError(String entityName, String fieldName, String error) {
+	public FieldParsingError(String entityName, String fieldName, String error) {
 		super();
 		this.exceptionMessage = entityName + " : field '" + fieldName + "' : " + error ;
 		this.entityName = entityName;

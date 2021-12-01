@@ -14,7 +14,7 @@ public class DomainEntityFieldAnnotationTest {
 
 	@Test
 	public void test1() {
-		DomainAnnotationOrTag annotation = new DomainAnnotationOrTag("Id") ;
+		DomainAnnotationOrTag annotation = new DomainAnnotation("Id") ;
 		System.out.println(annotation);
 		assertFalse ( annotation.hasParameter() ) ;
 		assertNull ( annotation.getParameterAsString() ) ;
@@ -24,7 +24,7 @@ public class DomainEntityFieldAnnotationTest {
 	
 	@Test
 	public void test2() {
-		DomainAnnotationOrTag annotation = new DomainAnnotationOrTag("Max", new BigDecimal("123.45")) ;
+		DomainAnnotationOrTag annotation = new DomainAnnotation("Max", new BigDecimal("123.45")) ;
 		System.out.println(annotation);
 		assertTrue ( annotation.hasParameter() ) ;
 		assertNull ( annotation.getParameterAsString() ) ;
@@ -35,7 +35,7 @@ public class DomainEntityFieldAnnotationTest {
 	
 	@Test
 	public void test3() {
-		DomainAnnotationOrTag annotation = new DomainAnnotationOrTag("SizeMax", new Integer("12")) ;
+		DomainAnnotationOrTag annotation = new DomainAnnotation("SizeMax", new Integer("12")) ;
 		System.out.println(annotation);
 		assertTrue ( annotation.hasParameter() ) ;
 		assertNull ( annotation.getParameterAsString() ) ;
@@ -46,7 +46,7 @@ public class DomainEntityFieldAnnotationTest {
 	
 	@Test
 	public void test4() {
-		DomainAnnotationOrTag annotation = new DomainAnnotationOrTag("DbColumn", "FIRST_NAME") ;
+		DomainAnnotationOrTag annotation = new DomainAnnotation("DbColumn", "FIRST_NAME") ;
 		System.out.println(annotation);
 		assertTrue ( annotation.hasParameter() ) ;
 		assertNotNull ( annotation.getParameterAsString() ) ;
