@@ -6,7 +6,6 @@ import java.util.Properties;
 import org.junit.Test;
 import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.model.DslModelEntity;
-import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntityType;
@@ -168,7 +167,7 @@ public class ConverterTest {
 	}
 
 	@Test
-	public void testAttributeWithAnnotations() throws AnnotationOrTagError {
+	public void testAttributeWithAnnotations() { // throws AnnotationOrTagError {
 		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
 		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
 
@@ -254,7 +253,7 @@ public class ConverterTest {
 		assertTrue(entity_2.getAttributes().isEmpty());
 	}
 
-	private DomainModel buildFullModel() throws AnnotationOrTagError {
+	private DomainModel buildFullModel() { // throws AnnotationOrTagError {
 		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
 
 		DomainEntity carEntity = new DomainEntity("Car");
@@ -305,7 +304,7 @@ public class ConverterTest {
 	}
 	
 	@Test
-	public void testFullModel() throws AnnotationOrTagError {
+	public void testFullModel() { // throws AnnotationOrTagError {
 		DomainModel domainModel = buildFullModel() ;
 		Model model = converter.convertToGenericModel(domainModel);
 		

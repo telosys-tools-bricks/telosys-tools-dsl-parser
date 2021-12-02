@@ -13,19 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.parser.annotation;
+package org.telosys.tools.dsl.parser.exceptions;
 
-public enum AnnotationParamType {
-	
-	NONE ,
-	
-	STRING ,
-	
-	INTEGER ,
-	
-	DECIMAL ,
-	
-	BOOLEAN,
-	
-	SIZE
+/**
+ * DSL Parser Exception 
+ * 
+ * @author Laurent GUERIN
+ *
+ */
+public class ForeignKeyError extends ParsingError {
+
+    private static final long serialVersionUID = 1L;
+    
+    /**
+     * Constructor
+     * @param entityName
+     * @param fieldName
+     * @param annotationOrTag
+     * @param error
+     */
+    public ForeignKeyError(String entityName, String fieldName, String error) {
+        super(entityName, fieldName, "@FK : " + error );
+    }
+
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainFK;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -17,7 +17,9 @@ import static org.junit.Assert.assertEquals;
 public class ParserTest {
 	
 	@Before
-	public void setUp() throws Exception {}
+	public void setUp() throws Exception {
+		// init here
+	}
 
 	private void log(String msg) {
 		System.out.println(msg);
@@ -50,7 +52,8 @@ public class ParserTest {
 		entitiesNames.add("Country");
 		entitiesNames.add("Employee");
 		DomainEntity entity ;
-		List<FieldParsingError> errors;
+//		List<FieldParsingError> errors;
+		List<ParsingError> errors;
 		
 		entity = parseEntityFile("src/test/resources/entity_test_v_3_3/Country.entity", entitiesNames);
 		assertEquals("Country", entity.getName());
@@ -61,7 +64,6 @@ public class ParserTest {
 		
 		entity = parseEntityFile("src/test/resources/entity_test_v_3_3/Employee.entity", entitiesNames);
 		assertEquals("Employee", entity.getName());
-		//assertEquals(10, entity.getNumberOfFields());
 		assertEquals(0, entity.getNumberOfErrors());
 		
 		logFieldFK(entity.getField("badgeId"));
@@ -72,7 +74,6 @@ public class ParserTest {
 	@Test
 	public void testEntityFileParserV32() throws EntityParsingError {
 		List<String> entitiesNames = new LinkedList<>();
-		//entitiesNames.add("Country");
 		entitiesNames.add("Employee");
 		DomainEntity entity ;
 		entity = parseEntityFile("src/test/resources/entity_test_v_3_2/Employee.entity", entitiesNames);

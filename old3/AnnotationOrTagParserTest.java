@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
-import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 
 import static org.junit.Assert.assertEquals;
@@ -15,6 +14,10 @@ import static org.junit.Assert.assertTrue;
 
 public class AnnotationOrTagParserTest {
 
+	private FieldAnnotationsAndTagsParser getParser(String entity) {
+		return new FieldAnnotationsAndTagsParser(entity);
+	}
+	
 	@Test
 	public void testGetName() throws AnnotationOrTagError {
 

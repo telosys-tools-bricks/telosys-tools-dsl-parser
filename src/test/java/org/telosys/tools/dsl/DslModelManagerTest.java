@@ -6,8 +6,8 @@ import java.util.Map;
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.Parser;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
@@ -21,19 +21,20 @@ import static org.junit.Assert.assertTrue;
 
 public class DslModelManagerTest {
     
+	private void println(String s) {
+		System.out.println(s);
+	}
+
 	private Model loadValidModel(String modelFileName) {
-		System.out.println("----- " );
-		System.out.println("Loading valid model : " + modelFileName );
+		println("----- " );
+		println("Loading valid model : " + modelFileName );
         DslModelManager dslModelManager = new DslModelManager();
         Model model = dslModelManager.loadModel(modelFileName);
 		printErrors(dslModelManager);
 		if ( model == null ) {
-			System.out.println("ERROR : cannot load model");
-			System.out.println(dslModelManager.getErrorMessage());
-//			for ( Map.Entry<String, String> entry : modelLoader.getParsingErrors().entrySet() ) {
-//				System.out.println(" . " + entry.getKey() + " : " + entry.getValue() );
-//			}
-			throw new RuntimeException("Cannot load model : " + dslModelManager.getErrorMessage());
+			println("ERROR : cannot load model");
+			println(dslModelManager.getErrorMessage());
+			throw new IllegalStateException("Cannot load model : " + dslModelManager.getErrorMessage());
 		}
 		// No error expected
 		assertEquals(0, dslModelManager.getErrorMessage().length() );
@@ -42,7 +43,7 @@ public class DslModelManagerTest {
     }
     
     @Test
-    public void test_ValidModel_OneEntity_Model() {
+    public void testValidModelOneEntityModel() {
         Model model = loadValidModel("src/test/resources/model_test/valid/OneEntity.model");
         
         assertNotNull(model);
@@ -95,13 +96,10 @@ public class DslModelManagerTest {
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
         assertFalse(attrib.isDatabaseNotNull());
-        
-
-
     }
 
     @Test
-    public void test_ValidModel_Types_Model()  {
+    public void testValidModelTypesModel()  {
         Model model = loadValidModel("src/test/resources/model_test/valid/types.model");
         
         assertNotNull(model);
@@ -109,16 +107,14 @@ public class DslModelManagerTest {
         
         Entity entity = model.getEntityByClassName("Person");
         assertNotNull(entity);
-        System.out.println("Entity 'Person' found");
+        println("Entity 'Person' found");
         assertEquals("Person", entity.getClassName() );
         assertEquals("Person", entity.getFullName() ); 
         
         for ( Attribute attribute : entity.getAttributes() ) {
-        	System.out.println(" attribute " + attribute.getName() );
-    		System.out.println("  " + attribute.getNeutralType() + " --> " + attribute.getNeutralType());
+        	println(" attribute " + attribute.getName() );
+    		println("  " + attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         	if ( attribute.getName().equals("id") ) {
-//        		assertEquals("int", attribute.getSimpleType() ); 
-//        		assertEquals("int", attribute.getFullType() ); 
         		assertEquals("int", attribute.getNeutralType() ); 
         		assertTrue(attribute.isKeyElement());
         		assertFalse(attribute.isAutoIncremented());
@@ -126,80 +122,56 @@ public class DslModelManagerTest {
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		assertFalse(attribute.isObjectTypeExpected());
-//        		assertFalse(attribute.isSqlTypeExpected());
         	}
         	else if ( attribute.getName().equals("firstName") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
+        		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertTrue(attribute.isNotEmpty());
         		assertFalse(attribute.isKeyElement());
         		assertFalse(attribute.isAutoIncremented());
         	}
         	else if ( attribute.getName().equals("lastName") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
+        		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertTrue(attribute.isNotBlank());
         		assertFalse(attribute.isKeyElement());
         		assertFalse(attribute.isAutoIncremented());
         	}
         	else if ( attribute.getName().equals("counter") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
+        		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
-        		
         		assertTrue(attribute.isAutoIncremented());
-
-//        		assertEquals("Short", attribute.getSimpleType() ); 
-//        		assertEquals("java.lang.Short", attribute.getFullType() ); 
         	}
         	else if ( attribute.getName().equals("counter2") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
+        		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
-
         		assertTrue(attribute.isAutoIncremented());
-        		
-//        		assertEquals("short", attribute.getSimpleType() ); 
-//        		assertEquals("short", attribute.getFullType() ); 
         	}
         	else if ( attribute.getName().equals("counter3") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
+        		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertTrue(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		assertFalse(attribute.isObjectTypeExpected());
-//        		assertFalse(attribute.isSqlTypeExpected());
-
-//        		assertEquals("short", attribute.getSimpleType() ); 
-//        		assertEquals("short", attribute.getFullType() ); 
         	}
         	else if ( attribute.getName().equals("counter4") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
+        		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertFalse(attribute.isNotNull());
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		assertTrue(attribute.isObjectTypeExpected());
-//        		assertFalse(attribute.isSqlTypeExpected());
-
-//        		assertEquals("Short", attribute.getSimpleType() ); 
-//        		assertEquals("java.lang.Short", attribute.getFullType() ); 
-
         	}
         	else if ( attribute.getName().equals("counter5") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
+        		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertFalse(attribute.isNotNull());
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
-        		//assertTrue(attribute.isObjectTypeExpected());
-//        		assertTrue(attribute.isSqlTypeExpected());
-
-//        		assertEquals("Short", attribute.getSimpleType() ); 
-//        		assertEquals("java.lang.Short", attribute.getFullType() ); 
-
         	}
         	else if ( attribute.getName().equals("counter6") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
+        		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertTrue(attribute.isNotNull());
@@ -207,14 +179,9 @@ public class DslModelManagerTest {
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		assertTrue(attribute.isObjectTypeExpected());
-//        		assertFalse(attribute.isSqlTypeExpected());
-
-//        		assertEquals("Short", attribute.getSimpleType() ); 
-//        		assertEquals("java.lang.Short", attribute.getFullType() ); 
-
         	}
         	else if ( attribute.getName().equals("counter7") ) {
-        		System.out.println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
+        		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertTrue(attribute.isNotNull());
@@ -223,17 +190,12 @@ public class DslModelManagerTest {
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		assertFalse(attribute.isObjectTypeExpected());
-//        		assertTrue(attribute.isSqlTypeExpected());
-
-//        		assertEquals("Short", attribute.getSimpleType() ); 
-//        		assertEquals("java.lang.Short", attribute.getFullType() ); 
-
         	}
         }
     }
     
     @Test
-    public void test_ValidModel_TwoEntity_Model() throws EntityParsingError {
+    public void testValidModelTwoEntityModel() {
         Model model = loadValidModel("src/test/resources/model_test/valid/TwoEntities.model");
         
         assertNotNull(model);
@@ -286,21 +248,10 @@ public class DslModelManagerTest {
         assertFalse(attrib.isFKSimple());
         assertFalse(attrib.isFKComposite());
 
-// since v 3.3 it's a LINK  ( no longer pseudo-FK attribute )
-//        attrib = employeeEntity.getAttributes().get(i++);
-//        assertEquals("country", attrib.getName() ) ;
-//        assertEquals("int", attrib.getNeutralType() ); // country PK is "id : int" 
-//        assertFalse(attrib.isKeyElement());
-//        assertFalse(attrib.isNotNull());
-//        assertTrue(attrib.isDatabaseNotNull()); // country PK has "@Id" => not null 
-//        assertTrue(attrib.isFK());
-//        assertTrue(attrib.isFKSimple());
-//        assertFalse(attrib.isFKComposite());
-
     }
 
     @Test
-    public void test_ValidModel_FourEntity_Model() throws EntityParsingError {
+    public void testValidModelFourEntityModel() {
         Model model = loadValidModel("src/test/resources/model_test/valid/FourEntities.model");
         
         assertNotNull(model);
@@ -341,20 +292,6 @@ public class DslModelManagerTest {
 
         // country is a OneToMay links => not in the attributes 
 
-// PSEUDO-FK removed in v 3.3
-//        attrib = personEntity.getAttributes().get(i++);
-//        assertEquals("gender", attrib.getName() ) ;
-//        assertEquals("string", attrib.getNeutralType() ); // gender PK is "id : string" 
-//        // Annotations come from "Gender.id" (instead original field)
-//        assertFalse(attrib.isKeyElement());
-//        assertFalse(attrib.isNotNull());
-//        assertTrue(attrib.isDatabaseNotNull()); // gender PK has "@Id" => not null 
-//        assertEquals(Integer.valueOf(2), attrib.getMaxLength()); // gender PK has "@SizeMax(2)" 
-//        // Foreign Key (simple, not composite)
-//        assertTrue(attrib.isFK());
-//        assertTrue(attrib.isFKSimple());
-//        assertFalse(attrib.isFKComposite());
-
     }    
     
     private void testParserWithInvalidModel(String modelFile) {
@@ -368,27 +305,27 @@ public class DslModelManagerTest {
 		}    	
         assertNull(domainModel);
         assertNotNull(modelParsingError);
-		System.out.println("ModelParsingError message : " + modelParsingError.getMessage() );
+		println("ModelParsingError message : " + modelParsingError.getMessage() );
 		for ( EntityParsingError entityError : modelParsingError.getEntitiesErrors() ) {
-			//System.out.println(" . EntityParsingError : " + entityError.getEntityName() + " : " + entityError.getMessage() );
-			System.out.println(" . EntityParsingError : " + entityError.getMessage() );
-			for ( FieldParsingError fieldError : entityError.getFieldsErrors() ) {
-				//System.out.println(" . . FieldParsingError : " + fieldError.getEntityName() + " : " + fieldError.getMessage() );
-				System.out.println(" . . FieldParsingError : " + fieldError.getMessage() );
+			println(" . EntityParsingError : " + entityError.getMessage() );
+//			for ( FieldParsingError fieldError : entityError.getFieldsErrors() ) {
+//				println(" . . FieldParsingError : " + fieldError.getMessage() );
+//			}
+			for ( ParsingError fieldError : entityError.getErrors() ) {
+				println(" . . ParsingError : " + fieldError.getMessage() );
 			}
 		}
     }
 
     @Test
-    public void testParser_InvalidModel_FourEntity_Model() { 
+    public void testParserInvalidModelFourEntityModel() { 
     	testParserWithInvalidModel("src/test/resources/model_test/invalid/FourEntities.model") ;
-//		System.out.println("Loading model : " + modelFile );
     }
     
     @Test
-    public void test_InvalidModel_TwoEntity_Model() { 
+    public void testInvalidModelTwoEntityModel() { 
     	String modelFile = "src/test/resources/model_test/invalid/TwoEntities.model" ;
-		System.out.println("Loading model : " + modelFile );
+		println("Loading model : " + modelFile );
         DslModelManager dslModelManager = new DslModelManager();
         Model model = dslModelManager.loadModel(modelFile);
         printErrors(dslModelManager);
@@ -400,9 +337,9 @@ public class DslModelManagerTest {
     }
     
     @Test
-    public void test_InvalidModel_FourEntity_Model() { 
+    public void testInvalidModelFourEntityModel() { 
     	String modelFile = "src/test/resources/model_test/invalid/FourEntities.model" ;
-		System.out.println("Loading model : " + modelFile );
+		println("Loading model : " + modelFile );
         DslModelManager dslModelManager = new DslModelManager();
         Model model = dslModelManager.loadModel(modelFile);
         printErrors(dslModelManager);
@@ -414,27 +351,27 @@ public class DslModelManagerTest {
     }
     
     private void printErrors(DslModelManager dslModelManager) {
-    	System.out.println("DslModelManager errors : " );
-    	System.out.println(" Error message : " + dslModelManager.getErrorMessage() );
+    	println("DslModelManager errors : " );
+    	println(" Error message : " + dslModelManager.getErrorMessage() );
     	DslModelErrors errors = dslModelManager.getErrors();
     	if ( errors != null ) {
-        	System.out.println(" All Errors Count : " + errors.getAllErrorsCount() );
+        	println(" All Errors Count : " + errors.getAllErrorsCount() );
 //    		for ( String entityName : errors.getEntities() ) {
-//            	System.out.println(" --> Entity '" + entityName + "' : " );
+//            	println(" --> Entity '" + entityName + "' : " );
 //        		for ( FieldParsingError fpe : errors.getErrors(entityName) ) {
-//                	// System.out.println("   . [" + fpe.getEntityName() + "] "+ fpe.getMessage() );
-//                	System.out.println("   . [" + fpe.getEntityName() + "] field '"+ fpe.getFieldName() + "' : " + fpe.getError() );
+//                	// println("   . [" + fpe.getEntityName() + "] "+ fpe.getMessage() );
+//                	println("   . [" + fpe.getEntityName() + "] field '"+ fpe.getFieldName() + "' : " + fpe.getError() );
 //        		}
 //    		}
-        	System.out.println(" All Errors : " );
+        	println(" All Errors : " );
     		for ( String err : errors.getAllErrorsList() ) {
-            	System.out.println(" . " + err );
+            	println(" . " + err );
     		}
-        	System.out.println(" Errors for each entity : " );
+        	println(" Errors for each entity : " );
     		for ( String entityName : errors.getEntities() ) {
-    			System.out.println(" --> Entity '" + entityName + "' : " );
+    			println(" --> Entity '" + entityName + "' : " );
     			for ( String err : errors.getErrors(entityName) ) {
-                	System.out.println(" . " + err );
+                	println(" . " + err );
     			}
     		}
     	}

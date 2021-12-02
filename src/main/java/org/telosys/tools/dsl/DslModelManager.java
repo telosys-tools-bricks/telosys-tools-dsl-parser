@@ -99,9 +99,11 @@ public class DslModelManager {
         Parser dslParser = new Parser();
         DomainModel domainModel = null ;
         ModelParsingError modelParsingError = null ;
+//        ParsingError modelParsingError = null ;
 		try {
 			domainModel = dslParser.parseModel(modelFile);
 		} catch (ModelParsingError e) {
+//		} catch (ParsingError e) {
 			modelParsingError = e ;
 		}
 		

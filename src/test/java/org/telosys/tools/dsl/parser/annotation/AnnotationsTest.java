@@ -25,7 +25,7 @@ public class AnnotationsTest {
 		ad = Annotations.get("Size");
 		assertNotNull(ad);
 		assertEquals("Size", ad.getName());
-		assertEquals(AnnotationParamType.STRING, ad.getParamType());
+		assertEquals(AnnotationParamType.SIZE, ad.getParamType());
 		
 		ad = Annotations.get("SizeMin");
 		assertNotNull(ad);

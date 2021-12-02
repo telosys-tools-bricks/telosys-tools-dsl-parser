@@ -21,17 +21,17 @@ package org.telosys.tools.dsl.parser.exceptions;
  * @author Laurent GUERIN
  *
  */
-public class FieldParsingError extends Exception {
+public class FieldParsingError extends ParsingError {
 
 	private static final long serialVersionUID = 1L;
 
-	// Standard exception message
-	private final String exceptionMessage;
-
-	// Error details (for reporting)
-	private final String entityName;
-	private final String fieldName;
-	private final String error;
+//	// Standard exception message
+//	private final String exceptionMessage;
+//
+//	// Error details (for reporting)
+//	private final String entityName;
+//	private final String fieldName;
+//	private final String error;
 
 	/**
 	 * Constructor
@@ -40,27 +40,27 @@ public class FieldParsingError extends Exception {
 	 * @param error
 	 */
 	public FieldParsingError(String entityName, String fieldName, String error) {
-		super();
-		this.exceptionMessage = entityName + " : field '" + fieldName + "' : " + error ;
-		this.entityName = entityName;
-		this.fieldName = fieldName;
-		this.error = error;
+		super(entityName, fieldName, error);
+//		this.exceptionMessage = entityName + " : field '" + fieldName + "' : " + error ;
+//		this.entityName = entityName;
+//		this.fieldName = fieldName;
+//		this.error = error;
 	}
 
-	// Standard exception message
-	@Override
-	public String getMessage() {
-		return exceptionMessage;
-	}
+//	// Standard exception message
+//	@Override
+//	public String getMessage() {
+//		return exceptionMessage;
+//	}
 
-	// Error details (for reporting)
-	public String getEntityName() {
-		return entityName;
-	}
-	public String getFieldName() {
-		return fieldName;
-	}
-	public String getError() {
-		return error;
-	}
+//	// Error details (for reporting)
+//	public String getEntityName() {
+//		return entityName;
+//	}
+//	public String getFieldName() {
+//		return fieldName;
+//	}
+//	public String getError() {
+//		return error;
+//	}
 }

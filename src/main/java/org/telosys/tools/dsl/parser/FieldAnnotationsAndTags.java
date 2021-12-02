@@ -18,7 +18,7 @@ package org.telosys.tools.dsl.parser;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 import org.telosys.tools.dsl.parser.model.DomainTag;
@@ -29,7 +29,7 @@ public class FieldAnnotationsAndTags {
 	
 	private final List<DomainTag>  tags ;
 	
-	private final List<AnnotationOrTagError>  errors ;
+	private final List<ParsingError>  errors ;
 	
 	
 	public FieldAnnotationsAndTags() {
@@ -48,8 +48,8 @@ public class FieldAnnotationsAndTags {
 		}
 	}
 	
-	protected void addError(AnnotationOrTagError exception) {
-		errors.add(exception);
+	protected void addError(ParsingError error) {
+		errors.add(error);
 	}
 	
 	public List<DomainAnnotation> getAnnotations() {
@@ -60,7 +60,7 @@ public class FieldAnnotationsAndTags {
 		return tags;
 	}
 	
-	public List<AnnotationOrTagError> getErrors() {
+	public List<ParsingError> getErrors() {
 		return errors;
 	}
 }

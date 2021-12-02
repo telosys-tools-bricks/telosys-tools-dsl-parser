@@ -3,7 +3,7 @@ package org.telosys.tools.dsl.parsing.entitylevel;
 import java.util.List;
 
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 public class ErrorsReport {
 
@@ -15,11 +15,11 @@ public class ErrorsReport {
 		System.out.println(" Message     : " + exception.getMessage() );
 		System.out.println(" Line number : " + exception.getLineNumber() );
 		System.out.println(" Fields errors :");
-		List<FieldParsingError> fieldsErrors = exception.getFieldsErrors() ;
+//		List<FieldParsingError> fieldsErrors = exception.getFieldsErrors() ;
+		List<ParsingError> fieldsErrors = exception.getErrors() ;
 		for ( Exception e : fieldsErrors ) {
 			System.out.println(" . " + e.getClass().getSimpleName() + " : " + e.getMessage());
 		}
-		
 	}
 
 }

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 public class DomainEntity {
 
@@ -36,7 +37,8 @@ public class DomainEntity {
      */
     private final Map<String, DomainField> fieldsMap;
     
-	private final List<FieldParsingError> errors = new LinkedList<>() ;
+//	private final List<FieldParsingError> errors = new LinkedList<>() ;
+	private final List<ParsingError> errors = new LinkedList<>() ;
 
 
     /**
@@ -110,7 +112,8 @@ public class DomainEntity {
      * Add a new error to the field 
      * @param error
      */
-    public void addError(FieldParsingError error) {
+//    public void addError(FieldParsingError error) {
+    public void addError(ParsingError error) {
     	errors.add(error);
     }
     
@@ -118,7 +121,8 @@ public class DomainEntity {
     	return ! errors.isEmpty();
     }
     
-    public List<FieldParsingError> getErrors() {
+//    public List<FieldParsingError> getErrors() {
+    public List<ParsingError> getErrors() {
     	return errors;
     }
     
@@ -147,9 +151,14 @@ public class DomainEntity {
     	} else {
         	sb.append(errors.size());
         	sb.append(" error(s) : \n");
-    		for ( FieldParsingError e : errors ) {
+//    		for ( FieldParsingError e : errors ) {
+    		for ( ParsingError e : errors ) {
     	    	sb.append(" . " );
-    	    	sb.append(e.getFieldName() );
+//    	    	sb.append(e.getFieldName() );
+    	    	if ( e instanceof FieldParsingError ) {
+        	    	sb.append(((FieldParsingError)e).getFieldName() );
+    	    	}
+
     	    	sb.append(" : " );
     	    	sb.append(e.getMessage() );
     	    	sb.append("\n");

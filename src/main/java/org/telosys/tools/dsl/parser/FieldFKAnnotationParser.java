@@ -17,7 +17,8 @@ package org.telosys.tools.dsl.parser;
 
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.AnnotationName;
-import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
+import org.telosys.tools.dsl.parser.exceptions.ForeignKeyError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainFK;
 
@@ -65,13 +66,13 @@ public class FieldFKAnnotationParser {
 	 * @return
 	 * @throws AnnotationOrTagError
 	 */
-	public DomainFK parse(DomainAnnotation annotation) throws AnnotationOrTagError {
+	public DomainFK parse(DomainAnnotation annotation) throws ParsingError {
 		if ( ! ANNOTATION_NAME.equals(annotation.getName()) ) {
-			throw new AnnotationOrTagError(entityName, fieldName, annotation.getName(), "unexpected annotation name");
+			throw new ForeignKeyError(entityName, fieldName, annotation.getName() + " unexpected annotation name");
 		}
 		String s = annotation.getParameterAsString();
 		if ( StrUtil.nullOrVoid(s)) {
-			throw new AnnotationOrTagError(entityName, fieldName, ANNOTATION_NAME, "parameter expected");
+			throw new ForeignKeyError(entityName, fieldName, "parameter expected");
 		}
 		String[] parts = StrUtil.split(s, ',');
 		switch(parts.length) {
@@ -80,7 +81,8 @@ public class FieldFKAnnotationParser {
 		case 2 :
 			return buildFKWithName(parts[0], parts[1]);
 		default :
-			throw new AnnotationOrTagError(entityName, fieldName, ANNOTATION_NAME, "invalid parameter (0 or 1 ',' expected)");
+			throw new ForeignKeyError(entityName, fieldName,
+					"invalid parameter (0 or 1 ',' expected)");
 		}
 	}
 	
@@ -90,7 +92,7 @@ public class FieldFKAnnotationParser {
 	 * @return
 	 * @throws AnnotationOrTagError
 	 */
-	private DomainFK buildFKWithoutName(String ref) throws AnnotationOrTagError {
+	private DomainFK buildFKWithoutName(String ref) throws ParsingError {
 		// Parse reference part
 		RefParts refParts = parseRef(ref);
 		// Build default FK name 
@@ -105,7 +107,7 @@ public class FieldFKAnnotationParser {
 	 * @return
 	 * @throws AnnotationOrTagError
 	 */
-	private DomainFK buildFKWithName(String fkNameParam, String ref) throws AnnotationOrTagError {
+	private DomainFK buildFKWithName(String fkNameParam, String ref) throws ParsingError {
 		// Parse reference part
 		RefParts refParts = parseRef(ref);
 		// Check FK name not empty
@@ -131,9 +133,9 @@ public class FieldFKAnnotationParser {
 	 * @return
 	 * @throws AnnotationOrTagError
 	 */
-	protected RefParts parseRef(String s) throws AnnotationOrTagError {
+	protected RefParts parseRef(String s) throws ParsingError {
 		if ( StrUtil.nullOrVoid(s)) {
-			throw new AnnotationOrTagError(entityName, fieldName, ANNOTATION_NAME, 
+			throw new ForeignKeyError(entityName, fieldName, 
 					"reference parameter expected (at least entity name)");
 		}
 		String[] parts = StrUtil.split(s, '.');
@@ -145,14 +147,14 @@ public class FieldFKAnnotationParser {
 			// 2 parts : Referenced entity name + Referenced field name)
 			return buildRefParts(parts[0], parts[1]);
 		default :
-			throw new AnnotationOrTagError(entityName, fieldName, ANNOTATION_NAME, 
+			throw new ForeignKeyError(entityName, fieldName,  
 					"invalid reference parameter : '" + s + "' (0 or 1 '.' expected)");
 		}
 	}
 	
-	private RefParts buildRefParts(String referencedEntityName, String referencedFieldName) throws AnnotationOrTagError {
+	private RefParts buildRefParts(String referencedEntityName, String referencedFieldName) throws ParsingError {
 		if ( StrUtil.nullOrVoid(referencedEntityName)) {
-			throw new AnnotationOrTagError(entityName, fieldName, ANNOTATION_NAME, 
+			throw new ForeignKeyError(entityName, fieldName, 
 					"referenced entity name expected");
 		}
 		return new RefParts(referencedEntityName, referencedFieldName);

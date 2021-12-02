@@ -17,19 +17,21 @@ package org.telosys.tools.dsl.parser;
 
 import java.util.List;
 
-import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
+import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
+//import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 
 public class FieldAnnotationsAndTagsParser {
 
-	private final String entityNameFromFileName;
+	private final String entityName;
 
 	/**
 	 * Constructor
 	 * @param entityNameFromFileName
 	 */
 	public FieldAnnotationsAndTagsParser(String entityNameFromFileName) {
-		this.entityNameFromFileName = entityNameFromFileName;
+		this.entityName = entityNameFromFileName;
 	}
 	
 	/**
@@ -37,9 +39,9 @@ public class FieldAnnotationsAndTagsParser {
 	 * @param fieldName
 	 * @param field
 	 * @return
-	 * @throws AnnotationOrTagError
+	 * @throws ParsingError
 	 */
-	public FieldAnnotationsAndTags parse(String fieldName, FieldParts field) throws AnnotationOrTagError {
+	public FieldAnnotationsAndTags parse(String fieldName, FieldParts field) throws ParsingError { // AnnotationOrTagError {
 		return parse( fieldName, field.getAnnotationsPart());
 	}
 
@@ -47,24 +49,26 @@ public class FieldAnnotationsAndTagsParser {
 	 * @param fieldName
 	 * @param annotationsAndTags
 	 * @return
-	 * @throws AnnotationOrTagError
+	 * @throws ParsingError
 	 */
-	private FieldAnnotationsAndTags parse(String fieldName, String annotationsAndTags) throws AnnotationOrTagError {
+	private FieldAnnotationsAndTags parse(String fieldName, String annotationsAndTags) throws ParsingError { // AnnotationOrTagError {
 		FieldAnnotationsAndTags result = new FieldAnnotationsAndTags();
 
     	if ( annotationsAndTags == null || "".equals(annotationsAndTags) ) {
     		return result; // void
     	}
-    	FieldAnnotationsAndTagsSplitter splitter = new FieldAnnotationsAndTagsSplitter(entityNameFromFileName, fieldName);
+    	FieldAnnotationsAndTagsSplitter splitter = new FieldAnnotationsAndTagsSplitter(entityName, fieldName);
 		List<String> elements = splitter.split(annotationsAndTags);
 		for ( String element : elements ) {
 			ParserLogger.log(" . '" + element + "'");
-			FieldAnnotationOrTagParser annotationOrTagParser = new FieldAnnotationOrTagParser(entityNameFromFileName, fieldName);
+//			FieldAnnotationOrTagParser annotationOrTagParser = new FieldAnnotationOrTagParser(entityName, fieldName);
 			DomainAnnotationOrTag annotationOrTag;
 			try {
-				annotationOrTag = annotationOrTagParser.parse(element);
+//				annotationOrTag = annotationOrTagParser.parse(element);
+				annotationOrTag = parseAnnotationOrTag(fieldName, element);
 				result.addAnnotationOrTag(annotationOrTag);
-			} catch (AnnotationOrTagError e) {
+//			} catch (AnnotationOrTagError e) {
+			} catch (ParsingError e) {
 				// invalid annotation or tag 
 				result.addError(e);
 			}
@@ -72,4 +76,22 @@ public class FieldAnnotationsAndTagsParser {
 		return result;
 	}
 
+	//--------------------------------------------------------------------------------------------------
+	// moved from FieldAnnotationOrTagParser
+	//--------------------------------------------------------------------------------------------------
+	private DomainAnnotationOrTag parseAnnotationOrTag(String fieldName, String annotationOrTagString) throws ParsingError { //AnnotationOrTagError {
+		char firstChar = annotationOrTagString.charAt(0);
+		if (firstChar == '@') {
+			AnnotationParser annotationParser = new AnnotationParser(entityName, fieldName);
+			return annotationParser.parseAnnotation(annotationOrTagString);
+		} else if (firstChar == '#') {
+			TagParser tagParser = new TagParser(entityName, fieldName);
+			return tagParser.parseTag(annotationOrTagString);
+		} else {
+//			throw new AnnotationOrTagError(entityName, fieldName, annotationOrTagString, "must start with '@' or '#'");
+			throw new FieldParsingError(entityName, fieldName, 
+					"invalid element '" + annotationOrTagString + "' must start with '@' or '#'");
+		}
+	}
+	
 }

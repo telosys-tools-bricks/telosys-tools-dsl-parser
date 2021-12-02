@@ -3,7 +3,8 @@ package org.telosys.tools.dsl.parser;
 import java.util.List;
 
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
+import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,15 +17,18 @@ public class SplitterTest {
 //		parser.parse(file);
 //	}
 
-	private List<String> split(String s) throws AnnotationOrTagError {
-		System.out.println("\nsplit(\""+s+"\")");
+//	private List<String> split(String s) throws AnnotationOrTagError {
+	private List<String> split(String s) throws FieldParsingError {
+		System.out.println("-----");
+		System.out.println("split(\""+s+"\")");
 		FieldAnnotationsAndTagsSplitter splitter = new FieldAnnotationsAndTagsSplitter("MyEntity","myField");
 		List<String> list;
 		try {
 			list = splitter.split(s);
 			print(list);
 			return list;
-		} catch (AnnotationOrTagError e) {
+//		} catch (AnnotationOrTagError e) {
+		} catch (ParsingError e) {
 			print(e);
 			throw e;
 		} catch (Exception e) {
@@ -34,18 +38,16 @@ public class SplitterTest {
 	}
 	
 	private void print(List<String> list) {
-		System.out.println("\n-----");
 		for ( String s : list ) {
 			System.out.println(" . [" + s + "]");
 		}
 	}
 	private void print(Exception e) {
-		System.out.println("\n----- EXCEPTION ");
-		System.out.println(e.getClass().getName() + " : " + e.getMessage());
+		System.out.println("--> EXCEPTION " + e.getClass().getSimpleName() + " : " + e.getMessage() );
 	}
 
 	@Test
-	public void test1() throws AnnotationOrTagError  {
+	public void test1() throws FieldParsingError { // AnnotationOrTagError  {
 		int i = 0 ;
 		List<String> list ;
 
@@ -74,7 +76,7 @@ public class SplitterTest {
 	}
 	
 	@Test
-	public void test2() throws AnnotationOrTagError  {
+	public void test2() throws FieldParsingError { // AnnotationOrTagError  {
 		int i = 0 ;
 		List<String> list ;
 
@@ -90,7 +92,7 @@ public class SplitterTest {
 	}
 
 	@Test
-	public void test3() throws AnnotationOrTagError {
+	public void test3() throws FieldParsingError { // AnnotationOrTagError {
 		int i = 0 ;
 		List<String> list ;
 
@@ -105,7 +107,7 @@ public class SplitterTest {
 	}
 
 	@Test
-	public void test4() throws AnnotationOrTagError {
+	public void test4() throws FieldParsingError { // AnnotationOrTagError {
 		int i = 0 ;
 		List<String> list ;
 
@@ -119,54 +121,63 @@ public class SplitterTest {
 		assertEquals("@Foo3(  'ab,cd')", list.get(i++));
 	}
 
-	@Test(expected = AnnotationOrTagError.class)
-	public void testError1() throws AnnotationOrTagError  {
+//	@Test(expected = AnnotationOrTagError.class)
+	@Test(expected = FieldParsingError.class)
+	public void testError1() throws FieldParsingError { // AnnotationOrTagError  {
 		// unexpected '(' 
 		split("@NotBlank (()   @Test(\"  a z'e''r}zz\")");
 	}
 
-	@Test(expected = AnnotationOrTagError.class)
-	public void testError2() throws AnnotationOrTagError  {
+//	@Test(expected = AnnotationOrTagError.class)
+	@Test(expected = FieldParsingError.class)
+	public void testError2() throws FieldParsingError { // AnnotationOrTagError  {
 		// unexpected ')' 
 		split("@NotBlank (  ) )   @Foo(\"  a z'e''r}zz\")  @Bar");
 	}
 
-	@Test(expected = AnnotationOrTagError.class)
-	public void testError3() throws AnnotationOrTagError {
+//	@Test(expected = AnnotationOrTagError.class)
+	@Test(expected = FieldParsingError.class)
+	public void testError3() throws FieldParsingError { // AnnotationOrTagError {
 		// unexpected '@' 
 		split("@NotBlank (  @ 'aa' )   @Foo  @Bar");
 	}
 
-	@Test(expected = AnnotationOrTagError.class)
-	public void testError4() throws AnnotationOrTagError {
+//	@Test(expected = AnnotationOrTagError.class)
+	@Test(expected = FieldParsingError.class)
+	public void testError4() throws FieldParsingError { // AnnotationOrTagError {
 		// unexpected '"' 
 		split("@NotBlank \" ('aa')   @Foo  @Bar");
 	}
 
-	@Test(expected = AnnotationOrTagError.class)
-	public void testError5() throws AnnotationOrTagError {
+//	@Test(expected = AnnotationOrTagError.class)
+	@Test(expected = FieldParsingError.class)
+	public void testError5() throws FieldParsingError { // AnnotationOrTagError {
 		// unexpected single quote
 		split("@NotBlank ' ('aa')   @Foo  @Bar");
 	}
 
-	@Test(expected = AnnotationOrTagError.class)
-	public void testError6() throws AnnotationOrTagError {
+//	@Test(expected = AnnotationOrTagError.class)
+	@Test(expected = FieldParsingError.class)
+	public void testError6() throws FieldParsingError { // AnnotationOrTagError {
 		// unexpected single quote
 		split("@NotBlank('aa')   @Foo ' @Bar");
 	}
 
-	@Test(expected = AnnotationOrTagError.class)
-	public void testError7() throws AnnotationOrTagError {
+//	@Test(expected = AnnotationOrTagError.class)
+	@Test(expected = FieldParsingError.class)
+	public void testError7() throws FieldParsingError { // AnnotationOrTagError {
 		// unexpected '"' 
 		split("@NotBlank  ('aa )   @Foo  @Bar");
 	}
-	@Test(expected = AnnotationOrTagError.class)
-	public void testError8() throws AnnotationOrTagError {
+//	@Test(expected = AnnotationOrTagError.class)
+	@Test(expected = FieldParsingError.class)
+	public void testError8() throws FieldParsingError { // AnnotationOrTagError {
 		// unexpected '"' 
 		split("@NotBlank  ('aa '   @Foo  @Bar");
 	}
-	@Test(expected = AnnotationOrTagError.class)
-	public void testError9() throws AnnotationOrTagError {
+//	@Test(expected = AnnotationOrTagError.class)
+	@Test(expected = FieldParsingError.class)
+	public void testError9() throws FieldParsingError { // AnnotationOrTagError {
 		// unexpected '"' 
 		split("@NotBlank  ('aa ' ");
 	}

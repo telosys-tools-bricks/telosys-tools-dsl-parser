@@ -2,7 +2,7 @@ package org.telosys.tools.dsl.parsing.entitylevel;
 
 import java.util.List;
 
-import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
 
@@ -19,7 +19,8 @@ public class EntityReport {
 		}
 		System.out.println(" Entity hasError() ? : " + entity.hasError());
 		System.out.println(" Entity errors :");
-		List<FieldParsingError> errors = entity.getErrors();
+//		List<FieldParsingError> errors = entity.getErrors();
+		List<ParsingError> errors = entity.getErrors();
 		for ( Exception e : errors ) {
 			System.out.println(" . " + e.getClass().getSimpleName() + " : " + e.getMessage());
 		}

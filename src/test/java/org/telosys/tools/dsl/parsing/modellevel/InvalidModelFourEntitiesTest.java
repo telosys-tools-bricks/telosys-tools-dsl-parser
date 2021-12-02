@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.Parser;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 
 import static org.junit.Assert.assertEquals;
@@ -31,7 +31,8 @@ public class InvalidModelFourEntitiesTest {
 	private void print(EntityParsingError exception) {
 		if ( exception != null ) {
 			System.out.println("EntityParsingError : " + exception.getMessage() );
-			for ( FieldParsingError error : exception.getFieldsErrors() ) {
+//			for ( FieldParsingError error : exception.getFieldsErrors() ) {
+			for ( ParsingError error : exception.getErrors() ) {
 				System.out.println(" . FieldParsingError : " + error.getMessage() + " [" + error.getEntityName() + "]");
 			}
 		}
@@ -56,11 +57,12 @@ public class InvalidModelFourEntitiesTest {
 		assertNotNull(exception);
 		assertNull(entity);
 		print(exception);
-		assertEquals(1, exception.getFieldsErrors().size() );		
+//		assertEquals(1, exception.getFieldsErrors().size() );		
+		assertEquals(1, exception.getErrors().size() );		
 	}
 
 	@Test
-	public void parseEntity_Country_ERR() {
+	public void parseEntityCountryERR() {
 		DomainEntity entity = null ;
 		EntityParsingError exception = null;
 		try {
@@ -71,7 +73,8 @@ public class InvalidModelFourEntitiesTest {
 		assertNotNull(exception);
 		assertNull(entity);
 		print(exception);
-		assertEquals(1, exception.getFieldsErrors().size() );		
+//		assertEquals(1, exception.getFieldsErrors().size() );		
+		assertEquals(1, exception.getErrors().size() );		
 	}
 
 
@@ -87,7 +90,8 @@ public class InvalidModelFourEntitiesTest {
 		assertNull(entity);
 		assertNotNull(exception);
 		print(exception);
-		assertEquals(2, exception.getFieldsErrors().size() );		
+//		assertEquals(2, exception.getFieldsErrors().size() );		
+		assertEquals(2, exception.getErrors().size() );		
 	}
 
 	@Test
@@ -102,7 +106,8 @@ public class InvalidModelFourEntitiesTest {
 		assertNull(entity);
 		assertNotNull(exception);
 		print(exception);
-		assertEquals(4, exception.getFieldsErrors().size() );		
+//		assertEquals(4, exception.getFieldsErrors().size() );		
+		assertEquals(4, exception.getErrors().size() );		
 	}
 
 }

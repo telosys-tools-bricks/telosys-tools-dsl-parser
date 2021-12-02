@@ -16,20 +16,17 @@
 package org.telosys.tools.dsl.parser;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.AnnotationName;
-import org.telosys.tools.dsl.KeyWords;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
-import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamValidator;
 import org.telosys.tools.dsl.parser.annotation.Annotations;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 import org.telosys.tools.dsl.parser.model.DomainTag;
-import org.telosys.tools.generic.model.BooleanValue;
 
 /**
  * Field annotations parsing
@@ -67,7 +64,7 @@ public class FieldAnnotationOrTagParser {
 	 *            e.g. "@Id", "@Max(12)", "#Tag", etc
 	 * @return
 	 */
-	public DomainAnnotationOrTag parse(String annotationOrTagString) throws AnnotationOrTagError {
+	public DomainAnnotationOrTag parse(String annotationOrTagString) throws ParsingError { // AnnotationOrTagError {
 
 		char firstChar = annotationOrTagString.charAt(0);
 		if (firstChar == '@') {
@@ -81,7 +78,7 @@ public class FieldAnnotationOrTagParser {
 		}
 	}
 
-	protected DomainAnnotation parseAnnotation(String annotation) throws AnnotationOrTagError {
+	protected DomainAnnotation parseAnnotation(String annotation) throws ParsingError { //AnnotationOrTagError {
 		
 		// get the name 
 		String name = getName(annotation);
@@ -147,6 +144,7 @@ public class FieldAnnotationOrTagParser {
 		**/
 		AnnotationDefinition ad = Annotations.get(name);
 		if ( ad != null ) {
+			/**
 			DomainAnnotation domainAnnotation = null;
 			switch(ad.getParamType()) {
 			case STRING :
@@ -174,6 +172,8 @@ public class FieldAnnotationOrTagParser {
 				break;
 			}
 			return domainAnnotation;
+			**/
+			return ad.buildAnnotation(name, name, annotation, parameterValue);
 		}
 		else {
 			throw new AnnotationOrTagError(entityName, fieldName, annotation, "unknown annotation");
@@ -273,6 +273,7 @@ public class FieldAnnotationOrTagParser {
 		}
 	}
 
+	/***
 	private void checkParameterExistence(String annotationOrTag, String parameterValue) throws AnnotationOrTagError { 
 		if (parameterValue == null || parameterValue.length() == 0) {
 			throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "parameter required");
@@ -332,7 +333,7 @@ public class FieldAnnotationOrTagParser {
 			return s;
 		}
 	}
-
+**/
 	/**
 	 * Remove quote char at the first and last position if any
 	 * 
@@ -340,6 +341,7 @@ public class FieldAnnotationOrTagParser {
 	 * @param quoteChar
 	 * @return
 	 */
+	/**
 	protected static String unquote(String s, char quoteChar) {
 		if (s == null) {
 			return s;
@@ -354,5 +356,5 @@ public class FieldAnnotationOrTagParser {
 			return s;
 		}
 	}
-
+**/
 }

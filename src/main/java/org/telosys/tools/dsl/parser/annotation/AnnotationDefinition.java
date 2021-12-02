@@ -17,11 +17,16 @@ package org.telosys.tools.dsl.parser.annotation;
 
 import java.math.BigDecimal;
 
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
-import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
+import org.telosys.tools.dsl.parser.commnos.ParamValue;
+import org.telosys.tools.dsl.parser.commnos.ParamValueOrigin;
+import org.telosys.tools.dsl.parser.exceptions.AnnotationParsingError;
+import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.generic.model.BooleanValue;
 
@@ -36,10 +41,6 @@ public abstract class AnnotationDefinition {
 		this.type = type ;
 		this.scope = scope ;
 	}
-
-//	protected String nameWithoutSuffix(String str) {
-//		return str.substring(0, str.length() - 1);
-//	}
 
 	public String getName() {
 		return name;
@@ -56,53 +57,30 @@ public abstract class AnnotationDefinition {
 	//-------------------------------------------------------------------------------------------
 	// Annotation parsing 
 	//-------------------------------------------------------------------------------------------
-	/**
-	public DomainAnnotation buildAnnotation() {
+	public DomainAnnotation buildAnnotation(String entityName, String fieldName, 
+			String annotation, String parameterValue) throws ParsingError {
+		ParamValue paramValue = new ParamValue(entityName, fieldName, annotation, parameterValue, ParamValueOrigin.FIELD_ANNOTATION);
 		switch(this.type) {
 		case STRING :
-			return new DomainAnnotation(name, 
-								getParameterValueAsString(annotation, parameterValue) );
-			break;
+			return new DomainAnnotation(name, paramValue.getAsString() );
 		case INTEGER :
-			domainAnnotation = new DomainAnnotation(name, 
-								getParameterValueAsInteger(annotation, parameterValue) );
-			break;
+			return new DomainAnnotation(name, paramValue.getAsInteger() );
 		case DECIMAL :
-			domainAnnotation = new DomainAnnotation(name, 
-								getParameterValueAsBigDecimal(annotation, parameterValue) );
-			break;
+			return new DomainAnnotation(name, paramValue.getAsBigDecimal() );
 		case BOOLEAN :
-			domainAnnotation = new DomainAnnotation(name, 
-								getParameterValueAsBoolean(annotation, parameterValue) );
-			break;
+			return new DomainAnnotation(name, paramValue.getAsBoolean() );
+		case SIZE :
+			return new DomainAnnotation(name, paramValue.getAsSize() );
 		default :
 			// annotation without parameter
 			if (parameterValue != null) {
-				throw new AnnotationOrTagError(entityName, fieldName, annotation, "unexpected parameter");
+				throw new AnnotationParsingError(entityName, fieldName, annotation, "unexpected parameter");
 			}
-			domainAnnotation = new DomainAnnotation(name);
-			break;
-		}
-		return domainAnnotation;
-		
-	}
-	
-	protected BigDecimal getParameterValueAsBigDecimal(String annotationOrTag, String parameterValue) throws AnnotationOrTagError {
-		// Decimal value
-		checkParameterExistence(annotationOrTag, parameterValue);
-		try {
-			return new BigDecimal(parameterValue);
-		} catch (NumberFormatException e) {
-			throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "invalid decimal parameter '" + parameterValue + "'");
+			return new DomainAnnotation(name);
 		}
 	}
 	
-	private void checkParameterExistence(String annotationOrTag, String parameterValue) throws AnnotationOrTagError { 
-		if (parameterValue == null || parameterValue.length() == 0) {
-			throw new AnnotationOrTagError(entityName, fieldName, annotationOrTag, "parameter required");
-		}
-	}
-**/
+
 	//-------------------------------------------------------------------------------------------
 	// Annotation application ( on attribute or link )
 	//-------------------------------------------------------------------------------------------

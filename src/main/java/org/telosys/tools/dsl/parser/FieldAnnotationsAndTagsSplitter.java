@@ -18,7 +18,7 @@ package org.telosys.tools.dsl.parser;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
+import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 
 /**
  * Utility class designed to split a string containing annotations and tags 
@@ -66,7 +66,7 @@ public class FieldAnnotationsAndTagsSplitter {
 		return inElement && inParentheses && ( inSingleQuote || inDoubleQuote ) ;
 	}
 	
-	public List<String> split(String s) throws AnnotationOrTagError {
+	public List<String> split(String s) throws FieldParsingError {
 		
 		for (char c : s.toCharArray() ) {
 			logChar(c);
@@ -76,7 +76,9 @@ public class FieldAnnotationsAndTagsSplitter {
 						keepChar(c);
 					}
 					else {
-						throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected '" + c + "' in parentheses");
+//						throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected '" + c + "' in parentheses");
+						throw new FieldParsingError(entityName, fieldName, 
+								"'" + s + "' unexpected '" + c + "' in parentheses");
 					}
 				}
 				else {
@@ -90,7 +92,9 @@ public class FieldAnnotationsAndTagsSplitter {
 						inParentheses = true ;
 					}
 					else {
-						throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected opening parenthesis");
+//						throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected opening parenthesis");
+						throw new FieldParsingError(entityName, fieldName, 
+								"'" + s + "' unexpected '(' ");
 					}
 				}
 				keepChar(c);
@@ -102,7 +106,9 @@ public class FieldAnnotationsAndTagsSplitter {
 						inElement = false; // it's the end of current element
 					}
 					else {
-						throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected closing parenthesis");
+//						throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected closing parenthesis");
+						throw new FieldParsingError(entityName, fieldName, 
+								"'" + s + "' unexpected ')' ");
 					}
 				}
 				keepChar(c);
@@ -115,7 +121,9 @@ public class FieldAnnotationsAndTagsSplitter {
 					keepChar(c);
 				}
 				else {
-					throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected single quote");
+//					throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected single quote");
+					throw new FieldParsingError(entityName, fieldName, 
+							"'" + s + "' unexpected single quote");
 				}
 				
 			}
@@ -127,11 +135,12 @@ public class FieldAnnotationsAndTagsSplitter {
 					keepChar(c);
 				}
 				else {
-					throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected double quote");
+//					throw new AnnotationOrTagError(entityName, fieldName, s, "unexpected double quote");
+					throw new FieldParsingError(entityName, fieldName, 
+							"'" + s + "' unexpected double quote");
 				}
 			}
 			else if ( c == ',' ) {
-				// if ( inQuote() ) { 
 				if ( inQuote() || inParentheses() ) { // since v 3.3.0 keep ',' if in parentheses
 					keepChar(c);
 				}
@@ -146,7 +155,7 @@ public class FieldAnnotationsAndTagsSplitter {
 		return elements;
 	}
 	
-	private void newCurrentElement() throws AnnotationOrTagError {
+	private void newCurrentElement() throws FieldParsingError { // AnnotationOrTagError {
 		keepCurrentElement();
 		currentElement = new StringBuilder();
 		// reset all flags
@@ -156,13 +165,17 @@ public class FieldAnnotationsAndTagsSplitter {
 		inParentheses = false ;
 	}
 	
-	private void keepCurrentElement() throws AnnotationOrTagError {
+	private void keepCurrentElement() throws FieldParsingError { // AnnotationOrTagError {
 		if ( currentElement != null ) {
 			if ( inQuote() ) {
-				throw new AnnotationOrTagError(entityName, fieldName, currentElement.toString(), "unexpected end of element (quote not closed)");
+//				throw new AnnotationOrTagError(entityName, fieldName, currentElement.toString(), "unexpected end of element (quote not closed)");
+				throw new FieldParsingError(entityName, fieldName,
+						"'" + currentElement.toString() + "' unexpected end of element (quote not closed)");
 			}
 			if ( inParentheses() ) {
-				throw new AnnotationOrTagError(entityName, fieldName, currentElement.toString(), "unexpected end of element (parenthesis not closed)");
+//				throw new AnnotationOrTagError(entityName, fieldName, currentElement.toString(), "unexpected end of element (parenthesis not closed)");
+				throw new FieldParsingError(entityName, fieldName,
+						"'" + currentElement.toString() + "' unexpected end of element (parenthesis not closed)");
 			}
 			String element = currentElement.toString().trim();
 			elements.add(element);

@@ -21,33 +21,28 @@ package org.telosys.tools.dsl.parser.exceptions;
  * @author Laurent GUERIN
  *
  */
-public class AnnotationOrTagError extends FieldParsingError {
+public class TagParsingError extends ParsingError {
 
     private static final long serialVersionUID = 1L;
     
-//	private final String fieldName;
-	private final String annotationOrTag;
-
     /**
-     * Constructor
+	 * ENTITY level tag error 
      * @param entityName
-     * @param fieldName
-     * @param annotationOrTag
+     * @param tagName
      * @param error
      */
-    public AnnotationOrTagError(String entityName, String fieldName, String annotationOrTag, String error) {
-//        super(entityName, fieldName, entityName + " : field '" + fieldName + "' : '" + annotationOrTag + "' (" + error + ")");
-        super(entityName, fieldName, "'" + annotationOrTag + "' (" + error + ")");
-//        this.fieldName = fieldName ;
-        this.annotationOrTag = annotationOrTag ;
+    public TagParsingError(String entityName, String tagName, String error) {
+        super(entityName, "'#" + tagName + "' : " + error );
     }
 
-//	public String getFieldName() {
-//		return fieldName;
-//	}
-
-	public String getAnnotationOrTag() {
-		return annotationOrTag;
-	}
-    
+    /**
+	 * FIELD level tag error 
+     * @param entityName
+     * @param fieldName
+     * @param tagName
+     * @param error
+     */
+    public TagParsingError(String entityName, String fieldName, String tagName, String error) {
+        super(entityName, fieldName, "'#" + tagName + "' : " + error );
+    }
 }

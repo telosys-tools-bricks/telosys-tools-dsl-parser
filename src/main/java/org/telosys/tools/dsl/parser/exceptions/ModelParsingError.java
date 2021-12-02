@@ -15,7 +15,6 @@
  */
 package org.telosys.tools.dsl.parser.exceptions;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,39 +24,41 @@ import java.util.List;
  * @author Laurent GUERIN
  *
  */
-public class ModelParsingError extends Exception {
+public class ModelParsingError extends ParsingError {
 
     private static final long serialVersionUID = 1L;
     
     
-	private final File modelFile;
-//	private final String error ;
+//	private final File modelFile;
 	private final List<EntityParsingError> errors ;
-	private final String detailMessage ;
+//	private final String detailMessage ;
 
-    public ModelParsingError(File modelFile, String errorMessage, List<EntityParsingError> errors) {
-        super();
-        this.modelFile = modelFile ;
-//        this.error = error;
-		this.detailMessage = modelFile.getName() + " : " + errorMessage ;
+//    public ModelParsingError(File modelFile, String errorMessage, List<EntityParsingError> errors) {
+//        super();
+//        this.modelFile = modelFile ;
+//		this.detailMessage = modelFile.getName() + " : " + errorMessage ;
+//		this.errors = errors ;
+//    }
+
+//    public ModelParsingError(String errorMessage, List<EntityParsingError> errors) {
+	public ModelParsingError(List<EntityParsingError> errors) {
+        super( (errors != null ? errors.size() : 0  ) + " parsing error(s)" ) ;
 		this.errors = errors ;
     }
 
-    public ModelParsingError(File modelFile, String errorMessage) {
-        super();
-        this.modelFile = modelFile ;
-		this.detailMessage = modelFile.getName() + " : " + errorMessage ;
+    public ModelParsingError(String errorMessage) {
+        super(errorMessage);
 		this.errors = new LinkedList<>() ; // void list
     }
 
-    public File getModelFile() {
-        return modelFile;
-    }
+//    public File getModelFile() {
+//        return modelFile;
+//    }
 
-    @Override
-    public String getMessage() {
-        return detailMessage;
-    }
+//    @Override
+//    public String getMessage() {
+//        return detailMessage;
+//    }
     
     public List<EntityParsingError> getEntitiesErrors() {
     	return errors ;

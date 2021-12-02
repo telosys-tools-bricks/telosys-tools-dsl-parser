@@ -53,7 +53,7 @@ public class FieldNameAndTypeParser {
 		// get field type and cardinality
 		String fieldTypeName = getFieldTypeWithoutCardinality(fieldNameAndType, fieldTypeWithCardinality);
 		int fieldTypeCardinality = getFieldTypeCardinality(fieldNameAndType, fieldTypeWithCardinality);
-		DomainType domainType = getFieldDomainType(fieldNameAndType, fieldTypeName);
+		DomainType domainType = getFieldDomainType(fieldName, fieldTypeName);
 
 		return new FieldNameAndType(fieldName, fieldTypeName, fieldTypeCardinality, domainType);
 	}
@@ -203,20 +203,19 @@ public class FieldNameAndTypeParser {
 
 	/**
 	 * Returns the DomainType for the given field type name
-	 * @param field
+	 * @param fieldName
 	 * @param typeName eg 'string', 'date', 'Book', 'Country', etc
 	 * @return
 	 */
-	private DomainType getFieldDomainType(String fieldNameAndType, String typeName) throws FieldParsingError {
+	private DomainType getFieldDomainType(String fieldName, String typeName) throws FieldParsingError {
 		if (DomainNeutralTypes.exists(typeName)) { 
 			// Simple neutral type ( string, int, date, etc )
 			return DomainNeutralTypes.getType(typeName);
 		} else if (entitiesNamesInModel.contains(typeName)) {
 			// Entity type (it is supposed to be known ) eg : 'Book', 'Car', etc
-//			return new DomainEntity(typeName); 
 			return new DomainEntityType(typeName); 
 		} else {
-			throw new FieldParsingError(entityNameFromFileName, fieldNameAndType, "invalid type '" + typeName + "'");
+			throw new FieldParsingError(entityNameFromFileName, fieldName, "invalid type '" + typeName + "'");
 		}
 	}
 

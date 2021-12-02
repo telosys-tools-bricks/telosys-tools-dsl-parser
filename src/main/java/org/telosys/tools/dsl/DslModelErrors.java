@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 public class DslModelErrors {
 
@@ -62,7 +62,8 @@ public class DslModelErrors {
 		List<String> list = new LinkedList<>();
 
 		// Entity error if any
-		String entityError = e.getError();
+//		String entityError = e.getError();
+		String entityError = e.getErrorMessage();
 		if (entityError != null) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("[").append(entityName).append("]");
@@ -71,11 +72,24 @@ public class DslModelErrors {
 		}
 
 		// Fields errors if any
-		for (FieldParsingError fpe : e.getFieldsErrors()) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("[").append(entityName).append("]");
-			sb.append(" : field '").append(fpe.getFieldName()).append("' : ").append(fpe.getError());
-			list.add(sb.toString());
+//		for (FieldParsingError fpe : e.getFieldsErrors()) {
+		for (ParsingError pe : e.getErrors()) {
+//			StringBuilder sb = new StringBuilder();
+//			sb.append("[").append(entityName).append("]");
+////			if ( pe instanceof FieldParsingError ) {
+////				FieldParsingError fpe = (FieldParsingError)pe;
+////				sb.append(" : field '").append(fpe.getFieldName()).append("' : ").append(fpe.getError());
+////			}
+////			else {
+////				// TODO : getDetailMessage for all Error classes ( abstract + implem )
+////				// or override getMessage()
+////				//pe.getMessage();
+////				sb.append(pe.toString());
+////			}
+//			sb.append(" : ");
+//			list.add(sb.toString());
+			
+			list.add(pe.getReportMessage());
 		}
 		return list.isEmpty() ? null : list;
 	}

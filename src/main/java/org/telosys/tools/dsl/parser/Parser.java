@@ -23,10 +23,10 @@ import java.util.Properties;
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.DslModelUtil;
-import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainFK;
@@ -108,8 +108,9 @@ public class Parser {
 		parserFKChecker.checkNoDuplicateFK(model, errors);
 		
 		if ( ! errors.isEmpty()) {
-			String msg = errors.size() + " parsing error(s)" ;
-			throw new ModelParsingError(file, msg, errors);
+//			String msg = errors.size() + " parsing error(s)" ;
+//			throw new ModelParsingError(msg, errors);
+			throw new ModelParsingError(errors);
 		} else {
 			return model;
 		}
@@ -124,15 +125,18 @@ public class Parser {
 	protected void checkModelFile(File file) throws ModelParsingError {
 		if (!file.exists()) {
 			String error = "File '" + file.toString() + "' not found";
-			throw new ModelParsingError(file, error);
+			//throw new ModelParsingError(file, error);
+			throw new ModelParsingError(error);
 		}
 		if (!file.isFile()) {
 			String error = "'" + file.toString() + "' is not a file";
-			throw new ModelParsingError(file, error);
+			//throw new ModelParsingError(file, error);
+			throw new ModelParsingError(error);
 		}
 		if (!file.getName().endsWith(DOT_MODEL)) {
 			String error = "File '" + file.toString() + "' doesn't end with '" + DOT_MODEL + "'";
-			throw new ModelParsingError(file, error);
+			//throw new ModelParsingError(file, error);
+			throw new ModelParsingError(error);
 		}
 	}
 
@@ -220,7 +224,8 @@ public class Parser {
 		DomainField domainField = null;
 		try {
 			domainField = parseField(domainEntity.getName(), fieldParts, entitiesNames);
-		} catch (FieldParsingError e) {
+//		} catch (FieldParsingError e) {
+		} catch (ParsingError e) {
 			domainEntity.addError(e); // Cannot parse field name and type
 			return;
 		}
@@ -237,7 +242,8 @@ public class Parser {
 
 		// If fiels has errors : store these errors at entity level 
 		if ( domainField.hasErrors() ) {
-			for ( AnnotationOrTagError fieldError : domainField.getErrors() ) {
+//			for ( AnnotationOrTagError fieldError : domainField.getErrors() ) {
+			for ( ParsingError fieldError : domainField.getErrors() ) {
 				domainEntity.addError(fieldError); 
 			}
 		}
@@ -252,7 +258,7 @@ public class Parser {
 	 * @throws FieldParsingError
 	 */
 	protected DomainField parseField(String entityName, FieldParts fieldParts, List<String> allEntitiesNames)
-			throws FieldParsingError {
+			throws ParsingError { // FieldParsingError {
 
 		// 1) Parse the field NAME and TYPE
 		FieldNameAndTypeParser parser = new FieldNameAndTypeParser(entityName, allEntitiesNames);
@@ -273,7 +279,8 @@ public class Parser {
 		FieldAnnotationsAndTags fieldAnnotationsAndTags = fieldAnnotationsAndTagsParser.parse(fieldName, fieldParts);
 
 		// Errors found
-		for (AnnotationOrTagError error : fieldAnnotationsAndTags.getErrors()) {
+//		for (AnnotationOrTagError error : fieldAnnotationsAndTags.getErrors()) {
+		for (ParsingError error : fieldAnnotationsAndTags.getErrors()) {
 			domainField.addError(error);
 		}
 
@@ -285,7 +292,8 @@ public class Parser {
 					FieldFKAnnotationParser fkParser = new FieldFKAnnotationParser(entityName, fieldName);
 					DomainFK fk = fkParser.parse(annotation);
 					domainField.addFKDeclaration(fk);
-				} catch (AnnotationOrTagError err) {
+//				} catch (AnnotationOrTagError err) {
+				} catch (ParsingError err) {
 					domainField.addError(err);
 				}
 			}
@@ -293,8 +301,8 @@ public class Parser {
 				// Standard processing for other annotations
 				if (domainField.hasAnnotation(annotation)) {
 					// Already defined => Error
-					domainField.addError(new AnnotationOrTagError(entityName, fieldName, "@"+annotation.getName(),
-							"annotation defined more than once"));
+					domainField.addError(new FieldParsingError(entityName, fieldName, 
+							"@" + annotation.getName() + " defined more than once"));
 				} else {
 					domainField.addAnnotation(annotation);
 				}
@@ -305,8 +313,10 @@ public class Parser {
 		for ( DomainTag tag : fieldAnnotationsAndTags.getTags() ) {
 			if (domainField.hasTag(tag)) {
 				// Already defined => Error
-				domainField.addError(new AnnotationOrTagError(entityName, fieldName, "#"+tag.getName(),
-						"tag defined more than once"));
+//				domainField.addError(new AnnotationOrTagError(entityName, fieldName, "#"+tag.getName(),
+//						"tag defined more than once"));
+				domainField.addError(new FieldParsingError(entityName, fieldName, 
+						"#" + tag.getName() + " defined more than once"));
 			} else {
 				domainField.addTag(tag);
 			}

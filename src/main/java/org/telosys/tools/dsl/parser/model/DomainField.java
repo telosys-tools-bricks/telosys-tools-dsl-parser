@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 public class DomainField {
 	
@@ -35,7 +35,9 @@ public class DomainField {
     private final Map<String, DomainAnnotation> annotations = new HashMap<>();
     private final Map<String, DomainTag> tags = new HashMap<>();
     private final List<DomainFK> fkDeclarations = new LinkedList<>() ; // v 3.3.0
-	private final List<AnnotationOrTagError> errors = new LinkedList<>() ;
+//	private final List<AnnotationOrTagError> errors = new LinkedList<>() ;
+	private final List<ParsingError> errors = new LinkedList<>() ;
+	
 
     /**
      * Constructor with specific cardinality
@@ -98,7 +100,8 @@ public class DomainField {
      * Add a new error to the field 
      * @param error
      */
-    public void addError(AnnotationOrTagError error) {
+//    public void addError(AnnotationOrTagError error) {
+    public void addError(ParsingError error) {
     	errors.add(error);
     }
     
@@ -200,7 +203,8 @@ public class DomainField {
     	return ! this.errors.isEmpty();
     }
     
-    public List<AnnotationOrTagError> getErrors() {
+//    public List<AnnotationOrTagError> getErrors() {
+    public List<ParsingError> getErrors() {
     	return this.errors;
     }
     

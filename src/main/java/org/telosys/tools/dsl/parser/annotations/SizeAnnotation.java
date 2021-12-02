@@ -26,7 +26,7 @@ import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 public class SizeAnnotation extends AnnotationDefinition {
 
 	public SizeAnnotation() {
-		super(AnnotationName.SIZE, AnnotationParamType.STRING, AnnotationScope.ATTRIBUTE);
+		super(AnnotationName.SIZE, AnnotationParamType.SIZE, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override
