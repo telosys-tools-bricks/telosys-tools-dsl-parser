@@ -1,5 +1,0 @@
-Country : string {
-    FR = "France",
-    EN = "Great Britain",
-    ES = "Spain"
-}
