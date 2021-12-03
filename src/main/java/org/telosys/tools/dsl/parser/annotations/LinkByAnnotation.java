@@ -16,9 +16,9 @@
 package org.telosys.tools.dsl.parser.annotations;
 
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.dsl.converter.JoinColumnsBuilder;
-import org.telosys.tools.dsl.converter.ReferenceDefinition;
-import org.telosys.tools.dsl.converter.ReferenceDefinitions;
+import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
+import org.telosys.tools.dsl.commons.ReferenceDefinition;
+import org.telosys.tools.dsl.commons.ReferenceDefinitions;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
@@ -37,21 +37,22 @@ public abstract class LinkByAnnotation extends AnnotationDefinition {
 		return new JoinColumnsBuilder("@"+this.getName()) ;
 	}
 
-	protected ReferenceDefinitions getReferenceDefinitions(String paramValue) {
-		ReferenceDefinitions rd = buildReferenceDefinitions(paramValue);
-		checkReferenceDefinitions(rd);
-		return rd;
-	}
+//	protected ReferenceDefinitions getReferenceDefinitions(String paramValue) {
+//		ReferenceDefinitions rd = buildReferenceDefinitions(paramValue);
+//		checkReferenceDefinitions(rd);
+//		return rd;
+//	}
 
 	/**
 	 * Builds all references definitions (for columns references or attributes references)<br>
+	 * No consistency check at this level (just build)
 	 * Input examples : <br>
 	 *   "col1",  "col1>refCol1 , col2 > refCol2 " <br>
 	 *   "attr1", "att1>refAtt1 , att2 > refAtt2 " <br>
 	 * @param s  
 	 * @return
 	 */
-	private ReferenceDefinitions buildReferenceDefinitions(String s) {
+	protected ReferenceDefinitions buildReferenceDefinitions(String s) {
 		ReferenceDefinitions refDefinitions = new ReferenceDefinitions();
 		if ( ! StrUtil.nullOrVoid(s) ) {
 			String[] parts = StrUtil.split(s, ',');
@@ -83,23 +84,50 @@ public abstract class LinkByAnnotation extends AnnotationDefinition {
 		return refDefinitions;
 	}
 	
-	private void checkReferenceDefinitions(ReferenceDefinitions referenceDefinitions ) {
+//	private void checkReferenceDefinitions(ReferenceDefinitions referenceDefinitions ) {
+//		if ( referenceDefinitions.count() == 0 ) {
+//			throw newException("no reference definition");
+//		}
+//		else {
+//			if ( referenceDefinitions.count() > 1 ) {
+//				int referencedCount = 0;
+//				for ( ReferenceDefinition rd : referenceDefinitions.getList() ) {
+//					if ( rd.hasReferencedName() ) {
+//						referencedCount++;
+//					}
+//				}
+//				if ( referencedCount < referenceDefinitions.count() ) {
+//					throw newException("missing referenced name(s)");
+//				}
+//			}
+//		}
+//	}
+	
+	/**
+	 * Check there's at least 1 reference defined
+	 * @param referenceDefinitions
+	 */
+	protected void checkNotVoid(ReferenceDefinitions referenceDefinitions) {
 		if ( referenceDefinitions.count() == 0 ) {
 			throw newException("no reference definition");
 		}
-		else {
-			if ( referenceDefinitions.count() > 1 ) {
-				int referencedCount = 0;
-				for ( ReferenceDefinition rd : referenceDefinitions.getList() ) {
-					if ( rd.hasReferencedName() ) {
-						referencedCount++;
-					}
+	}
+	
+	/**
+	 * Check referenced names are defined if more than one reference
+	 * @param referenceDefinitions
+	 */
+	protected void checkReferencedNames(ReferenceDefinitions referenceDefinitions) {
+		if ( referenceDefinitions.count() > 1 ) {
+			int referencedCount = 0;
+			for ( ReferenceDefinition rd : referenceDefinitions.getList() ) {
+				if ( rd.hasReferencedName() ) {
+					referencedCount++;
 				}
-				if ( referencedCount < referenceDefinitions.count() ) {
-					throw newException("missing referenced name(s)");
-				}
+			}
+			if ( referencedCount < referenceDefinitions.count() ) {
+				throw newException("missing referenced name(s)");
 			}
 		}
 	}
-
 }

@@ -1,7 +1,13 @@
-package org.telosys.tools.dsl.converter;
+package org.telosys.tools.dsl.converter.link;
 
 import org.junit.Test;
+import org.telosys.tools.dsl.AnnotationName;
+import org.telosys.tools.dsl.commons.ReferenceDefinitions;
+import org.telosys.tools.dsl.converter.link.LinksAnnotationsProcessor;
 import org.telosys.tools.dsl.model.DslModel;
+import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotations.LinkByAnnotation;
+import org.telosys.tools.dsl.parser.annotations.LinkByColAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
 import static org.junit.Assert.assertEquals;
@@ -9,6 +15,12 @@ import static org.junit.Assert.assertEquals;
 public class LinksAnnotationsProcessorTest {
 
 	private static final DslModel VOID_MODEL = new DslModel("test.model");
+
+	@Test
+	public void test01() {
+		LinkByColAnnotation a = new LinkByColAnnotation() ;
+		a.buildReferenceDefinitions("");
+	}
 	
 	@Test
 	public void test0() {

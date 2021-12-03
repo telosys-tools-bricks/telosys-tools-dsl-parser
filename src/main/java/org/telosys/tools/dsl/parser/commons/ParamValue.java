@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.parser.commnos;
+package org.telosys.tools.dsl.parser.commons;
 
 import java.math.BigDecimal;
 

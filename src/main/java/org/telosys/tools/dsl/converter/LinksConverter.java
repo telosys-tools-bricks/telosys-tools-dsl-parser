@@ -15,14 +15,17 @@
  */
 package org.telosys.tools.dsl.converter;
 
+import java.util.Collection;
 import java.util.List;
 
+import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
+import org.telosys.tools.dsl.converter.link.JoinColumnsUtil;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
-import org.telosys.tools.dsl.parser.model.DomainType;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Cardinality;
 import org.telosys.tools.generic.model.CascadeOptions;
@@ -37,6 +40,11 @@ public class LinksConverter extends AbstractConverter {
 	
 	private int linkIdCounter = 0;
 
+	private final AnnotationsApplicator annotationsApplicator ;
+
+	private final TagsConverter tagsConverter;
+	
+	
 	/**
 	 * Constructor
 	 * @param dslModel
@@ -44,51 +52,69 @@ public class LinksConverter extends AbstractConverter {
 	public LinksConverter(DslModel dslModel) {
 		super();
 		this.dslModel = dslModel;
+		this.annotationsApplicator = new AnnotationsApplicator(dslModel);
+		this.tagsConverter = new TagsConverter();
 	}
 
 	/**
-	 * Create all the 'links' for the given entity
+	 * Converts all the 'links' for the given entity
 	 * @param domainEntity
 	 * @param dslEntity
 	 */
-	public void createLinks(DomainEntity domainEntity, DslModelEntity dslEntity) {
-		log("createLinks()...");
+	public void convertLinks(DomainEntity domainEntity, DslModelEntity dslEntity) {
+		log("convertLinks()...");
 		if (domainEntity.getFields() == null) {
 			return;
 		}
-		for (DomainField domainEntityField : domainEntity.getFields()) {
-			// If this field references an entity then it's a LINK
-			if (domainEntityField.getType().isEntity()) { 
-				log("createLinks() : " + domainEntityField.getName() + " : entity type (link)");
+		for (DomainField domainField : domainEntity.getFields()) {
+			// If the field references an entity then it's a LINK
+			if (domainField.getType().isEntity()) { 
+				log("convert field : " + domainField.getName() + " (entity type => link)");
 				linkIdCounter++;
-				DslModelLink link = convertAttributeLink(dslEntity, domainEntityField);
+				// create a new link
+				DslModelLink dslLink = createLink(dslEntity, domainField);
+				// init link default values
+				step1InitLink(dslLink, domainField);
+				// apply link annotations
+				step2ApplyAnnotations(dslEntity, dslLink, domainField);
+				// apply tags : TODO
+				step3ApplyTags(dslLink, domainField); 
+				// try to infer undefined join columns
+				step4InferJoinColumns(dslEntity, dslLink);
+
 				// Add the new link to the entity
-				dslEntity.getLinks().add(link);
+				dslEntity.getLinks().add(dslLink);
+
+				//DslModelLink link = convertAttributeLink(dslEntity, domainField);
+				// Add the new link to the entity
+				//dslEntity.getLinks().add(link);
 			}
 		}
 	}
-
-	private DslModelLink convertAttributeLink(DslModelEntity dslEntity, DomainField domainEntityField) {
-
-		DomainType domainFieldType = domainEntityField.getType();
-		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
-
-		Entity referencedEntity = dslModel.getEntityByClassName(domainFieldType.getName());
+	
+	private DslModelLink createLink(DslModelEntity dslEntity, DomainField domainField) {
+		Entity referencedEntity = dslModel.getEntityByClassName(domainField.getType().getName());
+		
 		check((referencedEntity != null),
-				"No target entity for field '" + domainEntityField.getName() + "'. Cannot create Link");
+				"No target entity for field '" + domainField.getName() + "'. Cannot create Link");
 
 		DslModelLink dslLink = new DslModelLink();
+		// Init the new attribute with at least its name
+		dslLink.setFieldName(notNull(domainField.getName()));
 
 		// Link ID : generated (just to ensure not null )
 		dslLink.setId("Link" + linkIdCounter); 
 
-		dslLink.setFieldName(domainEntityField.getName());
-
-		dslLink.setSourceTableName(dslEntity.getDatabaseTable()); 
-
+		dslLink.setSourceTableName(notNull(dslEntity.getDatabaseTable())); 
+		
 		// Set target entity info
-		dslLink.setTargetEntityClassName(domainEntityField.getType().getName());
+		dslLink.setTargetEntityClassName(domainField.getType().getName());
 		dslLink.setTargetTableName(notNull(referencedEntity.getDatabaseTable())); // v 3.3.0
+
+		return dslLink;
+	}
+	
+	private void step1InitLink(DslModelLink dslLink, DomainField domainEntityField) {
 
 		// Cardinality and owning/inverse side
 		if (domainEntityField.getCardinality() == 1) {
@@ -125,19 +151,42 @@ public class LinksConverter extends AbstractConverter {
 		dslLink.setBasedOnJoinTable(false);
 		dslLink.setJoinTable(null);
 		dslLink.setJoinTableName(null);
-		
-
+	}
+	
+	private void step2ApplyAnnotations(DslModelEntity dslEntity, DslModelLink dslLink, DomainField domainField) {
+		log(dslLink.getFieldName() + " : apply annotations" );
 		// Apply annotations usable for link ( @Embedded @Optional @FetchTypeLazy @FetchTypeEager etc ) 
-		if (domainEntityField.getAnnotations() != null) {
-			LinksAnnotationsProcessor annotationsConverter = new LinksAnnotationsProcessor(this.dslModel);
-			annotationsConverter.applyAnnotationsForLink(dslEntity, dslLink, domainEntityField.getAnnotations().values());
+		if (domainField.getAnnotations() != null) {
+			log(domainField.getAnnotations().size() + " annotation(s) found");
+//			LinksAnnotationsProcessor annotationsConverter = new LinksAnnotationsProcessor(this.dslModel);
+//			annotationsConverter.applyAnnotationsForLink(dslEntity, dslLink, domainEntityField.getAnnotations().values());
+			Collection<DomainAnnotation> fieldAnnotations = domainField.getAnnotations().values();
+			annotationsApplicator.applyAnnotationsToLink(dslEntity, dslLink, fieldAnnotations);
+		} else {
+			log("no annotation");
 		}
-		
+	}
+	
+	/**
+	 * Apply tags to the given attribute
+	 * @param dslAttribute
+	 * @param domainField
+	 */
+	private void step3ApplyTags(DslModelLink dslLink, DomainField domainField) {
+		// TODO
+		// tagsConverter.applyTags(dslLink, domainField);
+	}
+	
+	/**
+	 * Try to infer join columns not defined by annotations
+	 * @param dslEntity
+	 * @param dslLink
+	 */
+	private void step4InferJoinColumns(DslModelEntity dslEntity, DslModelLink dslLink) {
 		// Join columns not already determined from annotations @LinkByFK or @LinkByCol ?
 		if ( ! dslLink.hasJoinColumns() && dslLink.isOwningSide() ) {
 			// No join columns defined by annotations => try to infer join columns from FK
 			String referencedTableName = dslLink.getTargetTableName(); 
-//			List<JoinColumn> joinColumns = JoinColumnsUtil.tryToInferJoinColumns(dslEntity, referencedTableName);
 			JoinColumnsBuilder jcb = new JoinColumnsBuilder("Infer Join Columns");
 			List<JoinColumn> joinColumns = jcb.tryToInferJoinColumns(dslEntity, referencedTableName);
 			if ( joinColumns != null ) {
@@ -145,8 +194,90 @@ public class LinksConverter extends AbstractConverter {
 			}
 		}
 		checkJoinColumns(dslLink);
-		return dslLink;
-	}	
+	}
+
+//	private DslModelLink convertAttributeLink(DslModelEntity dslEntity, DomainField domainEntityField) {
+
+//		DomainType domainFieldType = domainEntityField.getType();
+//		check(domainFieldType.isEntity(), "Invalid field type. Entity type expected");
+//		Entity referencedEntity = dslModel.getEntityByClassName(domainFieldType.getName());
+
+//		Entity referencedEntity = dslModel.getEntityByClassName(domainEntityField.getType().getName());
+//		
+//		check((referencedEntity != null),
+//				"No target entity for field '" + domainEntityField.getName() + "'. Cannot create Link");
+//
+//		DslModelLink dslLink = new DslModelLink();
+
+//--------------------------------------------------------------
+		
+//		// Link ID : generated (just to ensure not null )
+//		dslLink.setId("Link" + linkIdCounter); 
+//
+//		dslLink.setFieldName(domainEntityField.getName());
+//
+//		dslLink.setSourceTableName(dslEntity.getDatabaseTable()); 
+//
+//		// Set target entity info
+//		dslLink.setTargetEntityClassName(domainEntityField.getType().getName());
+//		dslLink.setTargetTableName(notNull(referencedEntity.getDatabaseTable())); // v 3.3.0
+//
+//		// Cardinality and owning/inverse side
+//		if (domainEntityField.getCardinality() == 1) {
+//			// Reference to only ONE entity => "MANY TO ONE"
+//			dslLink.setCardinality(Cardinality.MANY_TO_ONE);
+//			// The type is a single entity => OWNING SIDE by default
+//			dslLink.setOwningSide(true);
+//			dslLink.setInverseSide(false);
+//			dslLink.setInverseSideLinkId(null);
+//		} else {
+//			// Reference to MANY entities => "ONE TO MANY"
+//			dslLink.setCardinality(Cardinality.ONE_TO_MANY);
+//			// The type is a collection of entity => INVERSE SIDE by default
+//			dslLink.setOwningSide(false);
+//			dslLink.setInverseSide(true);
+//			dslLink.setInverseSideLinkId(null);
+//		}
+//		
+//		// void "cascade options"  (default values)
+//		dslLink.setCascadeOptions(new CascadeOptions()); 
+//
+//		// Link based on FK : @LinkByFK or implicit FK
+//		dslLink.setBasedOnForeignKey(false);
+//		dslLink.setForeignKeyName("");
+//		
+//		dslLink.setComparableString("");
+//		dslLink.setFetchType(FetchType.DEFAULT); // Default value set after by annotation 
+//		dslLink.setOptional(Optional.UNDEFINED); // Default value set after by annotation 
+//		dslLink.setMappedBy(null); // Default value set after by annotation
+//
+//		dslLink.setJoinColumns(null);
+//		
+//		// For "MANY TO MANY" --> No "JOIN TABLE" in DSL ?
+//		dslLink.setBasedOnJoinTable(false);
+//		dslLink.setJoinTable(null);
+//		dslLink.setJoinTableName(null);
+		
+
+//		// Apply annotations usable for link ( @Embedded @Optional @FetchTypeLazy @FetchTypeEager etc ) 
+//		if (domainEntityField.getAnnotations() != null) {
+//			LinksAnnotationsProcessor annotationsConverter = new LinksAnnotationsProcessor(this.dslModel);
+//			annotationsConverter.applyAnnotationsForLink(dslEntity, dslLink, domainEntityField.getAnnotations().values());
+//		}
+		
+//		// Join columns not already determined from annotations @LinkByFK or @LinkByCol ?
+//		if ( ! dslLink.hasJoinColumns() && dslLink.isOwningSide() ) {
+//			// No join columns defined by annotations => try to infer join columns from FK
+//			String referencedTableName = dslLink.getTargetTableName(); 
+//			JoinColumnsBuilder jcb = new JoinColumnsBuilder("Infer Join Columns");
+//			List<JoinColumn> joinColumns = jcb.tryToInferJoinColumns(dslEntity, referencedTableName);
+//			if ( joinColumns != null ) {
+//				dslLink.setJoinColumns(joinColumns);
+//			}
+//		}
+//		checkJoinColumns(dslLink);
+//		return dslLink;
+//	}	
 	
 	private void checkJoinColumns(DslModelLink dslLink) {
 		if ( dslLink.getJoinColumns() != null ) {

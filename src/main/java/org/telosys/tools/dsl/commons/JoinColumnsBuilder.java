@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.converter;
+package org.telosys.tools.dsl.commons;
 
 import java.util.LinkedList;
 import java.util.List;

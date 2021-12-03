@@ -15,7 +15,7 @@
  */
 package org.telosys.tools.dsl.parser;
 
-import org.telosys.tools.dsl.parser.commnos.ParamValue;
+import org.telosys.tools.dsl.parser.commons.ParamValue;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainTag;
 

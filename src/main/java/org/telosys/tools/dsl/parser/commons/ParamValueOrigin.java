@@ -13,34 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.converter;
+package org.telosys.tools.dsl.parser.commons;
 
-import java.util.LinkedList;
-import java.util.List;
-
-public class ReferenceDefinitions {
-
-	private final List<ReferenceDefinition> list ;
+public enum ParamValueOrigin {
 	
-	public ReferenceDefinitions() {
-		super();
-		this.list = new LinkedList<>();
-	}
+	ENTITY_ANNOTATION ,
 
-	public void add(ReferenceDefinition rd) {
-		list.add(rd);
-	}
-
-	public List<ReferenceDefinition> getList() {
-		return list;
-	}
-
-	public int count() {
-		return list.size();
-	}
-
-	public ReferenceDefinition get(int index) {
-		return list.get(index);
-	}
+	ENTITY_TAG,
 	
+	FIELD_ANNOTATION ,
+	
+	FIELD_TAG
 }

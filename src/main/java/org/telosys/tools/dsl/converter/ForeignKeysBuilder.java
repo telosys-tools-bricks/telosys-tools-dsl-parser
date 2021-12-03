@@ -211,7 +211,6 @@ public class ForeignKeysBuilder {
 	private DomainFK completeFK(String entityName, String fieldName, DomainFK fk) {
 		String fkName = fk.getFkName() ;
 		String referencedEntityName = fk.getReferencedEntityName() ;
-		//String referencedFieldName = fk.getReferencedFieldName() ;	
 		
 		//--- Check referenced entity ( it must exist and have an ID )
 		if ( StrUtil.nullOrVoid(referencedEntityName) ) {
@@ -230,11 +229,9 @@ public class ForeignKeysBuilder {
 		
 		//--- Check referenced field ( must exist if specified, ref entity must have a single ID if not specified ) 
 		Attribute referencedAttribute = getReferencedAttribute(fieldName, fk, referencedEntity ) ;
-		//referencedFieldName = referencedAttribute.getName();
 		
 		//--- Build default FK name if not defined
 		if ( StrUtil.nullOrVoid(fkName) ) {
-//			fkName = "FK_" + entityName + "_" + referencedEntityName ;
 			throw new IllegalStateException( fieldName
 					+ " : FK error : FK name is null or void" );
 		}

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.converter;
+package org.telosys.tools.dsl.commons;
 
 import org.telosys.tools.commons.StrUtil;
 
@@ -42,7 +42,7 @@ public class ReferenceDefinition {
 	public ReferenceDefinition(String name, String referencedName) {
 		super();
 		if ( StrUtil.nullOrVoid(name) ) {
-			throw new IllegalAccessError("name is null or void");
+			throw new IllegalArgumentException("name is null or void");
 		}
 		this.name = name;
 		if ( StrUtil.nullOrVoid(referencedName) ) {
@@ -56,7 +56,7 @@ public class ReferenceDefinition {
 	public ReferenceDefinition(String name) {
 		super();
 		if ( StrUtil.nullOrVoid(name) ) {
-			throw new IllegalAccessError("name is null or void");
+			throw new IllegalArgumentException("name is null or void");
 		}
 		this.name = name;
 		this.referencedName = EMPTY;

@@ -18,8 +18,8 @@ package org.telosys.tools.dsl.parser.annotations;
 import java.util.List;
 
 import org.telosys.tools.dsl.AnnotationName;
-import org.telosys.tools.dsl.converter.JoinColumnsBuilder;
-import org.telosys.tools.dsl.converter.ReferenceDefinitions;
+import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
+import org.telosys.tools.dsl.commons.ReferenceDefinitions;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
@@ -39,10 +39,10 @@ public class LinkByColAnnotation extends LinkByAnnotation {
 		link.setJoinColumns(joinColumns);
 	}
 	
-	private List<JoinColumn> getJoinColumns(String paramValue) {
+	protected List<JoinColumn> getJoinColumns(String paramValue) {
 		//ReferenceDefinitions columnsRefDef = buildReferenceDefinitions(annotation);
-		ReferenceDefinitions columnsRefDef = getReferenceDefinitions(paramValue);
-
+		ReferenceDefinitions columnsRefDef = buildReferenceDefinitions(paramValue);
+		checkNotVoid(columnsRefDef);
 //		JoinColumnsBuilder jcb = new JoinColumnsBuilder("@"+this.getName()) ;
 		JoinColumnsBuilder jcb = getJoinColumnsBuilder();
 

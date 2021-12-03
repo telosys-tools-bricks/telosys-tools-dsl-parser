@@ -65,7 +65,6 @@ public class Converter extends AbstractConverter {
 	public Model convertToGenericModel(DomainModel domainModel) {
 
 		// Create a new void DSL model 
-		// DslModel dslModel = new DslModel();
 		DslModel dslModel = new DslModel(domainModel.getModelNameFromFile()); // v 3.3.0
 		dslModel.setTitle(voidIfNull(domainModel.getTitle()));
 		dslModel.setDescription(voidIfNull(domainModel.getDescription()));
@@ -106,8 +105,7 @@ public class Converter extends AbstractConverter {
 	 * @param dslModel
 	 */
 	protected void createAllAttributes(DomainModel domainModel, DslModel dslModel) {
-//		AttribConverter attribConverter = new AttribConverter();
-		AttribConverter attribConverter = new AttribConverter(dslModel);
+		AttributesConverter attribConverter = new AttributesConverter(dslModel);
 		// for each "DomainEntity" convert attributes 
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
 			String entityName = domainEntity.getName();
@@ -139,7 +137,7 @@ public class Converter extends AbstractConverter {
 				// Get the GenericEntity built previously
 				DslModelEntity genericEntity = (DslModelEntity) dslModel.getEntityByClassName(entityName);
 				// Creates a link for each field referencing an entity
-				linksConverter.createLinks(domainEntity, genericEntity);
+				linksConverter.convertLinks(domainEntity, genericEntity);
 			}
 			catch(Exception e) {
 				rethrowException(e,"Entity " + entityName + " : ");

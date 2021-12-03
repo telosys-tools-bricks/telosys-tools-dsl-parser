@@ -15,8 +15,8 @@
  */
 package org.telosys.tools.dsl.parser;
 
-import org.telosys.tools.dsl.parser.commnos.ParamValue;
-import org.telosys.tools.dsl.parser.commnos.ParamValueOrigin;
+import org.telosys.tools.dsl.parser.commons.ParamValue;
+import org.telosys.tools.dsl.parser.commons.ParamValueOrigin;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 /**

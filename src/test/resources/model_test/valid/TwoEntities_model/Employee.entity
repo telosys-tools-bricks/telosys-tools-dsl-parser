@@ -6,5 +6,5 @@ Employee {
 	birthDate : date ;
 
     // LINKS
-	country : Country {@Max(3)}; // Pseudo FK => field definition replaced by PK Country.id 
+	country : Country ; 
 }

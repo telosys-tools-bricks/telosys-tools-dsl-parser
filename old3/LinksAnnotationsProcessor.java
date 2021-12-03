@@ -13,13 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.converter;
+package org.telosys.tools.dsl.converter.link;
 
 import java.util.Collection;
 import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.AnnotationName;
+import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
+import org.telosys.tools.dsl.commons.ReferenceDefinition;
+import org.telosys.tools.dsl.commons.ReferenceDefinitions;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelJoinTable;
@@ -56,49 +59,49 @@ public class LinksAnnotationsProcessor {
 	public void applyAnnotationsForLink(DslModelEntity entity, DslModelLink link, Collection<DomainAnnotation> annotations) {
 		for (DomainAnnotation annotation : annotations ) {
 			if (AnnotationName.EMBEDDED.equals(annotation.getName())) {
-				link.setEmbedded(true);
+				link.setEmbedded(true); // In annotation
 			}
 			else if (AnnotationName.MANY_TO_MANY.equals(annotation.getName())) { // Added in ver 3.3
-				link.setCardinality(Cardinality.MANY_TO_MANY);
+				link.setCardinality(Cardinality.MANY_TO_MANY); // In annotation
 			}
 			else if (AnnotationName.ONE_TO_ONE.equals(annotation.getName())) { // Added in ver 3.3
-				link.setCardinality(Cardinality.ONE_TO_ONE);
+				link.setCardinality(Cardinality.ONE_TO_ONE); // In annotation
 			}
 			else if (AnnotationName.OPTIONAL.equals(annotation.getName())) { // Added in ver 3.3
-				link.setOptional(Optional.TRUE);
+				link.setOptional(Optional.TRUE); // In annotation
 			}
 			else if (AnnotationName.TRANSIENT.equals(annotation.getName())) { // Added in ver 3.3
 				link.setTransient(true);
 			}
 			else if (AnnotationName.FETCH_TYPE_LAZY.equals(annotation.getName())) { // Added in ver 3.3
-				link.setFetchType(FetchType.LAZY);
+				link.setFetchType(FetchType.LAZY); // In annotation
 			}
 			else if (AnnotationName.FETCH_TYPE_EAGER.equals(annotation.getName())) { // Added in ver 3.3
-				link.setFetchType(FetchType.EAGER);
+				link.setFetchType(FetchType.EAGER); // In annotation
 			}
 			else if (AnnotationName.INSERTABLE.equals(annotation.getName())) { // Added in ver 3.3
-				processInsertable(entity, link, annotation);
+				processInsertable(entity, link, annotation); // In annotation
 			}
 			else if (AnnotationName.UPDATABLE.equals(annotation.getName())) { // Added in ver 3.3
-				processUpdatable(entity, link, annotation);
+				processUpdatable(entity, link, annotation); // In annotation
 			}
 			else if (AnnotationName.MAPPED_BY.equals(annotation.getName())) { // Added in ver 3.3
-				processMappedBy(entity, link, annotation);
+				processMappedBy(entity, link, annotation); // In annotation
 			}
 			else if (AnnotationName.LINK_BY_ATTR.equals(annotation.getName())) { // Added in ver 3.3
 				// Example : @LinkByAttr(attr1)   @LinkByAttr(attr1 > ref1 , attr2 > ref2 )
-				processLinkByAttr(entity, link, annotation);
+				processLinkByAttr(entity, link, annotation); // In annotation
 			}
 			else if (AnnotationName.LINK_BY_COL.equals(annotation.getName())) { // Added in ver 3.3
 				// Example : @LinkByCol(col1)   @LinkByCol(col1 > ref1 , col2 > ref2 )
-				processLinkByCol(link, annotation);
+				processLinkByCol(link, annotation); // In annotation
 			}
 			else if (AnnotationName.LINK_BY_FK.equals(annotation.getName())) { // Added in ver 3.3
 				// Example : @LinkByFK(FK_BOOK_AUTHOR) 
-				processLinkByFK(entity, link, annotation);
+				processLinkByFK(entity, link, annotation); // In annotation
 			}
 			else if (AnnotationName.LINK_BY_JOIN_ENTITY.equals(annotation.getName())) { // Added in ver 3.3
-				processLinkByJoinEntity(link, annotation);
+				processLinkByJoinEntity(link, annotation); // In annotation
 			}
 		}
 	}

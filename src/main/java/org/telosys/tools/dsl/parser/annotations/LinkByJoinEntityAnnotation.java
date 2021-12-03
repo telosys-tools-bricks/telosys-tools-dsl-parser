@@ -18,7 +18,7 @@ package org.telosys.tools.dsl.parser.annotations;
 import java.util.List;
 
 import org.telosys.tools.dsl.AnnotationName;
-import org.telosys.tools.dsl.converter.JoinColumnsBuilder;
+import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelJoinTable;

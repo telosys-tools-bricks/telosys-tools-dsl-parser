@@ -19,9 +19,11 @@ import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
+import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
+import org.telosys.tools.generic.model.Optional;
 
 public class TransientAnnotation extends AnnotationDefinition {
 
@@ -34,4 +36,11 @@ public class TransientAnnotation extends AnnotationDefinition {
 		checkParamValue(paramValue);
 		attribute.setTransient(true);
 	}
+
+	@Override
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
+		checkParamValue(paramValue);
+		link.setTransient(true);
+	}
+	
 }

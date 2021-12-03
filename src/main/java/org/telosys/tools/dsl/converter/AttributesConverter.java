@@ -20,7 +20,6 @@ import java.util.Collection;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
-import org.telosys.tools.dsl.parser.annotation.AnnotationApplicator;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -33,9 +32,9 @@ import org.telosys.tools.dsl.parser.model.DomainType;
  * @author L. Guerin
  *
  */
-public class AttribConverter extends AbstractConverter {
+public class AttributesConverter extends AbstractConverter {
 
-	private final AnnotationApplicator annotationApplicator ;
+	private final AnnotationsApplicator annotationsApplicator ;
 
 	private final TagsConverter tagsConverter;
 	
@@ -43,9 +42,9 @@ public class AttribConverter extends AbstractConverter {
 	 * Constructor
 	 * @param model
 	 */
-	public AttribConverter(DslModel model) {
+	public AttributesConverter(DslModel model) {
 		super();
-		this.annotationApplicator = new AnnotationApplicator(model);
+		this.annotationsApplicator = new AnnotationsApplicator(model);
 		this.tagsConverter = new TagsConverter();
 	}
 
@@ -56,29 +55,31 @@ public class AttribConverter extends AbstractConverter {
 	 * @param dslEntity entity to be popultated
 	 */
 	public void convertAttributes(DomainEntity domainEntity, DslModelEntity dslEntity) {
-		log("convertEntityAttributes()...");
+		log("convertAttributes()...");
 		if (domainEntity.getFields() == null) {
 			return;
 		}
-		for (DomainField domainEntityField : domainEntity.getFields()) {
-
-			// Init the new attribute with at least its name
-			DslModelAttribute dslAttribute = new DslModelAttribute();
-			dslAttribute.setName(notNull(domainEntityField.getName()));
-
-			DomainType domainFieldType = domainEntityField.getType();
-			if (domainFieldType.isNeutralType()) {
-				// STANDARD NEUTRAL TYPE = BASIC ATTRIBUTE
-				log("convertEntityAttributes() : " + domainEntityField.getName() + " : neutral type");
-				// Simple type attribute
-//				convertAttributeNeutralType(domainEntity, domainEntityField, genericAttribute);
-				populateAttribute(dslEntity, dslAttribute, domainEntityField );
+		for (DomainField domainField : domainEntity.getFields()) {
+			// If the field is a "neutral type" = "basic attribute"
+			if (domainField.getType().isNeutralType()) { 
+				log("convert field : " + domainField.getName() + " (neutral type => basic attribute)");
+				// New "basic attribute"
+				DslModelAttribute dslAttribute = createAttribute(domainField);
+				// Populate attribute with parsed attribute information
+				populateAttribute(dslEntity, dslAttribute, domainField );
 				// Add the new "basic attribute" to the entity
 				dslEntity.getAttributes().add(dslAttribute);
 			}
 		}
 	}
-
+	
+	private DslModelAttribute createAttribute( DomainField domainField ) {	
+		DslModelAttribute dslAttribute = new DslModelAttribute();
+		// Init the new attribute with at least its name
+		dslAttribute.setName(notNull(domainField.getName()));
+		return dslAttribute;
+	}
+	
 	/**
 	 * Converts a basic "neutral type" attribute <br>
 	 * eg : id : short {@Id}; <br>
@@ -101,26 +102,16 @@ public class AttribConverter extends AbstractConverter {
 		// the "neutral type" is now the only type managed at this level
 		dslAttribute.setNeutralType(domainNeutralType.getName());
 
-		initAttributeDefaultValues(dslAttribute, domainField);
+		step1InitAttributeDefaultValues(dslAttribute, domainField);
 
 		// Apply annotations if any
-		if (domainField.getAnnotations() != null) {
-			log("Converter : annotations found");
-			Collection<DomainAnnotation> fieldAnnotations = domainField.getAnnotations().values();
-		/***
-			AttribAnnotationsProcessor annotationsConverter = new AttribAnnotationsProcessor(domainEntity.getName());
-			annotationsConverter.applyAnnotationsForNeutralType(genericAttribute, fieldAnnotations);
-		***/
-			annotationApplicator.applyAnnotationsToField(dslEntity, dslAttribute, fieldAnnotations);
-		} else {
-			log("Converter : no annotation");
-		}
+		step2ApplyAnnotations(dslEntity, dslAttribute, domainField);
 		
 		// Apply tags if any
-		tagsConverter.applyTags(dslAttribute, domainField);
+		step3ApplyTags(dslAttribute, domainField);
 		
 		// Finalize attribute state
-		finalizeAttribute(dslAttribute);
+		step4FinalizeAttribute(dslAttribute);
 	}
 
 	/**
@@ -128,7 +119,7 @@ public class AttribConverter extends AbstractConverter {
 	 * @param dslAttribute
 	 * @param domainField
 	 */
-	private void initAttributeDefaultValues(DslModelAttribute dslAttribute, DomainField domainField) {
+	private void step1InitAttributeDefaultValues(DslModelAttribute dslAttribute, DomainField domainField) {
 
 		// All the default attribute values are set in the attribute class
 		// Here some default values can be set depending on other attribute information 
@@ -142,7 +133,40 @@ public class AttribConverter extends AbstractConverter {
 		dslAttribute.setLabel(domainField.getName());
 	}
 	
-	private void finalizeAttribute(DslModelAttribute dslAttribute ) {	
+	/**
+	 * Apply annotations to the given attribute
+	 * @param dslEntity
+	 * @param dslAttribute
+	 * @param domainField
+	 */
+	private void step2ApplyAnnotations(DslModelEntity dslEntity, DslModelAttribute dslAttribute, DomainField domainField) {
+		if (domainField.getAnnotations() != null) {
+			log("Converter : annotations found");
+			Collection<DomainAnnotation> fieldAnnotations = domainField.getAnnotations().values();
+		/***
+			AttribAnnotationsProcessor annotationsConverter = new AttribAnnotationsProcessor(domainEntity.getName());
+			annotationsConverter.applyAnnotationsForNeutralType(genericAttribute, fieldAnnotations);
+		***/
+			annotationsApplicator.applyAnnotationsToAttribute(dslEntity, dslAttribute, fieldAnnotations);
+		} else {
+			log("Converter : no annotation");
+		}
+	}
+	
+	/**
+	 * Apply tags to the given attribute
+	 * @param dslAttribute
+	 * @param domainField
+	 */
+	private void step3ApplyTags(DslModelAttribute dslAttribute, DomainField domainField) {
+		tagsConverter.applyTags(dslAttribute, domainField);
+	}
+	
+	/**
+	 * Finalize the given attribute
+	 * @param dslAttribute
+	 */
+	private void step4FinalizeAttribute(DslModelAttribute dslAttribute ) {	
 		if ( dslAttribute.getDatabaseSize() == null && dslAttribute.getMaxLength() != null ) {
 			dslAttribute.setDatabaseSize(dslAttribute.getMaxLength().toString());
 		}

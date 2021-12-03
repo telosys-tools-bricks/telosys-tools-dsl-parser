@@ -13,29 +13,45 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.parser.annotation;
+package org.telosys.tools.dsl.converter;
 
 import java.util.Collection;
 
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
+import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
-public class AnnotationApplicator {
+public class AnnotationsApplicator {
 
 	private final DslModel model;
 	
-	public AnnotationApplicator(DslModel model) {
+	public AnnotationsApplicator(DslModel model) {
 		this.model = model;
 	}
 
-	public void applyAnnotationsToField(DslModelEntity entity, DslModelAttribute attribute, Collection<DomainAnnotation> annotations) {
+	/**
+	 * Apply the given annotations to an attribute
+	 * @param entity
+	 * @param attribute
+	 * @param annotations
+	 */
+	public void applyAnnotationsToAttribute(DslModelEntity entity, DslModelAttribute attribute, Collection<DomainAnnotation> annotations) {
 		for (DomainAnnotation annotation : annotations) {
-			// log("Converter : annotation '" + annotation.getName() + "'");
-			
 			annotation.applyToAttribute(model, entity, attribute);
-			
+		}		
+	}
+
+	/**
+	 * Apply the given annotations to a link
+	 * @param entity
+	 * @param link
+	 * @param annotations
+	 */
+	public void applyAnnotationsToLink(DslModelEntity entity, DslModelLink link, Collection<DomainAnnotation> annotations) {
+		for (DomainAnnotation annotation : annotations) {
+			annotation.applyToLink(model, entity, link);
 		}		
 	}
 }

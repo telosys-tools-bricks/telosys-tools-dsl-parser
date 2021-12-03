@@ -13,15 +13,34 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.parser.commnos;
+package org.telosys.tools.dsl.commons;
 
-public enum ParamValueOrigin {
-	
-	ENTITY_ANNOTATION ,
+import java.util.LinkedList;
+import java.util.List;
 
-	ENTITY_TAG,
+public class ReferenceDefinitions {
+
+	private final List<ReferenceDefinition> list ;
 	
-	FIELD_ANNOTATION ,
+	public ReferenceDefinitions() {
+		super();
+		this.list = new LinkedList<>();
+	}
+
+	public void add(ReferenceDefinition rd) {
+		list.add(rd);
+	}
+
+	public List<ReferenceDefinition> getList() {
+		return list;
+	}
+
+	public int count() {
+		return list.size();
+	}
+
+	public ReferenceDefinition get(int index) {
+		return list.get(index);
+	}
 	
-	FIELD_TAG
 }

@@ -19,9 +19,9 @@ import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.AnnotationName;
-import org.telosys.tools.dsl.converter.JoinColumnsBuilder;
-import org.telosys.tools.dsl.converter.ReferenceDefinition;
-import org.telosys.tools.dsl.converter.ReferenceDefinitions;
+import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
+import org.telosys.tools.dsl.commons.ReferenceDefinition;
+import org.telosys.tools.dsl.commons.ReferenceDefinitions;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
@@ -41,6 +41,13 @@ public class LinkByAttrAnnotation extends LinkByAnnotation {
 		checkParamValue(paramValue);
 		List<JoinColumn> joinColumns = getJoinColumns(model, entity, link, (String)paramValue);
 		link.setJoinColumns(joinColumns);
+	}
+	
+	private ReferenceDefinitions getReferenceDefinitions(String paramValue) {
+		ReferenceDefinitions referenceDefinitions = buildReferenceDefinitions(paramValue);
+		checkNotVoid(referenceDefinitions);
+		checkReferencedNames(referenceDefinitions);
+		return referenceDefinitions;
 	}
 
 	private List<JoinColumn> getJoinColumns(DslModel model, DslModelEntity entity, DslModelLink link, String paramValue) {
