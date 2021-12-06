@@ -82,6 +82,7 @@ public class AnnotationName {
 
 	// Added in ver 3.4.0 : for attributes
 	public static final String SIZE          = "Size"; // v 3.4.0
+	public static final String UNIQUE        = "Unique"; // v 3.4.0
 
 	// TODO 
     // @Comment(xxx) 

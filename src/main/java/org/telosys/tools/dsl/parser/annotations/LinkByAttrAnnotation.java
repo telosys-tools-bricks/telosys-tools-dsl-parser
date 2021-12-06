@@ -50,7 +50,7 @@ public class LinkByAttrAnnotation extends LinkByAnnotation {
 		return referenceDefinitions;
 	}
 
-	private List<JoinColumn> getJoinColumns(DslModel model, DslModelEntity entity, DslModelLink link, String paramValue) {
+	protected List<JoinColumn> getJoinColumns(DslModel model, DslModelEntity entity, DslModelLink link, String paramValue) {
 		ReferenceDefinitions attributesRefDef = getReferenceDefinitions(paramValue);
 		
 //		String referencedEntityName = link.getTargetEntityClassName();
@@ -72,6 +72,9 @@ public class LinkByAttrAnnotation extends LinkByAnnotation {
 	
 	private DslModelEntity getReferencedEntity(DslModel model, DslModelLink link) {
 		String referencedEntityName = link.getTargetEntityClassName();
+		if ( referencedEntityName == null ) {
+			throw newException("invalid link : target entity name is null");
+		}
 		DslModelEntity referencedEntity = (DslModelEntity) model.getEntityByClassName(referencedEntityName);
 		if ( referencedEntity == null ) {
 			throw newException("unknown referenced entity '"+ referencedEntityName + "'");
@@ -177,11 +180,13 @@ public class LinkByAttrAnnotation extends LinkByAnnotation {
 					return columnName;
 				}
 				else {
-					throw newException("no database column for attribute '" + attribName + "'");
+					throw newException("no database column for attribute '" + attribName 
+							+ "' in '" + entity.getClassName() + "'");
 				}
 			}
 			else {
-				throw newException("unknown attribute '" + attribName + "'");
+				throw newException("unknown attribute '" + attribName 
+							+ "' in '" + entity.getClassName() + "'");
 			}
 		}
 		return "";

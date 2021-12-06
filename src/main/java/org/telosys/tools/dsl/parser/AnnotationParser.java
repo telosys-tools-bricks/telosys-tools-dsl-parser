@@ -48,7 +48,7 @@ public class AnnotationParser extends AnnotationAndTagParser {
 	
 	/**
 	 * Parse the given annotation string ( a string starting by '@' ) 
-	 * @param annotation annotation string eg "@Id", "@Min(12)"
+	 * @param annotation the full annotation string eg "@Id", "@Min(12)"
 	 * @return
 	 * @throws ParsingError
 	 */
@@ -63,7 +63,7 @@ public class AnnotationParser extends AnnotationAndTagParser {
 		// use annotation definition to build a new annotation instance
 		AnnotationDefinition ad = Annotations.get(annotationName);
 		if ( ad != null ) {
-			return ad.buildAnnotation(getEntityName(), getFieldName(), annotationName, annotationParameter);
+			return ad.buildAnnotation(getEntityName(), getFieldName(), annotationParameter);
 		}
 		else {
 			throw newError("'" + annotation + "' : unknown annotation");

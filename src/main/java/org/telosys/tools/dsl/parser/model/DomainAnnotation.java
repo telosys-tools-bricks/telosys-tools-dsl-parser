@@ -55,7 +55,8 @@ public class DomainAnnotation extends DomainAnnotationOrTag {
 	public void applyToAttribute(DslModel model, DslModelEntity entity, DslModelAttribute attribute ) {
 		String annotationName = this.getName();
     	AnnotationDefinition annotationDefinition = getAnnotationDefinition(annotationName);
-    	if ( annotationDefinition.getScope() == AnnotationScope.ATTRIBUTE ) {
+//    	if ( annotationDefinition.getScope() == AnnotationScope.ATTRIBUTE ) {
+       	if ( annotationDefinition.hasAttributeScope() ) {
         	annotationDefinition.apply(model, entity, attribute, this.getParameter());
     	}
     	else {
@@ -72,7 +73,8 @@ public class DomainAnnotation extends DomainAnnotationOrTag {
 	public void applyToLink(DslModel model, DslModelEntity entity, DslModelLink link ) {
 		String annotationName = this.getName();
     	AnnotationDefinition annotationDefinition = getAnnotationDefinition(annotationName);
-    	if ( annotationDefinition.getScope() == AnnotationScope.LINK ) {
+//    	if ( annotationDefinition.getScope() == AnnotationScope.LINK ) {
+       	if ( annotationDefinition.hasLinkScope() ) {
     		annotationDefinition.apply(model, entity, link, this.getParameter());
     	}
     	else {

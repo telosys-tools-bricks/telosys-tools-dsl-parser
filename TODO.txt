@@ -1,10 +1,20 @@
-TransientAnnotation => scope multiple 
 
-annotationDefinition.getScope() 
-  annotationDefinition.isApplicableOnAttribute()
-  annotationDefinition.isApplicableOnLink()
-  annotationDefinition.isApplicableOnEntity()
 
-check Transient annotation
+ @Size  : attribute.setSize((String) paramValue);
+ 
+ 
+ @Unique :
+  - For JPA unique constraint on a field, example:
+    @Column(unique=true)
+    private Long personNumber;
+    ( @UniqueConstraint is for Table => entity scope 
+      eg : 
+        @Table(uniqueConstraints = { @UniqueConstraint(name = "UniqueNumberAndStatus", 
+               columnNames = { "personNumber", "isActive" }) })
+ 
+ 
+ @MaxLen and @MinLen  (instead of @SizeMax and @SizeMin ) ???      
+      
+      
+ Tags at link level 
 
-JUnit : LinkByAttrAnnotationTest

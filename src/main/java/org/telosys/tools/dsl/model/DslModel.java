@@ -115,6 +115,9 @@ public class DslModel implements Model {
 
 	@Override
 	public Entity getEntityByClassName(String entityClassName) {
+		if ( entityClassName == null ) {
+			throw new IllegalArgumentException("getEntityByClassName() : entityClassName is null");
+		}
 		for(Entity entity : getEntities()) {
 			if ( entityClassName.equals(entity.getClassName()) ) {
 				return entity;
@@ -125,6 +128,9 @@ public class DslModel implements Model {
 
 	@Override
 	public Entity getEntityByTableName(String entityTableName) {
+		if ( entityTableName == null ) {
+			throw new IllegalArgumentException("getEntityByTableName() : entityTableName is null");
+		}
 		for(Entity entity : getEntities()) {
 			if ( entityTableName.equals(entity.getDatabaseTable() ) ) {
 				return entity;

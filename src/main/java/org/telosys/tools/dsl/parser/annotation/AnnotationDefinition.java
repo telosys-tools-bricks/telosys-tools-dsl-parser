@@ -17,7 +17,6 @@ package org.telosys.tools.dsl.parser.annotation;
 
 import java.math.BigDecimal;
 
-import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
@@ -25,7 +24,6 @@ import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.commons.ParamValue;
 import org.telosys.tools.dsl.parser.commons.ParamValueOrigin;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationParsingError;
-import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.generic.model.BooleanValue;
@@ -34,12 +32,25 @@ public abstract class AnnotationDefinition {
 
 	private final String name;
 	private final AnnotationParamType type;
-	private final AnnotationScope     scope;
+	// Annotation scope :
+	private boolean attributeScope = false ;
+	private boolean linkScope      = false ;
+	private boolean entityScope    = false ;
 
-	protected AnnotationDefinition(String name, AnnotationParamType type, AnnotationScope scope) {
+	protected AnnotationDefinition(String name, AnnotationParamType type, AnnotationScope... scopes) {
 		this.name = name ;
 		this.type = type ;
-		this.scope = scope ;
+		for ( AnnotationScope scope : scopes ) {
+			if ( scope == AnnotationScope.ATTRIBUTE ) {
+				this.attributeScope = true ;
+			}
+			else if ( scope == AnnotationScope.LINK ) {
+				this.linkScope = true ;
+			}
+			else if (  scope == AnnotationScope.ENTITY ) {
+				this.entityScope = true ;
+			}
+		}
 	}
 
 	public String getName() {
@@ -50,16 +61,26 @@ public abstract class AnnotationDefinition {
 		return type;
 	}
 	
-	public AnnotationScope getScope() {
-		return scope;
+//	public AnnotationScope getScope() {
+//		return scope;
+//	}
+	public boolean hasAttributeScope() {
+		return attributeScope;
 	}
-
+	public boolean hasLinkScope() {
+		return linkScope;
+	}
+	public boolean hasEntityScope() {
+		return entityScope;
+	}
+	
 	//-------------------------------------------------------------------------------------------
 	// Annotation parsing 
 	//-------------------------------------------------------------------------------------------
 	public DomainAnnotation buildAnnotation(String entityName, String fieldName, 
-			String annotation, String parameterValue) throws ParsingError {
-		ParamValue paramValue = new ParamValue(entityName, fieldName, annotation, parameterValue, ParamValueOrigin.FIELD_ANNOTATION);
+			String parameterValue) throws ParsingError {
+		ParamValue paramValue = new ParamValue(entityName, fieldName, name, 
+									parameterValue, ParamValueOrigin.FIELD_ANNOTATION);
 		switch(this.type) {
 		case STRING :
 			return new DomainAnnotation(name, paramValue.getAsString() );
@@ -74,7 +95,7 @@ public abstract class AnnotationDefinition {
 		default :
 			// annotation without parameter
 			if (parameterValue != null) {
-				throw new AnnotationParsingError(entityName, fieldName, annotation, "unexpected parameter");
+				throw new AnnotationParsingError(entityName, fieldName, name, "unexpected parameter");
 			}
 			return new DomainAnnotation(name);
 		}
@@ -89,6 +110,12 @@ public abstract class AnnotationDefinition {
 		case STRING:
 			if ( ! ( paramValue instanceof String ) ) {
 				throw new IllegalStateException("String value expected, actual type is " 
+							+ getParamValueActualType( paramValue));
+			}
+			break;
+		case SIZE: // Size is stored as a String
+			if ( ! ( paramValue instanceof String ) ) {
+				throw new IllegalStateException("Size value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;

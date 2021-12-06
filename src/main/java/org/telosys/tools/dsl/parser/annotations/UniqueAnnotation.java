@@ -23,15 +23,25 @@ import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
-public class SizeAnnotation extends AnnotationDefinition {
+/**
+ * "Unique" annotation 
+ *   Usage examples : 
+ *   - JPA unique constraint on a field :
+ *     @Column(unique=true)
+ *     private Long personNumber;
+ * 
+ * @author Laurent Guerin
+ *
+ */
+public class UniqueAnnotation extends AnnotationDefinition {
 
-	public SizeAnnotation() {
-		super(AnnotationName.SIZE, AnnotationParamType.SIZE, AnnotationScope.ATTRIBUTE);
+	public UniqueAnnotation() {
+		super(AnnotationName.UNIQUE, AnnotationParamType.NONE, AnnotationScope.ATTRIBUTE);
 	}
 
 	@Override
 	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) {
 		checkParamValue(paramValue);
-		attribute.setSize((String) paramValue);							
+		attribute.setUnique(true);
 	}
 }
