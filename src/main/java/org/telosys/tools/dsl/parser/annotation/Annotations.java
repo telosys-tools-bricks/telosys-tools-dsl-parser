@@ -15,6 +15,7 @@
  */
 package org.telosys.tools.dsl.parser.annotation;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,7 +44,9 @@ import org.telosys.tools.dsl.parser.annotations.LongTextAnnotation;
 import org.telosys.tools.dsl.parser.annotations.ManyToManyAnnotation;
 import org.telosys.tools.dsl.parser.annotations.MappedByAnnotation;
 import org.telosys.tools.dsl.parser.annotations.MaxAnnotation;
+import org.telosys.tools.dsl.parser.annotations.MaxLenAnnotation;
 import org.telosys.tools.dsl.parser.annotations.MinAnnotation;
+import org.telosys.tools.dsl.parser.annotations.MinLenAnnotation;
 import org.telosys.tools.dsl.parser.annotations.NotBlankAnnotation;
 import org.telosys.tools.dsl.parser.annotations.NotEmptyAnnotation;
 import org.telosys.tools.dsl.parser.annotations.NotNullAnnotation;
@@ -57,6 +60,7 @@ import org.telosys.tools.dsl.parser.annotations.SizeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.SizeMaxAnnotation;
 import org.telosys.tools.dsl.parser.annotations.SizeMinAnnotation;
 import org.telosys.tools.dsl.parser.annotations.TransientAnnotation;
+import org.telosys.tools.dsl.parser.annotations.UniqueAnnotation;
 import org.telosys.tools.dsl.parser.annotations.UnsignedTypeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.UpdatableAnnotation;
 
@@ -158,8 +162,10 @@ public class Annotations {
 		annotationDefinitions.add(new LinkByJoinEntityAnnotation());
 		
 		//--- Added in ver 3.4.0
-//		annotationsList.add(new AnnotationDefinition(AnnotationName.SIZE ,      AnnotationParamType.STRING ));
 		annotationDefinitions.add(new SizeAnnotation());
+		annotationDefinitions.add(new UniqueAnnotation());
+		annotationDefinitions.add(new MaxLenAnnotation());
+		annotationDefinitions.add(new MinLenAnnotation());
 	}
 	
 	private Annotations() {
@@ -185,5 +191,38 @@ public class Annotations {
 			}
 		}
 		return null ;
+	}
+	
+	// Lists of annotations names for Eclipse  ( cf plugin )
+	/**
+	 * Returns all annotations names with @ prefix ( @Id, @Size, @OneToMany, etc )
+	 * @return
+	 */
+	public static List<String> getAllAnnotationsWithPrefix() {
+		return buildAnnotationsList(false);
+	}
+	/**
+	 * Returns all annotations names with @ prefix 
+	 * and parentheses if annotation has a parameter ( @Id, @Size(), @Label(), etc )
+	 * @return
+	 */
+	public static List<String> getAllAnnotationsWithPrefixAndParentheses() {
+		return buildAnnotationsList(true);
+	}
+	/**
+	 * @param withParentheses
+	 * @return
+	 */
+	private static List<String> buildAnnotationsList(boolean withParentheses) {
+		List<String> list = new LinkedList<>();
+		for ( AnnotationDefinition ad : annotationDefinitions ) {
+			String annotation = "@" + ad.getName() ;
+			if( withParentheses && ad.hasParam() ) {
+				annotation = annotation + "()" ;
+			}
+			list.add(annotation);
+		}
+		Collections.sort(list);
+		return list;
 	}
 }

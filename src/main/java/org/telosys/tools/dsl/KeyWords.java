@@ -15,10 +15,9 @@
  */
 package org.telosys.tools.dsl;
 
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
+import org.telosys.tools.dsl.parser.annotation.Annotations;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 
 public class KeyWords {
@@ -130,7 +129,12 @@ public class KeyWords {
 //		return new LinkedList<>(Arrays.asList(annotations));
 //	}
 	
-	// TODO : for Eclipse ( cf plugin )
-	// getAnnotationsWithPrefix()   : @Size
-	// getAnnotationsWithPrefixAndParentheses()  : @Size()
+	// Lists of annotations names for Eclipse  ( cf plugin )
+	public static final List<String> getAllAnnotationsWithPrefix() {
+		return Annotations.getAllAnnotationsWithPrefix();
+	}
+	
+	public static final List<String> getAllAnnotationsWithPrefixAndParentheses() {
+		return Annotations.getAllAnnotationsWithPrefixAndParentheses();
+	}
 }

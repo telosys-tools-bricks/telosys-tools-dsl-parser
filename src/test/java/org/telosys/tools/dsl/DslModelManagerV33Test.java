@@ -1,7 +1,10 @@
 package org.telosys.tools.dsl;
 
+import java.util.Map;
+
 import org.junit.Test;
 import org.telosys.tools.dsl.model.DslModelEntity;
+import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Cardinality;
@@ -206,6 +209,14 @@ public class DslModelManagerV33Test {
         assertEquals("COUNTRY_CODE", jc.getName());
 //        jc = link.getJoinColumns().get(1);
 //        assertEquals("COUNTRY_CODE2", jc.getName());
+        
+        DslModelLink dslLink = (DslModelLink) link ;
+        Map<String,String> tags = dslLink.getTagsMap();
+        assertNotNull(tags);
+        assertNotNull(tags.get("Foo"));
+        assertEquals("",tags.get("Foo"));
+        assertNotNull(tags.get("Bar"));
+        assertEquals("xyz",tags.get("Bar"));
     }
     private void test1CheckAreaEntity(DslModelEntity entity ) {
     	Link link;

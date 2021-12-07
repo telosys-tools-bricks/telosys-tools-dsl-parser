@@ -13,46 +13,54 @@ import org.junit.Test;
 public class DomainEntityFieldAnnotationTest {
 
 	@Test
-	public void test1() {
+	public void testId() {
 		DomainAnnotationOrTag annotation = new DomainAnnotation("Id") ;
-		System.out.println(annotation);
 		assertFalse ( annotation.hasParameter() ) ;
+	}
+	@Test (expected = Exception.class)
+	public void testIdErr() {
+		DomainAnnotationOrTag annotation = new DomainAnnotation("Id") ;
 		assertNull ( annotation.getParameterAsString() ) ;
+	}
+	@Test (expected = Exception.class)
+	public void testIdErr2() {
+		DomainAnnotationOrTag annotation = new DomainAnnotation("Id") ;
 		assertNull ( annotation.getParameterAsInteger() ) ;
+	}
+	@Test (expected = Exception.class)
+	public void testIdErr3() {
+		DomainAnnotationOrTag annotation = new DomainAnnotation("Id") ;
 		assertNull ( annotation.getParameterAsBigDecimal() ) ;
 	}
 	
 	@Test
-	public void test2() {
+	public void testMax() {
 		DomainAnnotationOrTag annotation = new DomainAnnotation("Max", new BigDecimal("123.45")) ;
-		System.out.println(annotation);
 		assertTrue ( annotation.hasParameter() ) ;
-		assertNull ( annotation.getParameterAsString() ) ;
-		assertNull ( annotation.getParameterAsInteger() ) ;
-		assertNotNull ( annotation.getParameterAsBigDecimal() ) ;
 		assertEquals(new BigDecimal("123.45"), annotation.getParameterAsBigDecimal() );
 	}
 	
 	@Test
-	public void test3() {
-		DomainAnnotationOrTag annotation = new DomainAnnotation("SizeMax", new Integer("12")) ;
-		System.out.println(annotation);
+	public void testMaxLen() {
+		DomainAnnotationOrTag annotation = new DomainAnnotation("MaxLen", new Integer("12")) ;
 		assertTrue ( annotation.hasParameter() ) ;
-		assertNull ( annotation.getParameterAsString() ) ;
-		assertNotNull ( annotation.getParameterAsInteger() ) ;
-		assertNull ( annotation.getParameterAsBigDecimal() ) ;
 		assertEquals(new Integer("12"), annotation.getParameterAsInteger() );
 	}
 	
 	@Test
-	public void test4() {
+	public void testDbColumn() {
 		DomainAnnotationOrTag annotation = new DomainAnnotation("DbColumn", "FIRST_NAME") ;
-		System.out.println(annotation);
 		assertTrue ( annotation.hasParameter() ) ;
 		assertNotNull ( annotation.getParameterAsString() ) ;
-		assertNull ( annotation.getParameterAsInteger() ) ;
-		assertNull ( annotation.getParameterAsBigDecimal() ) ;
 		assertEquals("FIRST_NAME", annotation.getParameterAsString() );
 	}
 	
+	@Test
+	public void testSize() {
+		DomainAnnotationOrTag annotation = new DomainAnnotation("Size", "12,4") ;
+		assertTrue ( annotation.hasParameter() ) ;
+		assertNotNull ( annotation.getParameterAsString() ) ;
+		assertEquals("12,4", annotation.getParameterAsString() );
+	}
+
 }

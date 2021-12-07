@@ -16,6 +16,7 @@
 package org.telosys.tools.dsl.model;
 
 import java.util.List;
+import java.util.Map;
 
 import org.telosys.tools.generic.model.BooleanValue;
 import org.telosys.tools.generic.model.Cardinality;
@@ -63,6 +64,8 @@ public class DslModelLink implements Link {
     
     private BooleanValue insertable = BooleanValue.UNDEFINED; // Added in v 3.3.0
     private BooleanValue updatable  = BooleanValue.UNDEFINED; // Added in v 3.3.0
+
+	private Map<String, String> tagsMap = null ; // Tags added in v 3.4.0
 
     /**
      * Constructor
@@ -298,5 +301,18 @@ public class DslModelLink implements Link {
     public void setUpdatable(BooleanValue b) {
         this.updatable = b;
     }
+    
+    
+	//-----------------------------------------------------------------------------------------
+	// LINK TAGS  (added in v 3.4.0) 
+	//-----------------------------------------------------------------------------------------
+	public void setTags(Map<String,String> tags) {
+		this.tagsMap = tags;
+	}
+	
+	//@Override
+	public Map<String, String> getTagsMap() {
+		return this.tagsMap;
+	}
 
 }

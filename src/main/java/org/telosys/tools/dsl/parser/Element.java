@@ -13,21 +13,35 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.parser.annotation;
+package org.telosys.tools.dsl.parser;
 
-public enum AnnotationParamType {
+/**
+ * 
+ * @author Laurent GUERIN
+ *
+ */
+class Element {
+
+	private final int    lineNumber;
+	private final String content ;
 	
-	NONE ,
+	protected Element(int lineNumber, String content) {
+		super();
+		this.lineNumber = lineNumber ;
+		this.content = content;
+	}
 	
-	STRING ,
+	public int getLineNumber() {
+		return lineNumber;
+	}
 	
-	INTEGER ,
-	
-	DECIMAL ,
-	
-	BOOLEAN,
-	
-	SIZE,
-	
-	FK_ELEMENT
+	public String getContent() {
+		return content;
+	}
+
+	@Override
+	public String toString() {
+		return "Element (line " + lineNumber + ") '" + content + "'" ;
+	}
+
 }

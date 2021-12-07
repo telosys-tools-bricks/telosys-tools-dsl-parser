@@ -77,7 +77,7 @@ public class LinksConverter extends AbstractConverter {
 				step1InitLink(dslLink, domainField);
 				// apply link annotations
 				step2ApplyAnnotations(dslEntity, dslLink, domainField);
-				// apply tags : TODO
+				// apply tags 
 				step3ApplyTags(dslLink, domainField); 
 				// try to infer undefined join columns
 				step4InferJoinColumns(dslEntity, dslLink);
@@ -173,8 +173,7 @@ public class LinksConverter extends AbstractConverter {
 	 * @param domainField
 	 */
 	private void step3ApplyTags(DslModelLink dslLink, DomainField domainField) {
-		// TODO
-		// tagsConverter.applyTags(dslLink, domainField);
+		tagsConverter.applyTags(dslLink, domainField); // new in v 3.4.0
 	}
 	
 	/**

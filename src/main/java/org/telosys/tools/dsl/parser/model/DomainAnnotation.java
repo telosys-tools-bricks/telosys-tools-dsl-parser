@@ -15,29 +15,68 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
+import java.math.BigDecimal;
+
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
-import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 import org.telosys.tools.dsl.parser.annotation.Annotations;
+import org.telosys.tools.dsl.parser.commons.FkElement;
 
 public class DomainAnnotation extends DomainAnnotationOrTag {
 
+    /**
+     * Constructor for annotation without parameter
+     * @param name
+     */
     public DomainAnnotation(String name) {
     	super(name);
     }
     
+    /**
+     * Constructor for annotation with parameter
+     * @param name
+     * @param param
+     */
     public DomainAnnotation(String name, String param) {
     	super(name,param);
     }
     
-    public DomainAnnotation(String name, Number param) {
+    /**
+     * Constructor for annotation with parameter
+     * @param name
+     * @param param
+     */
+    public DomainAnnotation(String name, Integer param) {
     	super(name,param);
     }
     
+    /**
+     * Constructor for annotation with parameter
+     * @param name
+     * @param param
+     */
+    public DomainAnnotation(String name, BigDecimal param) {
+    	super(name,param);
+    }
+
+    /**
+     * Constructor for annotation with parameter
+     * @param name
+     * @param param
+     */
     public DomainAnnotation(String name, Boolean param) {
+    	super(name,param);
+    }
+    
+    /**
+     * Constructor for 'FK' annotation with special parameter
+     * @param name
+     * @param param
+     */
+    public DomainAnnotation(String name, FkElement param) {
     	super(name,param);
     }
     
@@ -55,7 +94,6 @@ public class DomainAnnotation extends DomainAnnotationOrTag {
 	public void applyToAttribute(DslModel model, DslModelEntity entity, DslModelAttribute attribute ) {
 		String annotationName = this.getName();
     	AnnotationDefinition annotationDefinition = getAnnotationDefinition(annotationName);
-//    	if ( annotationDefinition.getScope() == AnnotationScope.ATTRIBUTE ) {
        	if ( annotationDefinition.hasAttributeScope() ) {
         	annotationDefinition.apply(model, entity, attribute, this.getParameter());
     	}
@@ -73,7 +111,6 @@ public class DomainAnnotation extends DomainAnnotationOrTag {
 	public void applyToLink(DslModel model, DslModelEntity entity, DslModelLink link ) {
 		String annotationName = this.getName();
     	AnnotationDefinition annotationDefinition = getAnnotationDefinition(annotationName);
-//    	if ( annotationDefinition.getScope() == AnnotationScope.LINK ) {
        	if ( annotationDefinition.hasLinkScope() ) {
     		annotationDefinition.apply(model, entity, link, this.getParameter());
     	}

@@ -17,64 +17,78 @@ package org.telosys.tools.dsl.parser.model;
 
 import java.math.BigDecimal;
 
+import org.telosys.tools.dsl.parser.commons.FkElement;
+
 public abstract class DomainAnnotationOrTag {
 
     private final String  name;
-    private final String  stringParameter;
-    private final Number  numberParameter;
-    private final Boolean booleanParameter;
-    private final boolean hasParameter;
-
+//    private final String  stringParameter;
+//    private final Number  numberParameter;
+//    private final Boolean booleanParameter;
+//    private final boolean hasParameter;
+    private final Object  parameter;
+    
     /**
-     * Constructor for annotation without parameter
+     * Constructor for annotation or tag without parameter
      * @param name
      */
     protected DomainAnnotationOrTag(String name) {
         this.name = name;
-        this.stringParameter  = null;
-        this.numberParameter  = null;
-        this.booleanParameter = null;
-        this.hasParameter = false;
+//        this.stringParameter  = null;
+//        this.numberParameter  = null;
+//        this.booleanParameter = null;
+//        this.hasParameter = false;
+        this.parameter  = null;
     }
 
     /**
-     * Constructor for annotation with string parameter
+     * Constructor for annotation or tag with parameter
      * @param name
-     * @param stringParameter
+     * @param parameter
      */
-    protected DomainAnnotationOrTag(String name, String stringParameter) {
+    protected DomainAnnotationOrTag(String name, Object parameter) {
         this.name = name;
-        this.stringParameter  = stringParameter;
-        this.numberParameter  = null;
-        this.booleanParameter = null;
-        this.hasParameter = true;
+        this.parameter  = parameter;
     }
 
-    /**
-     * Constructor for annotation with number parameter
-     * @param name
-     * @param numberParameter
-     */
-    protected DomainAnnotationOrTag(String name, Number numberParameter) {
-        this.name = name;
-        this.stringParameter  = null;
-        this.numberParameter  = numberParameter;
-        this.booleanParameter = null;
-        this.hasParameter = true;
-    }
+//    /**
+//     * Constructor for annotation with string parameter
+//     * @param name
+//     * @param stringParameter
+//     */
+//    protected DomainAnnotationOrTag(String name, String stringParameter) {
+//        this.name = name;
+//        this.stringParameter  = stringParameter;
+//        this.numberParameter  = null;
+//        this.booleanParameter = null;
+//        this.hasParameter = true;
+//    }
 
-    /**
-     * Constructor for annotation with boolean parameter
-     * @param name
-     * @param booleanParameter
-     */
-    protected DomainAnnotationOrTag(String name, Boolean booleanParameter) {
-        this.name = name;
-        this.stringParameter  = null;
-        this.numberParameter  = null;
-        this.booleanParameter = booleanParameter;
-        this.hasParameter = true;
-    }
+//    /**
+//     * Constructor for annotation with number parameter
+//     * @param name
+//     * @param numberParameter
+//     */
+//    protected DomainAnnotationOrTag(String name, Number numberParameter) {
+//        this.name = name;
+//        this.stringParameter  = null;
+//        this.numberParameter  = numberParameter;
+//        this.booleanParameter = null;
+//        this.hasParameter = true;
+//    }
+
+//    /**
+//     * Constructor for annotation with boolean parameter
+//     * @param name
+//     * @param booleanParameter
+//     */
+//    protected DomainAnnotationOrTag(String name, Boolean booleanParameter) {
+//        this.name = name;
+//        this.stringParameter  = null;
+//        this.numberParameter  = null;
+//        this.booleanParameter = booleanParameter;
+//        this.hasParameter = true;
+//    }
 
     /**
      * Returns the annotation name ( without '@' )
@@ -89,7 +103,15 @@ public abstract class DomainAnnotationOrTag {
      * @return
      */
     public boolean hasParameter() {
-        return this.hasParameter;
+        return this.parameter != null;
+    }
+
+    /**
+     * Returns the annotation parameter <br>
+     * @return
+     */
+    public Object getParameter() {
+    	return parameter ;
     }
 
     /**
@@ -98,7 +120,11 @@ public abstract class DomainAnnotationOrTag {
      * @return
      */
     public String getParameterAsString() {
-        return stringParameter;
+//        return stringParameter;
+    	if ( parameter instanceof String ) {
+            return (String) parameter;
+    	}
+    	throw newParamTypeError("String"); 
     }
 
     /**
@@ -107,10 +133,14 @@ public abstract class DomainAnnotationOrTag {
      * @return
      */
     public BigDecimal getParameterAsBigDecimal() {
-    	if ( numberParameter instanceof BigDecimal ) { // null is not an instanceof anything
-            return (BigDecimal) numberParameter;
+//    	if ( numberParameter instanceof BigDecimal ) { // null is not an instanceof anything
+//            return (BigDecimal) numberParameter;
+//    	}
+//    	return null ;
+    	if ( parameter instanceof BigDecimal ) { // null is not an instanceof anything
+            return (BigDecimal) parameter;
     	}
-    	return null ;
+    	throw newParamTypeError("BigDecimal"); 
     }
 
     /**
@@ -119,10 +149,14 @@ public abstract class DomainAnnotationOrTag {
      * @return
      */
     public Integer getParameterAsInteger() {
-    	if ( numberParameter instanceof Integer ) { // null is not an instanceof anything
-            return (Integer) numberParameter;
+//    	if ( numberParameter instanceof Integer ) { // null is not an instanceof anything
+//            return (Integer) numberParameter;
+//    	}
+//    	return null ;
+    	if ( parameter instanceof Integer ) { // null is not an instanceof anything
+            return (Integer) parameter;
     	}
-    	return null ;
+    	throw newParamTypeError("Integer"); 
     }
 
     /**
@@ -131,39 +165,45 @@ public abstract class DomainAnnotationOrTag {
      * @return
      */
     public Boolean getParameterAsBoolean() {
-        return booleanParameter;
+//        return booleanParameter;
+    	if ( parameter instanceof Boolean ) { // null is not an instanceof anything
+            return (Boolean) parameter;
+    	}
+    	throw newParamTypeError("Boolean"); 
     }
 
-    public Object getParameter() {
-    	if ( this.hasParameter ) {
-            if (numberParameter != null ) {
-            	return numberParameter;
-            }
-            else if (stringParameter != null ) {
-            	return stringParameter;
-            }
-            else if (booleanParameter != null ) {
-            	return booleanParameter;
-            }
-    	}
-    	return null ;
+    public FkElement getParameterAsFKElement() {
+  	if ( parameter instanceof FkElement ) { // null is not an instanceof anything
+          return (FkElement) parameter;
+  	}
+  	throw newParamTypeError("FKElement"); 
+  }
+
+    private IllegalStateException newParamTypeError(String type) {
+    	return new IllegalStateException("'" + name + "' : parameter is not a " + type);
     }
+    
 
     @Override
     public String toString() {
     	StringBuilder sb = new StringBuilder();
     	sb.append(name);
-    	if ( this.hasParameter ) {
+//    	if ( this.hasParameter ) {
+//        	sb.append("(");
+//        	if ( stringParameter != null ) {
+//            	sb.append(stringParameter);
+//        	}
+//        	if ( numberParameter != null ) {
+//            	sb.append(numberParameter);
+//        	}
+//        	if ( booleanParameter != null ) {
+//            	sb.append(booleanParameter);
+//        	}
+//        	sb.append(")");
+//    	}
+    	if ( this.parameter != null ) {
         	sb.append("(");
-        	if ( stringParameter != null ) {
-            	sb.append(stringParameter);
-        	}
-        	if ( numberParameter != null ) {
-            	sb.append(numberParameter);
-        	}
-        	if ( booleanParameter != null ) {
-            	sb.append(booleanParameter);
-        	}
+        	sb.append(parameter);
         	sb.append(")");
     	}
     	return sb.toString();

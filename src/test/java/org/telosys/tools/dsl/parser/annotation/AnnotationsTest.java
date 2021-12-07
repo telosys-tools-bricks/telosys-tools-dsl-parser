@@ -1,17 +1,21 @@
 package org.telosys.tools.dsl.parser.annotation;
 
+import java.util.List;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 
 public class AnnotationsTest {
 	
 	@Test
 	public void test1() {
 
-		assertEquals(41, Annotations.getAll().size());
+		assertEquals(44, Annotations.getAll().size());
 
 		assertNull(Annotations.get("Abcdef"));
 		
@@ -54,4 +58,25 @@ public class AnnotationsTest {
 		
 	}
 
+	@Test
+	public void testGetAnnotations1() {
+		List<String> list = Annotations.getAllAnnotationsWithPrefix();
+		print(list);
+		assertTrue(list.contains("@DbComment"));
+		assertTrue(list.contains("@Label"));
+	}
+
+	@Test
+	public void testGetAnnotations2() {
+		List<String> list = Annotations.getAllAnnotationsWithPrefixAndParentheses();
+		print(list);
+		assertTrue(list.contains("@DbComment()"));
+		assertTrue(list.contains("@Label()"));
+	}
+	private void print(List<String> list) {		
+//		System.out.println("Annotations :");
+//		for(String s : list) {
+//			System.out.println(" . " + s);
+//		}
+	}
 }

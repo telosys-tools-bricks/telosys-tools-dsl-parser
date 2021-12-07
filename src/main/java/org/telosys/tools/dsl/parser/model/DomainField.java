@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.telosys.tools.dsl.parser.commons.FkElement;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 public class DomainField {
@@ -34,7 +35,8 @@ public class DomainField {
 
     private final Map<String, DomainAnnotation> annotations = new HashMap<>();
     private final Map<String, DomainTag> tags = new HashMap<>();
-    private final List<DomainFK> fkDeclarations = new LinkedList<>() ; // v 3.3.0
+//    private final List<DomainFK> fkDeclarations = new LinkedList<>() ; // v 3.3.0
+    private final List<FkElement> fkElements = new LinkedList<>() ; // v 3.4.0
 //	private final List<AnnotationOrTagError> errors = new LinkedList<>() ;
 	private final List<ParsingError> errors = new LinkedList<>() ;
 	
@@ -189,11 +191,17 @@ public class DomainField {
     //------------------------------------------------------------------------
     // FOREIGN KEYS DECLARATIONS ( v 3.3.0 )
     //------------------------------------------------------------------------
-    public List<DomainFK> getFKDeclarations() {
-    	return fkDeclarations;
+//    public List<DomainFK> getFKDeclarations() {
+//    	return fkDeclarations;
+//    }
+//    public void addFKDeclaration(DomainFK fk) {
+//    	fkDeclarations.add(fk);
+//    }
+    public List<FkElement> getFkElements() { // v 3.4.0
+    	return fkElements;
     }
-    public void addFKDeclaration(DomainFK fk) {
-    	fkDeclarations.add(fk);
+    public void addFkElements(FkElement fke) { // v 3.4.0
+    	fkElements.add(fke); 
     }
     
     //------------------------------------------------------------------------

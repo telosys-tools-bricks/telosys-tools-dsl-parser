@@ -81,7 +81,7 @@ public class DslModelErrors {
 ////				sb.append(" : field '").append(fpe.getFieldName()).append("' : ").append(fpe.getError());
 ////			}
 ////			else {
-////				// TODO : getDetailMessage for all Error classes ( abstract + implem )
+////				// Add getDetailMessage for all Error classes ( abstract + implem )
 ////				// or override getMessage()
 ////				//pe.getMessage();
 ////				sb.append(pe.toString());

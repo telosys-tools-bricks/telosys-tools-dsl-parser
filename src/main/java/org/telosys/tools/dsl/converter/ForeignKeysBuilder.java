@@ -27,8 +27,9 @@ import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelForeignKey;
 import org.telosys.tools.dsl.model.DslModelForeignKeyColumn;
 import org.telosys.tools.dsl.model.DslModelForeignKeyPart;
+import org.telosys.tools.dsl.parser.commons.FkElement;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainFK;
+//import org.telosys.tools.dsl.parser.model.DomainFK;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
@@ -71,8 +72,9 @@ public class ForeignKeysBuilder {
 					if (dslModelAttribute == null ) {
 						throw new IllegalStateException( "Cannot found attribute '" + field.getName() + "' in entity '" + entity.getName() + "'" );
 					}
-					List<DomainFK> fkDeclarations = field.getFKDeclarations();
-					processField(dslModelEntity, dslModelAttribute, fkDeclarations);
+//					List<DomainFK> fkDeclarations = field.getFKDeclarations();
+//					processField(dslModelEntity, dslModelAttribute, fkDeclarations);
+					processField(dslModelEntity, dslModelAttribute, field.getFkElements());
 				}
 			}
 		}
@@ -165,13 +167,37 @@ public class ForeignKeysBuilder {
 	 * @param field
 	 * @param fKDefinitions
 	 */
-	private void processField(DslModelEntity entity, DslModelAttribute field, List<DomainFK> fKDefinitions) {
+//	private void processField_OLD(DslModelEntity entity, DslModelAttribute field, List<DomainFK> fKDefinitions) {
+//		String entityField = entity.getClassName() + field.getName();
+//		if ( fKDefinitions != null ) {
+//			// Get all "@FK" definitions for this field 
+//			for ( DomainFK originalFkDef : fKDefinitions ) {
+//				// Complete the FK definition if necessary
+//				DomainFK fkDef = completeFK(entity.getClassName(), field.getName(), originalFkDef) ;
+//				// Is FK already defined 
+//				DslModelForeignKey fk = foreignKeys.get(fkDef.getFkName());
+//				if ( fk == null ) {
+//					// Init a new void FK in the map
+//					DslModelEntity referencedEntity = getReferencedEntity(entityField, fkDef);
+//					fk = new DslModelForeignKey(fkDef.getFkName(), entity.getDatabaseTable(), referencedEntity.getDatabaseTable() );
+//					foreignKeys.put(fkDef.getFkName(), fk);
+//				}
+//				// Build a new FK column 
+//				DslModelForeignKeyColumn fkCol = buildFKColumn(entityField, field, fkDef, getNextSequence(fk));
+//				// and add it in FK
+//				fk.addColumn(fkCol);
+//			}
+//		}
+//	}
+	
+	private void processField(DslModelEntity entity, DslModelAttribute field, List<FkElement> fkElements) {
 		String entityField = entity.getClassName() + field.getName();
-		if ( fKDefinitions != null ) {
+		if ( fkElements != null ) {
 			// Get all "@FK" definitions for this field 
-			for ( DomainFK originalFkDef : fKDefinitions ) {
+			for ( FkElement originalFkDef : fkElements ) {
 				// Complete the FK definition if necessary
-				DomainFK fkDef = completeFK(entity.getClassName(), field.getName(), originalFkDef) ;
+//				DomainFK fkDef = completeFK(entity.getClassName(), field.getName(), originalFkDef) ;
+				FkElement fkDef = completeFK(entity.getClassName(), field.getName(), originalFkDef) ;
 				// Is FK already defined 
 				DslModelForeignKey fk = foreignKeys.get(fkDef.getFkName());
 				if ( fk == null ) {
@@ -208,7 +234,39 @@ public class ForeignKeysBuilder {
 	 * @param fk
 	 * @return 
 	 */
-	private DomainFK completeFK(String entityName, String fieldName, DomainFK fk) {
+//	private DomainFK completeFK_OLD(String entityName, String fieldName, DomainFK fk) {
+//		String fkName = fk.getFkName() ;
+//		String referencedEntityName = fk.getReferencedEntityName() ;
+//		
+//		//--- Check referenced entity ( it must exist and have an ID )
+//		if ( StrUtil.nullOrVoid(referencedEntityName) ) {
+//			throw new IllegalStateException( fieldName
+//					+ " : FK error : no referenced entity " );
+//		}
+//		DslModelEntity referencedEntity = (DslModelEntity) this.model.getEntityByClassName(referencedEntityName);
+//		if (referencedEntity == null ) {
+//			throw new IllegalStateException( fieldName
+//					+ " : FK error : unknown entity '" + referencedEntityName + "'" );
+//		}
+//		if ( ! referencedEntity.hasId() ) {
+//			throw new IllegalStateException( fieldName
+//					+ " : FK error : entity '" + referencedEntityName + "' has no PK" );
+//		}
+//		
+//		//--- Check referenced field ( must exist if specified, ref entity must have a single ID if not specified ) 
+//		Attribute referencedAttribute = getReferencedAttribute(fieldName, fk, referencedEntity ) ;
+//		
+//		//--- Build default FK name if not defined
+//		if ( StrUtil.nullOrVoid(fkName) ) {
+//			throw new IllegalStateException( fieldName
+//					+ " : FK error : FK name is null or void" );
+//		}
+//		
+//		//--- Return the complete FK
+//		return new DomainFK(fkName, referencedEntityName, referencedAttribute.getName());
+//	}
+	
+	private FkElement completeFK(String entityName, String fieldName, FkElement fk) {
 		String fkName = fk.getFkName() ;
 		String referencedEntityName = fk.getReferencedEntityName() ;
 		
@@ -237,7 +295,9 @@ public class ForeignKeysBuilder {
 		}
 		
 		//--- Return the complete FK
-		return new DomainFK(fkName, referencedEntityName, referencedAttribute.getName());
+//		return new DomainFK(fkName, referencedEntityName, referencedAttribute.getName());
+		return new FkElement(fkName, referencedEntityName, referencedAttribute.getName());
+		
 	}
 	
 	private int getNextSequence(DslModelForeignKey fk ) {
@@ -250,7 +310,8 @@ public class ForeignKeysBuilder {
 	 * @param fkDef
 	 * @return
 	 */
-	private DslModelEntity getReferencedEntity(String entityField, DomainFK fkDef) {
+//	private DslModelEntity getReferencedEntity(String entityField, DomainFK fkDef) {
+	private DslModelEntity getReferencedEntity(String entityField, FkElement fkDef) {
 		DslModelEntity referencedEntity = (DslModelEntity) model.getEntityByClassName(fkDef.getReferencedEntityName());
 		if ( referencedEntity == null ) {
 			throw new IllegalStateException( entityField
@@ -266,7 +327,7 @@ public class ForeignKeysBuilder {
 	 * @param referencedEntity
 	 * @return 
 	 */
-	private Attribute getReferencedAttribute(String fieldName, DomainFK fkDef, DslModelEntity referencedEntity ) {
+	private Attribute getReferencedAttribute(String fieldName, FkElement fkDef, DslModelEntity referencedEntity ) {
 
 		String referencedFieldName = fkDef.getReferencedFieldName() ;
 		if ( StrUtil.nullOrVoid(referencedFieldName) ) {
@@ -302,7 +363,8 @@ public class ForeignKeysBuilder {
 		}
 	}
 	
-	private DslModelForeignKeyColumn buildFKColumn(String entityField, DslModelAttribute field, DomainFK fkDef, int sequence) {
+//	private DslModelForeignKeyColumn buildFKColumn(String entityField, DslModelAttribute field, DomainFK fkDef, int sequence) {
+	private DslModelForeignKeyColumn buildFKColumn(String entityField, DslModelAttribute field, FkElement fkDef, int sequence) {
 
 		//--- ORIGIN COLUMN
 		String column = field.getDatabaseName();

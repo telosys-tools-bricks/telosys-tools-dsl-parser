@@ -19,26 +19,64 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.telosys.tools.dsl.model.DslModelAttribute;
+import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainTag;
 
 public class TagsConverter {
 
-	public void applyTags(DslModelAttribute attribute, DomainField field) {
+	private Map<String,String> buildTags(DomainField field) { // new in v 3.4.0
 		Map<String, DomainTag> tagsMap = field.getTags();
-		if ( tagsMap == null) return ;
-		if ( tagsMap.isEmpty()) return ;
+		if ( tagsMap == null) return null;
+		if ( tagsMap.isEmpty()) return null;
 		// Convert tags
 		Map<String,String> newTags = new HashMap<>();
 		for ( DomainTag tag : tagsMap.values() ) {
 			String name = tag.getName() ;
-			String value = tag.getParameterAsString();
-			if ( value == null ) {
-				value = "";
+//			String value = tag.getParameterAsString();
+//			if ( value == null ) {
+//				value = "";
+//			}
+			// v 3.4.0
+			String value = "";
+			if ( tag.hasParameter() ) {
+				value = tag.getParameterAsString();
 			}
 			newTags.put(name, value);
 		}
-		attribute.setTags(newTags);
+		return newTags;
+	}
+	
+	/**
+	 * Apply tags to the given attribute
+	 * @param attribute
+	 * @param field
+	 */
+	public void applyTags(DslModelAttribute attribute, DomainField field) {
+//		Map<String, DomainTag> tagsMap = field.getTags();
+//		if ( tagsMap == null) return ;
+//		if ( tagsMap.isEmpty()) return ;
+//		// Convert tags
+//		Map<String,String> newTags = new HashMap<>();
+//		for ( DomainTag tag : tagsMap.values() ) {
+//			String name = tag.getName() ;
+//			String value = tag.getParameterAsString();
+//			if ( value == null ) {
+//				value = "";
+//			}
+//			newTags.put(name, value);
+//		}
+//		attribute.setTags(newTags);
+
+		attribute.setTags(buildTags(field));
 	}
 
+	/**
+	 * Apply tags to the given link
+	 * @param dslLink
+	 * @param domainField
+	 */
+	public void applyTags(DslModelLink dslLink, DomainField domainField) { // new in v 3.4.0
+		dslLink.setTags( buildTags(domainField) );
+	}
 }

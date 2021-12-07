@@ -8,7 +8,8 @@ Town {
 	
 	//--- Link by "join column(s)" : columns in the table associated with the entity (not visible in DSL model)
 	// no field for FK
-	country     : Country  { @LinkByCol(COUNTRY_CODE) } ;  // Just use the given column(s)
+	country     : Country  { @LinkByCol(COUNTRY_CODE) // Just use the given column(s)
+	                         #Foo #Bar(xyz) } ;  
 	//country     : Country  { @LinkByCol(COUNTRY_CODE1, COUNTRY_CODE2) } ;  // Error : nb join columns != nb key fields in Country
 
 	//--------------------------------------------

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.telosys.tools.dsl.parser.commons.FkElement;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
@@ -27,8 +28,11 @@ public class ParserTest {
 	private void logFieldFK(DomainField field) {
 		log(" Field : '" + field.getName() + "' ("+ field.getTypeName() +")");
 		log("  Declared Foreign Keys : ");
-		for ( DomainFK fk : field.getFKDeclarations() ) {
-			log ( "  - '" + fk.getFkName() + "' : " + fk.getReferencedEntityName() + " / " + fk.getReferencedFieldName() );
+//		for ( DomainFK fk : field.getFKDeclarations() ) {
+//			log ( "  - '" + fk.getFkName() + "' : " + fk.getReferencedEntityName() + " / " + fk.getReferencedFieldName() );
+//		}
+		for ( FkElement fke : field.getFkElements() ) {
+			log ( "  - '" + fke.getFkName() + "' : " + fke.getReferencedEntityName() + " / " + fke.getReferencedFieldName() );
 		}
 	}
 	

@@ -116,7 +116,8 @@ public class FieldFKAnnotationParserTest {
 	}
 	
 	//@Test (expected = AnnotationOrTagError.class)
-	@Test (expected = ParsingError.class)
+//	@Test (expected = ParsingError.class)
+	@Test (expected = Exception.class)
     public void testErr0() throws ParsingError { // AnnotationOrTagError {
 		process(null);
 	}

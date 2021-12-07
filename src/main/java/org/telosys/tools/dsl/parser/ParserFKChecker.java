@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.telosys.tools.dsl.parser.commons.FkElement;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainFK;
@@ -33,22 +34,27 @@ public class ParserFKChecker {
 	private class FullFK {
 		String entityName ;
 		String fieldName ;
-		DomainFK fk;
+//		DomainFK fk;
+		FkElement fk;
 		
-		public FullFK(DomainEntity entity, DomainField field, DomainFK fk) {
+//		protected FullFK(DomainEntity entity, DomainField field, DomainFK fk) {
+		protected FullFK(DomainEntity entity, DomainField field, FkElement fk) {
 			super();
 			this.entityName = entity.getName();
 			this.fieldName = field.getName();
 			this.fk = fk;
 		}
 
-		public String getEntityName() {
+		protected String getEntityName() {
 			return entityName;
 		}
-		public String getFieldName() {
+		protected String getFieldName() {
 			return fieldName;
 		}
-		public DomainFK getFk() {
+//		protected DomainFK getFk() {
+//			return fk;
+//		}
+		protected FkElement getFkElement() {
 			return fk;
 		}
 	}
@@ -75,7 +81,8 @@ public class ParserFKChecker {
 		Map<String,List<FullFK>> map = new HashMap<>();
 		for (DomainEntity entity : model.getEntities()) {
 			for (DomainField field : entity.getFields() ) {
-				for (DomainFK fk : field.getFKDeclarations() ) {
+//				for (DomainFK fk : field.getFKDeclarations() ) {
+				for (FkElement fk : field.getFkElements() ) {
 					FullFK fullFK = new FullFK(entity, field, fk);
 					String fkName = fk.getFkName();
 					List<FullFK> list = map.get(fkName);
@@ -104,7 +111,10 @@ public class ParserFKChecker {
 				return true ;
 			}
 			// in the same entity but not referencing the same entity => duplicated
-			if ( ! fullFK.getFk().getReferencedEntityName().equals(e.getFk().getReferencedEntityName()) ) {
+//			if ( ! fullFK.getFk().getReferencedEntityName().equals(
+//					    e.getFk().getReferencedEntityName()) ) {
+			if ( ! fullFK.getFkElement().getReferencedEntityName().equals(
+				        e.getFkElement().getReferencedEntityName()) ) {
 				return true ;
 			}
 		}

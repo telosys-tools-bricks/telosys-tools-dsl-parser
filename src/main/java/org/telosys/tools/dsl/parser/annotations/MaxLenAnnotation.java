@@ -16,16 +16,29 @@
 package org.telosys.tools.dsl.parser.annotations;
 
 import org.telosys.tools.dsl.AnnotationName;
+import org.telosys.tools.dsl.model.DslModel;
+import org.telosys.tools.dsl.model.DslModelAttribute;
+import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 
-public class FkAnnotation extends AnnotationDefinition {
+/**
+ * "MaxLen" annotation 
+ * Added in v 3.4.0
+ * 
+ * @author Laurent Guerin
+ *
+ */
+public class MaxLenAnnotation extends AnnotationDefinition {
 
-	public FkAnnotation() {
-		super(AnnotationName.FK, AnnotationParamType.FK_ELEMENT, AnnotationScope.ATTRIBUTE);
+	public MaxLenAnnotation() {
+		super(AnnotationName.MAX_LEN, AnnotationParamType.INTEGER, AnnotationScope.ATTRIBUTE);
 	}
 
-	// No apply for @FK annotation
-	// @FK are not "applied" on field or link but only used to create FK at Entity level 
+	@Override
+	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) {
+		checkParamValue(paramValue);
+		attribute.setMaxLength((Integer)paramValue);
+	}
 }

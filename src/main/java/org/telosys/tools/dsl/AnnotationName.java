@@ -81,10 +81,12 @@ public class AnnotationName {
 	public static final String LINK_BY_JOIN_ENTITY = "LinkByJoinEntity"; // v 3.3.0
 
 	// Added in ver 3.4.0 : for attributes
-	public static final String SIZE          = "Size"; // v 3.4.0
-	public static final String UNIQUE        = "Unique"; // v 3.4.0
+	public static final String SIZE      = "Size";   // v 3.4.0
+	public static final String UNIQUE    = "Unique"; // v 3.4.0
+	public static final String MIN_LEN   = "MinLen" ; // v 3.4.0
+	public static final String MAX_LEN   = "MaxLen" ; // v 3.4.0
 
-	// TODO 
+	// new annotations ?
     // @Comment(xxx) 
     // @After(DateISO)
     // @Before(DateISO)

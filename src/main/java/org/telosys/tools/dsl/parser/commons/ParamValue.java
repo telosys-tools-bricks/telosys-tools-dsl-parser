@@ -23,6 +23,7 @@ import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.exceptions.TagParsingError;
+import org.telosys.tools.dsl.parser.model.DomainFK;
 
 public class ParamValue {
 
@@ -200,6 +201,12 @@ public class ParamValue {
 		} catch (NumberFormatException e) {
 			throw newError("invalid size parameter '" + p + "' (not a number)");
 		}
+	}
+	
+	public FkElement getAsForeignKeyElement() throws ParsingError {
+		checkParameterExistence();
+		FkElementBuilder builder = new FkElementBuilder(entityName, fieldName);
+		return builder.build(parameterValue);
 	}
 	
 }

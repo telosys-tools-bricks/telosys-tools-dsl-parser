@@ -288,14 +288,15 @@ public class Parser {
 		for ( DomainAnnotation annotation : fieldAnnotationsAndTags.getAnnotations() ) {
 			if ( AnnotationName.FK.equals( annotation.getName() ) ) { // v 3.3.0
 				// Special processing for "@FK" annotation (can be used 1..N times in a field )
-				try {
-					FieldFKAnnotationParser fkParser = new FieldFKAnnotationParser(entityName, fieldName);
-					DomainFK fk = fkParser.parse(annotation);
-					domainField.addFKDeclaration(fk);
-//				} catch (AnnotationOrTagError err) {
-				} catch (ParsingError err) {
-					domainField.addError(err);
-				}
+//				try {
+//					FieldFKAnnotationParser fkParser = new FieldFKAnnotationParser(entityName, fieldName);
+//					DomainFK fk = fkParser.parse(annotation);
+//					domainField.addFKDeclaration(fk);
+////				} catch (AnnotationOrTagError err) {
+//				} catch (ParsingError err) {
+//					domainField.addError(err);
+//				}
+				domainField.addFkElements(annotation.getParameterAsFKElement());
 			}
 			else {
 				// Standard processing for other annotations

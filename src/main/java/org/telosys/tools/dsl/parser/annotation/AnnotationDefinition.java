@@ -31,15 +31,21 @@ import org.telosys.tools.generic.model.BooleanValue;
 public abstract class AnnotationDefinition {
 
 	private final String name;
-	private final AnnotationParamType type;
+	private final AnnotationParamType paramType;
 	// Annotation scope :
 	private boolean attributeScope = false ;
 	private boolean linkScope      = false ;
 	private boolean entityScope    = false ;
 
-	protected AnnotationDefinition(String name, AnnotationParamType type, AnnotationScope... scopes) {
+	/**
+	 * Constructor
+	 * @param name
+	 * @param paramType
+	 * @param scopes
+	 */
+	protected AnnotationDefinition(String name, AnnotationParamType paramType, AnnotationScope... scopes) {
 		this.name = name ;
-		this.type = type ;
+		this.paramType = paramType ;
 		for ( AnnotationScope scope : scopes ) {
 			if ( scope == AnnotationScope.ATTRIBUTE ) {
 				this.attributeScope = true ;
@@ -58,12 +64,12 @@ public abstract class AnnotationDefinition {
 	}
 
 	public AnnotationParamType getParamType() {
-		return type;
+		return paramType;
+	}
+	public boolean hasParam() {
+		return paramType != AnnotationParamType.NONE;
 	}
 	
-//	public AnnotationScope getScope() {
-//		return scope;
-//	}
 	public boolean hasAttributeScope() {
 		return attributeScope;
 	}
@@ -77,11 +83,19 @@ public abstract class AnnotationDefinition {
 	//-------------------------------------------------------------------------------------------
 	// Annotation parsing 
 	//-------------------------------------------------------------------------------------------
+	/**
+	 * Builds an annotation instance from its definition and the given param value
+	 * @param entityName
+	 * @param fieldName
+	 * @param parameterValue
+	 * @return
+	 * @throws ParsingError
+	 */
 	public DomainAnnotation buildAnnotation(String entityName, String fieldName, 
 			String parameterValue) throws ParsingError {
 		ParamValue paramValue = new ParamValue(entityName, fieldName, name, 
 									parameterValue, ParamValueOrigin.FIELD_ANNOTATION);
-		switch(this.type) {
+		switch(this.paramType) {
 		case STRING :
 			return new DomainAnnotation(name, paramValue.getAsString() );
 		case INTEGER :
@@ -92,6 +106,9 @@ public abstract class AnnotationDefinition {
 			return new DomainAnnotation(name, paramValue.getAsBoolean() );
 		case SIZE :
 			return new DomainAnnotation(name, paramValue.getAsSize() );
+		case FK_ELEMENT :
+			return new DomainAnnotation(name, paramValue.getAsForeignKeyElement() );
+
 		default :
 			// annotation without parameter
 			if (parameterValue != null) {

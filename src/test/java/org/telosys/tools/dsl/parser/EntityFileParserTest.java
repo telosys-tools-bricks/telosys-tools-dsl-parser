@@ -2,6 +2,9 @@ package org.telosys.tools.dsl.parser;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 
 public class EntityFileParserTest {
@@ -44,7 +47,7 @@ public class EntityFileParserTest {
 	}
 
 	@Test
-	public void testEntityFileParser_invalidEntity() throws EntityParsingError {
+	public void testEntityFileParserWithInvalidEntity() throws EntityParsingError {
 		
 		EntityFileParser entityFileParser = new EntityFileParser(
 		"src/test/resources/model_test/invalid/FourEntities_model/Gender.entity");
@@ -55,6 +58,20 @@ public class EntityFileParserTest {
 		for ( FieldParts field : result.getFields() ) {
 			System.out.println(" . " + field);
 		}
+	}
+
+	@Test
+	public void testEntityHeaderParsing() throws EntityParsingError {
+		EntityFileParser entityFileParser = new EntityFileParser("aaa/bbb/Foo.entity");
+		String s ;
+		int i = 1;
+		assertNull( entityFileParser.processLineEntityLevel("", i++) );
+		assertNull( entityFileParser.processLineEntityLevel("    ", i++) );
+		assertNull( entityFileParser.processLineEntityLevel("// comment    ", i++) );
+		assertNull( entityFileParser.processLineEntityLevel("   // comment    ", i++) );
+		assertEquals( "MyClass", entityFileParser.processLineEntityLevel(" MyClass ", i++) );
+		assertEquals( "@Foo", entityFileParser.processLineEntityLevel(" @Foo ", i++) );
+		assertEquals( "MyClass", entityFileParser.processLineEntityLevel(" MyClass {  // cbbcbc ", i++) );
 	}
 
 }
