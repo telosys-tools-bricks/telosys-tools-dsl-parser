@@ -29,10 +29,6 @@ public abstract class LinkByAnnotation extends AnnotationDefinition {
 		super(name, type, AnnotationScope.LINK);
 	}
 
-	protected IllegalStateException newException(String msg) {
-		return new IllegalStateException("@" + this.getName() + " : " + msg);
-	}
-	
 	protected JoinColumnsBuilder getJoinColumnsBuilder() {
 		return new JoinColumnsBuilder("@"+this.getName()) ;
 	}
@@ -83,25 +79,6 @@ public abstract class LinkByAnnotation extends AnnotationDefinition {
 		}
 		return refDefinitions;
 	}
-	
-//	private void checkReferenceDefinitions(ReferenceDefinitions referenceDefinitions ) {
-//		if ( referenceDefinitions.count() == 0 ) {
-//			throw newException("no reference definition");
-//		}
-//		else {
-//			if ( referenceDefinitions.count() > 1 ) {
-//				int referencedCount = 0;
-//				for ( ReferenceDefinition rd : referenceDefinitions.getList() ) {
-//					if ( rd.hasReferencedName() ) {
-//						referencedCount++;
-//					}
-//				}
-//				if ( referencedCount < referenceDefinitions.count() ) {
-//					throw newException("missing referenced name(s)");
-//				}
-//			}
-//		}
-//	}
 	
 	/**
 	 * Check there's at least 1 reference defined

@@ -113,6 +113,10 @@ public class DslModel implements Model {
 		return entities;
 	}
 
+	public void addEntity(Entity entity) { // v 3.4.0
+		entities.add(entity);
+	}
+
 	@Override
 	public Entity getEntityByClassName(String entityClassName) {
 		if ( entityClassName == null ) {

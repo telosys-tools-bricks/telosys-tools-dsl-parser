@@ -79,7 +79,14 @@ public abstract class AnnotationDefinition {
 	public boolean hasEntityScope() {
 		return entityScope;
 	}
-	
+
+	//-------------------------------------------------------------------------------------------
+	// Annotation error 
+	//-------------------------------------------------------------------------------------------
+	protected IllegalStateException newException(String msg) {
+		return new IllegalStateException("@" + this.name + " : " + msg);
+	}
+
 	//-------------------------------------------------------------------------------------------
 	// Annotation parsing 
 	//-------------------------------------------------------------------------------------------
@@ -92,6 +99,13 @@ public abstract class AnnotationDefinition {
 	 * @throws ParsingError
 	 */
 	public DomainAnnotation buildAnnotation(String entityName, String fieldName, 
+			String parameterValue) throws ParsingError {
+		DomainAnnotation annotation = createAnnotation(entityName, fieldName, parameterValue);
+		afterCreation(annotation);
+		return annotation;
+	}
+	
+	private DomainAnnotation createAnnotation(String entityName, String fieldName, 
 			String parameterValue) throws ParsingError {
 		ParamValue paramValue = new ParamValue(entityName, fieldName, name, 
 									parameterValue, ParamValueOrigin.FIELD_ANNOTATION);
@@ -118,47 +132,58 @@ public abstract class AnnotationDefinition {
 		}
 	}
 	
+	protected void afterCreation(DomainAnnotation annotation) {
+		// Override this method to process the annotation after build
+	}
 
 	//-------------------------------------------------------------------------------------------
 	// Annotation application ( on attribute or link )
 	//-------------------------------------------------------------------------------------------
 	protected void checkParamValue(Object paramValue) {
-		switch ( getParamType() ) {
+		switch ( this.paramType ) {
 		case STRING:
 			if ( ! ( paramValue instanceof String ) ) {
-				throw new IllegalStateException("String value expected, actual type is " 
+				throw newException("String value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case SIZE: // Size is stored as a String
 			if ( ! ( paramValue instanceof String ) ) {
-				throw new IllegalStateException("Size value expected, actual type is " 
+				throw newException("Size value expected, actual type is " 
+							+ getParamValueActualType( paramValue));
+			}
+			break;
+		case FK_ELEMENT: // FK element is stored as a String
+			if ( ! ( paramValue instanceof String ) ) {
+				throw newException("FK element expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case INTEGER:
 			if ( ! ( paramValue instanceof Integer ) ) {
-				throw new IllegalStateException("Integer value expected, actual type is " 
+				throw newException("Integer value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case DECIMAL:
 			if ( ! ( paramValue instanceof BigDecimal ) ) {
-				throw new IllegalStateException("BigDecimal value expected, actual type is " 
+				throw newException("BigDecimal value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case BOOLEAN:
 			if ( ! ( paramValue instanceof Boolean ) ) {
-				throw new IllegalStateException("Boolean value expected, actual type is " 
+				throw newException("Boolean value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case NONE:
 			if ( paramValue != null ) {
-				throw new IllegalStateException("No value expected, actual value is " + paramValue );
+				throw newException("No value expected, actual value is " + paramValue );
 			}
 			break;
+		default:
+			throw newException("Unexpected parameter type '" + this.paramType + "'" );
 		}
 	}
 	

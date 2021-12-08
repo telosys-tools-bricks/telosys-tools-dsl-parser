@@ -96,7 +96,8 @@ public class Converter extends AbstractConverter {
 		// for each "DomainEntity" create a void "DslModelEntity"
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
 			DslModelEntity genericEntity = createVoidEntity(domainEntity);
-			dslModel.getEntities().add(genericEntity);
+//			dslModel.getEntities().add(genericEntity);
+			dslModel.addEntity(genericEntity); // v 3.4.0
 		}
 	}
 	

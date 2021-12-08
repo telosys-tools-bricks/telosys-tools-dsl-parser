@@ -30,8 +30,7 @@ import org.telosys.tools.generic.model.Optional;
 public class DslModelLink implements Link {
     private String id;
     
-    private String fieldName; 
-    private final boolean selected = true ; // Always considered as "selected" 
+    private final String fieldName; 
 
     private List<JoinColumn> joinColumns;
     
@@ -39,7 +38,6 @@ public class DslModelLink implements Link {
     private String targetEntityClassName;
     private String targetTableName; // table associated with the target entity 
     
-//    private String fieldType; // REMOVED in v 3.3.0
     private boolean owningSide;
     private String mappedBy;
     
@@ -69,9 +67,11 @@ public class DslModelLink implements Link {
 
     /**
      * Constructor
+     * @param fieldName
      */
-    public DslModelLink() {
+    public DslModelLink(String fieldName) {
 		super();
+        this.fieldName = fieldName;
 	}
 
 	@Override
@@ -120,18 +120,8 @@ public class DslModelLink implements Link {
         return fieldName;
     }
 
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
-    }
-
-// REMOVED in v 3.3.0
-//    @Override
-//    public String getFieldType() {
-//        return fieldType;
-//    }
-// REMOVED in v 3.3.0
-//    public void setFieldType(String fieldType) {
-//        this.fieldType = fieldType;
+//    public void setFieldName(String fieldName) {
+//        this.fieldName = fieldName;
 //    }
 
     @Override
@@ -154,7 +144,7 @@ public class DslModelLink implements Link {
 
     @Override
     public boolean isSelected() {
-        return selected; // Always "TRUE" ( "SELECTED" )
+        return true; // Always "TRUE" ( "SELECTED" )
     }
 
     @Override
@@ -306,11 +296,11 @@ public class DslModelLink implements Link {
 	//-----------------------------------------------------------------------------------------
 	// LINK TAGS  (added in v 3.4.0) 
 	//-----------------------------------------------------------------------------------------
-	public void setTags(Map<String,String> tags) {
+	public void setTags(Map<String,String> tags) { 
 		this.tagsMap = tags;
 	}
 	
-	//@Override
+	@Override
 	public Map<String, String> getTagsMap() {
 		return this.tagsMap;
 	}

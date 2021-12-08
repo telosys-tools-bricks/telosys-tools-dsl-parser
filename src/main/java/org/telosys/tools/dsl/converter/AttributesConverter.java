@@ -68,16 +68,18 @@ public class AttributesConverter extends AbstractConverter {
 				// Populate attribute with parsed attribute information
 				populateAttribute(dslEntity, dslAttribute, domainField );
 				// Add the new "basic attribute" to the entity
-				dslEntity.getAttributes().add(dslAttribute);
+				//dslEntity.getAttributes().add(dslAttribute);
+				dslEntity.addAttribute(dslAttribute);  // v 3.4.0
 			}
 		}
 	}
 	
 	private DslModelAttribute createAttribute( DomainField domainField ) {	
-		DslModelAttribute dslAttribute = new DslModelAttribute();
-		// Init the new attribute with at least its name
-		dslAttribute.setName(notNull(domainField.getName()));
-		return dslAttribute;
+//		DslModelAttribute dslAttribute = new DslModelAttribute();
+//		// Init the new attribute with at least its name
+//		dslAttribute.setName(notNull(domainField.getName()));
+//		return dslAttribute;
+		return new DslModelAttribute(notNull(domainField.getName())); // v 3.4.0
 	}
 	
 	/**

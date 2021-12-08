@@ -22,6 +22,7 @@ import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
+import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
 public class MappedByAnnotation extends AnnotationDefinition {
 
@@ -30,9 +31,19 @@ public class MappedByAnnotation extends AnnotationDefinition {
 	}
 
 	@Override
+	protected void afterCreation(DomainAnnotation annotation) {
+		if ( annotation.getParameterAsString().trim().length() == 0 ) {
+			throw newException("invalid entity name (blank)");
+		}
+	}
+
+	@Override
 	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
 		checkParamValue(paramValue);
-		link.setMappedBy((String)paramValue);
+		String entityName = (String) paramValue;
+		checkEntityName(model, entityName);
+		link.setMappedBy(entityName);
+		
 		// has MappedBy => inverse side
 		link.setInverseSide(true);
 		link.setOwningSide(false);
@@ -45,4 +56,14 @@ public class MappedByAnnotation extends AnnotationDefinition {
 		//     targetEntity.getLinkByFieldName(attributeName) 
 	}
 
+	/**
+	 * Checks that the referenced entity exists
+	 * @param model
+	 * @param entityName
+	 */
+	private void checkEntityName(DslModel model, String entityName) {
+		if ( model.getEntityByClassName(entityName) == null ) {
+			throw newException("Unknown entity '" + entityName + "'");
+		}
+	}
 }

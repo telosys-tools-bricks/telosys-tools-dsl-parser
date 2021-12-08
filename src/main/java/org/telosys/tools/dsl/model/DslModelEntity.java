@@ -62,6 +62,9 @@ public class DslModelEntity implements Entity {
 	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
 	}
+	public void addAttribute(Attribute attribute) { // v 3.4.0
+		this.attributes.add(attribute);
+	}
 	
 	/**
 	 * Returns all attributes being part of the PK 
@@ -168,8 +171,11 @@ public class DslModelEntity implements Entity {
 	public List<Link> getLinks() {
 		return links;
 	}
-	public void setLinks(List<Link> links) {
-		this.links = links;
+//	public void setLinks(List<Link> links) { // Unused : removed v 3.4.0
+//		this.links = links;
+//	}
+	public void addLink(Link link) { // v 3.4.0
+		this.links.add(link);
 	}
 	public Link getLinkByFieldName(String fieldName) {
 		for(Link link : links) {

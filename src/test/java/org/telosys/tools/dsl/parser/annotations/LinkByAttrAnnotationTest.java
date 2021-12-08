@@ -18,15 +18,13 @@ import static org.junit.Assert.assertNotNull;
 public class LinkByAttrAnnotationTest {
 
 	private DslModelAttribute buildAttribute(String name, boolean id, String databaseName) {
-		DslModelAttribute attribute = new DslModelAttribute();
-		attribute.setName(name);
+		DslModelAttribute attribute = new DslModelAttribute(name);
 		attribute.setKeyElement(id);
 		attribute.setDatabaseName(databaseName);
 		return attribute;
 	}
 	private DslModelLink buildLink(String fieldName, String targetEntityName) {
-		DslModelLink link = new DslModelLink();
-		link.setFieldName(fieldName);
+		DslModelLink link = new DslModelLink(fieldName);
 		link.setTargetEntityClassName(targetEntityName);
 		return link;
 	}
@@ -49,11 +47,10 @@ public class LinkByAttrAnnotationTest {
 		bookEntity.setAttributes(attributes);
 		
 		DslModel model =  new DslModel("MyTestModel");
-		model.getEntities().add(bookEntity);
-		model.getEntities().add(authorEntity);
+		model.addEntity(bookEntity);
+		model.addEntity(authorEntity);
 		
-		DslModelLink linkToAuthor = new DslModelLink();
-		linkToAuthor.setFieldName("author");
+		DslModelLink linkToAuthor = new DslModelLink("author");
 		linkToAuthor.setTargetEntityClassName("Author");
 		
 		LinkByAttrAnnotation a = new LinkByAttrAnnotation();
@@ -81,8 +78,8 @@ public class LinkByAttrAnnotationTest {
 	}
 	private DslModel buildLineAndPointModel() {
 		DslModel model =  new DslModel("LineAndPointModel");
-		model.getEntities().add(buildPoint());
-		model.getEntities().add(buildLine());
+		model.addEntity(buildPoint());
+		model.addEntity(buildLine());
 		return model;
 	}
 	private List<JoinColumn> getJoinColumnsForLinkToPoint(String paramValue) {

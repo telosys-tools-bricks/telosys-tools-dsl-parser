@@ -83,7 +83,8 @@ public class LinksConverter extends AbstractConverter {
 				step4InferJoinColumns(dslEntity, dslLink);
 
 				// Add the new link to the entity
-				dslEntity.getLinks().add(dslLink);
+//				dslEntity.getLinks().add(dslLink);
+				dslEntity.addLink(dslLink); // v 3.4.0
 
 				//DslModelLink link = convertAttributeLink(dslEntity, domainField);
 				// Add the new link to the entity
@@ -98,9 +99,10 @@ public class LinksConverter extends AbstractConverter {
 		check((referencedEntity != null),
 				"No target entity for field '" + domainField.getName() + "'. Cannot create Link");
 
-		DslModelLink dslLink = new DslModelLink();
-		// Init the new attribute with at least its name
-		dslLink.setFieldName(notNull(domainField.getName()));
+//		DslModelLink dslLink = new DslModelLink();
+//		// Init the new attribute with at least its name
+//		dslLink.setFieldName(notNull(domainField.getName()));
+		DslModelLink dslLink = new DslModelLink(notNull(domainField.getName())); // v 3.4.0
 
 		// Link ID : generated (just to ensure not null )
 		dslLink.setId("Link" + linkIdCounter); 
