@@ -29,5 +29,7 @@ public enum AnnotationParamType {
 	
 	SIZE,
 	
-	FK_ELEMENT
+	FK_ELEMENT,
+	
+	LIST
 }

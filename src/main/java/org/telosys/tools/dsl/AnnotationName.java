@@ -85,6 +85,8 @@ public class AnnotationName {
 	public static final String UNIQUE    = "Unique"; // v 3.4.0
 	public static final String MIN_LEN   = "MinLen" ; // v 3.4.0
 	public static final String MAX_LEN   = "MaxLen" ; // v 3.4.0
+	public static final String GENERATED_VALUE   = "GeneratedValue" ; // v 3.4.0
+	
 
 	// new annotations ?
     // @Comment(xxx) 

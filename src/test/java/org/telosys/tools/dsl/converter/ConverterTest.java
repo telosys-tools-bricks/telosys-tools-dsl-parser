@@ -14,11 +14,11 @@ import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainNeutralType;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.generic.model.Attribute;
-import org.telosys.tools.generic.model.Cardinality;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Link;
 import org.telosys.tools.generic.model.Model;
-import org.telosys.tools.generic.model.ModelType;
+import org.telosys.tools.generic.model.enums.Cardinality;
+import org.telosys.tools.generic.model.enums.ModelType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

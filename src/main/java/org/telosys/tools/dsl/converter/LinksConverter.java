@@ -27,12 +27,12 @@ import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.generic.model.Attribute;
-import org.telosys.tools.generic.model.Cardinality;
 import org.telosys.tools.generic.model.CascadeOptions;
 import org.telosys.tools.generic.model.Entity;
-import org.telosys.tools.generic.model.FetchType;
 import org.telosys.tools.generic.model.JoinColumn;
-import org.telosys.tools.generic.model.Optional;
+import org.telosys.tools.generic.model.enums.Cardinality;
+import org.telosys.tools.generic.model.enums.FetchType;
+import org.telosys.tools.generic.model.enums.Optional;
 
 public class LinksConverter extends AbstractConverter {
 

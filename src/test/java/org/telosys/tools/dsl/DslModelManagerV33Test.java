@@ -7,14 +7,14 @@ import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.generic.model.Attribute;
-import org.telosys.tools.generic.model.Cardinality;
 import org.telosys.tools.generic.model.CascadeOptions;
 import org.telosys.tools.generic.model.Entity;
-import org.telosys.tools.generic.model.FetchType;
 import org.telosys.tools.generic.model.JoinColumn;
 import org.telosys.tools.generic.model.Link;
 import org.telosys.tools.generic.model.Model;
-import org.telosys.tools.generic.model.Optional;
+import org.telosys.tools.generic.model.enums.Cardinality;
+import org.telosys.tools.generic.model.enums.FetchType;
+import org.telosys.tools.generic.model.enums.Optional;
 import org.telosys.tools.junit.utils.PrintUtil;
 
 import static org.junit.Assert.assertEquals;

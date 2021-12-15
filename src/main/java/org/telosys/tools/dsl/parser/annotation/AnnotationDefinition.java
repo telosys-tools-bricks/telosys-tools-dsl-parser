@@ -16,6 +16,7 @@
 package org.telosys.tools.dsl.parser.annotation;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
@@ -26,7 +27,7 @@ import org.telosys.tools.dsl.parser.commons.ParamValueOrigin;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
-import org.telosys.tools.generic.model.BooleanValue;
+import org.telosys.tools.generic.model.enums.BooleanValue;
 
 public abstract class AnnotationDefinition {
 
@@ -120,6 +121,8 @@ public abstract class AnnotationDefinition {
 			return new DomainAnnotation(name, paramValue.getAsBoolean() );
 		case SIZE :
 			return new DomainAnnotation(name, paramValue.getAsSize() );
+		case LIST :
+			return new DomainAnnotation(name, paramValue.getAsList() );
 		case FK_ELEMENT :
 			return new DomainAnnotation(name, paramValue.getAsForeignKeyElement() );
 
@@ -177,6 +180,12 @@ public abstract class AnnotationDefinition {
 							+ getParamValueActualType( paramValue));
 			}
 			break;
+		case LIST:
+			if ( ! ( paramValue instanceof List<?> ) ) {
+				throw newException("List value expected, actual type is " 
+							+ getParamValueActualType( paramValue));
+			}
+			break;
 		case NONE:
 			if ( paramValue != null ) {
 				throw newException("No value expected, actual value is " + paramValue );
@@ -209,6 +218,14 @@ public abstract class AnnotationDefinition {
 		else {
 			return BooleanValue.FALSE;
 		}
+	}
+	
+	protected int toInt(String s) {
+		try {
+			return Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+			throw newException("Cannot convert '"+s+"' to int");
+		}  
 	}
 	
 	/**

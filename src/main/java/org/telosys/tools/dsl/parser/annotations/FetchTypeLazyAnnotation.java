@@ -22,7 +22,7 @@ import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
-import org.telosys.tools.generic.model.FetchType;
+import org.telosys.tools.generic.model.enums.FetchType;
 
 public class FetchTypeLazyAnnotation extends AnnotationDefinition {
 

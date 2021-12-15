@@ -16,6 +16,8 @@
 package org.telosys.tools.dsl.parser.commons;
 
 import java.math.BigDecimal;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationParsingError;
@@ -23,7 +25,6 @@ import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.exceptions.TagParsingError;
-import org.telosys.tools.dsl.parser.model.DomainFK;
 
 public class ParamValue {
 
@@ -209,4 +210,23 @@ public class ParamValue {
 		return builder.build(parameterValue);
 	}
 	
+	public List<String> getAsList() throws ParsingError {
+		checkParameterExistence();
+		return buildList(parameterValue);
+	}
+	
+	private List<String> buildList(String paramString) throws ParsingError {
+		String[] elements = StrUtil.split(paramString, ',');
+		if (elements.length == 0 ) {
+			throw new AnnotationParsingError(entityName, fieldName, annotationOrTagName, 
+					"invalid list parameter (at list 1 element expected)");
+		}
+		
+		List<String> list = new LinkedList<>();
+		for ( String s : elements ) {
+			list.add(s.trim());
+		}
+		return list;
+	}
+
 }

@@ -16,6 +16,7 @@
 package org.telosys.tools.dsl.parser.model;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
@@ -36,7 +37,7 @@ public class DomainAnnotation extends DomainAnnotationOrTag {
     }
     
     /**
-     * Constructor for annotation with parameter
+     * Constructor for annotation with String parameter
      * @param name
      * @param param
      */
@@ -45,7 +46,7 @@ public class DomainAnnotation extends DomainAnnotationOrTag {
     }
     
     /**
-     * Constructor for annotation with parameter
+     * Constructor for annotation with Integer parameter
      * @param name
      * @param param
      */
@@ -54,7 +55,7 @@ public class DomainAnnotation extends DomainAnnotationOrTag {
     }
     
     /**
-     * Constructor for annotation with parameter
+     * Constructor for annotation with BigDecimal parameter
      * @param name
      * @param param
      */
@@ -63,11 +64,20 @@ public class DomainAnnotation extends DomainAnnotationOrTag {
     }
 
     /**
-     * Constructor for annotation with parameter
+     * Constructor for annotation with Boolean parameter
      * @param name
      * @param param
      */
     public DomainAnnotation(String name, Boolean param) {
+    	super(name,param);
+    }
+    
+    /**
+     * Constructor for annotation with List parameter
+     * @param name
+     * @param param
+     */
+    public DomainAnnotation(String name, List<String> param) {
     	super(name,param);
     }
     

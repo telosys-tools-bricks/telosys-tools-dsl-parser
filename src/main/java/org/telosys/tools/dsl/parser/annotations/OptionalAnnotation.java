@@ -22,7 +22,7 @@ import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
-import org.telosys.tools.generic.model.Optional;
+import org.telosys.tools.generic.model.enums.Optional;
 
 public class OptionalAnnotation extends AnnotationDefinition {
 

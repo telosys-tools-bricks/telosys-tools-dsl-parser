@@ -23,7 +23,7 @@ import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
-import org.telosys.tools.generic.model.ModelType;
+import org.telosys.tools.generic.model.enums.ModelType;
 import org.telosys.tools.generic.model.util.EntityClassNameComparator;
 
 public class DslModel implements Model {

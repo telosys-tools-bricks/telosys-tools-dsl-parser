@@ -21,10 +21,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.telosys.tools.generic.model.Attribute;
-import org.telosys.tools.generic.model.BooleanValue;
-import org.telosys.tools.generic.model.DateType;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKeyPart;
+import org.telosys.tools.generic.model.enums.BooleanValue;
+import org.telosys.tools.generic.model.enums.DateType;
+import org.telosys.tools.generic.model.enums.GeneratedValueStrategy;
 
 public class DslModelAttribute implements Attribute {
 	
@@ -43,8 +44,9 @@ public class DslModelAttribute implements Attribute {
 	private DateType dateType;
 	private String defaultValue = "" ; // ver 3.2.0
 	private Entity entity;
-	private String generatedValueGenerator;
-	private String generatedValueStrategy;
+	private String generatedValueGeneratorName;
+//	private String generatedValueStrategy;
+	private GeneratedValueStrategy generatedValueStrategy = GeneratedValueStrategy.UNDEFINED; // v 3.4.0
 	private String initialValue = "" ; // ver 3.2.0
 	private String inputType = "" ; // ver 3.2.0
 	private Integer jdbcTypeCode;
@@ -55,25 +57,25 @@ public class DslModelAttribute implements Attribute {
 	private BigDecimal maxValue;
 	private BigDecimal minValue;
 	private String pattern = "" ; // ver 3.2.0
-	private Integer sequenceGeneratorAllocationSize;
+	private Integer generatedValueAllocationSize;
 	private String sequenceGeneratorName;
-	private String sequenceGeneratorSequenceName;
+	private String generatedValueSequenceName;
 	private String tableGeneratorName;
-	private String tableGeneratorPkColumnName;
-	private String tableGeneratorPkColumnValue;
-	private String tableGeneratorTable;
-	private String tableGeneratorValueColumnName;
+	private String generatedValueTablePkColumnName;
+	private String generatedValueTablePkColumnValue;
+	private String generatedValueTableName;
+	private String generatedValueTableValueColumnName;
 	private boolean autoIncremented = false ;
 	private boolean databaseNotNull = false ;
-	private boolean generatedValue = false;
+//	private boolean generatedValue = false; // removed v 3.4.0
 	private boolean keyElement = false;
 	private boolean longText = false;
 	private boolean notBlank = false;
 	private boolean notEmpty = false;
 	private boolean notNull = false;
 	private boolean selected = true; // SELECTED BY DEFAULT
-	private boolean hasSequenceGenerator = false;
-	private boolean hasTableGenerator = false;
+//	private boolean hasSequenceGenerator = false; // removed v 3.4.0
+//	private boolean hasTableGenerator = false; // removed v 3.4.0
 	private boolean isDateAfter = false;
 	private boolean isDateBefore = false;
 	private boolean isDateFuture = false;
@@ -220,21 +222,86 @@ public class DslModelAttribute implements Attribute {
 		this.entity = entity;
 	}
 	
+	//----------------------------------------------------------------------------------------
+	// Generated value
+	//----------------------------------------------------------------------------------------
+
 	@Override
-	public String getGeneratedValueGenerator() {
-		return generatedValueGenerator;
+	public GeneratedValueStrategy getGeneratedValueStrategy() {
+		return generatedValueStrategy;
 	}
-	public void setGeneratedValueGenerator(String generatedValueGenerator) {
-		this.generatedValueGenerator = generatedValueGenerator;
+	public void setGeneratedValueStrategy(GeneratedValueStrategy strategy) {
+		this.generatedValueStrategy = strategy;
+	}
+
+	@Override // Generator name (used by 'sequence' and 'table' )
+	public String getGeneratedValueGeneratorName() {
+		return generatedValueGeneratorName;
+	}
+	public void setGeneratedValueGeneratorName(String generatorName) {
+		this.generatedValueGeneratorName = generatorName;
 	}
 	
 	@Override
-	public String getGeneratedValueStrategy() {
-		return generatedValueStrategy;
+	public String getGeneratedValueSequenceName() {
+		return generatedValueSequenceName;
 	}
-	public void setGeneratedValueStrategy(String generatedValueStrategy) {
-		this.generatedValueStrategy = generatedValueStrategy;
+	public void setGeneratedValueSequenceName(String sequenceName) {
+		this.generatedValueSequenceName = sequenceName;
 	}
+
+	@Override  // Allocation size (used by 'sequence' and 'table' )
+	public Integer getGeneratedValueAllocationSize() {
+		return generatedValueAllocationSize;
+	}
+	public void setGeneratedValueAllocationSize(int v) {
+		this.generatedValueAllocationSize = v;
+	}
+
+	//----------------------------------------------------------------------------------------
+	
+//	@Override
+//	public String getTableGeneratorName() {
+//		return tableGeneratorName;
+//	}
+//	public void setTableGeneratorName(String tableGeneratorName) {
+//		this.tableGeneratorName = tableGeneratorName;
+//	}
+
+	@Override
+	public String getGeneratedValueTableName() {
+		return generatedValueTableName;
+	}
+	public void setGeneratedValueTableName(String tableName) {
+		this.generatedValueTableName = tableName;
+	}
+
+
+	@Override
+	public String getGeneratedValueTablePkColumnName() {
+		return generatedValueTablePkColumnName;
+	}
+	public void setGeneratedValueTablePkColumnName(String pkColumnName) {
+		this.generatedValueTablePkColumnName = pkColumnName;
+	}
+
+	@Override
+	public String getGeneratedValueTablePkColumnValue() {
+		return generatedValueTablePkColumnValue;
+	}
+	public void setGeneratedValueTablePkColumnValue(String pkColumnValue) {
+		this.generatedValueTablePkColumnValue = pkColumnValue;
+	}
+
+	@Override
+	public String getGeneratedValueTableValueColumnName() {
+		return generatedValueTableValueColumnName;
+	}
+	public void setGeneratedValueTableValueColumnName(String valueColumnName) {
+		this.generatedValueTableValueColumnName = valueColumnName;
+	}
+	
+	//----------------------------------------------------------------------------------------
 
 	@Override
 	public String getInitialValue() {
@@ -316,88 +383,31 @@ public class DslModelAttribute implements Attribute {
 		this.pattern = pattern;
 	}
 
-	@Override
-	public Integer getSequenceGeneratorAllocationSize() {
-		return sequenceGeneratorAllocationSize;
-	}
-	public void setSequenceGeneratorAllocationSize(
-			Integer sequenceGeneratorAllocationSize) {
-		this.sequenceGeneratorAllocationSize = sequenceGeneratorAllocationSize;
-	}
+//	@Override
+//	public String getSequenceGeneratorName() {
+//		return sequenceGeneratorName;
+//	}
+//	public void setSequenceGeneratorName(String sequenceGeneratorName) {
+//		this.sequenceGeneratorName = sequenceGeneratorName;
+//	}
 
-	@Override
-	public String getSequenceGeneratorName() {
-		return sequenceGeneratorName;
-	}
-	public void setSequenceGeneratorName(String sequenceGeneratorName) {
-		this.sequenceGeneratorName = sequenceGeneratorName;
-	}
+//	@Override
+//	public boolean hasSequenceGenerator() {
+////		return hasSequenceGenerator;
+//		return generatedValueStrategy == GeneratedValueStrategy.SEQUENCE ; // v 3.4.0
+//	}
+//	public void setHasSequenceGenerator(boolean hasSequenceGenerator) {
+//		this.hasSequenceGenerator = hasSequenceGenerator;
+//	}
 
-	@Override
-	public String getSequenceGeneratorSequenceName() {
-		return sequenceGeneratorSequenceName;
-	}
-	public void setSequenceGeneratorSequenceName(
-			String sequenceGeneratorSequenceName) {
-		this.sequenceGeneratorSequenceName = sequenceGeneratorSequenceName;
-	}
-
-	@Override
-	public String getTableGeneratorName() {
-		return tableGeneratorName;
-	}
-	public void setTableGeneratorName(String tableGeneratorName) {
-		this.tableGeneratorName = tableGeneratorName;
-	}
-
-	@Override
-	public String getTableGeneratorPkColumnName() {
-		return tableGeneratorPkColumnName;
-	}
-	public void setTableGeneratorPkColumnName(String tableGeneratorPkColumnName) {
-		this.tableGeneratorPkColumnName = tableGeneratorPkColumnName;
-	}
-
-	@Override
-	public String getTableGeneratorPkColumnValue() {
-		return tableGeneratorPkColumnValue;
-	}
-	public void setTableGeneratorPkColumnValue(String tableGeneratorPkColumnValue) {
-		this.tableGeneratorPkColumnValue = tableGeneratorPkColumnValue;
-	}
-
-	@Override
-	public String getTableGeneratorTable() {
-		return tableGeneratorTable;
-	}
-	public void setTableGeneratorTable(String tableGeneratorTable) {
-		this.tableGeneratorTable = tableGeneratorTable;
-	}
-
-	@Override
-	public String getTableGeneratorValueColumnName() {
-		return tableGeneratorValueColumnName;
-	}
-	public void setTableGeneratorValueColumnName(
-			String tableGeneratorValueColumnName) {
-		this.tableGeneratorValueColumnName = tableGeneratorValueColumnName;
-	}
-	
-	@Override
-	public boolean hasSequenceGenerator() {
-		return hasSequenceGenerator;
-	}
-	public void setHasSequenceGenerator(boolean hasSequenceGenerator) {
-		this.hasSequenceGenerator = hasSequenceGenerator;
-	}
-
-	@Override
-	public boolean hasTableGenerator() {
-		return hasTableGenerator;
-	}
-	public void setHasTableGenerator(boolean hasTableGenerator) {
-		this.hasTableGenerator = hasTableGenerator;
-	}
+//	@Override
+//	public boolean hasTableGenerator() {
+////		return hasTableGenerator;
+//		return generatedValueStrategy == GeneratedValueStrategy.TABLE ; // v 3.4.0
+//	}
+//	public void setHasTableGenerator(boolean hasTableGenerator) {
+//		this.hasTableGenerator = hasTableGenerator;
+//	}
 
 	@Override
 	public boolean isAutoIncremented() {
@@ -449,11 +459,14 @@ public class DslModelAttribute implements Attribute {
 
 	@Override
 	public boolean isGeneratedValue() {
-		return generatedValue;
+//		return generatedValue;
+		return generatedValueStrategy != null 
+				&& generatedValueStrategy != GeneratedValueStrategy.UNDEFINED ; // v 3.4.0
+		
 	}
-	public void setGeneratedValue(boolean generatedValue) {
-		this.generatedValue = generatedValue;
-	}
+//	public void setGeneratedValue(boolean generatedValue) {
+//		this.generatedValue = generatedValue;
+//	}
 	
 	@Override
 	public boolean isKeyElement() {
