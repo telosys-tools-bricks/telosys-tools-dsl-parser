@@ -26,6 +26,15 @@ import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.generic.model.JoinColumn;
 
+/**
+ * "LinkByCol" annotation 
+ * . LinkByCol(Column1 [, Column2 [, Column3] ] )
+ * 
+ * Added in v 3.3.0
+ * 
+ * @author Laurent Guerin
+ *
+ */
 public class LinkByColAnnotation extends LinkByAnnotation {
 
 	public LinkByColAnnotation() {

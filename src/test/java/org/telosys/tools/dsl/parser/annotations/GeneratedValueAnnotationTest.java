@@ -67,4 +67,32 @@ public class GeneratedValueAnnotationTest {
 		assertEquals("1", list.get(3));
 	}
 
+	@Test (expected=Exception.class)
+	public void testInvalidSEQUENCE() throws ParsingError {
+		AnnotationDefinition a = getAnnotationDefinition();
+		a.buildAnnotation("Student", "id", 
+				" SEQUENCE  , GeneratorName   "); // invalid number of parameters 
+	}
+
+	@Test (expected=Exception.class)
+	public void testInvalidSEQUENCE2() throws ParsingError {
+		AnnotationDefinition a = getAnnotationDefinition();
+		a.buildAnnotation("Student", "id", 
+				" SEQUENCE  , GeneratorName, MYSEQ1 , 1 , foo   "); // invalid number of parameters 
+	}
+
+	@Test (expected=Exception.class)
+	public void testInvalidTABLE() throws ParsingError {
+		AnnotationDefinition a = getAnnotationDefinition();
+		a.buildAnnotation("Student", "id", 
+				" TABLE  , GeneratorName   "); // invalid number of parameters 
+	}
+
+	@Test (expected=Exception.class)
+	public void testInvalidTABLE2() throws ParsingError {
+		AnnotationDefinition a = getAnnotationDefinition();
+		a.buildAnnotation("Student", "id", 
+				" TABLE  , GeneratorName, tableName, foo  "); // invalid number of parameters 
+	}
+
 }

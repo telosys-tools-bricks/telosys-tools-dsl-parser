@@ -28,6 +28,18 @@ import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.generic.model.enums.GeneratedValueStrategy;
 
+/**
+ * "GeneratedValue" annotation 
+ *  . GeneratedValue(AUTO)
+ *  . GeneratedValue(IDENTITY)
+ *  . GeneratedValue(SEQUENCE [, GeneratorName, SequenceName [, AllocationSize ] ])
+ *  . GeneratedValue(TABLE [, GeneratorName, TableName [, PkColumnName, PkColumnValue, ValueColumnName [, AllocationSize ] ] ])
+ *   
+ * Added in v 3.4.0
+ * 
+ * @author Laurent Guerin
+ *
+ */
 public class GeneratedValueAnnotation extends AnnotationDefinition {
 
 	private static final String AUTO = "AUTO";
@@ -52,6 +64,18 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 			String strategy = list.get(0);
 			if ( ! stategies.contains(strategy) ) {
 				throw newException("invalid strategy '" + strategy + "'");
+			}
+			// Check number of parameters 
+			int n = list.size();
+			if ( strategy.equals(SEQUENCE) ) {
+				if ( n != 3 && n != 4 ) {
+					throw newException("invalid number of parameters for 'SEQUENCE'");
+				}
+			}
+			if ( strategy.equals(TABLE) ) {
+				if ( n != 3 && n != 6 && n != 7 ) {
+					throw newException("invalid number of parameters for 'TABLE'");
+				}
 			}
 		}
 	}
