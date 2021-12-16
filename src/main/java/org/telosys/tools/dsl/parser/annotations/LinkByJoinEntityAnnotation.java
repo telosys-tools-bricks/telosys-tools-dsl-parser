@@ -46,9 +46,10 @@ public class LinkByJoinEntityAnnotation extends LinkByAnnotation {
 		// Apply join table to link 
 		link.setJoinTable(joinTable);
 		
-		// has Join Table => owning side
-		link.setOwningSide(true);
-		link.setInverseSide(false);
+// Moved in  link converter (finalize)
+//		// has Join Table => owning side
+//		link.setOwningSide(true);
+//		link.setInverseSide(false);
 	}
 	
 	protected JoinTable getJoinTable(DslModel model, DslModelLink link, String joinEntityName) {

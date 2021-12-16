@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
 public class LinkByAttrAnnotationTest {
 
 	private DslModelAttribute buildAttribute(String name, boolean id, String databaseName) {
-		DslModelAttribute attribute = new DslModelAttribute(name);
+		DslModelAttribute attribute = new DslModelAttribute(name, "fake-type");
 		attribute.setKeyElement(id);
 		attribute.setDatabaseName(databaseName);
 		return attribute;

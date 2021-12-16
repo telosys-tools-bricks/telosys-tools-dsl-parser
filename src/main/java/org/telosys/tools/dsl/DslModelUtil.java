@@ -27,6 +27,9 @@ import org.telosys.tools.dsl.parser.model.DomainModelInfo;
 
 public class DslModelUtil {
 	
+	public static final int FULLPATH_NAME = 1 ;
+	public static final int SIMPLE_NAME   = 2 ;
+	
 	private static final String MODELS_FOLDER_NAME  = TelosysToolsEnv.getInstance().getModelsFolder() ;
     private static final String DOT_MODEL           = ".model"  ;
     private static final String DOT_ENTITY          = ".entity" ;
@@ -121,14 +124,14 @@ public class DslModelUtil {
     }
     
     /**
-     * Returns a list of entities absolute file names <br>
+     * Returns a list of entities absolute file names ( eg "/full/path/Student.entity" )<br>
      * List of all the files located in the model folder and ending with ".entity" <br>
      * 
      * @param modelFile
      * @return
      */
     public static List<String> getEntitiesAbsoluteFileNames(File modelFile) {
-
+/***
     	File modelFolder = getModelFolder(modelFile);
     	if ( modelFolder.exists() ) {
             List<String> entities = new LinkedList<String>();
@@ -137,6 +140,43 @@ public class DslModelUtil {
             for (String fileName : allFiles) {
             	if ( fileName.endsWith(DslModelUtil.DOT_ENTITY)) {
             		entities.add( modelFolder.getAbsolutePath() + "/" + fileName ) ;
+            	}
+            }
+            return entities;
+    	}
+    	else {
+            String textError = "Model folder '"+ modelFolder.getAbsolutePath() + "' not found";
+            throw new RuntimeException(textError);
+    	}
+***/
+    	return getEntitiesFileNames(modelFile, FULLPATH_NAME); // v 3.4.0
+    }
+    
+    /**
+     * Returns a list of entities simple file names ( eg "Student.entity" ) <br>
+     * List of all the files located in the model folder and ending with ".entity" <br>
+     * @param modelFile
+     * @return
+     */
+    public static List<String> getEntitiesSimpleFileNames(File modelFile) {  // v 3.4.0
+    	return getEntitiesFileNames(modelFile, SIMPLE_NAME);
+    }
+    
+    protected static List<String> getEntitiesFileNames(File modelFile, int expectedName) {  // v 3.4.0
+
+    	File modelFolder = getModelFolder(modelFile);
+    	if ( modelFolder.exists() ) {
+            List<String> entities = new LinkedList<>();
+
+            String[] allFiles = modelFolder.list();
+            for (String fileName : allFiles) {
+            	if ( fileName.endsWith(DslModelUtil.DOT_ENTITY)) {
+            		if ( expectedName == FULLPATH_NAME ) {
+                		entities.add( modelFolder.getAbsolutePath() + "/" + fileName ) ;
+            		}
+            		else {
+                		entities.add( fileName ) ;
+            		}
             	}
             }
             return entities;

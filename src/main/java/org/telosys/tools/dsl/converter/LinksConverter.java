@@ -21,6 +21,7 @@ import java.util.List;
 import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
 import org.telosys.tools.dsl.converter.link.JoinColumnsUtil;
 import org.telosys.tools.dsl.model.DslModel;
+import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
@@ -73,15 +74,18 @@ public class LinksConverter extends AbstractConverter {
 				linkIdCounter++;
 				// create a new link
 				DslModelLink dslLink = createLink(dslEntity, domainField);
-				// init link default values
+				
+				// 1) init link default values
 				step1InitLink(dslLink, domainField);
-				// apply link annotations
+				// 2) apply annotations on the link
 				step2ApplyAnnotations(dslEntity, dslLink, domainField);
-				// apply tags 
+				// 3) apply tags on the link
 				step3ApplyTags(dslLink, domainField); 
-				// try to infer undefined join columns
+				// 4) try to infer undefined join columns
 				step4InferJoinColumns(dslEntity, dslLink);
-
+				// 5) finalize the link
+				step5FinalizeLink(dslLink);
+				
 				// Add the new link to the entity
 //				dslEntity.getLinks().add(dslLink);
 				dslEntity.addLink(dslLink); // v 3.4.0
@@ -196,7 +200,27 @@ public class LinksConverter extends AbstractConverter {
 		}
 		checkJoinColumns(dslLink);
 	}
-
+	
+	private void step5FinalizeLink(DslModelLink dslLink) {
+		// If link based on a Join Table => owning side
+		if ( dslLink.isBasedOnJoinTable() ) {
+			dslLink.setOwningSide(true);
+			dslLink.setInverseSide(false);
+		}
+		// If link is "mapped by" another entity => inverse side
+		if ( dslLink.getMappedBy() != null ) {
+			dslLink.setInverseSide(true);
+			dslLink.setOwningSide(false);
+		}
+		// TODO : Check MappedBy validity AFTER all "apply"  (next step) (?)
+		// check existence :
+		// . referenced entity
+		//     dslModel.getEntityByClassName(targetEntityName);
+		// . owning side link existence in the target entity
+		//     targetEntity.getLinkByFieldName(attributeName) 
+		
+	}
+	
 //	private DslModelLink convertAttributeLink(DslModelEntity dslEntity, DomainField domainEntityField) {
 
 //		DomainType domainFieldType = domainEntityField.getType();

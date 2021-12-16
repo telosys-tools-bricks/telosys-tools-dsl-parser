@@ -17,20 +17,20 @@ import static org.junit.Assert.assertTrue;
 
 public class MappedByAnnotationTest {
 
-	private static final String MAPPED_BY = "MappedBy";
+	private static final String ANNOTATION_NAME = "MappedBy";
 	
 	private AnnotationDefinition getAnnotationDefinition() {
 		return new MappedByAnnotation() ;
 	}
-	private DomainAnnotation buildAnnotation(String referencedEntityName) throws ParsingError {
+	private DomainAnnotation buildAnnotation(String owningSideLinkFieldName) throws ParsingError {
 		AnnotationDefinition a = getAnnotationDefinition();
-		return a.buildAnnotation("Student", "teacher", referencedEntityName); 
+		return a.buildAnnotation("Teacher", "students", owningSideLinkFieldName); 
 	}
 	
 	@Test
 	public void test1() {
 		AnnotationDefinition a = getAnnotationDefinition();
-		assertEquals( MAPPED_BY, a.getName() );
+		assertEquals( ANNOTATION_NAME, a.getName() );
 		assertEquals( AnnotationParamType.STRING, a.getParamType() );
 		// Check scope
 		assertFalse( a.hasAttributeScope() );
@@ -40,9 +40,9 @@ public class MappedByAnnotationTest {
 
 	@Test 
 	public void test2() throws ParsingError {
-		DomainAnnotation da = buildAnnotation("Teacher"); 
-		assertEquals( MAPPED_BY, da.getName() );
-		assertEquals( "Teacher", da.getParameter()); 
+		DomainAnnotation da = buildAnnotation("teacher"); 
+		assertEquals( ANNOTATION_NAME, da.getName() );
+		assertEquals( "teacher", da.getParameter()); 
 	}
 
 	@Test (expected=AnnotationParsingError.class)
@@ -63,21 +63,20 @@ public class MappedByAnnotationTest {
 	
 	@Test 
 	public void test6() throws ParsingError {
-		DomainAnnotation da = buildAnnotation("Teacher"); 
+		DomainAnnotation da = buildAnnotation("teacher"); 
 		DslModel model = buildModel();
-		DslModelEntity entity = (DslModelEntity) model.getEntityByClassName("Student");
-		DslModelLink link = (DslModelLink) entity.getLinkByFieldName("teacher");
+		DslModelEntity entity = (DslModelEntity) model.getEntityByClassName("Teacher");
+		DslModelLink link = (DslModelLink) entity.getLinkByFieldName("students");
 		da.applyToLink(model, entity, link);
 	}
 	
-	@Test (expected=Exception.class)
+	@Test 
 	public void test7() throws ParsingError {
-		DomainAnnotation da = buildAnnotation("FooBar"); 
+		DomainAnnotation da = buildAnnotation("unknown");  // Not checked at this step
 		DslModel model = buildModel();
-		DslModelEntity entity = (DslModelEntity) model.getEntityByClassName("Student");
-		DslModelLink link = (DslModelLink) entity.getLinkByFieldName("teacher");
-		da.applyToLink(model, entity, link);
-		// Error : unknown entity 'FooBar'
+		DslModelEntity entity = (DslModelEntity) model.getEntityByClassName("Teacher");
+		DslModelLink link = (DslModelLink) entity.getLinkByFieldName("students");
+		da.applyToLink(model, entity, link); // Not checked at this step
 	}
 	
 	//------------------------------------------------------------------------
@@ -86,15 +85,16 @@ public class MappedByAnnotationTest {
 
 	private DslModelEntity buildStudentEntity() {
 		DslModelEntity e = new DslModelEntity("Student");
-		e.addAttribute(new DslModelAttribute("id"));
-		e.addAttribute(new DslModelAttribute("lastName"));
-		e.addLink(new DslModelLink("teacher"));
+		e.addAttribute(new DslModelAttribute("id", "int"));
+		e.addAttribute(new DslModelAttribute("lastName", "string"));
+		e.addLink(new DslModelLink("teacher")); // Owning side link
 		return e;
 	}
 	private DslModelEntity buildTeacherEntity() {
 		DslModelEntity e = new DslModelEntity("Teacher");
-		e.addAttribute(new DslModelAttribute("code"));
-		e.addAttribute(new DslModelAttribute("lastName"));
+		e.addAttribute(new DslModelAttribute("code", "int"));
+		e.addAttribute(new DslModelAttribute("lastName", "string"));
+		e.addLink(new DslModelLink("students")); // Inverse side link with MappedBy('teacher' link)
 		return e;
 	}
 	private DslModel buildModel() {

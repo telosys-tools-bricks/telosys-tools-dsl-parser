@@ -31,12 +31,12 @@ public class ConverterTest {
 	private final static String     MODEL_FILE_NAME = "test.model" ;
 	private final static Properties MODEL_PROPERTIES = null ;
 	
-	private Converter converter = new Converter();
+	private ModelConverter converter = new ModelConverter();
 
 	@Test
 	public void testEmptyModel() {
 		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
-		Model model = converter.convertToGenericModel(domainModel);
+		Model model = converter.convertModel(domainModel);
 		
 		assertEquals("test", model.getName());
 		assertTrue(model.getEntities().isEmpty());		
@@ -50,7 +50,7 @@ public class ConverterTest {
 		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
 		domainModel.addEntity(domainEntity_2);		
 		//--- Convert 
-		return converter.convertToGenericModel(domainModel);	
+		return converter.convertModel(domainModel);	
 	}
 	
 	@Test
@@ -124,7 +124,7 @@ public class ConverterTest {
 		domainModel.addEntity(domainEntity_2);
 		
 		// When
-		Model model = converter.convertToGenericModel(domainModel);
+		Model model = converter.convertModel(domainModel);
 		
 		// Then
 		assertEquals(2, model.getEntities().size());
@@ -208,7 +208,7 @@ public class ConverterTest {
 		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
 		domainModel.addEntity(domainEntity_2);
 
-		Model model = converter.convertToGenericModel(domainModel);
+		Model model = converter.convertModel(domainModel);
 
 		assertEquals(2, model.getEntities().size());
 
@@ -306,7 +306,7 @@ public class ConverterTest {
 	@Test
 	public void testFullModel() { // throws AnnotationOrTagError {
 		DomainModel domainModel = buildFullModel() ;
-		Model model = converter.convertToGenericModel(domainModel);
+		Model model = converter.convertModel(domainModel);
 		
 		//--- "Car" entity
 		checkCarEntity((DslModelEntity) model.getEntityByClassName("Car"));

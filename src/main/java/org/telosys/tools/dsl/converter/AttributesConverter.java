@@ -64,9 +64,11 @@ public class AttributesConverter extends AbstractConverter {
 			if (domainField.getType().isNeutralType()) { 
 				log("convert field : " + domainField.getName() + " (neutral type => basic attribute)");
 				// New "basic attribute"
-				DslModelAttribute dslAttribute = createAttribute(domainField);
-				// Populate attribute with parsed attribute information
-				populateAttribute(dslEntity, dslAttribute, domainField );
+//				DslModelAttribute dslAttribute = createAttribute(domainField);
+//				// Populate attribute with parsed attribute information
+//				populateAttribute(dslEntity, dslAttribute, domainField );
+				
+				DslModelAttribute dslAttribute = convertAttribute(domainField, dslEntity);
 				// Add the new "basic attribute" to the entity
 				//dslEntity.getAttributes().add(dslAttribute);
 				dslEntity.addAttribute(dslAttribute);  // v 3.4.0
@@ -74,36 +76,14 @@ public class AttributesConverter extends AbstractConverter {
 		}
 	}
 	
-	private DslModelAttribute createAttribute( DomainField domainField ) {	
-//		DslModelAttribute dslAttribute = new DslModelAttribute();
-//		// Init the new attribute with at least its name
-//		dslAttribute.setName(notNull(domainField.getName()));
-//		return dslAttribute;
-		return new DslModelAttribute(notNull(domainField.getName())); // v 3.4.0
-	}
-	
-	/**
-	 * Converts a basic "neutral type" attribute <br>
-	 * eg : id : short {@Id}; <br>
-	 * @param domainEntity
-	 * @param domainField
-	 * @param dslAttribute
-	 */
-//	private void convertAttributeNeutralType(DomainEntity domainEntity, 
-//			DomainField domainEntityField, DslModelAttribute genericAttribute) {
-//	private void convertAttributeNeutralType(DomainField domainEntityField, 
-//			DslModelEntity dslEntity, DslModelAttribute dslAttribute) {
-	private void populateAttribute(DslModelEntity dslEntity, DslModelAttribute dslAttribute, 
-			DomainField domainField ) {	
-		log("convertAttributeNeutralType() : name = " + domainField.getName());
-
-		DomainType domainFieldType = domainField.getType();
-		check(domainFieldType.isNeutralType(), "Invalid field type. Neutral type expected");
-		DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
-
-		// the "neutral type" is now the only type managed at this level
-		dslAttribute.setNeutralType(domainNeutralType.getName());
-
+	protected DslModelAttribute convertAttribute(DomainField domainField, DslModelEntity dslEntity) { // v 3.4.0
+		String attributeName = notNull(domainField.getName());
+		String attributeType = ((DomainNeutralType) domainField.getType()).getName();
+		
+		// New attribute 
+		DslModelAttribute dslAttribute = new DslModelAttribute(attributeName, attributeType);
+		
+		// Init attribute state
 		step1InitAttributeDefaultValues(dslAttribute, domainField);
 
 		// Apply annotations if any
@@ -114,7 +94,51 @@ public class AttributesConverter extends AbstractConverter {
 		
 		// Finalize attribute state
 		step4FinalizeAttribute(dslAttribute);
+		
+		return dslAttribute;
 	}
+	
+//	private DslModelAttribute createAttribute( DomainField domainField ) {	
+////		DslModelAttribute dslAttribute = new DslModelAttribute();
+////		// Init the new attribute with at least its name
+////		dslAttribute.setName(notNull(domainField.getName()));
+////		return dslAttribute;
+//		return new DslModelAttribute(notNull(domainField.getName())); // v 3.4.0
+//	}
+	
+//	/**
+//	 * Converts a basic "neutral type" attribute <br>
+//	 * eg : id : short {@Id}; <br>
+//	 * @param domainEntity
+//	 * @param domainField
+//	 * @param dslAttribute
+//	 */
+////	private void convertAttributeNeutralType(DomainEntity domainEntity, 
+////			DomainField domainEntityField, DslModelAttribute genericAttribute) {
+////	private void convertAttributeNeutralType(DomainField domainEntityField, 
+////			DslModelEntity dslEntity, DslModelAttribute dslAttribute) {
+//	private void populateAttribute(DslModelEntity dslEntity, DslModelAttribute dslAttribute, 
+//			DomainField domainField ) {	
+//		log("convertAttributeNeutralType() : name = " + domainField.getName());
+//
+//		DomainType domainFieldType = domainField.getType();
+//		check(domainFieldType.isNeutralType(), "Invalid field type. Neutral type expected");
+//		DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
+//
+//		// the "neutral type" is now the only type managed at this level
+//		dslAttribute.setNeutralType(domainNeutralType.getName());
+//
+//		step1InitAttributeDefaultValues(dslAttribute, domainField);
+//
+//		// Apply annotations if any
+//		step2ApplyAnnotations(dslEntity, dslAttribute, domainField);
+//		
+//		// Apply tags if any
+//		step3ApplyTags(dslAttribute, domainField);
+//		
+//		// Finalize attribute state
+//		step4FinalizeAttribute(dslAttribute);
+//	}
 
 	/**
 	 * Initializes default values according with the given attribute
@@ -169,6 +193,15 @@ public class AttributesConverter extends AbstractConverter {
 	 * @param dslAttribute
 	 */
 	private void step4FinalizeAttribute(DslModelAttribute dslAttribute ) {	
+		// If attribute is KEY ELEMENT ( @Id ) => NOT NULL
+		if ( dslAttribute.isKeyElement() ) {
+			dslAttribute.setNotNull(true);
+		}
+		// If attribute is NOT NULL ( @NotNull ) => Database NOT NULL
+		if ( dslAttribute.isNotNull() ) {
+			dslAttribute.setDatabaseNotNull(true);
+		}
+		// If database size is not defined use max length if any 
 		if ( dslAttribute.getDatabaseSize() == null && dslAttribute.getMaxLength() != null ) {
 			dslAttribute.setDatabaseSize(dslAttribute.getMaxLength().toString());
 		}

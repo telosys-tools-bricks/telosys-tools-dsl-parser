@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.telosys.tools.commons.PropertiesManager;
-import org.telosys.tools.dsl.converter.Converter;
+import org.telosys.tools.dsl.converter.ModelConverter;
 import org.telosys.tools.dsl.parser.Parser;
 import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
 import org.telosys.tools.dsl.parser.model.DomainModel;
@@ -115,9 +115,9 @@ public class DslModelManager {
         }
         else {
             //--- 2) Parsing OK : Convert the "domain model" to "generic model" 
-            Converter converter = new Converter();
+            ModelConverter converter = new ModelConverter();
 			try {
-				return converter.convertToGenericModel(domainModel);
+				return converter.convertModel(domainModel);
 			} catch (Exception e) {
 				String msg = e.getMessage();
 				if ( msg == null ) { // eg NullPointerException

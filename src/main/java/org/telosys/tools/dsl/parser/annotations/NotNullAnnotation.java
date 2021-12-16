@@ -33,8 +33,9 @@ public class NotNullAnnotation extends AnnotationDefinition {
 	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) {
 		checkParamValue(paramValue);
 		attribute.setNotNull(true);
-		
-		// if Field Not Null => Database Not Null 
-		attribute.setDatabaseNotNull(true);
+
+// Moved in step4FinalizeAttribute()
+//		// if Field Not Null => Database Not Null 
+//		attribute.setDatabaseNotNull(true);
 	}
 }

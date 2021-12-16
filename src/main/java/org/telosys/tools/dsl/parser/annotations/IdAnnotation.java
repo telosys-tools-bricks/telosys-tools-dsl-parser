@@ -34,8 +34,9 @@ public class IdAnnotation extends AnnotationDefinition {
 		checkParamValue(paramValue);
 		attribute.setKeyElement(true);
 		
-		// If "@Id" => "@NotNull"
-		attribute.setNotNull(true);
-		attribute.setDatabaseNotNull(true);
+// Moved in step4FinalizeAttribute()
+//		// If "@Id" => "@NotNull"
+//		attribute.setNotNull(true);
+//		attribute.setDatabaseNotNull(true);
 	}
 }

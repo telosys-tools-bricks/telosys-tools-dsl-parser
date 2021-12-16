@@ -30,12 +30,12 @@ import org.telosys.tools.generic.model.Model;
  * @author L. Guerin
  *
  */
-public class Converter extends AbstractConverter {
+public class ModelConverter extends AbstractConverter {
 
 	/**
 	 * Constructor
 	 */
-	public Converter() {
+	public ModelConverter() {
 		super();
 	}
 
@@ -62,7 +62,7 @@ public class Converter extends AbstractConverter {
 	 * @throws IllegalStateException
 	 *             if an error occurs
 	 */
-	public Model convertToGenericModel(DomainModel domainModel) {
+	public Model convertModel(DomainModel domainModel) {
 
 		// Create a new void DSL model 
 		DslModel dslModel = new DslModel(domainModel.getModelNameFromFile()); // v 3.3.0
@@ -70,20 +70,22 @@ public class Converter extends AbstractConverter {
 		dslModel.setDescription(voidIfNull(domainModel.getDescription()));
 
 		// Create void entities (without attribute)
-		createAllVoidEntities(domainModel, dslModel);
+		step1CreateAllVoidEntities(domainModel, dslModel);
 
 		// Create attributes (only basic fields with neutral type) 
-		createAllAttributes(domainModel, dslModel);
+		step2CreateAllAttributes(domainModel, dslModel);
 		
 		// Create Foreign Keys defined in attributes ( with @FK(xx) annotation )
-		createAllForeignKeys(domainModel, dslModel); // Added in v 3.3
+		step3CreateAllForeignKeys(domainModel, dslModel); // Added in v 3.3
 		
 		// Create links (fields referencing entities) 
-		createAllLinks(domainModel, dslModel); // Keep at the end (to be able to found Foreign Keys)
+		step4CreateAllLinks(domainModel, dslModel); // Keep at the end (to be able to found Foreign Keys)
 		
 		// Finally sort the entities by class name
 		dslModel.sortEntitiesByClassName();
 
+		step5CheckModel(dslModel);
+		
 		return dslModel;
 	}
 
@@ -92,7 +94,7 @@ public class Converter extends AbstractConverter {
 	 * @param domainModel
 	 * @param dslModel
 	 */
-	protected void createAllVoidEntities(DomainModel domainModel, DslModel dslModel) {
+	protected void step1CreateAllVoidEntities(DomainModel domainModel, DslModel dslModel) {
 		// for each "DomainEntity" create a void "DslModelEntity"
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
 			DslModelEntity genericEntity = createVoidEntity(domainEntity);
@@ -105,7 +107,7 @@ public class Converter extends AbstractConverter {
 	 * @param domainModel
 	 * @param dslModel
 	 */
-	protected void createAllAttributes(DomainModel domainModel, DslModel dslModel) {
+	protected void step2CreateAllAttributes(DomainModel domainModel, DslModel dslModel) {
 		AttributesConverter attribConverter = new AttributesConverter(dslModel);
 		// for each "DomainEntity" convert attributes 
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
@@ -127,7 +129,7 @@ public class Converter extends AbstractConverter {
 	 * @param domainModel
 	 * @param dslModel
 	 */
-	protected void createAllLinks(DomainModel domainModel, DslModel dslModel) {
+	protected void step4CreateAllLinks(DomainModel domainModel, DslModel dslModel) {
 
 		LinksConverter linksConverter = new LinksConverter(dslModel);
 		
@@ -151,7 +153,7 @@ public class Converter extends AbstractConverter {
 	 * @param domainModel
 	 * @param dslModel
 	 */
-	protected void createAllForeignKeys(DomainModel domainModel, DslModel dslModel) {
+	protected void step3CreateAllForeignKeys(DomainModel domainModel, DslModel dslModel) {
 		ForeignKeysBuilder fkBuilder = new ForeignKeysBuilder(dslModel);
 		// for each entity in the model
 		for (DomainEntity entity : domainModel.getEntities()) {
@@ -189,5 +191,12 @@ public class Converter extends AbstractConverter {
 
 		return dslEntity;
 	}
-
+	
+	/**
+	 * Check model consistency
+	 * @param dslModel
+	 */
+	protected void step5CheckModel(DslModel dslModel) {
+		// Add consistency checking here
+	}
 }

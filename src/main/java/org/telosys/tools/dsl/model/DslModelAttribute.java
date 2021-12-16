@@ -30,7 +30,7 @@ import org.telosys.tools.generic.model.enums.GeneratedValueStrategy;
 public class DslModelAttribute implements Attribute {
 	
 	private final String name ;
-	private String neutralType = "";
+	private final String neutralType ;
 	
 	private String booleanFalseValue;
 	private String booleanTrueValue;
@@ -58,9 +58,9 @@ public class DslModelAttribute implements Attribute {
 	private BigDecimal minValue;
 	private String pattern = "" ; // ver 3.2.0
 	private Integer generatedValueAllocationSize;
-	private String sequenceGeneratorName;
+//	private String sequenceGeneratorName; // removed in v 3.4.0
 	private String generatedValueSequenceName;
-	private String tableGeneratorName;
+//	private String tableGeneratorName; // removed in v 3.4.0
 	private String generatedValueTablePkColumnName;
 	private String generatedValueTablePkColumnValue;
 	private String generatedValueTableName;
@@ -105,10 +105,12 @@ public class DslModelAttribute implements Attribute {
 	/**
 	 * Constructor 
 	 * @param name
+	 * @param type
 	 */
-	public DslModelAttribute(String name) {
+	public DslModelAttribute(String name, String type) {
 		super();
 		this.name = name;
+		this.neutralType = type;
 	}
 	
 	@Override
@@ -123,9 +125,9 @@ public class DslModelAttribute implements Attribute {
 	public String getNeutralType() {
 		return neutralType;
 	}
-	public void setNeutralType(String neutralType) {
-		this.neutralType = neutralType;
-	}
+//	public void setNeutralType(String neutralType) {
+//		this.neutralType = neutralType;
+//	}
 
 	@Override
 	public String getBooleanFalseValue() {

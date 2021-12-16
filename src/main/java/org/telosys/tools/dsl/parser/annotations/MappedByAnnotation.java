@@ -24,6 +24,20 @@ import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
+/**
+ * "MappedBy" annotation 
+ * . MappedBy(inverse-side-attribute)
+ * 
+ * Can be used for JPA code generation 
+ * Example in 'Department' entity :
+ *   OneToMany(mappedBy="department") // mapped by "department" LINK FIELD NAME in Employee
+ *   private Collection<Employee> employees;
+ * 
+ * Added in v 3.3.0 
+ * 
+ * @author Laurent Guerin
+ *
+ */
 public class MappedByAnnotation extends AnnotationDefinition {
 
 	public MappedByAnnotation() {
@@ -40,30 +54,12 @@ public class MappedByAnnotation extends AnnotationDefinition {
 	@Override
 	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
 		checkParamValue(paramValue);
-		String entityName = (String) paramValue;
-		checkEntityName(model, entityName);
-		link.setMappedBy(entityName);
+		link.setMappedBy((String) paramValue);
 		
-		// has MappedBy => inverse side
-		link.setInverseSide(true);
-		link.setOwningSide(false);
-		
-		// TODO : Check MappedBy validity AFTER all "apply"  (next step)
-		// check existence :
-		// . referenced entity
-		//     dslModel.getEntityByClassName(targetEntityName);
-		// . owning side link existence in the target entity
-		//     targetEntity.getLinkByFieldName(attributeName) 
+// Moved in  link converter (finalize)
+//		// has MappedBy => inverse side
+//		link.setInverseSide(true);
+//		link.setOwningSide(false);
 	}
 
-	/**
-	 * Checks that the referenced entity exists
-	 * @param model
-	 * @param entityName
-	 */
-	private void checkEntityName(DslModel model, String entityName) {
-		if ( model.getEntityByClassName(entityName) == null ) {
-			throw newException("Unknown entity '" + entityName + "'");
-		}
-	}
 }
