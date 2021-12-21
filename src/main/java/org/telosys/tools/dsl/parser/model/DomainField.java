@@ -26,8 +26,6 @@ import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 public class DomainField {
 	
-    public static final int THIRTY_ONE = 31;
-
     private final int lineNumber;
     private final String name;
     private final DomainType type;
@@ -40,9 +38,9 @@ public class DomainField {
 //	private final List<AnnotationOrTagError> errors = new LinkedList<>() ;
 	private final List<ParsingError> errors = new LinkedList<>() ;
 	
-
     /**
-     * Constructor with specific cardinality
+     * Constructor with initial data
+     * @param lineNumber
      * @param name
      * @param type
      * @param cardinality

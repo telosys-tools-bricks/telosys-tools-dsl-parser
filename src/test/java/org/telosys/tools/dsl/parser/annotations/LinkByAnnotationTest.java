@@ -2,6 +2,9 @@ package org.telosys.tools.dsl.parser.annotations;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.commons.ReferenceDefinitions;
+import org.telosys.tools.dsl.model.DslModelEntity;
+import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 import static org.junit.Assert.assertEquals;
 
@@ -27,11 +30,14 @@ public class LinkByAnnotationTest {
 	 * Get and check ReferenceDefinitions (exception if void)
 	 * @param s
 	 * @return
+	 * @throws ParsingError 
 	 */
-	private ReferenceDefinitions getReferenceDefinitionsNotVoid(String s) {
+	private ReferenceDefinitions getReferenceDefinitionsNotVoid(String s) throws ParsingError {
+		DslModelEntity entity = new DslModelEntity("Student");
+		DslModelLink link = new DslModelLink("teacher");
 		LinkByAnnotation a = getLinkByAnnotation() ;
 		ReferenceDefinitions rd = a.buildReferenceDefinitions(s);
-		a.checkNotVoid(rd);
+		a.checkNotVoid(entity, link, rd);
 		return rd ;
 	}
 
@@ -40,11 +46,13 @@ public class LinkByAnnotationTest {
 	 * @param s
 	 * @return
 	 */
-	private ReferenceDefinitions getReferenceDefinitionsMultiRef(String s) {
+	private ReferenceDefinitions getReferenceDefinitionsMultiRef(String s) throws ParsingError  {
+		DslModelEntity entity = new DslModelEntity("Student");
+		DslModelLink link = new DslModelLink("teacher");
 		LinkByAnnotation a = getLinkByAnnotation() ;
 		ReferenceDefinitions rd = a.buildReferenceDefinitions(s);
-		a.checkNotVoid(rd);
-		a.checkReferencedNames(rd);
+		a.checkNotVoid(entity, link, rd);
+		a.checkReferencedNames(entity, link, rd);
 		return rd ;
 	}
 
@@ -106,7 +114,7 @@ public class LinkByAnnotationTest {
 	}
 	
 	@Test
-	public void test5() {
+	public void test5() throws ParsingError {
 //		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", "aa ");
 //		ReferenceDefinitions rd = p.buildReferenceDefinitions(annotation);
 		ReferenceDefinitions rd = getReferenceDefinitionsNotVoid("aa ");
@@ -117,7 +125,7 @@ public class LinkByAnnotationTest {
 	}
 	
 	@Test
-	public void test6() {
+	public void test6() throws ParsingError {
 //		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", "aa > refAA ,  bb>refBB ");
 //		ReferenceDefinitions rd = p.buildReferenceDefinitions(annotation);
 		ReferenceDefinitions rd = getReferenceDefinitionsNotVoid("aa > refAA ,  bb>refBB ");
@@ -131,36 +139,36 @@ public class LinkByAnnotationTest {
 	
 	//----------------------------------------------------------------------
 
-	@Test (expected=RuntimeException.class)
-	public void testErrNotVoid1() {
+	@Test (expected=ParsingError.class)
+	public void testErrNotVoid1() throws ParsingError {
 //		LinkByAnnotation p = getLinkByAnnotation();
 //		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", " ");
 //		p.buildReferenceDefinitions(annotation);
 		getReferenceDefinitionsNotVoid(" ");
 	}
 	
-	@Test (expected=RuntimeException.class)
-	public void testErrNotVoid2() {
+	@Test (expected=ParsingError.class)
+	public void testErrNotVoid2() throws ParsingError {
 //		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor(VOID_MODEL) ;
 //		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", "  > refAA ");
 //		p.buildReferenceDefinitions(annotation);
 		getReferenceDefinitionsNotVoid("  > refAA "); // "no reference definition"
 	}
 	
-	@Test (expected=RuntimeException.class)
-	public void testErrNotVoid3() {
+	@Test (expected=ParsingError.class)
+	public void testErrNotVoid3() throws ParsingError {
 		getReferenceDefinitionsNotVoid(null);
 	}
 
 	//----------------------------------------------------------------------
 	
-	@Test (expected=RuntimeException.class)
-	public void testErrMultiRef1() {
+	@Test (expected=ParsingError.class)
+	public void testErrMultiRef1() throws ParsingError {
 		getReferenceDefinitionsMultiRef(" aa  ,  bb ");
 	}
 	
-	@Test (expected=RuntimeException.class)
-	public void testErrMultiRef2() {
+	@Test (expected=ParsingError.class)
+	public void testErrMultiRef2() throws ParsingError {
 		getReferenceDefinitionsMultiRef(" aa  ,  bb > RBB ");
 	}
 	

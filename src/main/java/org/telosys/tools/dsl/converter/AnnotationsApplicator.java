@@ -17,18 +17,22 @@ package org.telosys.tools.dsl.converter;
 
 import java.util.Collection;
 
+import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
 public class AnnotationsApplicator {
 
 	private final DslModel model;
+	private final DslModelErrors errors;
 	
-	public AnnotationsApplicator(DslModel model) {
+	public AnnotationsApplicator(DslModel model, DslModelErrors errors) {
 		this.model = model;
+		this.errors = errors;
 	}
 
 	/**
@@ -39,7 +43,11 @@ public class AnnotationsApplicator {
 	 */
 	public void applyAnnotationsToAttribute(DslModelEntity entity, DslModelAttribute attribute, Collection<DomainAnnotation> annotations) {
 		for (DomainAnnotation annotation : annotations) {
-			annotation.applyToAttribute(model, entity, attribute);
+			try {
+				annotation.applyToAttribute(model, entity, attribute);
+			} catch (ParsingError e) {
+				errors.addError(e.getEntityName(), e.getErrorMessage());
+			}
 		}		
 	}
 
@@ -51,7 +59,11 @@ public class AnnotationsApplicator {
 	 */
 	public void applyAnnotationsToLink(DslModelEntity entity, DslModelLink link, Collection<DomainAnnotation> annotations) {
 		for (DomainAnnotation annotation : annotations) {
-			annotation.applyToLink(model, entity, link);
+			try {
+				annotation.applyToLink(model, entity, link);
+			} catch (ParsingError e) {
+				errors.addError(e.getEntityName(), e.getErrorMessage());
+			}
 		}		
 	}
 }

@@ -23,6 +23,12 @@ import java.util.TreeMap;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
+/**
+ * DSL model errors collector keeping all errors grouped by entity 
+ * 
+ * @author Laurent Guerin
+ *
+ */
 public class DslModelErrors {
 
 	/**
@@ -41,6 +47,7 @@ public class DslModelErrors {
 
 	/**
 	 * Constructor with errors
+	 * @param entityParsingErrors
 	 */
 	public DslModelErrors(List<EntityParsingError> entityParsingErrors) {
 		super();
@@ -56,7 +63,19 @@ public class DslModelErrors {
 			errorsMap.put(entityName, errors);
 		}
 	}
-
+	public boolean isEmpty() {
+		return errorsMap.isEmpty();
+	}
+	
+	public void addError(String entityName, String message) {
+		List<String> entityErrors = errorsMap.get(entityName);
+		if ( entityErrors == null ) {
+			entityErrors = new LinkedList<>();
+			errorsMap.put(entityName, entityErrors);
+		}
+		entityErrors.add(message);
+	}
+	
 	private List<String> buildEntityErrors(EntityParsingError e) {
 		String entityName = e.getEntityName();
 		List<String> list = new LinkedList<>();

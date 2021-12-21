@@ -6,7 +6,9 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.Parser;
+import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -14,19 +16,35 @@ import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainTag;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 
 public class ValidModelWithSpacesTest {
+
+	private DomainModel parseModel(String modelFilePath) {
+		File modelFile = new File(modelFilePath);
+		Parser parser = new Parser();
+		try {
+			return parser.parseModel(modelFile);
+		} catch (ModelParsingError e) {
+			System.out.println( e.getReportMessage() );
+			for ( EntityParsingError err : e.getEntitiesErrors() ) {
+				System.out.println( err.getReportMessage() );
+				for ( ParsingError pe : err.getErrors() ) {
+					System.out.println( pe.getReportMessage());
+				}
+			}
+			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	@Test
 	public void test() throws ModelParsingError {
-		File modelFile = new File("src/test/resources/model_test/valid/TwoEntitiesWithSpaces.model");
-		
-		Parser parser = new Parser();
-		DomainModel model = parser.parseModel(modelFile);
+		DomainModel model = parseModel("src/test/resources/model_test/valid/TwoEntitiesWithSpaces.model");
 		
 		assertEquals(2, model.getNumberOfEntities());
 		assertEquals(2, model.getEntityNames().size());
@@ -106,12 +124,9 @@ public class ValidModelWithSpacesTest {
 		assertEquals("Country", field.getTypeName());
 		annotations = field.getAnnotations();
 		//--- Annotations
-		assertEquals(2, annotations.size() );
+		assertEquals(1, annotations.size() );
 		assertNotNull(annotations.get("Embedded"));
 		assertTrue(field.hasAnnotation(annotations.get("Embedded")));
-		assertNotNull(annotations.get("Max"));
-		assertTrue(field.hasAnnotation(annotations.get("Max")));
-		assertEquals(new BigDecimal("3"), annotations.get("Max").getParameterAsBigDecimal() );
 		//--- Tags
 		tags = field.getTags();
 		assertEquals(2, tags.size() );

@@ -17,6 +17,7 @@ package org.telosys.tools.dsl.converter;
 
 import java.util.LinkedList;
 
+import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
@@ -32,13 +33,20 @@ import org.telosys.tools.generic.model.Model;
  */
 public class ModelConverter extends AbstractConverter {
 
+	private final DslModelErrors errors;
+	
 	/**
 	 * Constructor
 	 */
-	public ModelConverter() {
+	public ModelConverter(DslModelErrors errors) {
 		super();
+		this.errors = errors;
 	}
 
+	public DslModelErrors getErrors() {
+		return errors;
+	}
+	
 	/**
 	 * Re-throw the given exception by adding a prefix to the message 
 	 * @param e
@@ -108,7 +116,7 @@ public class ModelConverter extends AbstractConverter {
 	 * @param dslModel
 	 */
 	protected void step2CreateAllAttributes(DomainModel domainModel, DslModel dslModel) {
-		AttributesConverter attribConverter = new AttributesConverter(dslModel);
+		AttributesConverter attribConverter = new AttributesConverter(dslModel, errors);
 		// for each "DomainEntity" convert attributes 
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
 			String entityName = domainEntity.getName();
@@ -120,7 +128,7 @@ public class ModelConverter extends AbstractConverter {
 				attribConverter.convertAttributes(domainEntity, genericEntity);
 			}
 			catch(Exception e) {
-				rethrowException(e,"Entity " + entityName + " : ");
+				rethrowException(e, "Entity " + entityName + " : ");
 			}			
 		}
 	}
@@ -131,7 +139,7 @@ public class ModelConverter extends AbstractConverter {
 	 */
 	protected void step4CreateAllLinks(DomainModel domainModel, DslModel dslModel) {
 
-		LinksConverter linksConverter = new LinksConverter(dslModel);
+		LinksConverter linksConverter = new LinksConverter(dslModel, errors);
 		
 		// Create the links 
 		for (DomainEntity domainEntity : domainModel.getEntities()) {

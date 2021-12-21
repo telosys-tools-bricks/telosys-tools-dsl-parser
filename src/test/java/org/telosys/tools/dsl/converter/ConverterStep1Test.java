@@ -3,6 +3,7 @@ package org.telosys.tools.dsl.converter;
 import java.io.File;
 
 import org.junit.Test;
+import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.parser.Parser;
 import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
@@ -27,7 +28,7 @@ public class ConverterStep1Test {
 	private DslModel convertModel(DomainModel domainModel) {
 		// Create a new void DSL model 
 		DslModel dslModel = new DslModel("test-model");
-		ModelConverter converter = new ModelConverter();
+		ModelConverter converter = new ModelConverter(new DslModelErrors());
 		converter.step1CreateAllVoidEntities(domainModel, dslModel);
 		converter.step2CreateAllAttributes(domainModel, dslModel);
 		// stop just after attributes conversion

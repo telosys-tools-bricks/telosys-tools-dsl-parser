@@ -25,6 +25,7 @@ import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.generic.model.enums.GeneratedValueStrategy;
 
@@ -53,36 +54,38 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 	}
 	
 	@Override
-	protected void afterCreation(DomainAnnotation annotation) {
+	protected void afterCreation(String entityName, String fieldName, 
+			 DomainAnnotation annotation) throws ParsingError {
 		@SuppressWarnings("unchecked")
 		List<String> list = (List<String>) annotation.getParameterAsList();
 		if ( list.isEmpty() ) {
-			throw newException("invalid parameter ('strategy' is required)");
+			throw newException(entityName, fieldName, "invalid parameter ('strategy' is required)");
 		}
 		else {
 			// Check strategy 
 			String strategy = list.get(0);
 			if ( ! stategies.contains(strategy) ) {
-				throw newException("invalid strategy '" + strategy + "'");
+				throw newException(entityName, fieldName, "invalid strategy '" + strategy + "'");
 			}
 			// Check number of parameters 
 			int n = list.size();
 			if ( strategy.equals(SEQUENCE) ) {
 				if ( n != 3 && n != 4 ) {
-					throw newException("invalid number of parameters for 'SEQUENCE'");
+					throw newException(entityName, fieldName, "invalid number of parameters for 'SEQUENCE'");
 				}
 			}
 			if ( strategy.equals(TABLE) ) {
 				if ( n != 3 && n != 6 && n != 7 ) {
-					throw newException("invalid number of parameters for 'TABLE'");
+					throw newException(entityName, fieldName, "invalid number of parameters for 'TABLE'");
 				}
 			}
 		}
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) {
-		checkParamValue(paramValue);
+	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, 
+			Object paramValue) throws ParsingError {
+		checkParamValue(entity, attribute, paramValue);
 		@SuppressWarnings("unchecked")
 		List<String> list = (List<String>)paramValue;
 		String strategy = list.get(0); // cannot be empty 
@@ -100,7 +103,7 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 				attribute.setGeneratedValueSequenceName(list.get(2));
 			}
 			if ( list.size() >= 4 ) {
-				attribute.setGeneratedValueAllocationSize(toInt(list.get(3)));
+				attribute.setGeneratedValueAllocationSize(toInt(entity, attribute, list.get(3)));
 			}
 			break;
 		case TABLE:
@@ -115,11 +118,11 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 				attribute.setGeneratedValueTableValueColumnName(list.get(5));
 			}
 			if ( list.size() >= 7 ) {
-				attribute.setGeneratedValueAllocationSize(toInt(list.get(6)));
+				attribute.setGeneratedValueAllocationSize(toInt(entity, attribute, list.get(6)));
 			}
 			break;
 		default:
-			throw newException("invalid strategy '" + strategy + "'");
+			throw newParamError(entity, attribute, "invalid strategy '" + strategy + "'");
 		}
 	}
 }

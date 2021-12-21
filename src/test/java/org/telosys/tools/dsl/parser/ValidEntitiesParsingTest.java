@@ -1,4 +1,4 @@
-package org.telosys.tools.dsl.parsing.entitylevel;
+package org.telosys.tools.dsl.parser;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.telosys.tools.dsl.parser.Parser;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
+import org.telosys.tools.dsl.parser.reporting.EntityReport;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

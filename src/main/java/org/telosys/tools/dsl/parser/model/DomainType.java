@@ -30,7 +30,12 @@ public abstract class DomainType {
     private final DomainTypeNature nature;
 
 
-    public DomainType(String name, DomainTypeNature nature) {
+    /**
+     * Constructor
+     * @param name
+     * @param nature
+     */
+    protected DomainType(String name, DomainTypeNature nature) {
         super();
         this.name = name;
         this.nature = nature;

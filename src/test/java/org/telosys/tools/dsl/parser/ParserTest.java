@@ -11,7 +11,7 @@ import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainFK;
 import org.telosys.tools.dsl.parser.model.DomainField;
-import org.telosys.tools.dsl.parsing.entitylevel.ErrorsReport;
+import org.telosys.tools.dsl.parser.reporting.ErrorsReport;
 
 import static org.junit.Assert.assertEquals;
 

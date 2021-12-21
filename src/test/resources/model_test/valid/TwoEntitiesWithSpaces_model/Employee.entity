@@ -21,7 +21,7 @@ Employee
 			birthDate :   	  date { @Future } ;
 			
 // Field "country"
-	country    :			 Country  {     @Max(3)  #Foo  @Embedded    #MyTag(   123   )  }  ;  
+	country    :			 Country  {      #Foo  @Embedded    #MyTag(   123   )  }  ;  
 	
 	
 }

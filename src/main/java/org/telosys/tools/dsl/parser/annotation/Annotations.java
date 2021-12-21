@@ -31,6 +31,7 @@ import org.telosys.tools.dsl.parser.annotations.FetchTypeEagerAnnotation;
 import org.telosys.tools.dsl.parser.annotations.FetchTypeLazyAnnotation;
 import org.telosys.tools.dsl.parser.annotations.FkAnnotation;
 import org.telosys.tools.dsl.parser.annotations.FutureAnnotation;
+import org.telosys.tools.dsl.parser.annotations.GeneratedValueAnnotation;
 import org.telosys.tools.dsl.parser.annotations.IdAnnotation;
 import org.telosys.tools.dsl.parser.annotations.InitialValueAnnotation;
 import org.telosys.tools.dsl.parser.annotations.InputTypeAnnotation;
@@ -166,6 +167,7 @@ public class Annotations {
 		annotationDefinitions.add(new UniqueAnnotation());
 		annotationDefinitions.add(new MaxLenAnnotation());
 		annotationDefinitions.add(new MinLenAnnotation());
+		annotationDefinitions.add(new GeneratedValueAnnotation());
 	}
 	
 	private Annotations() {

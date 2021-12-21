@@ -22,17 +22,18 @@ import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.generic.model.enums.Cardinality;
 
 public class OneToOneAnnotation extends AnnotationDefinition {
 
 	public OneToOneAnnotation() {
-		super(AnnotationName.ONE_TO_ONE, AnnotationParamType.STRING, AnnotationScope.LINK);
+		super(AnnotationName.ONE_TO_ONE, AnnotationParamType.NONE, AnnotationScope.LINK);
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
-		checkParamValue(paramValue);
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+		checkParamValue(entity, link, paramValue);
 		link.setCardinality(Cardinality.ONE_TO_ONE);	
 	}
 

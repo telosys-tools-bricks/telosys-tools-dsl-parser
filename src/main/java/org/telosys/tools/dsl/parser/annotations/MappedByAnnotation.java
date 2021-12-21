@@ -22,6 +22,7 @@ import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
 /**
@@ -45,15 +46,15 @@ public class MappedByAnnotation extends AnnotationDefinition {
 	}
 
 	@Override
-	protected void afterCreation(DomainAnnotation annotation) {
+	protected void afterCreation(String entityName, String fieldName, DomainAnnotation annotation) throws ParsingError  {
 		if ( annotation.getParameterAsString().trim().length() == 0 ) {
-			throw newException("invalid entity name (blank)");
+			throw newException(entityName, fieldName, "invalid link name (blank)");
 		}
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
-		checkParamValue(paramValue);
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+		checkParamValue(entity, link, paramValue);
 		link.setMappedBy((String) paramValue);
 		
 // Moved in  link converter (finalize)

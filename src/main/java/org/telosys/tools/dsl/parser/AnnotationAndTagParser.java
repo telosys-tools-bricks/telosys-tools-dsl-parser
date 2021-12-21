@@ -17,6 +17,8 @@ package org.telosys.tools.dsl.parser;
 
 import org.telosys.tools.dsl.parser.commons.ParamValue;
 import org.telosys.tools.dsl.parser.commons.ParamValueOrigin;
+import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
+import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 /**
@@ -71,10 +73,12 @@ public abstract class AnnotationAndTagParser {
 	 */
 	protected ParsingError newError(String message) {
 		if ( this.fieldName != null ) {
-			return new ParsingError(entityName, fieldName, message);
+//			return new ParsingError(entityName, fieldName, message);
+			return new FieldParsingError(entityName, fieldName, message);
 		}
 		else {
-			return new ParsingError(entityName, message);
+//			return new ParsingError(entityName, message);
+			return new EntityParsingError(entityName, message);
 		}
 	}
 

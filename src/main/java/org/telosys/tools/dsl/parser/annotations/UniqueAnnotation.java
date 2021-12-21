@@ -22,6 +22,7 @@ import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 /**
  * "Unique" annotation 
@@ -40,8 +41,8 @@ public class UniqueAnnotation extends AnnotationDefinition {
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) {
-		checkParamValue(paramValue);
+	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) throws ParsingError {
+		checkParamValue(entity, attribute, paramValue);
 		attribute.setUnique(true);
 	}
 }

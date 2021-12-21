@@ -22,17 +22,18 @@ import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.generic.model.enums.Cardinality;
 
 public class ManyToManyAnnotation extends AnnotationDefinition {
 
 	public ManyToManyAnnotation() {
-		super(AnnotationName.MANY_TO_MANY, AnnotationParamType.STRING, AnnotationScope.LINK);
+		super(AnnotationName.MANY_TO_MANY, AnnotationParamType.NONE, AnnotationScope.LINK);
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
-		checkParamValue(paramValue);
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+		checkParamValue(entity, link, paramValue);
 		link.setCardinality(Cardinality.MANY_TO_MANY);	
 	}
 

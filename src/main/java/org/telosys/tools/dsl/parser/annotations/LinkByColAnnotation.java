@@ -24,6 +24,7 @@ import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.generic.model.JoinColumn;
 
 /**
@@ -42,16 +43,16 @@ public class LinkByColAnnotation extends LinkByAnnotation {
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
-		checkParamValue(paramValue);
-		List<JoinColumn> joinColumns = getJoinColumns((String)paramValue);
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+		checkParamValue(entity, link, paramValue);
+		List<JoinColumn> joinColumns = getJoinColumns(entity, link, (String)paramValue);
 		link.setJoinColumns(joinColumns);
 	}
 	
-	protected List<JoinColumn> getJoinColumns(String paramValue) {
+	protected List<JoinColumn> getJoinColumns(DslModelEntity entity, DslModelLink link, String paramValue) throws ParsingError {
 		//ReferenceDefinitions columnsRefDef = buildReferenceDefinitions(annotation);
 		ReferenceDefinitions columnsRefDef = buildReferenceDefinitions(paramValue);
-		checkNotVoid(columnsRefDef);
+		checkNotVoid(entity, link, columnsRefDef);
 //		JoinColumnsBuilder jcb = new JoinColumnsBuilder("@"+this.getName()) ;
 		JoinColumnsBuilder jcb = getJoinColumnsBuilder();
 

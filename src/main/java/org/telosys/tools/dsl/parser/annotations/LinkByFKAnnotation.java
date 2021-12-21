@@ -24,6 +24,7 @@ import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.JoinColumn;
 
@@ -34,8 +35,8 @@ public class LinkByFKAnnotation extends LinkByAnnotation {
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
-		checkParamValue(paramValue);
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+		checkParamValue(entity, link, paramValue);
 		String fkName = (String)paramValue;
 //		ForeignKey fk = getForeignKeyByName(entity, fkName);
 //		
@@ -53,14 +54,18 @@ public class LinkByFKAnnotation extends LinkByAnnotation {
 		
 	}
 	
-	private List<JoinColumn> getJoinColumns(DslModelEntity entity, DslModelLink link, String fkName) {
-		ForeignKey fk = getForeignKeyByName(entity, fkName);
-		checkIfForeignKeyIsCompatible(link, fk);
-		JoinColumnsBuilder jcb = getJoinColumnsBuilder();
-		return jcb.buildJoinColumnsFromForeignKey(fk);
+	private List<JoinColumn> getJoinColumns(DslModelEntity entity, DslModelLink link, String fkName) throws ParsingError {
+		try {
+			ForeignKey fk = getForeignKeyByName(entity, fkName);
+			checkIfForeignKeyIsCompatible(link, fk);
+			JoinColumnsBuilder jcb = getJoinColumnsBuilder();
+			return jcb.buildJoinColumnsFromForeignKey(fk);
+		} catch (Exception e) {
+			throw newParamError(entity, link, e.getMessage());
+		}
 	}
 	
-	private ForeignKey getForeignKeyByName(DslModelEntity entity, String fkName) {
+	private ForeignKey getForeignKeyByName(DslModelEntity entity, String fkName) throws Exception {
 		if ( ! StrUtil.nullOrVoid(fkName) ) {
 			ForeignKey fk = entity.getDatabaseForeignKeyByName(fkName);
 			if ( fk != null ) {
@@ -69,28 +74,28 @@ public class LinkByFKAnnotation extends LinkByAnnotation {
 			else {
 				// FK not found => ERROR
 //				throw new IllegalStateException("@LinkByFK : cannot found Foreign Key '" + fkName + "' in entity" );
-				throw newException("cannot found Foreign Key '" + fkName + "' in entity");
+				throw new Exception("cannot found Foreign Key '" + fkName + "' in entity");
 			}
 		}
 		else {
 			// no FK name => ERROR
 //			throw new IllegalStateException("@LinkByFK : no Foreign Key name");
-			throw newException("no Foreign Key name");
+			throw new Exception("no Foreign Key name");
 		}
 	}
 
-	private void checkIfForeignKeyIsCompatible(DslModelLink link, ForeignKey fk) {
+	private void checkIfForeignKeyIsCompatible(DslModelLink link, ForeignKey fk) throws Exception {
 		String linkTable = link.getTargetTableName();
 		String fkTable = fk.getReferencedTableName();
 		if ( linkTable != null ) {
 			if ( ! linkTable.equals(fkTable) ) {
 				//throw new IllegalStateException("@LinkByFK : invalid Foreign Key : ref table '" + fkTable + "' != '" + linkTable + "'");
-				throw newException("invalid Foreign Key : ref table '" + fkTable + "' != '" + linkTable + "'");
+				throw new Exception("invalid Foreign Key : ref table '" + fkTable + "' != '" + linkTable + "'");
 			}
 		}
 		else {
 			//throw new IllegalStateException("@LinkByFK : cannot check reference because link table is null");
-			throw newException("cannot check reference because link table is null");
+			throw new Exception("cannot check reference because link table is null");
 		}
 	}
 

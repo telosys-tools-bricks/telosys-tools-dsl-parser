@@ -1,10 +1,10 @@
 // test v 3.3 swith FOREIGN KEY
 Employee 
 { 
-	id 		: int {@Id , @AutoIncremented, @Embedded , @Max(800)}; // the id
+	id 		: int {@Id , @AutoIncremented,  @Max(800)}; // the id
 	
 	firstName : string   { @DefaultValue( "   a b") #MyTag(qqq) #foo(12) } ;
-	lastName : string {  @NotBlank,  @Embedded  	 } ;
+	lastName : string {  @NotBlank   	 } ;
 	    
 	birthDate : date { @Future  @NotEmpty } ;
 	

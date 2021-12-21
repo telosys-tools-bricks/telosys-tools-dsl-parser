@@ -25,6 +25,7 @@ import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.Annotations;
 import org.telosys.tools.dsl.parser.commons.FkElement;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 public class DomainAnnotation extends DomainAnnotationOrTag {
 
@@ -101,7 +102,7 @@ public class DomainAnnotation extends DomainAnnotationOrTag {
 	 * @param entity
 	 * @param attribute
 	 */
-	public void applyToAttribute(DslModel model, DslModelEntity entity, DslModelAttribute attribute ) {
+	public void applyToAttribute(DslModel model, DslModelEntity entity, DslModelAttribute attribute ) throws ParsingError {
 		String annotationName = this.getName();
     	AnnotationDefinition annotationDefinition = getAnnotationDefinition(annotationName);
        	if ( annotationDefinition.hasAttributeScope() ) {
@@ -118,7 +119,7 @@ public class DomainAnnotation extends DomainAnnotationOrTag {
 	 * @param entity
 	 * @param link
 	 */
-	public void applyToLink(DslModel model, DslModelEntity entity, DslModelLink link ) {
+	public void applyToLink(DslModel model, DslModelEntity entity, DslModelLink link ) throws ParsingError {
 		String annotationName = this.getName();
     	AnnotationDefinition annotationDefinition = getAnnotationDefinition(annotationName);
        	if ( annotationDefinition.hasLinkScope() ) {

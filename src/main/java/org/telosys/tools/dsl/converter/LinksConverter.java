@@ -18,6 +18,7 @@ package org.telosys.tools.dsl.converter;
 import java.util.Collection;
 import java.util.List;
 
+import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
 import org.telosys.tools.dsl.converter.link.JoinColumnsUtil;
 import org.telosys.tools.dsl.model.DslModel;
@@ -50,10 +51,10 @@ public class LinksConverter extends AbstractConverter {
 	 * Constructor
 	 * @param dslModel
 	 */
-	public LinksConverter(DslModel dslModel) {
+	public LinksConverter(DslModel dslModel, DslModelErrors errors) {
 		super();
 		this.dslModel = dslModel;
-		this.annotationsApplicator = new AnnotationsApplicator(dslModel);
+		this.annotationsApplicator = new AnnotationsApplicator(dslModel, errors);
 		this.tagsConverter = new TagsConverter();
 	}
 

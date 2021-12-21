@@ -1,4 +1,4 @@
-package org.telosys.tools.dsl.parsing.entitylevel;
+package org.telosys.tools.dsl.parser.reporting;
 
 import java.util.List;
 

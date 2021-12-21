@@ -22,6 +22,7 @@ import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 public class EmbeddedAnnotation extends AnnotationDefinition {
 
@@ -30,8 +31,9 @@ public class EmbeddedAnnotation extends AnnotationDefinition {
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
-		checkParamValue(paramValue);
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, 
+					  Object paramValue) throws ParsingError {
+		checkParamValue(entity, link, paramValue);
 		link.setEmbedded(true);
 	}
 }

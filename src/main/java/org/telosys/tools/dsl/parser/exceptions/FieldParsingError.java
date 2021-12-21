@@ -16,7 +16,7 @@
 package org.telosys.tools.dsl.parser.exceptions;
 
 /**
- * DSL Parser Exception
+ * DSL Parser : field level error
  * 
  * @author Laurent GUERIN
  *
@@ -24,14 +24,6 @@ package org.telosys.tools.dsl.parser.exceptions;
 public class FieldParsingError extends ParsingError {
 
 	private static final long serialVersionUID = 1L;
-
-//	// Standard exception message
-//	private final String exceptionMessage;
-//
-//	// Error details (for reporting)
-//	private final String entityName;
-//	private final String fieldName;
-//	private final String error;
 
 	/**
 	 * Constructor
@@ -41,26 +33,6 @@ public class FieldParsingError extends ParsingError {
 	 */
 	public FieldParsingError(String entityName, String fieldName, String error) {
 		super(entityName, fieldName, error);
-//		this.exceptionMessage = entityName + " : field '" + fieldName + "' : " + error ;
-//		this.entityName = entityName;
-//		this.fieldName = fieldName;
-//		this.error = error;
 	}
 
-//	// Standard exception message
-//	@Override
-//	public String getMessage() {
-//		return exceptionMessage;
-//	}
-
-//	// Error details (for reporting)
-//	public String getEntityName() {
-//		return entityName;
-//	}
-//	public String getFieldName() {
-//		return fieldName;
-//	}
-//	public String getError() {
-//		return error;
-//	}
 }

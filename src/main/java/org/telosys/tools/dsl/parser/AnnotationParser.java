@@ -28,7 +28,7 @@ import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 public class AnnotationParser extends AnnotationAndTagParser {
 
 	/**
-	 * Constructor
+	 * Constructor for parsing at FIELD level
 	 * 
 	 * @param entityName
 	 * @param fieldName
@@ -38,7 +38,7 @@ public class AnnotationParser extends AnnotationAndTagParser {
 	}
 	
 	/**
-	 * Constructor
+	 * Constructor for parsing at ENTITY level
 	 * 
 	 * @param entityName
 	 */

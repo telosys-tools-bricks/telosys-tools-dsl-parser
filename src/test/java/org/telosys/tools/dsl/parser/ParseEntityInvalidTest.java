@@ -1,4 +1,4 @@
-package org.telosys.tools.dsl.parsing.entitylevel;
+package org.telosys.tools.dsl.parser;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -7,11 +7,12 @@ import java.util.List;
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.Parser;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
+import org.telosys.tools.dsl.parser.reporting.ErrorsReport;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-public class InvalidEntitiesParsingTest {
+public class ParseEntityInvalidTest {
 
 	private File getEntityFile(String entityName) {
 		return new File("src/test/resources/entity_test/invalid/" + entityName + ".entity");

@@ -26,6 +26,7 @@ import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.JoinColumn;
 
@@ -36,22 +37,22 @@ public class LinkByAttrAnnotation extends LinkByAnnotation {
 	}
 	
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
 		// Example : @LinkByAttr(attr1)   @LinkByAttr(attr1 > ref1 , attr2 > ref2 )
-		checkParamValue(paramValue);
+		checkParamValue(entity, link, paramValue);
 		List<JoinColumn> joinColumns = getJoinColumns(model, entity, link, (String)paramValue);
 		link.setJoinColumns(joinColumns);
 	}
 	
-	private ReferenceDefinitions getReferenceDefinitions(String paramValue) {
+	private ReferenceDefinitions getReferenceDefinitions(DslModelEntity entity, DslModelLink link, String paramValue) throws ParsingError {
 		ReferenceDefinitions referenceDefinitions = buildReferenceDefinitions(paramValue);
-		checkNotVoid(referenceDefinitions);
-		checkReferencedNames(referenceDefinitions);
+		checkNotVoid(entity, link, referenceDefinitions);
+		checkReferencedNames(entity, link, referenceDefinitions);
 		return referenceDefinitions;
 	}
 
-	protected List<JoinColumn> getJoinColumns(DslModel model, DslModelEntity entity, DslModelLink link, String paramValue) {
-		ReferenceDefinitions attributesRefDef = getReferenceDefinitions(paramValue);
+	protected List<JoinColumn> getJoinColumns(DslModel model, DslModelEntity entity, DslModelLink link, String paramValue) throws ParsingError {
+		ReferenceDefinitions attributesRefDef = getReferenceDefinitions(entity, link, paramValue);
 		
 //		String referencedEntityName = link.getTargetEntityClassName();
 //		DslModelEntity referencedEntity = (DslModelEntity) model.getEntityByClassName(referencedEntityName);
@@ -59,25 +60,31 @@ public class LinkByAttrAnnotation extends LinkByAnnotation {
 //			throw new IllegalStateException("@"+ AnnotationName.LINK_BY_ATTR 
 //					+ " : cannot found referenced entity '"+ referencedEntityName + "'");
 //		}
-		DslModelEntity referencedEntity = getReferencedEntity(model, link);
+		DslModelEntity referencedEntity = getReferencedEntity(model, entity, link);
 		
-		ReferenceDefinitions columnsRefDef = convertAttribRefToColRef(entity, referencedEntity, attributesRefDef);
+		ReferenceDefinitions columnsRefDef;
+		try {
+			columnsRefDef = convertAttribRefToColRef(entity, referencedEntity, attributesRefDef);
 //		JoinColumnsBuilder jcb = new JoinColumnsBuilder("@"+AnnotationName.LINK_BY_ATTR) ;
 //		JoinColumnsBuilder jcb = new JoinColumnsBuilder("@"+this.getName()) ;
-		JoinColumnsBuilder jcb = getJoinColumnsBuilder();
-		List<JoinColumn> joinColumns = jcb.buildJoinColumnsFromRefDef(columnsRefDef); 
-		link.setJoinColumns(joinColumns);
-		return jcb.buildJoinColumnsFromRefDef(columnsRefDef);		
+			JoinColumnsBuilder jcb = getJoinColumnsBuilder();
+			List<JoinColumn> joinColumns = jcb.buildJoinColumnsFromRefDef(columnsRefDef); 
+			link.setJoinColumns(joinColumns);
+			return jcb.buildJoinColumnsFromRefDef(columnsRefDef);		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			throw newParamError(entity, link, e.getMessage());
+		}
 	}
 	
-	private DslModelEntity getReferencedEntity(DslModel model, DslModelLink link) {
+	private DslModelEntity getReferencedEntity(DslModel model, DslModelEntity entity, DslModelLink link) throws ParsingError {
 		String referencedEntityName = link.getTargetEntityClassName();
 		if ( referencedEntityName == null ) {
-			throw newException("invalid link : target entity name is null");
+			throw newParamError(entity, link, "invalid link : target entity name is null");
 		}
 		DslModelEntity referencedEntity = (DslModelEntity) model.getEntityByClassName(referencedEntityName);
 		if ( referencedEntity == null ) {
-			throw newException("unknown referenced entity '"+ referencedEntityName + "'");
+			throw newParamError(entity, link, "unknown referenced entity '"+ referencedEntityName + "'");
 		}
 		return referencedEntity;
 	}
@@ -150,7 +157,7 @@ public class LinkByAttrAnnotation extends LinkByAnnotation {
 	 * @return
 	 */
 	private ReferenceDefinitions convertAttribRefToColRef(DslModelEntity entity, 
-			DslModelEntity referencedEntity, ReferenceDefinitions referenceDefinitions) {
+			DslModelEntity referencedEntity, ReferenceDefinitions referenceDefinitions) throws Exception {
 		ReferenceDefinitions referenceDefinitionsForColumns = new ReferenceDefinitions();
 		for ( ReferenceDefinition rd : referenceDefinitions.getList()) {
 			String columnName = getAttribColumnName(entity, rd.getName());
@@ -171,7 +178,7 @@ public class LinkByAttrAnnotation extends LinkByAnnotation {
 	 * @param attribName
 	 * @return
 	 */
-	private String getAttribColumnName(DslModelEntity entity, String attribName) {
+	private String getAttribColumnName(DslModelEntity entity, String attribName) throws Exception {
 		if ( ! StrUtil.nullOrVoid(attribName) ) {
 			Attribute attrib = entity.getAttributeByName(attribName);
 			if ( attrib != null ) {
@@ -180,12 +187,12 @@ public class LinkByAttrAnnotation extends LinkByAnnotation {
 					return columnName;
 				}
 				else {
-					throw newException("no database column for attribute '" + attribName 
+					throw new Exception("no database column for attribute '" + attribName 
 							+ "' in '" + entity.getClassName() + "'");
 				}
 			}
 			else {
-				throw newException("unknown attribute '" + attribName 
+				throw new Exception("unknown attribute '" + attribName 
 							+ "' in '" + entity.getClassName() + "'");
 			}
 		}

@@ -28,18 +28,7 @@ public class EntityParsingError extends ParsingError {
 
     private static final long serialVersionUID = 1L;
     
-    // Standard exception message
-//	private final String exceptionMessage ;
-
-//    // Error details (for reporting)
-//	private final String entityName;
-//
-//	// Entity error
-//	private final int lineNumber;
-//	private final String entityError;
-    
 	// Fields errors
-//	private final List<FieldParsingError> fieldsErrors ;
 	private final List<ParsingError> errors ;
 
     /**
@@ -49,12 +38,6 @@ public class EntityParsingError extends ParsingError {
      */
     public EntityParsingError(String entityName, String errorMessage) {
         super(entityName, errorMessage);
-//		this.exceptionMessage = "entity '" + entityName + "' : " + errorMessage ;
-//	    // Error details (for reporting)
-//        this.entityName = entityName ;
-//    	// Entity error
-//        this.lineNumber = 0 ; // unknown line number
-//        this.entityError = errorMessage ;
     	// Fields errors
 		this.errors = new LinkedList<>() ; // no fields errors 
     }
@@ -67,12 +50,6 @@ public class EntityParsingError extends ParsingError {
      */
     public EntityParsingError(String entityName, String errorMessage, int lineNumber) {
         super(entityName, lineNumber, errorMessage);
-//		this.exceptionMessage = entityName + " : " + errorMessage + "(line " + lineNumber + ")";
-        // Error details (for reporting)
-//        this.entityName = entityName ;
-    	// Entity error
-//        this.entityError = errorMessage ;
-//        this.lineNumber = lineNumber ;
     	// Fields errors
 		this.errors = new LinkedList<>() ; // no fields errors 
     }
@@ -82,41 +59,12 @@ public class EntityParsingError extends ParsingError {
      * @param entityName
      * @param fieldsErrors
      */
-//    public EntityParsingError(String entityName, List<FieldParsingError> fieldsErrors) {
     public EntityParsingError(String entityName, List<ParsingError> fieldsErrors) {
         super(entityName, fieldsErrors.size() + " field error(s)" );
-        if ( fieldsErrors == null ) {
-        	throw new IllegalArgumentException("fieldsErrors is null");
-        }
-//		this.exceptionMessage = "entity '" + entityName + "' : " + fieldsErrors.size() + " field error(s)" ;
-//        // Error details (for reporting)
-//        this.entityName = entityName ;
-//        // No entity level error
-//        this.lineNumber = 0 ;
-//        this.entityError = null ;
         // Only fields errors
    		this.errors = fieldsErrors ;
     }
 
-//    // Standard exception message
-//    @Override
-//    public String getMessage() {
-//        return exceptionMessage;
-//    }
-    
-//    // Error details (for reporting)
-//    public String getEntityName() {
-//    	return entityName;
-//    }
-//
-//    public String getError() {
-//    	return entityError;
-//    }
-//    public int getLineNumber() {
-//    	return lineNumber;
-//    }
-    
-//    public List<FieldParsingError> getFieldsErrors() {
     public List<ParsingError> getErrors() {
     	return errors ;
     }
@@ -128,10 +76,5 @@ public class EntityParsingError extends ParsingError {
     	else {
     		return 1 ; // this single entity error
     	}
-//    	int n = fieldsErrors.size(); // 0 or N 
-//    	if ( this.entityError != null ) {
-//    		n++;
-//    	}
-//    	return n ;
     }
 }

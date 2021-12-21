@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.AnnotationName;
+import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
@@ -31,7 +32,7 @@ public class ConverterTest {
 	private final static String     MODEL_FILE_NAME = "test.model" ;
 	private final static Properties MODEL_PROPERTIES = null ;
 	
-	private ModelConverter converter = new ModelConverter();
+	private ModelConverter converter = new ModelConverter(new DslModelErrors());
 
 	@Test
 	public void testEmptyModel() {
@@ -45,10 +46,10 @@ public class ConverterTest {
 	
 	private Model buildModelWithTwoEmptyEntities() {
 		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
-		DomainEntity domainEntity_1 = new DomainEntity("domainEntity_1");
-		domainModel.addEntity(domainEntity_1);
-		DomainEntity domainEntity_2 = new DomainEntity("domainEntity_2");
-		domainModel.addEntity(domainEntity_2);		
+//		DomainEntity domainEntity1 = new DomainEntity("domainEntity_1");
+		domainModel.addEntity(new DomainEntity("domainEntity_1"));
+//		DomainEntity domainEntity2 = new DomainEntity("domainEntity_2");
+		domainModel.addEntity(new DomainEntity("domainEntity_2"));		
 		//--- Convert 
 		return converter.convertModel(domainModel);	
 	}

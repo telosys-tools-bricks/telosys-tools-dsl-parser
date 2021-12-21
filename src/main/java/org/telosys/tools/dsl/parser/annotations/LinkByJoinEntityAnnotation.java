@@ -24,6 +24,7 @@ import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelJoinTable;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.JoinColumn;
@@ -36,12 +37,12 @@ public class LinkByJoinEntityAnnotation extends LinkByAnnotation {
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
-		checkParamValue(paramValue);
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+		checkParamValue(entity, link, paramValue);
 		String joinEntityName = (String) paramValue ;
 		
 		// Try to get the join table
-		JoinTable joinTable = getJoinTable(model, link, joinEntityName);
+		JoinTable joinTable = getJoinTable(model, entity, link, joinEntityName);
 		
 		// Apply join table to link 
 		link.setJoinTable(joinTable);
@@ -52,37 +53,41 @@ public class LinkByJoinEntityAnnotation extends LinkByAnnotation {
 //		link.setInverseSide(false);
 	}
 	
-	protected JoinTable getJoinTable(DslModel model, DslModelLink link, String joinEntityName) {
-		DslModelEntity joinEntity = getJoinEntity( model, joinEntityName);
-		List<ForeignKey> foreignKeys = joinEntity.getDatabaseForeignKeys();
-		checkForeignKeys(foreignKeys, joinEntityName);
-		return buildJoinTable(joinEntity, link, foreignKeys);
+	protected JoinTable getJoinTable(DslModel model, DslModelEntity entity, DslModelLink link, String joinEntityName) throws ParsingError {
+		try {
+			DslModelEntity joinEntity = getJoinEntity( model, joinEntityName);
+			List<ForeignKey> foreignKeys = joinEntity.getDatabaseForeignKeys();
+			checkForeignKeys(foreignKeys, joinEntityName);
+			return buildJoinTable(joinEntity, link, foreignKeys);
+		} catch (Exception e) {
+			throw newParamError(entity, link, e.getMessage());
+		}
 	}
 	
-	private DslModelEntity getJoinEntity(DslModel model, String joinEntityName) {
+	private DslModelEntity getJoinEntity(DslModel model, String joinEntityName) throws Exception {
 		DslModelEntity joinEntity = (DslModelEntity) model.getEntityByClassName(joinEntityName);
 		if ( joinEntity == null ) {
-			throw newException("unknown join entity '"+ joinEntityName + "'");
+			throw new Exception("unknown join entity '"+ joinEntityName + "'");
 		}
 		return joinEntity;
 	}	
 	
-	private void checkForeignKeys(List<ForeignKey> foreignKeys, String joinEntityName) {
+	private void checkForeignKeys(List<ForeignKey> foreignKeys, String joinEntityName) throws Exception {
 		if ( foreignKeys == null ) {
-			throw newException("no foreign key in entity '"+ joinEntityName + "'");
+			throw new Exception("no foreign key in entity '"+ joinEntityName + "'");
 		}
 		if ( foreignKeys.size() != 2 ) {
-			throw newException( "2 foreign keys expected in join entity '"+ joinEntityName + "' (" + foreignKeys.size() + " found)");
+			throw new Exception("2 foreign keys expected in join entity '"+ joinEntityName + "' (" + foreignKeys.size() + " found)");
 		}
 	}
 	
-	private JoinTable buildJoinTable(Entity joinEntity, DslModelLink link, List<ForeignKey> foreignKeys) {
+	private JoinTable buildJoinTable(Entity joinEntity, DslModelLink link, List<ForeignKey> foreignKeys) throws Exception {
 		ForeignKey fk1 = foreignKeys.get(0);
 		ForeignKey fk2 = foreignKeys.get(1);
 		ForeignKey joinColumnsFK = getFKReferencingTable(link.getSourceTableName(), fk1, fk2 );
 		ForeignKey inverseJoinColumnsFK = getFKReferencingTable(link.getTargetTableName(), fk1, fk2 );
 		if ( joinColumnsFK.getName().equals(inverseJoinColumnsFK.getName()) ) {
-			throw newException("the 2 foreign keys are identical");
+			throw new Exception("the 2 foreign keys are identical");
 		}
 //		JoinColumnsBuilder jcb = new JoinColumnsBuilder("@"+ AnnotationName.LINK_BY_JOIN_ENTITY ) ;
 		JoinColumnsBuilder jcb = getJoinColumnsBuilder();
@@ -94,7 +99,7 @@ public class LinkByJoinEntityAnnotation extends LinkByAnnotation {
 		return new DslModelJoinTable(joinEntity, joinColumns, inverseJoinColumns);
 	}
 	
-	private ForeignKey getFKReferencingTable(String tableName, ForeignKey fk1, ForeignKey fk2 ) {
+	private ForeignKey getFKReferencingTable(String tableName, ForeignKey fk1, ForeignKey fk2 ) throws Exception {
 		if ( tableName.equals(fk1.getReferencedTableName()) ) {
 			return fk1 ;
 		}
@@ -102,7 +107,7 @@ public class LinkByJoinEntityAnnotation extends LinkByAnnotation {
 			return fk2 ;
 		}
 		else {
-			throw newException("join entity does not have FK referencing table '" + tableName + "'");
+			throw new Exception("join entity does not have FK referencing table '" + tableName + "'");
 		}
 	}
 	

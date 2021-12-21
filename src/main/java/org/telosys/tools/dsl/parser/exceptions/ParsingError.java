@@ -21,7 +21,7 @@ package org.telosys.tools.dsl.parser.exceptions;
  * @author Laurent GUERIN
  *
  */
-public class ParsingError extends Exception {
+public abstract class ParsingError extends Exception {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -41,7 +41,7 @@ public class ParsingError extends Exception {
 	 * MODEL level error 
 	 * @param errorMessage
 	 */
-	public ParsingError(String errorMessage ) {
+	protected ParsingError(String errorMessage ) {
         this(null, 0, null, errorMessage);
     }
 
@@ -50,7 +50,7 @@ public class ParsingError extends Exception {
 	 * @param entityName
 	 * @param errorMessage
 	 */
-	public ParsingError(String entityName, String errorMessage ) {
+	protected ParsingError(String entityName, String errorMessage ) {
         this(entityName, 0, null, errorMessage);
     }
 
@@ -60,7 +60,7 @@ public class ParsingError extends Exception {
 	 * @param lineNumber
 	 * @param errorMessage
 	 */
-	public ParsingError(String entityName, int lineNumber, String errorMessage ) {
+	protected ParsingError(String entityName, int lineNumber, String errorMessage ) {
         this(entityName, lineNumber, null, errorMessage);
     }
 
@@ -70,7 +70,7 @@ public class ParsingError extends Exception {
 	 * @param fieldName
 	 * @param errorMessage
 	 */
-	public ParsingError(String entityName, String fieldName, String errorMessage ) {
+	protected ParsingError(String entityName, String fieldName, String errorMessage ) {
         this(entityName, 0, fieldName, errorMessage);
     }
 
@@ -81,7 +81,7 @@ public class ParsingError extends Exception {
 	 * @param fieldName
 	 * @param errorMessage
 	 */
-	public ParsingError(String entityName, int lineNumber, String fieldName, String errorMessage ) {
+	protected ParsingError(String entityName, int lineNumber, String fieldName, String errorMessage ) {
         super();
         this.entityName = entityName ;
         this.lineNumber = lineNumber ;

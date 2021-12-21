@@ -23,13 +23,15 @@ import java.util.Properties;
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.DslModelUtil;
+import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
+import org.telosys.tools.dsl.parser.annotation.Annotations;
+import org.telosys.tools.dsl.parser.exceptions.AnnotationParsingError;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainFK;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainTag;
@@ -92,8 +94,6 @@ public class Parser {
 			try {
 				domainEntity = parseEntity(entityFileName, entitiesNames);
 				if ( domainEntity.hasError() ) {
-					//int n = domainEntity.getErrors().size() ;
-					//errors.add(new EntityParsingError(domainEntity.getName(), n + " error(s)", domainEntity.getErrors() ) );
 					errors.add(new EntityParsingError(domainEntity.getName(), domainEntity.getErrors() ) );
 				}
 				//--- Replace VOID ENTITY by REAL ENTITY
@@ -108,8 +108,6 @@ public class Parser {
 		parserFKChecker.checkNoDuplicateFK(model, errors);
 		
 		if ( ! errors.isEmpty()) {
-//			String msg = errors.size() + " parsing error(s)" ;
-//			throw new ModelParsingError(msg, errors);
 			throw new ModelParsingError(errors);
 		} else {
 			return model;
@@ -125,17 +123,14 @@ public class Parser {
 	protected void checkModelFile(File file) throws ModelParsingError {
 		if (!file.exists()) {
 			String error = "File '" + file.toString() + "' not found";
-			//throw new ModelParsingError(file, error);
 			throw new ModelParsingError(error);
 		}
 		if (!file.isFile()) {
 			String error = "'" + file.toString() + "' is not a file";
-			//throw new ModelParsingError(file, error);
 			throw new ModelParsingError(error);
 		}
 		if (!file.getName().endsWith(DOT_MODEL)) {
 			String error = "File '" + file.toString() + "' doesn't end with '" + DOT_MODEL + "'";
-			//throw new ModelParsingError(file, error);
 			throw new ModelParsingError(error);
 		}
 	}
@@ -148,7 +143,7 @@ public class Parser {
 	 * @return
 	 * @throws EntityParsingError
 	 */
-	public DomainEntity parseEntity(String entityFileName, List<String> entitiesNames) throws EntityParsingError {
+	protected DomainEntity parseEntity(String entityFileName, List<String> entitiesNames) throws EntityParsingError {
 		File entityFile = new File(entityFileName);
 		return parseEntity(entityFile, entitiesNames);
 	}
@@ -161,7 +156,7 @@ public class Parser {
 	 * @return
 	 * @throws EntityParsingError
 	 */
-	public DomainEntity parseEntity(File file, List<String> entitiesNames) throws EntityParsingError {
+	protected DomainEntity parseEntity(File file, List<String> entitiesNames) throws EntityParsingError {
 
 		EntityFileParser entityFileParser = new EntityFileParser(file);
 		EntityFileParsingResult result = entityFileParser.parse();
@@ -211,8 +206,6 @@ public class Parser {
 			parseField(domainEntity, field, entitiesNames );
 		}
 		if ( domainEntity.hasError() ) {
-//			String msg = domainEntity.getErrors().size() + " error(s)" ;
-//			throw new EntityParsingError(domainEntity.getName(), msg, domainEntity.getErrors() );
 			throw new EntityParsingError(domainEntity.getName(), domainEntity.getErrors() );
 		}
 		return domainEntity;
@@ -224,7 +217,6 @@ public class Parser {
 		DomainField domainField = null;
 		try {
 			domainField = parseField(domainEntity.getName(), fieldParts, entitiesNames);
-//		} catch (FieldParsingError e) {
 		} catch (ParsingError e) {
 			domainEntity.addError(e); // Cannot parse field name and type
 			return;
@@ -242,7 +234,6 @@ public class Parser {
 
 		// If fiels has errors : store these errors at entity level 
 		if ( domainField.hasErrors() ) {
-//			for ( AnnotationOrTagError fieldError : domainField.getErrors() ) {
 			for ( ParsingError fieldError : domainField.getErrors() ) {
 				domainEntity.addError(fieldError); 
 			}
@@ -258,7 +249,7 @@ public class Parser {
 	 * @throws FieldParsingError
 	 */
 	protected DomainField parseField(String entityName, FieldParts fieldParts, List<String> allEntitiesNames)
-			throws ParsingError { // FieldParsingError {
+			throws ParsingError {
 
 		// 1) Parse the field NAME and TYPE
 		FieldNameAndTypeParser parser = new FieldNameAndTypeParser(entityName, allEntitiesNames);
@@ -269,7 +260,7 @@ public class Parser {
 
 		String fieldName = fieldNameAndType.getName();
 
-		// --- New "DomainField" instance
+		// Create a new "DomainField" instance
 		DomainField domainField = new DomainField(fieldParts.getLineNumber(), fieldName, fieldNameAndType.getDomainType(),
 				fieldNameAndType.getCardinality());
 
@@ -279,43 +270,17 @@ public class Parser {
 		FieldAnnotationsAndTags fieldAnnotationsAndTags = fieldAnnotationsAndTagsParser.parse(fieldName, fieldParts);
 
 		// Errors found
-//		for (AnnotationOrTagError error : fieldAnnotationsAndTags.getErrors()) {
 		for (ParsingError error : fieldAnnotationsAndTags.getErrors()) {
 			domainField.addError(error);
 		}
 
 		// Process all ANNOTATIONS found for this field
-		for ( DomainAnnotation annotation : fieldAnnotationsAndTags.getAnnotations() ) {
-			if ( AnnotationName.FK.equals( annotation.getName() ) ) { // v 3.3.0
-				// Special processing for "@FK" annotation (can be used 1..N times in a field )
-//				try {
-//					FieldFKAnnotationParser fkParser = new FieldFKAnnotationParser(entityName, fieldName);
-//					DomainFK fk = fkParser.parse(annotation);
-//					domainField.addFKDeclaration(fk);
-////				} catch (AnnotationOrTagError err) {
-//				} catch (ParsingError err) {
-//					domainField.addError(err);
-//				}
-				domainField.addFkElements(annotation.getParameterAsFKElement());
-			}
-			else {
-				// Standard processing for other annotations
-				if (domainField.hasAnnotation(annotation)) {
-					// Already defined => Error
-					domainField.addError(new FieldParsingError(entityName, fieldName, 
-							"@" + annotation.getName() + " defined more than once"));
-				} else {
-					domainField.addAnnotation(annotation);
-				}
-			}
-		}
-
+		processFieldAnnotations(entityName, domainField, fieldAnnotationsAndTags.getAnnotations());
+		
 		// Process all TAGS found for this field
 		for ( DomainTag tag : fieldAnnotationsAndTags.getTags() ) {
 			if (domainField.hasTag(tag)) {
 				// Already defined => Error
-//				domainField.addError(new AnnotationOrTagError(entityName, fieldName, "#"+tag.getName(),
-//						"tag defined more than once"));
 				domainField.addError(new FieldParsingError(entityName, fieldName, 
 						"#" + tag.getName() + " defined more than once"));
 			} else {
@@ -325,5 +290,60 @@ public class Parser {
 
 		ParserLogger.log("--- ");
 		return domainField;
+	}
+	
+	private void processFieldAnnotations(String entityName, DomainField domainField, List<DomainAnnotation> fieldAnnotations) {
+		for ( DomainAnnotation annotation : fieldAnnotations ) {
+			if ( AnnotationName.FK.equals( annotation.getName() ) ) { 
+				// Special processing for "@FK" annotation (can be used 1..N times in a field )
+				domainField.addFkElements(annotation.getParameterAsFKElement());
+			}
+			else {
+				if ( annotationScopeIsValid(entityName, domainField, annotation) ) {
+					// Standard processing for other annotations
+					if ( ! domainField.hasAnnotation(annotation)) {
+						// Not already used for this field => OK
+						domainField.addAnnotation(annotation);
+					} else {
+						// Already defined => Error
+						domainField.addError(new AnnotationParsingError(entityName, domainField.getName(), 
+								annotation.getName(), "defined more than once"));
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Check if the annotation scope is compatible the type of the field (Attribute or Link)
+	 * @param entityName
+	 * @param domainField
+	 * @param annotation
+	 * @return
+	 */
+	private boolean annotationScopeIsValid(String entityName, DomainField domainField, DomainAnnotation annotation) {
+    	AnnotationDefinition annotationDefinition = Annotations.get(annotation.getName());
+		if ( domainField.getType().isNeutralType() ) {
+			// Neutral type => Attribute 
+	       	if ( annotationDefinition.hasAttributeScope() ) {
+	    		return true ;
+	    	}
+	    	else {
+				domainField.addError(new AnnotationParsingError(entityName, domainField.getName(), 
+									annotation.getName(), "not usable in an attribute"));
+				return false;
+	    	}
+		}
+		else {
+			// Entity or Enum => Link
+	       	if ( annotationDefinition.hasLinkScope() ) {
+	    		return true ;
+	    	}
+	    	else {
+				domainField.addError(new AnnotationParsingError(entityName, domainField.getName(), 
+									annotation.getName(), "not usable in a link") );
+				return false;
+	    	}
+		}
 	}
 }

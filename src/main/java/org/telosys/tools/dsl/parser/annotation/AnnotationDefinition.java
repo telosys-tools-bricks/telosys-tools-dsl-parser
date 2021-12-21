@@ -54,7 +54,7 @@ public abstract class AnnotationDefinition {
 			else if ( scope == AnnotationScope.LINK ) {
 				this.linkScope = true ;
 			}
-			else if (  scope == AnnotationScope.ENTITY ) {
+			else if ( scope == AnnotationScope.ENTITY ) {
 				this.entityScope = true ;
 			}
 		}
@@ -84,10 +84,22 @@ public abstract class AnnotationDefinition {
 	//-------------------------------------------------------------------------------------------
 	// Annotation error 
 	//-------------------------------------------------------------------------------------------
-	protected IllegalStateException newException(String msg) {
-		return new IllegalStateException("@" + this.name + " : " + msg);
+	protected ParsingError newException(String entityName, String fieldName, 
+			// DomainAnnotation annotation, 
+			String error) {
+		return new AnnotationParsingError(entityName, fieldName, this.name, error);
 	}
-
+	protected ParsingError newParamError(DslModelEntity entity, DslModelAttribute attribute, 
+			String error) {
+		return new AnnotationParsingError(entity.getClassName(), attribute.getName(), 
+				this.name, error);
+	}
+	protected ParsingError newParamError(DslModelEntity entity, DslModelLink link, 
+			String error) {
+		return new AnnotationParsingError(entity.getClassName(), link.getFieldName(), 
+				this.name, error);
+	}
+	
 	//-------------------------------------------------------------------------------------------
 	// Annotation parsing 
 	//-------------------------------------------------------------------------------------------
@@ -102,7 +114,7 @@ public abstract class AnnotationDefinition {
 	public DomainAnnotation buildAnnotation(String entityName, String fieldName, 
 			String parameterValue) throws ParsingError {
 		DomainAnnotation annotation = createAnnotation(entityName, fieldName, parameterValue);
-		afterCreation(annotation);
+		afterCreation(entityName, fieldName, annotation);
 		return annotation;
 	}
 	
@@ -135,64 +147,72 @@ public abstract class AnnotationDefinition {
 		}
 	}
 	
-	protected void afterCreation(DomainAnnotation annotation) {
+	protected void afterCreation(String entityName, String fieldName, 
+								 DomainAnnotation annotation) throws ParsingError {		
 		// Override this method to process the annotation after build
 	}
 
 	//-------------------------------------------------------------------------------------------
 	// Annotation application ( on attribute or link )
 	//-------------------------------------------------------------------------------------------
-	protected void checkParamValue(Object paramValue) {
+	protected void checkParamValue(DslModelEntity entity, DslModelAttribute attribute, Object paramValue) throws ParsingError {
+		checkParamValue(entity.getClassName(), attribute.getName(), paramValue);
+	}
+	protected void checkParamValue(DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+		checkParamValue(entity.getClassName(), link.getFieldName(), paramValue);
+	}
+
+	private void checkParamValue(String entityName, String fieldName, Object paramValue) throws ParsingError {
 		switch ( this.paramType ) {
 		case STRING:
 			if ( ! ( paramValue instanceof String ) ) {
-				throw newException("String value expected, actual type is " 
+				throw newException(entityName, fieldName, "String value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case SIZE: // Size is stored as a String
 			if ( ! ( paramValue instanceof String ) ) {
-				throw newException("Size value expected, actual type is " 
+				throw newException(entityName, fieldName, "Size value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case FK_ELEMENT: // FK element is stored as a String
 			if ( ! ( paramValue instanceof String ) ) {
-				throw newException("FK element expected, actual type is " 
+				throw newException(entityName, fieldName, "FK element expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case INTEGER:
 			if ( ! ( paramValue instanceof Integer ) ) {
-				throw newException("Integer value expected, actual type is " 
+				throw newException(entityName, fieldName, "Integer value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case DECIMAL:
 			if ( ! ( paramValue instanceof BigDecimal ) ) {
-				throw newException("BigDecimal value expected, actual type is " 
+				throw newException(entityName, fieldName, "BigDecimal value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case BOOLEAN:
 			if ( ! ( paramValue instanceof Boolean ) ) {
-				throw newException("Boolean value expected, actual type is " 
+				throw newException(entityName, fieldName, "Boolean value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case LIST:
 			if ( ! ( paramValue instanceof List<?> ) ) {
-				throw newException("List value expected, actual type is " 
+				throw newException(entityName, fieldName, "List value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case NONE:
 			if ( paramValue != null ) {
-				throw newException("No value expected, actual value is " + paramValue );
+				throw newException(entityName, fieldName, "No value expected, actual value is " + paramValue );
 			}
 			break;
 		default:
-			throw newException("Unexpected parameter type '" + this.paramType + "'" );
+			throw newException(entityName, fieldName, "Unexpected parameter type '" + this.paramType + "'" );
 		}
 	}
 	
@@ -220,11 +240,11 @@ public abstract class AnnotationDefinition {
 		}
 	}
 	
-	protected int toInt(String s) {
+	protected int toInt(DslModelEntity entity, DslModelAttribute attribute, String s) throws ParsingError {
 		try {
 			return Integer.parseInt(s);
 		} catch (NumberFormatException e) {
-			throw newException("Cannot convert '"+s+"' to int");
+			throw newParamError(entity, attribute, "Cannot convert '"+s+"' to int");
 		}  
 	}
 	
@@ -236,7 +256,7 @@ public abstract class AnnotationDefinition {
 	 * @param attribute
 	 * @param paramValue
 	 */
-	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) {
+	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) throws ParsingError {
 		throw new IllegalStateException("apply(attribute) is not implemented");
 	}
 	
@@ -248,7 +268,7 @@ public abstract class AnnotationDefinition {
 	 * @param link
 	 * @param paramValue
 	 */
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) {
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
 		throw new IllegalStateException("apply(link) is not implemented");
 	}
 	

@@ -17,6 +17,7 @@ package org.telosys.tools.dsl.converter;
 
 import java.util.Collection;
 
+import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
@@ -24,7 +25,6 @@ import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainNeutralType;
-import org.telosys.tools.dsl.parser.model.DomainType;
 
 /**
  * Utility class to convert the "raw model" (built by DSL parser) to the standard "generic model"
@@ -37,14 +37,15 @@ public class AttributesConverter extends AbstractConverter {
 	private final AnnotationsApplicator annotationsApplicator ;
 
 	private final TagsConverter tagsConverter;
+//	private final DslModelErrors errors;
 	
 	/**
 	 * Constructor
 	 * @param model
 	 */
-	public AttributesConverter(DslModel model) {
+	public AttributesConverter(DslModel model, DslModelErrors errors) {
 		super();
-		this.annotationsApplicator = new AnnotationsApplicator(model);
+		this.annotationsApplicator = new AnnotationsApplicator(model, errors);
 		this.tagsConverter = new TagsConverter();
 	}
 

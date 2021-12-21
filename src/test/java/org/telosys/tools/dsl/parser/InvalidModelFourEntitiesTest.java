@@ -1,4 +1,4 @@
-package org.telosys.tools.dsl.parsing.modellevel;
+package org.telosys.tools.dsl.parser;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -31,7 +31,6 @@ public class InvalidModelFourEntitiesTest {
 	private void print(EntityParsingError exception) {
 		if ( exception != null ) {
 			System.out.println("EntityParsingError : " + exception.getMessage() );
-//			for ( FieldParsingError error : exception.getFieldsErrors() ) {
 			for ( ParsingError error : exception.getErrors() ) {
 				System.out.println(" . FieldParsingError : " + error.getMessage() + " [" + error.getEntityName() + "]");
 			}
@@ -50,14 +49,9 @@ public class InvalidModelFourEntitiesTest {
 		} catch (EntityParsingError e) {
 			exception = e;
 		}
-//		// "Entity OK" expected 
-//		assertNull(exception);
-//		assertNotNull(entity);
-//		assertFalse(entity.hasError());
 		assertNotNull(exception);
 		assertNull(entity);
 		print(exception);
-//		assertEquals(1, exception.getFieldsErrors().size() );		
 		assertEquals(1, exception.getErrors().size() );		
 	}
 
@@ -73,7 +67,6 @@ public class InvalidModelFourEntitiesTest {
 		assertNotNull(exception);
 		assertNull(entity);
 		print(exception);
-//		assertEquals(1, exception.getFieldsErrors().size() );		
 		assertEquals(1, exception.getErrors().size() );		
 	}
 
@@ -90,7 +83,6 @@ public class InvalidModelFourEntitiesTest {
 		assertNull(entity);
 		assertNotNull(exception);
 		print(exception);
-//		assertEquals(2, exception.getFieldsErrors().size() );		
 		assertEquals(2, exception.getErrors().size() );		
 	}
 
@@ -106,8 +98,7 @@ public class InvalidModelFourEntitiesTest {
 		assertNull(entity);
 		assertNotNull(exception);
 		print(exception);
-//		assertEquals(4, exception.getFieldsErrors().size() );		
-		assertEquals(4, exception.getErrors().size() );		
+		assertEquals(5, exception.getErrors().size() );		
 	}
 
 }
