@@ -14,10 +14,9 @@ import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainTag;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 
 public class ValidModelOneEntityTest {
 	
@@ -58,11 +57,9 @@ public class ValidModelOneEntityTest {
 		assertEquals(3, tags.size() );
 		assertNotNull(tags.get("Id"));
 		assertNotNull(tags.get("Foo"));
-		assertEquals("abc",tags.get("Foo").getParameterAsString());
-//		assertNull(tags.get("Foo").getParameterAsInteger());
+		assertEquals("abc",tags.get("Foo").getParameter());
 		assertNotNull(tags.get("Bar"));
-		assertEquals("12.34",tags.get("Bar").getParameterAsString());
-//		assertNull(tags.get("Bar").getParameterAsInteger());
+		assertEquals("12.34",tags.get("Bar").getParameter());
 		// Field errors
 		assertFalse(field.hasErrors());
 		
@@ -93,12 +90,6 @@ public class ValidModelOneEntityTest {
 		assertEquals(1, annotations.size() );
 		// Field errors
 		assertFalse(field.hasErrors());
-
-		//		List<String> annotNames = id.getAnnotationNames();
-//		for ( DomainField field : entity.getFields() ) {
-//			
-//		}
-		
 	}
 
 }

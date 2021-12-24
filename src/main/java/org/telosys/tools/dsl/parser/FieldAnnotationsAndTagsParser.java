@@ -20,7 +20,8 @@ import java.util.List;
 import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
 //import org.telosys.tools.dsl.parser.exceptions.AnnotationOrTagError;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
-import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
+import org.telosys.tools.dsl.parser.model.DomainAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainTag;
 
 public class FieldAnnotationsAndTagsParser {
 
@@ -61,13 +62,11 @@ public class FieldAnnotationsAndTagsParser {
 		List<String> elements = splitter.split(annotationsAndTags);
 		for ( String element : elements ) {
 			ParserLogger.log(" . '" + element + "'");
-//			FieldAnnotationOrTagParser annotationOrTagParser = new FieldAnnotationOrTagParser(entityName, fieldName);
-			DomainAnnotationOrTag annotationOrTag;
+//			DomainAnnotationOrTag annotationOrTag;
 			try {
-//				annotationOrTag = annotationOrTagParser.parse(element);
-				annotationOrTag = parseAnnotationOrTag(fieldName, element);
-				result.addAnnotationOrTag(annotationOrTag);
-//			} catch (AnnotationOrTagError e) {
+//				annotationOrTag = parseAnnotationOrTag(fieldName, element);
+//				result.addAnnotationOrTag(annotationOrTag);
+				parseAnnotationOrTag(fieldName, element, result);
 			} catch (ParsingError e) {
 				// invalid annotation or tag 
 				result.addError(e);
@@ -79,16 +78,19 @@ public class FieldAnnotationsAndTagsParser {
 	//--------------------------------------------------------------------------------------------------
 	// moved from FieldAnnotationOrTagParser
 	//--------------------------------------------------------------------------------------------------
-	private DomainAnnotationOrTag parseAnnotationOrTag(String fieldName, String annotationOrTagString) throws ParsingError { //AnnotationOrTagError {
+	private void parseAnnotationOrTag(String fieldName, String annotationOrTagString, FieldAnnotationsAndTags result) throws ParsingError { //AnnotationOrTagError {
 		char firstChar = annotationOrTagString.charAt(0);
 		if (firstChar == '@') {
+			// TAG
 			AnnotationParser annotationParser = new AnnotationParser(entityName, fieldName);
-			return annotationParser.parseAnnotation(annotationOrTagString);
+			DomainAnnotation annotation = annotationParser.parseAnnotation(annotationOrTagString);
+			result.addAnnotation(annotation);
 		} else if (firstChar == '#') {
+			// ANNOTATION
 			TagParser tagParser = new TagParser(entityName, fieldName);
-			return tagParser.parseTag(annotationOrTagString);
+			DomainTag tag = tagParser.parseTag(annotationOrTagString);
+			result.addTag(tag);
 		} else {
-//			throw new AnnotationOrTagError(entityName, fieldName, annotationOrTagString, "must start with '@' or '#'");
 			throw new FieldParsingError(entityName, fieldName, 
 					"invalid element '" + annotationOrTagString + "' must start with '@' or '#'");
 		}

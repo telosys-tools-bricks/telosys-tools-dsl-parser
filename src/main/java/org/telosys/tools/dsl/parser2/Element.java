@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.parser;
+package org.telosys.tools.dsl.parser2;
 
 /**
  * 
@@ -25,10 +25,16 @@ class Element {
 	private final int    lineNumber;
 	private final String content ;
 	
-	protected Element(int lineNumber, String content) {
+	public Element(int lineNumber, String content) {
 		super();
 		this.lineNumber = lineNumber ;
 		this.content = content;
+	}
+	
+	public Element(int lineNumber, char c) {
+		super();
+		this.lineNumber = lineNumber ;
+		this.content = String.valueOf(c);
 	}
 	
 	public int getLineNumber() {

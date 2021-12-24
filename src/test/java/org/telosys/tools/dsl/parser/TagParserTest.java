@@ -7,7 +7,6 @@ import org.telosys.tools.dsl.parser.model.DomainTag;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class TagParserTest {
@@ -30,25 +29,16 @@ public class TagParserTest {
 		tag = parser.parseTag("#Foo");
 		assertEquals("Foo", tag.getName());
 		assertFalse(tag.hasParameter());
-//		assertNull(tag.getParameterAsString());
-//		assertNull(tag.getParameterAsBigDecimal());
-//		assertNull(tag.getParameterAsInteger());
 		
 		tag = parser.parseTag("#FooBar(abc)");
 		assertEquals("FooBar", tag.getName());
 		assertTrue(tag.hasParameter());
-		assertEquals("abc", tag.getParameterAsString());
-//		assertNull(tag.getParameterAsBigDecimal());
-//		assertNull(tag.getParameterAsInteger());
-//		assertNull(tag.getParameterAsBoolean());
+		assertEquals("abc", tag.getParameter());
 
 		tag = parser.parseTag("#Maximum(  123  )");
 		assertEquals("Maximum", tag.getName());
 		assertTrue(tag.hasParameter());
-		assertEquals("123", tag.getParameterAsString());
-//		assertNull(tag.getParameterAsBigDecimal());
-//		assertNull(tag.getParameterAsInteger());
-//		assertNull(tag.getParameterAsBoolean());
+		assertEquals("123", tag.getParameter());
 
 		parseWithExpectedException("#Fo o(123)");
 		parseWithExpectedException("# Foo(123)");

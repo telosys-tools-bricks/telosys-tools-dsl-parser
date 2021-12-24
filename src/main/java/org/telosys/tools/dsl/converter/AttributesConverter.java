@@ -21,6 +21,7 @@ import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -34,8 +35,11 @@ import org.telosys.tools.dsl.parser.model.DomainNeutralType;
  */
 public class AttributesConverter extends AbstractConverter {
 
-	private final AnnotationsApplicator annotationsApplicator ;
+//	private final AnnotationsApplicator annotationsApplicator ;
 
+	private final DslModel dslModel ;
+	private final DslModelErrors dslModelErrors;
+	
 	private final TagsConverter tagsConverter;
 //	private final DslModelErrors errors;
 	
@@ -43,9 +47,11 @@ public class AttributesConverter extends AbstractConverter {
 	 * Constructor
 	 * @param model
 	 */
-	public AttributesConverter(DslModel model, DslModelErrors errors) {
+	public AttributesConverter(DslModel dslModel, DslModelErrors errors) {
 		super();
-		this.annotationsApplicator = new AnnotationsApplicator(model, errors);
+		this.dslModel = dslModel;
+		this.dslModelErrors = errors;
+//		this.annotationsApplicator = new AnnotationsApplicator(dslModel, errors);
 		this.tagsConverter = new TagsConverter();
 	}
 
@@ -169,12 +175,22 @@ public class AttributesConverter extends AbstractConverter {
 	private void step2ApplyAnnotations(DslModelEntity dslEntity, DslModelAttribute dslAttribute, DomainField domainField) {
 		if (domainField.getAnnotations() != null) {
 			log("Converter : annotations found");
-			Collection<DomainAnnotation> fieldAnnotations = domainField.getAnnotations().values();
-		/***
-			AttribAnnotationsProcessor annotationsConverter = new AttribAnnotationsProcessor(domainEntity.getName());
-			annotationsConverter.applyAnnotationsForNeutralType(genericAttribute, fieldAnnotations);
-		***/
-			annotationsApplicator.applyAnnotationsToAttribute(dslEntity, dslAttribute, fieldAnnotations);
+//			Collection<DomainAnnotation> fieldAnnotations = domainField.getAnnotations().values();
+//		/***
+//			AttribAnnotationsProcessor annotationsConverter = new AttribAnnotationsProcessor(domainEntity.getName());
+//			annotationsConverter.applyAnnotationsForNeutralType(genericAttribute, fieldAnnotations);
+//		***/
+//			annotationsApplicator.applyAnnotationsToAttribute(dslEntity, dslAttribute, fieldAnnotations);
+			
+			Collection<DomainAnnotation> annotations = domainField.getAnnotations().values();
+			for (DomainAnnotation annotation : annotations) {
+				try {
+					annotation.applyToAttribute(dslModel, dslEntity, dslAttribute);
+				} catch (ParsingError e) {
+					dslModelErrors.addError(e.getEntityName(), e.getErrorMessage());
+				}
+			}		
+			
 		} else {
 			log("Converter : no annotation");
 		}

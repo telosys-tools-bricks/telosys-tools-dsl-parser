@@ -76,11 +76,9 @@ public class ValidModelWithSpacesTest {
 		assertEquals(3, tags.size() );
 		assertNotNull(tags.get("Id"));
 		assertNotNull(tags.get("Foo"));
-		assertEquals("abc ",tags.get("Foo").getParameterAsString());
-//		assertNull(tags.get("Foo").getParameterAsInteger());
+		assertEquals("abc ",tags.get("Foo").getParameter());
 		assertNotNull(tags.get("Bar"));
-		assertEquals("12.34",tags.get("Bar").getParameterAsString());
-//		assertNull(tags.get("Bar").getParameterAsInteger());
+		assertEquals("12.34",tags.get("Bar").getParameter());
 		// Field errors
 		assertFalse(field.hasErrors());
 		
@@ -133,16 +131,11 @@ public class ValidModelWithSpacesTest {
 
 		assertTrue(field.hasTag(new DomainTag("Foo")));
 		assertNotNull(tags.get("Foo"));
-//		assertNull(tags.get("Foo").getParameterAsString());
-//		assertNull(tags.get("Foo").getParameterAsInteger());
 		
 		assertTrue(field.hasTag(new DomainTag("MyTag")));
 		assertNotNull(tags.get("MyTag"));
 		assertTrue(tags.get("MyTag").hasParameter());
-		assertEquals("123", tags.get("MyTag").getParameterAsString());
-//		assertNull(tags.get("MyTag").getParameterAsInteger()); // tag param is always STRING
-//		assertNull(tags.get("MyTag").getParameterAsBigDecimal()); // tag param is always STRING
-
+		assertEquals("123", tags.get("MyTag").getParameter());
 	}
 
 }

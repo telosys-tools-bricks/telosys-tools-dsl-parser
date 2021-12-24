@@ -40,7 +40,8 @@ public class TagsConverter {
 			// v 3.4.0
 			String value = "";
 			if ( tag.hasParameter() ) {
-				value = tag.getParameterAsString();
+//				value = tag.getParameterAsString();
+				value = tag.getParameter();
 			}
 			newTags.put(name, value);
 		}

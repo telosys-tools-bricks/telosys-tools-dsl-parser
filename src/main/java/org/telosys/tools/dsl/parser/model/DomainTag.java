@@ -15,18 +15,74 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
-public class DomainTag extends DomainAnnotationOrTag {
+public class DomainTag {
 
-    public DomainTag(String name) {
-    	super(name);
-    }
-    
+	private final String name;
+	private final String parameter;
+
+    /**
+     * Constructor : tag with parameter
+     * @param name
+     * @param param
+     */
     public DomainTag(String name, String param) {
-    	super(name,param);
+    	super();
+		this.name = name;
+		this.parameter = param;
     }
+
+    /**
+     * Constructor : tag without parameter
+     * @param name
+     * @param param
+     */
+    public DomainTag(String name) {
+    	super();
+		this.name = name;
+		this.parameter = null;
+    }
+
+	//-------------------------------------------------------------------------
+	// Getters
+	//-------------------------------------------------------------------------
+
+    /**
+	 * Returns the tag name ( without '#' )
+	 * 
+	 * @return
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Returns true if the tag has a parameter
+	 * 
+	 * @return
+	 */
+	public boolean hasParameter() {
+		return this.parameter != null;
+	}
+
+	/**
+	 * Returns the tag parameter <br>
+	 * 
+	 * @return
+	 */
+	public String getParameter() {
+		return parameter;
+	}
     
     @Override
     public String toString() {
-    	return "#" + super.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append("#");
+		sb.append(name);
+		if (this.parameter != null) {
+			sb.append("(");
+			sb.append(parameter);
+			sb.append(")");
+		}
+		return sb.toString();
     }
 }

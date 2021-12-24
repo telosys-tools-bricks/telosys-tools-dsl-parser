@@ -22,9 +22,9 @@ import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
 import org.telosys.tools.dsl.converter.link.JoinColumnsUtil;
 import org.telosys.tools.dsl.model.DslModel;
-import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -38,11 +38,12 @@ import org.telosys.tools.generic.model.enums.Optional;
 
 public class LinksConverter extends AbstractConverter {
 
-	private final DslModel    dslModel;
+	private final DslModel       dslModel;
+	private final DslModelErrors dslModelErrors;
 	
 	private int linkIdCounter = 0;
 
-	private final AnnotationsApplicator annotationsApplicator ;
+//	private final AnnotationsApplicator annotationsApplicator ;
 
 	private final TagsConverter tagsConverter;
 	
@@ -54,7 +55,8 @@ public class LinksConverter extends AbstractConverter {
 	public LinksConverter(DslModel dslModel, DslModelErrors errors) {
 		super();
 		this.dslModel = dslModel;
-		this.annotationsApplicator = new AnnotationsApplicator(dslModel, errors);
+		this.dslModelErrors = errors ;
+//		this.annotationsApplicator = new AnnotationsApplicator(dslModel, errors);
 		this.tagsConverter = new TagsConverter();
 	}
 
@@ -165,10 +167,19 @@ public class LinksConverter extends AbstractConverter {
 		// Apply annotations usable for link ( @Embedded @Optional @FetchTypeLazy @FetchTypeEager etc ) 
 		if (domainField.getAnnotations() != null) {
 			log(domainField.getAnnotations().size() + " annotation(s) found");
-//			LinksAnnotationsProcessor annotationsConverter = new LinksAnnotationsProcessor(this.dslModel);
-//			annotationsConverter.applyAnnotationsForLink(dslEntity, dslLink, domainEntityField.getAnnotations().values());
-			Collection<DomainAnnotation> fieldAnnotations = domainField.getAnnotations().values();
-			annotationsApplicator.applyAnnotationsToLink(dslEntity, dslLink, fieldAnnotations);
+////			LinksAnnotationsProcessor annotationsConverter = new LinksAnnotationsProcessor(this.dslModel);
+////			annotationsConverter.applyAnnotationsForLink(dslEntity, dslLink, domainEntityField.getAnnotations().values());
+//			Collection<DomainAnnotation> fieldAnnotations = domainField.getAnnotations().values();			
+//			annotationsApplicator.applyAnnotationsToLink(dslEntity, dslLink, fieldAnnotations);
+
+			Collection<DomainAnnotation> annotations = domainField.getAnnotations().values();
+			for (DomainAnnotation annotation : annotations) {
+				try {
+					annotation.applyToLink(dslModel, dslEntity, dslLink);
+				} catch (ParsingError e) {
+					dslModelErrors.addError(e.getEntityName(), e.getErrorMessage());
+				}
+			}
 		} else {
 			log("no annotation");
 		}

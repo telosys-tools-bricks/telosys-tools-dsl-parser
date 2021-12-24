@@ -5,12 +5,10 @@ import java.math.BigDecimal;
 import org.junit.Test;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
-import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class AnnotationParserTest {
@@ -28,7 +26,7 @@ public class AnnotationParserTest {
 	@Test
 	public void testParseAnnotations() throws ParsingError {
 		AnnotationParser parser = getParser();
-		DomainAnnotationOrTag annotation ;
+		DomainAnnotation annotation ;
 		
 		annotation = parser.parseAnnotation("@Id");
 		assertEquals("Id", annotation.getName());
@@ -88,7 +86,7 @@ public class AnnotationParserTest {
 	@Test
 	public void testParseAnnotationDbSize() throws ParsingError {
 		AnnotationParser parser = getParser();
-		DomainAnnotationOrTag annotation ;
+		DomainAnnotation annotation ;
 		
 		annotation = parser.parseAnnotation("@DbSize(22)");
 		assertEquals("DbSize", annotation.getName());
@@ -110,7 +108,7 @@ public class AnnotationParserTest {
 	@Test
 	public void testParseAnnotationSize() throws ParsingError {
 		AnnotationParser parser = getParser();
-		DomainAnnotationOrTag annotation ;
+		DomainAnnotation annotation ;
 		
 		annotation = parser.parseAnnotation("@Size(22 )"); 
 		assertNotNull(annotation);

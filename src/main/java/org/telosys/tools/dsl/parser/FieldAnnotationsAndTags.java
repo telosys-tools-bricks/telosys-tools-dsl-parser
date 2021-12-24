@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
-import org.telosys.tools.dsl.parser.model.DomainAnnotationOrTag;
 import org.telosys.tools.dsl.parser.model.DomainTag;
 
 public class FieldAnnotationsAndTags {
@@ -39,13 +38,21 @@ public class FieldAnnotationsAndTags {
 		this.errors = new LinkedList<>();
 	}
 
-	public void addAnnotationOrTag(DomainAnnotationOrTag annotationOrTag) {
-		if ( annotationOrTag instanceof DomainAnnotation) {
-			annotations.add((DomainAnnotation)annotationOrTag);
-		}
-		else if ( annotationOrTag instanceof DomainTag) {
-			tags.add((DomainTag)annotationOrTag);
-		}
+//	public void addAnnotationOrTag(DomainAnnotationOrTag annotationOrTag) {
+//		if ( annotationOrTag instanceof DomainAnnotation) {
+//			annotations.add((DomainAnnotation)annotationOrTag);
+//		}
+//		else if ( annotationOrTag instanceof DomainTag) {
+//			tags.add((DomainTag)annotationOrTag);
+//		}
+//	}
+	
+	public void addAnnotation(DomainAnnotation annotation) {
+		annotations.add(annotation);
+	}
+	
+	public void addTag(DomainTag tag) {
+		tags.add(tag);
 	}
 	
 	protected void addError(ParsingError error) {
