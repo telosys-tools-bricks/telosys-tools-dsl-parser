@@ -26,12 +26,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.dsl.DslModelUtil;
-import org.telosys.tools.dsl.parser.EntityFileParsingResult;
 import org.telosys.tools.dsl.parser.ParserLogger;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 
 /**
- * Telosys DSL entity parser
+ * Telosys DSL : entity file parser returning a list of grammar elements 
  *
  * @author Laurent GUERIN
  * 
@@ -42,6 +41,7 @@ public class EntityElementsParser {
 	private static final int END_OF_ELEMENT = 1;
 	private static final int END_OF_LINE = 2;
 	private static final int COMMENT = 3;
+	private static final int SEPARATOR = 4;
 	
 
 	private static final char SPACE = 32;
@@ -85,7 +85,6 @@ public class EntityElementsParser {
 		}
 		log("parse() : File : " + entityFile.getAbsolutePath());
 
-		//List<String> lines = readAllLines(entityFile.getAbsolutePath());
 		return readAllElements(entityFile.getAbsolutePath());
 	}
 	
@@ -132,6 +131,11 @@ public class EntityElementsParser {
 				keepElement(elements, sb, state);
 				sb = new StringBuilder();
 			}
+			else if ( r == SEPARATOR ) {
+				keepElement(elements, sb, state); // SEPARATOR => end of current element
+				sb = new StringBuilder();
+				keepSeparatorElement(elements, c, state); // Each SEPARATOR is an element => keep it 
+			}
 			else if ( r == END_OF_LINE ) {
 				keepElement(elements, sb, state);
 				return;
@@ -146,6 +150,10 @@ public class EntityElementsParser {
 		keepElement(elements, sb, state);
 	}
 
+	private void keepSeparatorElement(List<Element> elements, char c, State state) {
+		elements.add(new Element(state.getLineNumber(), String.valueOf(c)));
+		state.reset();
+	}
 	private void keepElement(List<Element> elements, StringBuilder sb, State state) {
 		if ( sb.length() > 0 ) { 
 			elements.add(new Element(state.getLineNumber(), sb.toString()));
@@ -156,8 +164,7 @@ public class EntityElementsParser {
 	private int processCharacterOutOfAnnotationOrTagParam(char c, StringBuilder sb, State state ) {
 		logChar(c);
 		if ( c == '{' || c == '}' || c == ';' || c == ':' ) {
-			sb.append(c);
-			return END_OF_ELEMENT;
+			return SEPARATOR;
 		}
 		else if ( c == '@' ) {
 			state.setInAnnotation();

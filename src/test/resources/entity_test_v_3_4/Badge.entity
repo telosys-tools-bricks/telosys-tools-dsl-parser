@@ -1,0 +1,6 @@
+
+// Test without blanks as separators
+Badge {
+	id:int{@Id @Label("abc;de}f")  @DefaultValue( 'a;z))e'  ) };  
+	name:string;
+}

@@ -30,7 +30,6 @@ class State {
 	private boolean inAnnotationOrTagParam = false ;
 	private boolean inDoubleQuote = false ;
 	private boolean inSingleQuote = false ;
-//	private boolean inTagParam = false ;
 	
 	public State(int lineNumber) {
 		super();
@@ -79,13 +78,6 @@ class State {
 		this.previousChar = c;
 	}
 	
-//	public boolean inAnnotationParam() {
-//		return inAnnotationParam;
-//	}
-	
-//	public boolean inTagParam() {
-//		return inTagParam ;
-//	}
 	public void toggleDoubleQuote() {
 		inDoubleQuote = ! inDoubleQuote ;
 	}

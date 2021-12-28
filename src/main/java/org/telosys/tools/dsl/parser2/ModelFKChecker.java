@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.telosys.tools.dsl.parser;
+package org.telosys.tools.dsl.parser2;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -26,17 +26,13 @@ import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 
-
-
-public class ParserFKChecker {
+public class ModelFKChecker {
 
 	private class FullFK {
 		String entityName ;
 		String fieldName ;
-//		DomainFK fk;
 		FkElement fk;
 		
-//		protected FullFK(DomainEntity entity, DomainField field, DomainFK fk) {
 		protected FullFK(DomainEntity entity, DomainField field, FkElement fk) {
 			super();
 			this.entityName = entity.getName();
@@ -50,15 +46,12 @@ public class ParserFKChecker {
 		protected String getFieldName() {
 			return fieldName;
 		}
-//		protected DomainFK getFk() {
-//			return fk;
-//		}
 		protected FkElement getFkElement() {
 			return fk;
 		}
 	}
 
-	public void checkNoDuplicateFK(DomainModel model, List<EntityParsingError> errors) {
+	public void checkNoDuplicateFK(DomainModel model, ParsingErrors errors) {
 		Map<String,List<FullFK>> map = buildFKMap(model);
 		for (String fkName : map.keySet() ) {
 			List<FullFK> list = map.get(fkName);
@@ -70,7 +63,7 @@ public class ParserFKChecker {
 							fullFK.getEntityName(), 
 							fullFK.getFieldName() 
 							  + " : Duplicated FK name '" + fkName + "' ");
-					errors.add(err);
+					errors.addError(err);
 				}
 			}
 		}
@@ -80,7 +73,6 @@ public class ParserFKChecker {
 		Map<String,List<FullFK>> map = new HashMap<>();
 		for (DomainEntity entity : model.getEntities()) {
 			for (DomainField field : entity.getFields() ) {
-//				for (DomainFK fk : field.getFKDeclarations() ) {
 				for (FkElement fk : field.getFkElements() ) {
 					FullFK fullFK = new FullFK(entity, field, fk);
 					String fkName = fk.getFkName();
@@ -120,13 +112,4 @@ public class ParserFKChecker {
 		return false ; // no real duplicate FK found
 	}
 
-//	private String buildFKOrigin(DomainEntity entity, DomainField field, DomainFK fk) {
-//		StringBuilder sb = new StringBuilder();
-//		sb.append(entity.getName());
-//		sb.append(".");
-//		sb.append(field.getName());
-//		sb.append(":");
-//		sb.append(fk.getFkName());
-//		return sb.toString();
-//	}
 }

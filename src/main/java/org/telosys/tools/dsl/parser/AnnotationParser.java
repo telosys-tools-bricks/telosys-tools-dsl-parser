@@ -33,7 +33,7 @@ public class AnnotationParser extends AnnotationAndTagParser {
 	 * @param entityName
 	 * @param fieldName
 	 */
-	protected AnnotationParser(String entityName, String fieldName) {
+	public AnnotationParser(String entityName, String fieldName) {
 		super(entityName, fieldName);
 	}
 	
@@ -42,7 +42,7 @@ public class AnnotationParser extends AnnotationAndTagParser {
 	 * 
 	 * @param entityName
 	 */
-	protected AnnotationParser(String entityName) {
+	public AnnotationParser(String entityName) {
 		super(entityName);
 	}
 	

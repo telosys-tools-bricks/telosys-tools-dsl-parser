@@ -15,6 +15,8 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +34,9 @@ public class DomainEntity {
     
     private String databaseTable = "";
     
+    private final Map<String, DomainAnnotation> annotations = new HashMap<>(); // V 3.4.0
+    private final Map<String, DomainTag> tags = new HashMap<>(); // V 3.4.0
+
     /**
      * Map of fields used for direct access by field name and to check uniqueness 
      */
@@ -67,7 +72,38 @@ public class DomainEntity {
 	public void setDatabaseTable(String databaseTable) {
 		this.databaseTable = databaseTable;
 	}
-
+    /**
+     * Check if the given annotation is already defined in the field
+     * @param annotation
+     * @return
+     */
+    public boolean hasAnnotation(DomainAnnotation annotation) {
+    	return annotations.containsKey(annotation.getName());
+    }
+    /**
+     * Add a new annotation to the field 
+     * @param annotation
+     */
+    public void addAnnotation(DomainAnnotation annotation) {
+    	annotations.put(annotation.getName(), annotation);
+    }
+        
+    /**
+     * Check if the given tag is already defined in the field
+     * @param tag
+     * @return
+     */
+    public boolean hasTag(DomainTag tag) {
+    	return tags.containsKey(tag.getName());
+    }
+    /**
+     * Add a new tag to the field 
+     * @param tag
+     */
+    public void addTag(DomainTag tag) {
+    	tags.put(tag.getName(), tag);
+    }
+    
     //-------------------------------------------------------------------------------------
     // FIELDS
     //-------------------------------------------------------------------------------------
@@ -102,7 +138,42 @@ public class DomainEntity {
     public int getNumberOfFields() {
         return fieldsMap.size();
     }
-    
+
+    //------------------------------------------------------------------------
+    // ANNOTATIONS
+    //------------------------------------------------------------------------
+    /**
+     * Returns all the annotation names (in alphabetical order)
+     *
+     * @return
+     */
+    public final List<String> getAnnotationNames() {
+        List<String> names = new LinkedList<>(annotations.keySet());
+        Collections.sort(names);
+        return names;
+    }
+
+    /**
+     * Return annotations
+     * @return annotations
+     */
+    public Map<String, DomainAnnotation> getAnnotations() {
+        return this.annotations;
+    }
+
+    //------------------------------------------------------------------------
+    // TAGS
+    //------------------------------------------------------------------------
+    public final List<String> getTagNames() {
+        List<String> names = new LinkedList<>(tags.keySet());
+        Collections.sort(names);
+        return names;
+    }
+
+    public Map<String, DomainTag> getTags() {
+        return this.tags;
+    }
+
     //-------------------------------------------------------------------------------------
     // ERRORS
     //-------------------------------------------------------------------------------------
@@ -137,6 +208,7 @@ public class DomainEntity {
     	sb.append(" {");
         for (DomainField field : fieldsMap.values()) {
         	sb.append("\n");
+        	sb.append("  ");
         	sb.append(field.toString());
         }
     	sb.append("\n");

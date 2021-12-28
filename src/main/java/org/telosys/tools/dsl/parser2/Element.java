@@ -45,6 +45,18 @@ class Element {
 		return content;
 	}
 
+	public boolean startsWithAnnotationPrefix() {
+		return content != null && content.startsWith("@") ; 
+	}
+	
+	public boolean startsWithTagPrefix() {
+		return content != null && content.startsWith("#") ; 
+	}
+	
+	public boolean equals(String s) {
+		return content != null && content.equals(s);
+	}
+	
 	@Override
 	public String toString() {
 		return "Element (line " + lineNumber + ") '" + content + "'" ;

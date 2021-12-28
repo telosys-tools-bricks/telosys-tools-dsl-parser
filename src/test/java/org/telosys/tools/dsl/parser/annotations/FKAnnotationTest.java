@@ -7,7 +7,6 @@ import org.telosys.tools.dsl.parser.commons.FkElement;
 import org.telosys.tools.dsl.parser.exceptions.AnnotationParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
-import org.telosys.tools.dsl.parser.model.DomainFK;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

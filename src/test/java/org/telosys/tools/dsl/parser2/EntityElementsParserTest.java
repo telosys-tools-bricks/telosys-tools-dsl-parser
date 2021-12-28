@@ -16,7 +16,7 @@ public class EntityElementsParserTest {
 		System.out.println(msg);
 	}
 	
-	private void parseEntityFile(String entityFile) throws EntityParsingError {
+	private List<Element> parseEntityFile(String entityFile) throws EntityParsingError {
 		log("\nENTITY FILE : " + entityFile);
 		EntityElementsParser parser = new EntityElementsParser(entityFile);
 		List<Element> elements = parser.parseElements();
@@ -24,6 +24,19 @@ public class EntityElementsParserTest {
 		for ( Element e : elements) {
 			log(" . " + e);
 		}
+		return elements;
+	}
+
+	@Test
+	public void testEntityElementsParserEmployee() throws EntityParsingError {
+		List<Element> elements = parseEntityFile("src/test/resources/entity_test_v_3_4/Employee.entity");
+		assertEquals(83, elements.size());
+	}
+
+	@Test
+	public void testEntityElementsParserBadge() throws EntityParsingError {
+		List<Element> elements = parseEntityFile("src/test/resources/entity_test_v_3_4/Badge.entity");
+		assertEquals(16, elements.size());
 	}
 
 	@Test

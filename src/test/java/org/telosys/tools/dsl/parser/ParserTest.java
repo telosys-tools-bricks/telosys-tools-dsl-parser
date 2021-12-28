@@ -9,7 +9,6 @@ import org.telosys.tools.dsl.parser.commons.FkElement;
 import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.model.DomainFK;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.reporting.ErrorsReport;
 
