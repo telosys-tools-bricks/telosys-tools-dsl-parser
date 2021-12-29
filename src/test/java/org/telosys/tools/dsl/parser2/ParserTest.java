@@ -1,20 +1,15 @@
 package org.telosys.tools.dsl.parser2;
 
-import java.io.File;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.EntityFileParser;
-import org.telosys.tools.dsl.parser.EntityFileParsingResult;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class ParserTest {
 	
@@ -84,8 +79,8 @@ public class ParserTest {
 
 		assertEquals("Badge", entity.getName() );
 		assertEquals(2, entity.getNumberOfFields() );
-		assertTrue(entity.getAnnotationNames().isEmpty() );
-		assertTrue(entity.getTagNames().isEmpty() );
+		assertFalse(entity.getAnnotationNames().isEmpty() );
+		assertFalse(entity.getTagNames().isEmpty() );
 	}
 
 //	@Test (expected=EntityParsingError.class)

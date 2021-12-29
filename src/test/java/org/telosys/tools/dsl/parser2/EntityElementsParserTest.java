@@ -3,12 +3,8 @@ package org.telosys.tools.dsl.parser2;
 import java.util.List;
 
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.EntityFileParser;
-import org.telosys.tools.dsl.parser.EntityFileParsingResult;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class EntityElementsParserTest {
 	
@@ -16,37 +12,38 @@ public class EntityElementsParserTest {
 		System.out.println(msg);
 	}
 	
-	private List<Element> parseEntityFile(String entityFile) throws EntityParsingError {
+	private List<Element> parseEntityFile(String entityFile) throws ParserError {
 		log("\nENTITY FILE : " + entityFile);
 		EntityElementsParser parser = new EntityElementsParser(entityFile);
 		List<Element> elements = parser.parseElements();
-		log("ELEMENTS :");
+		log("ELEMENTS : " );
 		for ( Element e : elements) {
 			log(" . " + e);
 		}
+		log(" " + elements.size() + " element(s)");
 		return elements;
 	}
 
 	@Test
-	public void testEntityElementsParserEmployee() throws EntityParsingError {
+	public void testEntityElementsParserEmployee() throws ParserError {
 		List<Element> elements = parseEntityFile("src/test/resources/entity_test_v_3_4/Employee.entity");
 		assertEquals(83, elements.size());
 	}
 
 	@Test
-	public void testEntityElementsParserBadge() throws EntityParsingError {
+	public void testEntityElementsParserBadge() throws ParserError {
 		List<Element> elements = parseEntityFile("src/test/resources/entity_test_v_3_4/Badge.entity");
-		assertEquals(16, elements.size());
+		assertEquals(19, elements.size());
 	}
 
 	@Test
-	public void testEntityFileParserV33() throws EntityParsingError {
+	public void testEntityFileParserV33() throws ParserError {
 		parseEntityFile("src/test/resources/entity_test_v_3_3/Country.entity");
 		parseEntityFile("src/test/resources/entity_test_v_3_3/Employee.entity");
 	}
 
 	@Test
-	public void testEntityFileParserV32() throws EntityParsingError {
+	public void testEntityFileParserV32() throws ParserError {
 		parseEntityFile("src/test/resources/entity_test_v_3_2/Employee.entity");
 	}
 

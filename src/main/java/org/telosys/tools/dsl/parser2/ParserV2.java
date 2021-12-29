@@ -22,10 +22,6 @@ import java.util.Properties;
 
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.DslModelUtil;
-import org.telosys.tools.dsl.parser.ParserFKChecker;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 
@@ -65,7 +61,7 @@ public class ParserV2 {
 		//--- Step 0 : check model file validity
 		try {
 			checkModelFile(file);
-		} catch (ParsingError e) {
+		} catch (ParserError e) {
 			errors.addError(e);
 			return new ParsingResult(null, errors);
 		}
@@ -128,18 +124,18 @@ public class ParserV2 {
 	 * @param file
 	 * @throws ModelParsingError
 	 */
-	protected void checkModelFile(File file) throws ModelParsingError {
+	protected void checkModelFile(File file) throws ParserError {
 		if (!file.exists()) {
 			String error = "File '" + file.toString() + "' not found";
-			throw new ModelParsingError(error);
+			throw new ParserError(error);
 		}
 		if (!file.isFile()) {
 			String error = "'" + file.toString() + "' is not a file";
-			throw new ModelParsingError(error);
+			throw new ParserError(error);
 		}
 		if (!file.getName().endsWith(DOT_MODEL)) {
 			String error = "File '" + file.toString() + "' doesn't end with '" + DOT_MODEL + "'";
-			throw new ModelParsingError(error);
+			throw new ParserError(error);
 		}
 	}
 
@@ -172,7 +168,7 @@ public class ParserV2 {
 		List<Element> elements;
 		try {
 			elements = elementsParser.parseElements();
-		} catch (ParsingError e) {
+		} catch (ParserError e) {
 			errors.addError(e);
 			return null;
 		}

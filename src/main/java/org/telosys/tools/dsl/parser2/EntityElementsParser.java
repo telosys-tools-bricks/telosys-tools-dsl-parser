@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.parser.ParserLogger;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
+//import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 
 /**
  * Telosys DSL : entity file parser returning a list of grammar elements 
@@ -79,9 +79,9 @@ public class EntityElementsParser {
 	 * @return
 	 * @throws EntityParsingError
 	 */
-	public List<Element> parseElements() throws EntityParsingError  {
+	public List<Element> parseElements() throws ParserError  {
 		if ( ! entityFile.exists() ) {
-			throw new EntityParsingError(entityNameFromFileName, "File not found");
+			throw new ParserError(entityNameFromFileName, "File not found");
 		}
 		log("parse() : File : " + entityFile.getAbsolutePath());
 
@@ -94,7 +94,7 @@ public class EntityElementsParser {
 	 * @return
 	 * @throws EntityParsingError
 	 */
-	protected List<Element> readAllElements(String filePath) throws EntityParsingError {
+	protected List<Element> readAllElements(String filePath) throws ParserError {
 		Path path = Paths.get(filePath); 
 		try (BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8)) { 
 			List<Element> elements = new LinkedList<>();
@@ -106,9 +106,9 @@ public class EntityElementsParser {
 			}
 			return elements;
 		} catch (IOException e) {
-			throw new EntityParsingError(entityNameFromFileName, "IOException : " + e.getMessage() );
-		} catch (Exception e) {
-			throw new EntityParsingError(entityNameFromFileName, "Exception : " + e.getMessage() );
+			throw new ParserError(entityNameFromFileName, "IOException : " + e.getMessage() );
+//		} catch (Exception e) {
+//			throw new EntityParsingError(entityNameFromFileName, "Exception : " + e.getMessage() );
 		}
 	}
 

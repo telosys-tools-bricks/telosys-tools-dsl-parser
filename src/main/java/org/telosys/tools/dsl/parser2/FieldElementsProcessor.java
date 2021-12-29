@@ -18,10 +18,6 @@ package org.telosys.tools.dsl.parser2;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.telosys.tools.dsl.parser.AnnotationParser;
-import org.telosys.tools.dsl.parser.TagParser;
-import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntityType;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -57,13 +53,13 @@ public class FieldElementsProcessor {
 	 * @return the new field (or null if it's impossible to create a new field)
 	 * @throws ParsingError
 	 */
-	public DomainField processFieldElements(List<Element> elements, ParsingErrors errors) { // throws ParsingError {
+	public DomainField processFieldElements(List<Element> elements, ParsingErrors errors) {
 		
 		// Build field with NAME and TYPE
 		DomainField field;
 		try {
 			field = buildField(elements);
-		} catch (FieldParsingError e) {
+		} catch (ParserError e) {
 			errors.addError(e);
 			return null;
 		}
@@ -72,7 +68,7 @@ public class FieldElementsProcessor {
 		List<Element> additionalElements;
 		try {
 			additionalElements = extractAdditionalElements(field.getName(), elements);
-		} catch (FieldParsingError e) {
+		} catch (ParserError e) {
 			errors.addError(e);
 			return field;
 		}
@@ -81,14 +77,14 @@ public class FieldElementsProcessor {
 		for ( Element element : additionalElements ) {
 			try {
 				processAnnotationOrTag(field, element) ;
-			} catch (ParsingError e) {
+			} catch (ParserError e) {
 				errors.addError(e);
 			}
 		}
 		return field;
 	}
 	
-	private DomainField buildField(List<Element> elements) throws FieldParsingError {
+	private DomainField buildField(List<Element> elements) throws ParserError {
 		if ( elements.size() >= 3 ) {
 			String fieldName = parseFieldName(elements.get(0));
 			parseSeparator(fieldName, elements.get(1));
@@ -101,28 +97,28 @@ public class FieldElementsProcessor {
 			if ( ! elements.isEmpty() ) {
 				fieldName = elements.get(0).getContent();
 			}
-			throw new FieldParsingError(entityName, fieldName, "invalid field definition");
+			throw new ParserError(entityName, 0, fieldName, "invalid field definition");
 		}
 	}
 	
-	private String parseFieldName(Element element) throws FieldParsingError {
+	private String parseFieldName(Element element) throws ParserError {
 		String fieldName = element.getContent();
 		for ( char c : fieldName.toCharArray() ) {
 			if ( ! ( Character.isLetterOrDigit(c) || c == '_') ) {
-				throw new FieldParsingError(entityName, fieldName, "invalid field name (char '" + c + "')");
+				throw new ParserError(entityName, element.getLineNumber(), fieldName, "invalid field name (char '" + c + "')");
 			}
 		}
 		return fieldName; // Field name is OK 
 	}
 	
-	private void parseSeparator(String fieldName, Element element) throws FieldParsingError {
+	private void parseSeparator(String fieldName, Element element) throws ParserError {
 		String s = element.getContent();
 		if ( ! ":".equals(s) ) {
-			throw new FieldParsingError(entityName, fieldName, "invalid separator '" + s + "' (':' expected)");
+			throw new ParserError(entityName, element.getLineNumber(), fieldName, "invalid separator '" + s + "' (':' expected)");
 		}
 	}
 	
-	private DomainType parseFieldType(String fieldName, Element element) throws FieldParsingError {
+	private DomainType parseFieldType(String fieldName, Element element) throws ParserError {
 		String typeName = element.getContent();
 		if (DomainNeutralTypes.exists(typeName)) { 
 			// Simple neutral type ( string, int, date, etc )
@@ -131,11 +127,11 @@ public class FieldElementsProcessor {
 			// Entity type (it is supposed to be known ) eg : 'Book', 'Car', etc
 			return new DomainEntityType(typeName); 
 		} else {
-			throw new FieldParsingError(entityName, fieldName, "invalid type '" + typeName + "'");
+			throw new ParserError(entityName, element.getLineNumber(), fieldName, "invalid type '" + typeName + "'");
 		}
 	}
 	
-	protected List<Element> extractAdditionalElements(String fieldName, List<Element> elements) throws FieldParsingError {
+	protected List<Element> extractAdditionalElements(String fieldName, List<Element> elements) throws ParserError {
 		List<Element> selection = new LinkedList<>();
 		
 		boolean inAnnotationsAndTags = false;
@@ -147,14 +143,14 @@ public class FieldElementsProcessor {
 			if ( position > 3 ) { // Skip "field name", ":" and "field type"
 				if ( element.equals("{") ) {
 					if ( openingBracePosition != 0 ) {
-						throw new FieldParsingError(entityName, fieldName, "multiple '{' ");
+						throw new ParserError(entityName, element.getLineNumber(), fieldName, "multiple '{' ");
 					}
 					inAnnotationsAndTags = true ;
 					openingBracePosition = position ;
 				}
 				else if ( element.equals("}") ) {
 					if ( closingBracePosition != 0 ) {
-						throw new FieldParsingError(entityName, fieldName, "multiple '}' ");
+						throw new ParserError(entityName, element.getLineNumber(), fieldName, "multiple '}' ");
 					}
 					inAnnotationsAndTags = false ;
 					closingBracePosition = position ;
@@ -165,7 +161,7 @@ public class FieldElementsProcessor {
 					}
 					else {
 						// ERROR
-						throw new FieldParsingError(entityName, fieldName, 
+						throw new ParserError(entityName, element.getLineNumber(), fieldName, 
 								"unexpected element '" + element.getContent() + "' out of {...}");
 					}
 				}
@@ -174,21 +170,21 @@ public class FieldElementsProcessor {
 		return selection;
 	}
 	
-	private void processAnnotationOrTag(DomainField field, Element element) throws ParsingError {
+	private void processAnnotationOrTag(DomainField field, Element element) throws ParserError {
 		if ( element.startsWithAnnotationPrefix() ) {
-			AnnotationParser annotationParser = new AnnotationParser(entityName, field.getName());
-			DomainAnnotation annotation = annotationParser.parseAnnotation(element.getContent());
+			AnnotationProcessor annotationParser = new AnnotationProcessor(entityName, field.getName());
+			DomainAnnotation annotation = annotationParser.parseAnnotation(element);
 			field.addAnnotation(annotation);
 		}
 		else if ( element.startsWithTagPrefix() ) {
-			TagParser tagParser = new TagParser(entityName, field.getName());
-			DomainTag tag = tagParser.parseTag(element.getContent());
+			TagProcessor tagParser = new TagProcessor(entityName, field.getName());
+			DomainTag tag = tagParser.parseTag(element);
 			field.addTag(tag);
 		}
 		else {
 			// ERROR
-			throw new FieldParsingError(entityName, field.getName(), "invalid element '" + element.getContent() + "'"
-					+ "(annotation or tag expected)");
+			throw new ParserError(entityName, element.getLineNumber(), field.getName(), 
+					"invalid element '" + element.getContent() + "'" + "(annotation or tag expected)");
 		}
 	}
 	

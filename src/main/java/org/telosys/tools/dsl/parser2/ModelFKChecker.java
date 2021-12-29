@@ -59,7 +59,7 @@ public class ModelFKChecker {
 				// duplicated FK name found
 				for (FullFK fullFK : list) {
 					
-					EntityParsingError err = new EntityParsingError(
+					ParserError err = new ParserError(
 							fullFK.getEntityName(), 
 							fullFK.getFieldName() 
 							  + " : Duplicated FK name '" + fkName + "' ");

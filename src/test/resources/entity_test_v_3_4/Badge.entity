@@ -1,6 +1,13 @@
 
 // Test without blanks as separators
+
+@DefaultValue(aa)
+#Bar
+
 Badge {
-	id:int{@Id @Label("abc;de}f")  @DefaultValue( 'a;z))e'  ) };  
+	id:int{@Id @Label("abc;de}f")  
+	
+	@OneToOne   @DefaultValue( 'a;z))e'  )  };  
+	
 	name:string;
 }

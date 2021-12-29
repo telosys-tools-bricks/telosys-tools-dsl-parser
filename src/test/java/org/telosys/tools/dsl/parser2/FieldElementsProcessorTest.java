@@ -7,17 +7,15 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainTag;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class FieldElementsProcessorTest {
 	
@@ -42,7 +40,7 @@ public class FieldElementsProcessorTest {
 		return list;
 	}
 	
-	private DomainField process(String... elements) { // throws ParsingError {
+	private DomainField process(String... elements) {
 		List<String> entitiesNames = Arrays.asList("Country", "Employee");
 		FieldElementsProcessor processor = new FieldElementsProcessor("Country", entitiesNames);
 
@@ -54,7 +52,7 @@ public class FieldElementsProcessorTest {
 	}
 
 	@Test
-	public void test1() { // throws ParsingError  {
+	public void test1() {
 		DomainField field = process("firstName", ":", "string");
 		assertTrue(errors.isEmpty());
 		assertEquals(0, errors.getNumberOfErrors());
@@ -64,7 +62,7 @@ public class FieldElementsProcessorTest {
 	}
 
 	@Test
-	public void test11() { // throws ParsingError  {
+	public void test11() {
 		DomainField field = process("firstName", ":", "string", "{", "}");
 		assertTrue(errors.isEmpty());
 		assertEquals(0, errors.getNumberOfErrors());
@@ -74,7 +72,7 @@ public class FieldElementsProcessorTest {
 	}
 
 	@Test
-	public void test12() { // throws ParsingError  {
+	public void test12() {
 		DomainField field = process("firstName", ":", "string", "{", "@MaxLen(20)", "#Foo(12)", "#Bar", "}");
 		assertTrue(errors.isEmpty());
 		assertEquals(0, errors.getNumberOfErrors());
@@ -87,8 +85,8 @@ public class FieldElementsProcessorTest {
 		assertEquals(2, tags.size());
 	}
 
-	@Test //(expected=FieldParsingError.class)
-	public void testErr1() { //  throws ParsingError  {
+	@Test
+	public void testErr1() {
 		DomainField field = process("firstName", ":", "xxx", "{", "@MaxLen(20)", "#Foo(12)", "#Bar", "}");
 		// invalid type 'xxx' 
 		assertNull(field);
@@ -96,8 +94,8 @@ public class FieldElementsProcessorTest {
 		assertEquals(1, errors.getNumberOfErrors());
 	}
 
-	@Test //(expected=FieldParsingError.class)
-	public void testErr2() { // throws ParsingError  {
+	@Test
+	public void testErr2() {
 		DomainField field = process("firstName", ":", "string", "{", "@FooBar(20)", "}");
 		// field OK, but unknown annotation
 		assertNotNull(field); 
@@ -105,8 +103,8 @@ public class FieldElementsProcessorTest {
 		assertEquals(1, errors.getNumberOfErrors());
 	}
 
-	@Test  // (expected=FieldParsingError.class)
-	public void testCommaError() throws ParsingError  {
+	@Test
+	public void testCommaError() {
 		DomainField field = process("count", ":", "int", 
 				"{", "@Max(12)",  ",",  "@NotNull",  "@SizeMax(12)", "}" ); 
 		// ERR : ',' invalid element
@@ -116,7 +114,7 @@ public class FieldElementsProcessorTest {
 	}
 
 	@Test 
-	public void testCommaAtTheEnd() { // throws ParsingError  {
+	public void testCommaAtTheEnd() {
 		DomainField field = process("count", ":", "int", 
 				"{", "@Max(12),", "@Min(  0 ),", "@NotNull",  "@SizeMax(12)", "}" ); 
 		// Ok : ')' => end of annotation or tag => "," is isolated in an element
@@ -125,8 +123,8 @@ public class FieldElementsProcessorTest {
 		assertEquals(0, errors.getNumberOfErrors());
 	}
 
-	@Test // (expected=FieldParsingError.class)
-	public void testCommaAtTheEndError() { // throws ParsingError  {
+	@Test
+	public void testCommaAtTheEndError() {
 		DomainField field = process("count", ":", "int", 
 				"{", "@Id,", "@Min(  0 ),", "@NotNull",  "@SizeMax(12)", "}" ); 
 		// ERR : "@Id," invalid name
@@ -135,8 +133,8 @@ public class FieldElementsProcessorTest {
 		assertEquals(1, errors.getNumberOfErrors());
 	}
 
-	@Test //(expected=FieldParsingError.class)
-	public void testCommaAtTheBeginning() throws ParsingError  {
+	@Test 
+	public void testCommaAtTheBeginning() {
 		DomainField field = process("count", ":", "int", 
 				"{", "@Max(12),", ",@Min(  0 ),", "@NotNull",  "@SizeMax(12)", "}" ); 
 		// ERR : ",@Min" not an annotation or tag 
@@ -146,7 +144,7 @@ public class FieldElementsProcessorTest {
 	}
 
 	@Test
-	public void test2() { // throws ParsingError  {
+	public void test2() {
 		DomainField field = process("country", ":", "Country");
 		assertNotNull(field);
 		assertTrue(errors.isEmpty());
@@ -157,8 +155,8 @@ public class FieldElementsProcessorTest {
 		assertEquals("Country", field.getType().getName());
 	}
 
-	@Test // (expected=FieldParsingError.class)
-	public void testErr21()  { // throws ParsingError  {
+	@Test
+	public void testErr21() {
 		DomainField field = process("country", ":", "Country", "{", "@FooBar(20)", "}");
 		// '@FooBar(20)' : unknown annotation
 		assertNotNull(field);
@@ -166,8 +164,8 @@ public class FieldElementsProcessorTest {
 		assertEquals(1, errors.getNumberOfErrors());
 	}
 
-	@Test //(expected=FieldParsingError.class)
-	public void testErr22()  { // throws ParsingError  {
+	@Test
+	public void testErr22() {
 		DomainField field = process("country", ":", "Country", "{", "@Embedded", "}", "aa");
 		// unexpected element 'aa'
 		assertNotNull(field);
@@ -175,8 +173,8 @@ public class FieldElementsProcessorTest {
 		assertEquals(1, errors.getNumberOfErrors());
 	}
 
-	@Test //(expected=FieldParsingError.class)
-	public void testErr23()  { // throws ParsingError  {
+	@Test
+	public void testErr23() {
 		DomainField field = process("country", ":", "Country", "zzz", "{", "@Embedded", "}" );
 		// unexpected element 'zzz'
 		assertNotNull(field);
@@ -184,8 +182,8 @@ public class FieldElementsProcessorTest {
 		assertEquals(1, errors.getNumberOfErrors());
 	}
 
-	@Test // (expected=FieldParsingError.class)
-	public void testErr24()  { // throws ParsingError  {
+	@Test 
+	public void testErr24()  { 
 		DomainField field = process("country", ":", ":", "Country", "{", "@Embedded", "}", "aa");
 		// invalid type ':'
 		assertNull(field);
@@ -193,8 +191,8 @@ public class FieldElementsProcessorTest {
 		assertEquals(1, errors.getNumberOfErrors());
 	}
 
-	@Test // (expected=FieldParsingError.class)
-	public void testErr25()  { // throws ParsingError  {
+	@Test 
+	public void testErr25()  { 
 		DomainField field = process("country", ":", "Nation", "{", "@Embedded", "}");
 		// invalid type 'Nation'
 		assertNull(field);
@@ -205,8 +203,8 @@ public class FieldElementsProcessorTest {
 	//--------------------------------------------------------------------------
 	// extractAdditionalElements()
 	//--------------------------------------------------------------------------
-	@Test //(expected=FieldParsingError.class)
-	public void testExtractAdditionalElements() throws ParsingError  {
+	@Test
+	public void testExtractAdditionalElements() throws ParserError  {
 		List<String> entitiesNames = Arrays.asList("Country", "Employee");
 		FieldElementsProcessor processor = new FieldElementsProcessor("Country", entitiesNames);
 
@@ -233,8 +231,8 @@ public class FieldElementsProcessorTest {
 		
 	}
 
-	@Test (expected=FieldParsingError.class)
-	public void testExtractAdditionalElementsErr1() throws ParsingError  {
+	@Test (expected=ParserError.class)
+	public void testExtractAdditionalElementsErr1() throws ParserError  {
 		List<String> entitiesNames = Arrays.asList("Country", "Employee");
 		FieldElementsProcessor processor = new FieldElementsProcessor("Country", entitiesNames);
 
@@ -242,8 +240,8 @@ public class FieldElementsProcessorTest {
 				buildElements("foo",":","int",  "aaa","}") ); // unexpected element 'aaa' out of {...}
 	}
 
-	@Test (expected=FieldParsingError.class)
-	public void testExtractAdditionalElementsErr2() throws ParsingError  {
+	@Test (expected=ParserError.class)
+	public void testExtractAdditionalElementsErr2() throws ParserError  {
 		List<String> entitiesNames = Arrays.asList("Country", "Employee");
 		FieldElementsProcessor processor = new FieldElementsProcessor("Country", entitiesNames);
 
@@ -251,8 +249,8 @@ public class FieldElementsProcessorTest {
 				buildElements("foo",":","int",  "{", "aaa",  "{", "}") ); // multiple {
 	}
 
-	@Test (expected=FieldParsingError.class)
-	public void testExtractAdditionalElementsErr3() throws ParsingError  {
+	@Test (expected=ParserError.class)
+	public void testExtractAdditionalElementsErr3() throws ParserError  {
 		List<String> entitiesNames = Arrays.asList("Country", "Employee");
 		FieldElementsProcessor processor = new FieldElementsProcessor("Country", entitiesNames);
 

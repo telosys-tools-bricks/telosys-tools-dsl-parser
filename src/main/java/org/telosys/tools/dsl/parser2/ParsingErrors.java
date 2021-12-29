@@ -18,8 +18,6 @@ package org.telosys.tools.dsl.parser2;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
-
 /**
  * Model Parsing : errors collector
  * 
@@ -28,7 +26,7 @@ import org.telosys.tools.dsl.parser.exceptions.ParsingError;
  */
 public class ParsingErrors {
 
-	private final List<ParsingError> errors ;
+	private final List<ParserError> errors ;
 
     /**
      * Constructor with a single error message
@@ -43,7 +41,7 @@ public class ParsingErrors {
      * Returns a list containing all errors
      * @return
      */
-    public List<ParsingError> getErrors() {
+    public List<ParserError> getErrors() {
     	return errors ;
     }
     
@@ -67,7 +65,7 @@ public class ParsingErrors {
      * Add a new error in the collector
      * @param error
      */
-    protected void addError(ParsingError error) {
+    protected void addError(ParserError error) {
     	errors.add(error);
     }
     
@@ -76,7 +74,7 @@ public class ParsingErrors {
     	StringBuilder sb = new StringBuilder();
     	sb.append(errors.size());
     	sb.append(" error(s) : \n");
-		for ( ParsingError e : errors ) {
+		for ( ParserError e : errors ) {
 	    	sb.append(" . " );
 	    	sb.append(e.getReportMessage() );
 	    	sb.append("\n");

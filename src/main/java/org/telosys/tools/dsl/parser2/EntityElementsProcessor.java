@@ -18,11 +18,6 @@ package org.telosys.tools.dsl.parser2;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.telosys.tools.dsl.parser.AnnotationParser;
-import org.telosys.tools.dsl.parser.ParserLogger;
-import org.telosys.tools.dsl.parser.TagParser;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -57,7 +52,7 @@ public class EntityElementsProcessor {
 	 * @return
 	 * @throws EntityParsingError
 	 */
-	public DomainEntity processEntityElements(List<Element> elements, ParsingErrors errors) { //throws ParsingError {
+	public DomainEntity processEntityElements(List<Element> elements, ParsingErrors errors) {
 		List<Element> fieldElements = null ;
 		boolean inFields = false ;
 		DomainEntity domainEntity = new DomainEntity(entityName);
@@ -107,22 +102,22 @@ public class EntityElementsProcessor {
 	
 	private void processElementAtEntityLevel(DomainEntity domainEntity, Element element, ParsingErrors errors) { //throws ParsingError {
 		if ( element.startsWithAnnotationPrefix() ) {
-			AnnotationParser annotationParser = new AnnotationParser(entityName);
+			AnnotationProcessor annotationParser = new AnnotationProcessor(entityName);
 			DomainAnnotation annotation;
 			try {
-				annotation = annotationParser.parseAnnotation(element.getContent());
+				annotation = annotationParser.parseAnnotation(element);
 				domainEntity.addAnnotation(annotation);
-			} catch (ParsingError e) {
+			} catch (ParserError e) {
 				errors.addError(e);
 			}
 		}
 		else if ( element.startsWithTagPrefix() ) {
-			TagParser tagParser = new TagParser(entityName);
+			TagProcessor tagParser = new TagProcessor(entityName);
 			DomainTag tag;
 			try {
-				tag = tagParser.parseTag(element.getContent());
+				tag = tagParser.parseTag(element);
 				domainEntity.addTag(tag);
-			} catch (ParsingError e) {
+			} catch (ParserError e) {
 				errors.addError(e);
 			}
 		}
@@ -137,7 +132,7 @@ public class EntityElementsProcessor {
 //					throw new EntityParsingError(entityName, 
 //							"Entity name '" + element.getContent()
 //							+ "' different from file name '" + entityName +"' ");
-					errors.addError( new EntityParsingError(entityName, 
+					errors.addError( new ParserError(entityName, element.getLineNumber(), 
 							"Entity name '" + element.getContent()
 							+ "' different from file name '" + entityName +"' "));
 				}
@@ -146,7 +141,7 @@ public class EntityElementsProcessor {
 				// ERROR : unexpected element 
 //				throw new EntityParsingError(entityName, 
 //						"unexpected element '" + element.getContent()+"' ");
-				errors.addError( new EntityParsingError(entityName, 
+				errors.addError( new ParserError(entityName, element.getLineNumber(),
 						"unexpected element '" + element.getContent()+"' "));
 			}
 		}

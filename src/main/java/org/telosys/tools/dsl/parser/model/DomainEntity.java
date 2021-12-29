@@ -204,32 +204,47 @@ public class DomainEntity {
     //-------------------------------------------------------------------------------------
     public String toString() {
     	StringBuilder sb = new StringBuilder();
+    	sb.append("Entity name : '");
     	sb.append(this.name);
-    	sb.append(" {");
-        for (DomainField field : fieldsMap.values()) {
+    	sb.append("'\n");
+    	sb.append("Annotations (");
+    	sb.append(annotations.size());
+    	sb.append(") : \n");
+    	for ( DomainAnnotation a : annotations.values() ) {
+        	sb.append(" - ");
+        	sb.append(a.toString());
         	sb.append("\n");
-        	sb.append("  ");
-        	sb.append(field.toString());
-        }
-    	sb.append("\n");
-    	sb.append("}");
-    	sb.append("\n");
-    	if ( errors.isEmpty() ) {
-        	sb.append("OK (no error) \n");
-    	} else {
-        	sb.append(errors.size());
-        	sb.append(" error(s) : \n");
-    		for ( ParsingError e : errors ) {
-    	    	sb.append(" . " );
-    	    	if ( e instanceof FieldParsingError ) {
-        	    	sb.append(((FieldParsingError)e).getFieldName() );
-    	    	}
-
-    	    	sb.append(" : " );
-    	    	sb.append(e.getMessage() );
-    	    	sb.append("\n");
-    		}
     	}
+    	sb.append("Tags (");
+    	sb.append(tags.size());
+    	sb.append(") : \n");
+    	for ( DomainTag tag : tags.values() ) {
+        	sb.append(" - ");
+        	sb.append(tag.toString());
+        	sb.append("\n");
+    	}
+    	sb.append("Fields (");
+    	sb.append(fieldsMap.size());
+    	sb.append(") : \n");
+        for (DomainField field : fieldsMap.values()) {
+        	sb.append(" - ");
+        	sb.append(field.toString());
+        	sb.append("\n");
+        }
+        /*** Errors no longer stored in entity
+    	sb.append("Errors (");
+    	sb.append(errors.size());
+    	sb.append(") : \n");
+		for ( ParsingError e : errors ) {
+	    	sb.append(" . " );
+	    	if ( e instanceof FieldParsingError ) {
+    	    	sb.append(((FieldParsingError)e).getFieldName() );
+	    	}
+	    	sb.append(" : " );
+	    	sb.append(e.getMessage() );
+	    	sb.append("\n");
+		}
+		***/
         return sb.toString();
     }
 
