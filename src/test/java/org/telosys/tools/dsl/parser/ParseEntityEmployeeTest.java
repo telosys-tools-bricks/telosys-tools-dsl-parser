@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.Parser;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
+import org.telosys.tools.dsl.DslModelErrors;
+import org.telosys.tools.dsl.parser.ParserV2;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.reporting.EntityReport;
 
@@ -26,17 +26,20 @@ public class ParseEntityEmployeeTest {
 //	}
 
 	@Test
-	public void testParser() throws EntityParsingError {
+	public void testParser() {
+		
+		File entityFile = new File("src/test/resources/entity_test_v_3_2/Employee.entity");
 		
 		List<String> entitiesNames = new LinkedList<>();
 		entitiesNames.add("Car");
-		Parser parser = new Parser();
-		DomainEntity entity = parser.parseEntity(new File("src/test/resources/entity_test_v_3_2/Employee.entity"), entitiesNames );
+		DslModelErrors errors = new DslModelErrors();
+		ParserV2 parser = new ParserV2();
+		DomainEntity entity = parser.parseEntity(entityFile, entitiesNames, errors );
 		
-		EntityReport.print(entity);
+		EntityReport.print(entity, errors);
 		
 		assertEquals("Employee", entity.getName());
-		assertEquals(14, entity.getNumberOfFields());
+		assertEquals(11, entity.getNumberOfFields());
 
 	}
 

@@ -67,7 +67,8 @@ public class ForeignKeysBuilder {
 		if (entity.getFields() != null) {
 			// for each entity field : store all defined FK (FK part or entire FK ) 
 			for (DomainField field : entity.getFields()) {
-				if ( field.isNeutralType() ) {
+//				if ( field.isNeutralType() ) {
+				if ( field.isAttribute() ) { // FK are defined in attributes not in links
 					DslModelAttribute dslModelAttribute = (DslModelAttribute) dslModelEntity.getAttributeByName(field.getName());
 					if (dslModelAttribute == null ) {
 						throw new IllegalStateException( "Cannot found attribute '" + field.getName() + "' in entity '" + entity.getName() + "'" );

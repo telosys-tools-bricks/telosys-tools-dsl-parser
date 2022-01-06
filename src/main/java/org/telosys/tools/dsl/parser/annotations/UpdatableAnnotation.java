@@ -15,14 +15,14 @@
  */
 package org.telosys.tools.dsl.parser.annotations;
 
-import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
+import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 
 public class UpdatableAnnotation extends AnnotationDefinition {
 
@@ -31,7 +31,7 @@ public class UpdatableAnnotation extends AnnotationDefinition {
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParamError {
 		checkParamValue(entity, link, paramValue);
 		link.setUpdatable(getBooleanValue(paramValue));	
 	}

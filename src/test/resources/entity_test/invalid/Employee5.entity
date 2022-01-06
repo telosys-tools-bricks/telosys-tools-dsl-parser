@@ -1,4 +1,6 @@
 
 Employee5 {
   // no field defined in this entity
+  id : int { @Id };
+  foo : string { @Insertable(trueeee) };
 }

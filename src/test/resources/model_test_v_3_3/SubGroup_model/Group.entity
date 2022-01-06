@@ -1,6 +1,6 @@
 Group {
 
-	code : string {@Id, @SizeMax(2)};
+	code : string {@Id @SizeMax(2)};
 	
 	name : string;
 }

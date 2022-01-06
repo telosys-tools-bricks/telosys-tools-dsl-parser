@@ -16,7 +16,13 @@
 package org.telosys.tools.dsl.parser.model;
 
 public enum DomainTypeNature {
-    NEUTRAL_TYPE,  // e.g "string", "integer", "date", etc
-    ENTITY,        // entity defined in the domain model ( .entity file )
-    ENUMERATION    // enumeration defined in the domain model ( .enum file )
+
+	// Basic type ( e.g "string", "integer", "date", etc )
+    NEUTRAL_TYPE,  
+
+    // Entity defined in the model ( .entity file )
+    ENTITY,        
+    
+//    // enumeration 
+//    ENUMERATION    
 }

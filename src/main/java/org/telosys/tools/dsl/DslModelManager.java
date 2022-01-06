@@ -22,8 +22,8 @@ import java.util.Properties;
 
 import org.telosys.tools.commons.PropertiesManager;
 import org.telosys.tools.dsl.converter.ModelConverter;
-import org.telosys.tools.dsl.parser.Parser;
-import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
+import org.telosys.tools.dsl.parser.ParserV2;
+import org.telosys.tools.dsl.parser.ParsingResult;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainModelInfo;
 import org.telosys.tools.generic.model.Model;
@@ -68,10 +68,10 @@ public class DslModelManager {
 		return errors;
 	}
 
-	public Map<String, List<String>> getErrorsMap() {
-		return errors.getAllErrorsMap();
-	}
-
+//	public Map<String, List<String>> getErrorsMap() {
+//		return errors.getAllErrorsMap();
+//	}
+//
 
 	/**
 	 * Loads (parse) the given model file
@@ -83,56 +83,6 @@ public class DslModelManager {
 	public Model loadModel(String modelFileAbsolutePath) {
 		return loadModel(new File(modelFileAbsolutePath));
 	}
-
-//	/**
-//     * Loads (parse and convert) the given model file <br>
-//     * If errors occured this method returns null <br>
-//     * and the errors can be retrieved from this instance ( parsingErrorMessage and parsingErrors ) 
-//     *
-//     * @param modelFile the ".model" file 
-//     * 
-//     * @return the generic model or null if errors detected during parsing 
-//     */
-//    public Model loadModel_OLD(File modelFile) {
-//    	
-//        //--- 1) Parse the model 
-//        Parser dslParser = new Parser();
-//        DomainModel domainModel = null ;
-//        ModelParsingError modelParsingError = null ;
-//		try {
-//			domainModel = dslParser.parseModel(modelFile);
-//		} catch (ModelParsingError e) {
-//			modelParsingError = e ;
-//		}
-//		
-//        if ( modelParsingError != null ) {
-//        	//--- 2) Parsing ERRORS => Keep errors information
-//        	parsingErrorMessage = modelParsingError.getMessage();
-//        	errors = new DslModelErrors(modelParsingError.getEntitiesErrors());
-//            return null;
-//        }
-//        else {
-//            //--- 2) Parsing OK : Convert the "domain model" to "generic model" 
-//            ModelConverter converter = new ModelConverter(errors);
-//			try {
-//				Model model = converter.convertModel(domainModel);
-//				if ( ! errors.isEmpty() ) {
-//					return model ; // Model is OK
-//				}
-//				else {
-//					return null ; // Invalid model
-//				}
-//			} catch (Exception e) {
-//				// Unexpected exception
-//				String msg = e.getMessage();
-//				if ( msg == null ) { // eg NullPointerException
-//					msg = e.toString();
-//				}
-//				parsingErrorMessage = "Converter error : " + msg ;
-//				return null ;
-//			}
-//        }
-//    }
     
     /**
      * Loads (parse and convert) the given model file <br>
@@ -143,20 +93,31 @@ public class DslModelManager {
      * @return the generic model or null if errors detected during parsing 
      */
     public Model loadModel(File modelFile) {
-    	try {
-			DomainModel domainModel = step1ParseModel(modelFile);
-			if ( domainModel != null ) {
-				return step2ConvertModel(domainModel);
-			}
-		} catch (Exception e) {
-			// Unexpected exception
-			String msg = e.getMessage();
-			if ( msg == null ) { // eg NullPointerException
-				msg = e.toString();
-			}
-			parsingErrorMessage = "Converter error : " + msg ;
+//    	try {
+//			DomainModel domainModel = step1ParseModel(modelFile);
+//			if ( domainModel != null ) {
+//				return step2ConvertModel(domainModel);
+//			}
+//		} catch (Exception e) {
+//			// Unexpected exception
+//			String msg = e.getMessage();
+//			if ( msg == null ) { // eg NullPointerException
+//				msg = e.toString();
+//			}
+//			parsingErrorMessage = "Converter error : " + msg ;
+//		}
+//		return null ;
+		ParsingResult parsingResult = step1ParseModel(modelFile);
+		if ( parsingResult.hasErrors() ) {
+			this.errors = parsingResult.getErrors();
+			this.parsingErrorMessage = parsingResult.getErrors().getNumberOfErrors() + " parsing error(s)";
+			return null ;
 		}
-		return null ;
+		else {
+			// Parsing is OK => convert model
+			return step2ConvertModel(parsingResult.getModel());
+		}
+
     }
     
     /**
@@ -164,19 +125,21 @@ public class DslModelManager {
      * @param modelFile
      * @return
      */
-    private DomainModel step1ParseModel(File modelFile) {
-        Parser dslParser = new Parser();
-		try {
-			// Try to parse the DSL model
-			return dslParser.parseModel(modelFile);
-		} catch (ModelParsingError modelParsingError) {
-        	// Parsing ERRORS 
-			// Keep errors information
-        	parsingErrorMessage = modelParsingError.getMessage();
-        	errors = new DslModelErrors(modelParsingError.getEntitiesErrors());
-        	// Invalid model => return null
-            return null;
-		}
+    private ParsingResult step1ParseModel(File modelFile) {
+//        Parser dslParser = new Parser();
+//		try {
+//			// Try to parse the DSL model
+//			return dslParser.parseModel(modelFile);
+//		} catch (ModelParsingError modelParsingError) {
+//        	// Parsing ERRORS 
+//			// Keep errors information
+//        	parsingErrorMessage = modelParsingError.getMessage();
+//        	errors = new DslModelErrors(modelParsingError.getEntitiesErrors());
+//        	// Invalid model => return null
+//            return null;
+//		}
+    	ParserV2 dslParser = new ParserV2();
+		return dslParser.parseModel(modelFile);
     }
     
     /**

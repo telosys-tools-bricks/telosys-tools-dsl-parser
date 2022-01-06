@@ -17,14 +17,14 @@ package org.telosys.tools.dsl.parser.annotations;
 
 import java.util.List;
 
-import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelJoinTable;
 import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.JoinColumn;
@@ -37,7 +37,7 @@ public class LinkByJoinEntityAnnotation extends LinkByAnnotation {
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParamError {
 		checkParamValue(entity, link, paramValue);
 		String joinEntityName = (String) paramValue ;
 		
@@ -53,7 +53,7 @@ public class LinkByJoinEntityAnnotation extends LinkByAnnotation {
 //		link.setInverseSide(false);
 	}
 	
-	protected JoinTable getJoinTable(DslModel model, DslModelEntity entity, DslModelLink link, String joinEntityName) throws ParsingError {
+	protected JoinTable getJoinTable(DslModel model, DslModelEntity entity, DslModelLink link, String joinEntityName) throws ParamError {
 		try {
 			DslModelEntity joinEntity = getJoinEntity( model, joinEntityName);
 			List<ForeignKey> foreignKeys = joinEntity.getDatabaseForeignKeys();

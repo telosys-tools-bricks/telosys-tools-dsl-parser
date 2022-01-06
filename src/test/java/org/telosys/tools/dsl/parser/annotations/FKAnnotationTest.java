@@ -1,11 +1,12 @@
 package org.telosys.tools.dsl.parser.annotations;
 
 import org.junit.Test;
+import org.telosys.tools.dsl.DslModelError;
+import org.telosys.tools.dsl.parser.AnnotationProcessor;
+import org.telosys.tools.dsl.parser.Element;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.commons.FkElement;
-import org.telosys.tools.dsl.parser.exceptions.AnnotationParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
 import static org.junit.Assert.assertEquals;
@@ -15,16 +16,24 @@ import static org.junit.Assert.assertTrue;
 
 public class FKAnnotationTest {
 
-	private static final String FK = "FK";
+	private static final String ANNOTATION_NAME = "FK";
 	
-	private AnnotationDefinition getAnnotationDefinition() {
-		return new FkAnnotation() ;
+	private DomainAnnotation parseAnnotation(String annotation) throws DslModelError {
+		Element element = new Element(2, annotation);
+		AnnotationProcessor annotationProcessor = new AnnotationProcessor("MyEntity", "myField");
+		return annotationProcessor.parseAnnotation(element);
+	}
+	private DomainAnnotation buildAnnotation() throws DslModelError {
+		return parseAnnotation("@" + ANNOTATION_NAME );
+	}
+	private DomainAnnotation buildAnnotation(String annotationParam) throws DslModelError {
+		return parseAnnotation("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
 	}
 	
 	@Test
 	public void test1() {
-		AnnotationDefinition a = getAnnotationDefinition();
-		assertEquals( FK, a.getName() );
+		AnnotationDefinition a = new FkAnnotation();
+		assertEquals( ANNOTATION_NAME, a.getName() );
 		assertEquals( AnnotationParamType.FK_ELEMENT, a.getParamType() );
 		assertTrue( a.hasAttributeScope() );
 		assertFalse( a.hasLinkScope() );
@@ -32,10 +41,9 @@ public class FKAnnotationTest {
 	}
 
 	@Test 
-	public void test2() throws ParsingError {
-		AnnotationDefinition a = getAnnotationDefinition();
-		DomainAnnotation da = a.buildAnnotation("Student", "firstName", "FK_PER_SUBGRP, SubGroup.groupCode");
-		assertEquals( FK, da.getName() );
+	public void test2() throws DslModelError {
+		DomainAnnotation da = buildAnnotation("FK_PER_SUBGRP, SubGroup.groupCode");
+		assertEquals( ANNOTATION_NAME, da.getName() );
 		assertNotNull( da.getParameter());
 		FkElement fke = da.getParameterAsFKElement();
 		assertEquals("FK_PER_SUBGRP", fke.getFkName());
@@ -43,14 +51,13 @@ public class FKAnnotationTest {
 		assertEquals("groupCode", fke.getReferencedFieldName());
 	}
 
-	private FkElement getFkElement(String paramValue) throws ParsingError {
-		AnnotationDefinition a = getAnnotationDefinition();
-		DomainAnnotation da = a.buildAnnotation("MyEntity", "myField", paramValue);
+	private FkElement getFkElement(String paramValue) throws DslModelError {
+		DomainAnnotation da = buildAnnotation(paramValue);
 		return da.getParameterAsFKElement();
 	}
 	
 	@Test
-    public void testFkElement1WithoutFkName() throws ParsingError { 
+    public void testFkElement1WithoutFkName() throws DslModelError { 
 		FkElement fk ;
 		fk = getFkElement("Book");
 		assertEquals("FK_MyEntity_Book", fk.getFkName() );
@@ -75,7 +82,7 @@ public class FKAnnotationTest {
 	}
 
 	@Test
-    public void testFkElement1WithFkName() throws ParsingError { 
+    public void testFkElement1WithFkName() throws DslModelError { 
 		FkElement fk ;
 		fk = getFkElement("MY_FK,Book");
 		assertEquals("MY_FK", fk.getFkName() );
@@ -114,22 +121,19 @@ public class FKAnnotationTest {
 		
 	}
 	
-	@Test (expected=AnnotationParsingError.class)
-	public void test3() throws ParsingError {
-		AnnotationDefinition a = getAnnotationDefinition();
-		a.buildAnnotation("Student", "firstName", null);
+	@Test (expected=DslModelError.class)
+	public void test3() throws DslModelError {
+		buildAnnotation();
 		// Error : parameter required
 	}
-	@Test (expected=AnnotationParsingError.class)
-	public void test4() throws ParsingError {
-		AnnotationDefinition a = getAnnotationDefinition();
-		a.buildAnnotation("Student", "firstName", "");
+	@Test (expected=DslModelError.class)
+	public void test4() throws DslModelError {
+		buildAnnotation("");
 		// Error : parameter required
 	}
-	@Test (expected=AnnotationParsingError.class)
-	public void test5() throws ParsingError {
-		AnnotationDefinition a = getAnnotationDefinition();
-		a.buildAnnotation("Student", "firstName", "  ");
+	@Test (expected=DslModelError.class)
+	public void test5() throws DslModelError {
+		buildAnnotation("  ");
 		// Error : parameter expected
 	}
 }

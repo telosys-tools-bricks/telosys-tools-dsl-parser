@@ -18,13 +18,13 @@ package org.telosys.tools.dsl.parser.annotations;
 import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.JoinColumn;
 
@@ -35,7 +35,7 @@ public class LinkByFKAnnotation extends LinkByAnnotation {
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParamError {
 		checkParamValue(entity, link, paramValue);
 		String fkName = (String)paramValue;
 //		ForeignKey fk = getForeignKeyByName(entity, fkName);
@@ -54,7 +54,7 @@ public class LinkByFKAnnotation extends LinkByAnnotation {
 		
 	}
 	
-	private List<JoinColumn> getJoinColumns(DslModelEntity entity, DslModelLink link, String fkName) throws ParsingError {
+	private List<JoinColumn> getJoinColumns(DslModelEntity entity, DslModelLink link, String fkName) throws ParamError {
 		try {
 			ForeignKey fk = getForeignKeyByName(entity, fkName);
 			checkIfForeignKeyIsCompatible(link, fk);

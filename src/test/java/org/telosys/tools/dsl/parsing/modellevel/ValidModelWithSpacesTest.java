@@ -1,50 +1,25 @@
 package org.telosys.tools.dsl.parsing.modellevel;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.util.Map;
 
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.Parser;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainTag;
+import org.telosys.tools.junit.utils.ModelUtil;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class ValidModelWithSpacesTest {
 
-	private DomainModel parseModel(String modelFilePath) {
-		File modelFile = new File(modelFilePath);
-		Parser parser = new Parser();
-		try {
-			return parser.parseModel(modelFile);
-		} catch (ModelParsingError e) {
-			System.out.println( e.getReportMessage() );
-			for ( EntityParsingError err : e.getEntitiesErrors() ) {
-				System.out.println( err.getReportMessage() );
-				for ( ParsingError pe : err.getErrors() ) {
-					System.out.println( pe.getReportMessage());
-				}
-			}
-			return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
 	@Test
-	public void test() throws ModelParsingError {
-		DomainModel model = parseModel("src/test/resources/model_test/valid/TwoEntitiesWithSpaces.model");
+	public void test() {
+		DomainModel model = ModelUtil.parseValidModel("src/test/resources/model_test/valid/TwoEntitiesWithSpaces.model");
 		
 		assertEquals(2, model.getNumberOfEntities());
 		assertEquals(2, model.getEntityNames().size());
@@ -76,11 +51,9 @@ public class ValidModelWithSpacesTest {
 		assertEquals(3, tags.size() );
 		assertNotNull(tags.get("Id"));
 		assertNotNull(tags.get("Foo"));
-		assertEquals("abc ",tags.get("Foo").getParameter());
+		assertEquals("'abc '",tags.get("Foo").getParameter());
 		assertNotNull(tags.get("Bar"));
 		assertEquals("12.34",tags.get("Bar").getParameter());
-		// Field errors
-		assertFalse(field.hasErrors());
 		
 		//---------- FIELD : firstName
 		field = entity.getField("firstName") ;
@@ -90,16 +63,16 @@ public class ValidModelWithSpacesTest {
 		annotations = field.getAnnotations();
 		assertEquals(2, annotations.size() );
 		assertNotNull(annotations.get("DefaultValue"));
-		assertTrue(field.hasAnnotation(annotations.get("DefaultValue")));
-		assertEquals("Bart", annotations.get("DefaultValue").getParameterAsString());
+		assertEquals("'Bart'", annotations.get("DefaultValue").getParameterAsString());
+//		assertTrue(field.hasAnnotation(annotations.get("DefaultValue")));
+//		assertEquals("Bart", annotations.get("DefaultValue").getParameterAsString());
 		assertNotNull(annotations.get("InitialValue"));
 		assertEquals("xxx", annotations.get("InitialValue").getParameterAsString());
 		// Field tags
 		tags = field.getTags();
-		assertEquals(1, tags.size() );
+		assertEquals(2, tags.size() );
 		assertNotNull(tags.get("tag"));
-		// Field errors
-		assertFalse(field.hasErrors());
+		assertEquals(" a b c ", tags.get("Foo").getParameter());
 
 		//---------- FIELD : birthDate
 		field = entity.getField("birthDate") ;
@@ -107,18 +80,10 @@ public class ValidModelWithSpacesTest {
 		assertEquals("date", field.getTypeName());
 		annotations = field.getAnnotations();
 		assertEquals(1, annotations.size() );
-		// Field errors
-		assertFalse(field.hasErrors());
 
-		//		List<String> annotNames = id.getAnnotationNames();
-//		for ( DomainField field : entity.getFields() ) {
-//			
-//		}
-		
 		//---------- FIELD : birthDate
 		field = entity.getField("country") ;
 		assertNotNull(field);
-		assertFalse(field.hasErrors());
 		assertEquals("Country", field.getTypeName());
 		annotations = field.getAnnotations();
 		//--- Annotations

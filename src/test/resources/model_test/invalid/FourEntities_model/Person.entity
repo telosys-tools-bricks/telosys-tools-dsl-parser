@@ -3,6 +3,7 @@ Person {
 	firstName : string { @SizeMax(xx) } ;
 	lastName : string { @Min } ;
 	birthDate : date { @DefaultValue } ;
+	comment : string { @NotNull @NotNull } ;
 	country : Country[ 999]; 
-	gender : Gender { @NotNull @NotNull } ;
+	gender : Gender { @NotNull } ;
 }

@@ -1,26 +1,22 @@
 package org.telosys.tools.dsl.parser;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.telosys.tools.dsl.DslModelErrors;
+import org.telosys.tools.dsl.parser.ParserV2;
 import org.telosys.tools.dsl.parser.commons.FkElement;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
-import org.telosys.tools.dsl.parser.reporting.ErrorsReport;
+import org.telosys.tools.dsl.parser.reporting.EntityReport;
 
 import static org.junit.Assert.assertEquals;
 
 public class ParserTest {
 	
-	@Before
-	public void setUp() throws Exception {
-		// init here
-	}
-
 	private void log(String msg) {
 		System.out.println(msg);
 	}
@@ -35,39 +31,45 @@ public class ParserTest {
 		}
 	}
 	
-	private DomainEntity parseEntityFile(String entityFile, List<String> entitiesNames) throws EntityParsingError {
-		log("\nENTITY FILE : " + entityFile);
-		Parser parser = new Parser();
-		try {
-			DomainEntity entity = parser.parseEntity(entityFile, entitiesNames);
-			log("PARSING RESULT :");
-			log(" Entity name : " + entity.getName() );
-			return entity ;
-		} catch (EntityParsingError e) {
-			ErrorsReport.print(e);
-			throw e;
-		}
+//	private DomainEntity parseEntityFile(String entityFile, List<String> entitiesNames)  {
+//		log("\nENTITY FILE : " + entityFile);
+//		Parser parser = new Parser();
+//		try {
+//			DomainEntity entity = parser.parseEntity(entityFile, entitiesNames);
+//			log("PARSING RESULT :");
+//			log(" Entity name : " + entity.getName() );
+//			return entity ;
+//		} catch (EntityParsingError e) {
+//			ErrorsReport.print(e);
+//			throw e;
+//		}
+//	}
+	private DomainEntity parseEntityFile(String entityFile, List<String> entitiesNames, DslModelErrors errors) {
+		ParserV2 parser = new ParserV2();
+		DomainEntity entity = parser.parseEntity(entityFile, entitiesNames, errors);
+		EntityReport.print(entity, errors);
+		return entity;
 	}
-
+	
 	@Test
-	public void testEntityFileParserV33() throws EntityParsingError {
-		List<String> entitiesNames = new LinkedList<>();
-		entitiesNames.add("Country");
-		entitiesNames.add("Employee");
+	public void testEntityFileParserV33()  {
+		List<String> entitiesNames = Arrays.asList("Country", "Employee");
+//		entitiesNames.add("Country");
+//		entitiesNames.add("Employee");
 		DomainEntity entity ;
 //		List<FieldParsingError> errors;
-		List<ParsingError> errors;
-		
-		entity = parseEntityFile("src/test/resources/entity_test_v_3_3/Country.entity", entitiesNames);
+//		List<ParsingError> errors;
+		DslModelErrors errors = new DslModelErrors();
+		entity = parseEntityFile("src/test/resources/entity_test_v_3_3/Country.entity", entitiesNames, errors);
 		assertEquals("Country", entity.getName());
 		assertEquals(3, entity.getNumberOfFields());
-		assertEquals(0, entity.getNumberOfErrors());
-		errors = entity.getErrors();
-		assertEquals(0, errors.size());
+		assertEquals(0, errors.getNumberOfErrors());
+		assertEquals(0, errors.getErrors().size());
 		
-		entity = parseEntityFile("src/test/resources/entity_test_v_3_3/Employee.entity", entitiesNames);
+		errors = new DslModelErrors();
+		entity = parseEntityFile("src/test/resources/entity_test_v_3_3/Employee.entity", entitiesNames, errors);
 		assertEquals("Employee", entity.getName());
-		assertEquals(0, entity.getNumberOfErrors());
+		assertEquals(0, errors.getNumberOfErrors());
 		
 		logFieldFK(entity.getField("badgeId"));
 		logFieldFK(entity.getField("countryId1"));
@@ -75,11 +77,12 @@ public class ParserTest {
 	}
 
 	@Test
-	public void testEntityFileParserV32() throws EntityParsingError {
-		List<String> entitiesNames = new LinkedList<>();
-		entitiesNames.add("Employee");
+	public void testEntityFileParserV32()  {
+		List<String> entitiesNames = Arrays.asList("Employee");
 		DomainEntity entity ;
-		entity = parseEntityFile("src/test/resources/entity_test_v_3_2/Employee.entity", entitiesNames);
+//		entity = parseEntityFile("src/test/resources/entity_test_v_3_2/Employee.entity", entitiesNames);
+		DslModelErrors errors = new DslModelErrors();
+		entity = parseEntityFile("src/test/resources/entity_test_v_3_2/Employee.entity", entitiesNames, errors);
 		assertEquals("Employee", entity.getName());
 	}
 

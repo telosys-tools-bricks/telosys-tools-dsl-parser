@@ -18,14 +18,12 @@ package org.telosys.tools.dsl.parser.annotation;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.telosys.tools.dsl.DslModelError;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
-import org.telosys.tools.dsl.parser.commons.ParamValue;
-import org.telosys.tools.dsl.parser.commons.ParamValueOrigin;
-import org.telosys.tools.dsl.parser.exceptions.AnnotationParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.generic.model.enums.BooleanValue;
 
@@ -84,135 +82,90 @@ public abstract class AnnotationDefinition {
 	//-------------------------------------------------------------------------------------------
 	// Annotation error 
 	//-------------------------------------------------------------------------------------------
-	protected ParsingError newException(String entityName, String fieldName, 
-			// DomainAnnotation annotation, 
+	protected ParamError newParamError(DslModelEntity entity, DslModelAttribute attribute, 
 			String error) {
-		return new AnnotationParsingError(entityName, fieldName, this.name, error);
+		return new ParamError(entity.getClassName() + "." + attribute.getName() + " : " + error); 
 	}
-	protected ParsingError newParamError(DslModelEntity entity, DslModelAttribute attribute, 
+	protected ParamError newParamError(DslModelEntity entity, DslModelLink link, 
 			String error) {
-		return new AnnotationParsingError(entity.getClassName(), attribute.getName(), 
-				this.name, error);
+		return new ParamError(entity.getClassName() + "." + link.getFieldName() + " : " + error); 
 	}
-	protected ParsingError newParamError(DslModelEntity entity, DslModelLink link, 
-			String error) {
-		return new AnnotationParsingError(entity.getClassName(), link.getFieldName(), 
-				this.name, error);
+	protected ParamError newParamError(String entityName, String fieldName, String error) {
+		return new ParamError(entityName + "." + fieldName + " : " + error);
+	}
+	protected DslModelError newError(String entityName, int lineNumber, String fieldName, String errorMessage) {
+		return new DslModelError(entityName, lineNumber, fieldName, errorMessage);
 	}
 	
 	//-------------------------------------------------------------------------------------------
 	// Annotation parsing 
 	//-------------------------------------------------------------------------------------------
-	/**
-	 * Builds an annotation instance from its definition and the given param value
-	 * @param entityName
-	 * @param fieldName
-	 * @param parameterValue
-	 * @return
-	 * @throws ParsingError
-	 */
-	public DomainAnnotation buildAnnotation(String entityName, String fieldName, 
-			String parameterValue) throws ParsingError {
-		DomainAnnotation annotation = createAnnotation(entityName, fieldName, parameterValue);
-		afterCreation(entityName, fieldName, annotation);
-		return annotation;
-	}
-	
-	private DomainAnnotation createAnnotation(String entityName, String fieldName, 
-			String parameterValue) throws ParsingError {
-		ParamValue paramValue = new ParamValue(entityName, fieldName, name, 
-									parameterValue, ParamValueOrigin.FIELD_ANNOTATION);
-		switch(this.paramType) {
-		case STRING :
-			return new DomainAnnotation(name, paramValue.getAsString() );
-		case INTEGER :
-			return new DomainAnnotation(name, paramValue.getAsInteger() );
-		case DECIMAL :
-			return new DomainAnnotation(name, paramValue.getAsBigDecimal() );
-		case BOOLEAN :
-			return new DomainAnnotation(name, paramValue.getAsBoolean() );
-		case SIZE :
-			return new DomainAnnotation(name, paramValue.getAsSize() );
-		case LIST :
-			return new DomainAnnotation(name, paramValue.getAsList() );
-		case FK_ELEMENT :
-			return new DomainAnnotation(name, paramValue.getAsForeignKeyElement() );
-
-		default :
-			// annotation without parameter
-			if (parameterValue != null) {
-				throw new AnnotationParsingError(entityName, fieldName, name, "unexpected parameter");
-			}
-			return new DomainAnnotation(name);
-		}
-	}
-	
-	protected void afterCreation(String entityName, String fieldName, 
-								 DomainAnnotation annotation) throws ParsingError {		
+	public void afterCreation(String entityName, String fieldName, 
+								 DomainAnnotation annotation) throws ParamError {		
 		// Override this method to process the annotation after build
 	}
 
 	//-------------------------------------------------------------------------------------------
 	// Annotation application ( on attribute or link )
 	//-------------------------------------------------------------------------------------------
-	protected void checkParamValue(DslModelEntity entity, DslModelAttribute attribute, Object paramValue) throws ParsingError {
+	protected void checkParamValue(DslModelEntity entity, DslModelAttribute attribute, Object paramValue) throws ParamError {
 		checkParamValue(entity.getClassName(), attribute.getName(), paramValue);
 	}
-	protected void checkParamValue(DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+	protected void checkParamValue(DslModelEntity entity, DslModelLink link, Object paramValue) throws ParamError {
 		checkParamValue(entity.getClassName(), link.getFieldName(), paramValue);
 	}
 
-	private void checkParamValue(String entityName, String fieldName, Object paramValue) throws ParsingError {
+	private void checkParamValue(String entityName, String fieldName, Object paramValue) throws ParamError {
 		switch ( this.paramType ) {
 		case STRING:
 			if ( ! ( paramValue instanceof String ) ) {
-				throw newException(entityName, fieldName, "String value expected, actual type is " 
+				throw newParamError(entityName, fieldName, "String value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case SIZE: // Size is stored as a String
 			if ( ! ( paramValue instanceof String ) ) {
-				throw newException(entityName, fieldName, "Size value expected, actual type is " 
+				throw newParamError(entityName, fieldName, "Size value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case FK_ELEMENT: // FK element is stored as a String
 			if ( ! ( paramValue instanceof String ) ) {
-				throw newException(entityName, fieldName, "FK element expected, actual type is " 
+				throw newParamError(entityName, fieldName, "FK element expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case INTEGER:
 			if ( ! ( paramValue instanceof Integer ) ) {
-				throw newException(entityName, fieldName, "Integer value expected, actual type is " 
+				throw newParamError(entityName, fieldName, "Integer value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case DECIMAL:
 			if ( ! ( paramValue instanceof BigDecimal ) ) {
-				throw newException(entityName, fieldName, "BigDecimal value expected, actual type is " 
+				throw newParamError(entityName, fieldName, "BigDecimal value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case BOOLEAN:
 			if ( ! ( paramValue instanceof Boolean ) ) {
-				throw newException(entityName, fieldName, "Boolean value expected, actual type is " 
+				throw newParamError(entityName, fieldName, "Boolean value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case LIST:
 			if ( ! ( paramValue instanceof List<?> ) ) {
-				throw newException(entityName, fieldName, "List value expected, actual type is " 
+				throw newParamError(entityName, fieldName, "List value expected, actual type is " 
 							+ getParamValueActualType( paramValue));
 			}
 			break;
 		case NONE:
 			if ( paramValue != null ) {
-				throw newException(entityName, fieldName, "No value expected, actual value is " + paramValue );
+				throw newParamError(entityName, fieldName, "No value expected, actual value is " + paramValue );
 			}
 			break;
 		default:
-			throw newException(entityName, fieldName, "Unexpected parameter type '" + this.paramType + "'" );
+			throw newParamError(entityName, fieldName, "Unexpected parameter type '" + this.paramType + "'" );
 		}
 	}
 	
@@ -240,7 +193,7 @@ public abstract class AnnotationDefinition {
 		}
 	}
 	
-	protected int toInt(DslModelEntity entity, DslModelAttribute attribute, String s) throws ParsingError {
+	protected int toInt(DslModelEntity entity, DslModelAttribute attribute, String s) throws ParamError {
 		try {
 			return Integer.parseInt(s);
 		} catch (NumberFormatException e) {
@@ -256,7 +209,7 @@ public abstract class AnnotationDefinition {
 	 * @param attribute
 	 * @param paramValue
 	 */
-	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) throws ParsingError {
+	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) throws ParamError {
 		throw new IllegalStateException("apply(attribute) is not implemented");
 	}
 	
@@ -268,7 +221,7 @@ public abstract class AnnotationDefinition {
 	 * @param link
 	 * @param paramValue
 	 */
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParamError {
 		throw new IllegalStateException("apply(link) is not implemented");
 	}
 	

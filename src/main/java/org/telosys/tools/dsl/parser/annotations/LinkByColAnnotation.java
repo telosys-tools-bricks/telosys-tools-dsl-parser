@@ -17,14 +17,14 @@ package org.telosys.tools.dsl.parser.annotations;
 
 import java.util.List;
 
-import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
 import org.telosys.tools.dsl.commons.ReferenceDefinitions;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 import org.telosys.tools.generic.model.JoinColumn;
 
 /**
@@ -43,13 +43,13 @@ public class LinkByColAnnotation extends LinkByAnnotation {
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParamError {
 		checkParamValue(entity, link, paramValue);
 		List<JoinColumn> joinColumns = getJoinColumns(entity, link, (String)paramValue);
 		link.setJoinColumns(joinColumns);
 	}
 	
-	protected List<JoinColumn> getJoinColumns(DslModelEntity entity, DslModelLink link, String paramValue) throws ParsingError {
+	protected List<JoinColumn> getJoinColumns(DslModelEntity entity, DslModelLink link, String paramValue) throws ParamError {
 		//ReferenceDefinitions columnsRefDef = buildReferenceDefinitions(annotation);
 		ReferenceDefinitions columnsRefDef = buildReferenceDefinitions(paramValue);
 		checkNotVoid(entity, link, columnsRefDef);

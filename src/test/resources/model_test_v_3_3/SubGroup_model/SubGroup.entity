@@ -1,7 +1,7 @@
 SubGroup {
 
     // ATTRIBUTES
-	groupCode : string {@Id, @SizeMax(2), @FK(Group) };
+	groupCode : string {@Id @SizeMax(2) @FK(Group) };
 	subgroupId : int {@Id };
 	
 	name : string;

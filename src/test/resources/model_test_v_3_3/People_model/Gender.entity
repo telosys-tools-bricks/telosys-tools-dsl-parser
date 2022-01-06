@@ -1,6 +1,6 @@
 Gender 
 
 { 
-	id : short  { @Id, @Min(1), @DbName(ID) };
+	id : short  { @Id  @Min(1)   @DbName(ID) };
 	name : string;
 }

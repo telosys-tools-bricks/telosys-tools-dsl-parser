@@ -15,14 +15,14 @@
  */
 package org.telosys.tools.dsl.parser.annotations;
 
-import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
+import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 
 /**
  * "MaxLen" annotation 
@@ -38,7 +38,7 @@ public class MaxLenAnnotation extends AnnotationDefinition {
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) throws ParsingError {
+	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, Object paramValue) throws ParamError {
 		checkParamValue(entity, attribute, paramValue);
 		attribute.setMaxLength((Integer)paramValue);
 	}

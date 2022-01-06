@@ -5,13 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.Parser;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
+import org.telosys.tools.dsl.DslModelErrors;
+import org.telosys.tools.dsl.parser.ParserV2;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.reporting.EntityReport;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 public class ValidEntitiesParsingTest {
 	
@@ -19,18 +18,33 @@ public class ValidEntitiesParsingTest {
 		return new File("src/test/resources/entity_test/valid/" + entityName + ".entity");
 	}
 
-	private DomainEntity parseEntity(String entityName, List<String> entitiesNames) throws EntityParsingError {
-		Parser parser = new Parser();
-		File entityFile = getEntityFile(entityName);
-		return parser.parseEntity(entityFile, entitiesNames );
+//	private DomainEntity parseEntity(String entityName, List<String> entitiesNames) throws EntityParsingError {
+//		Parser parser = new Parser();
+//		File entityFile = getEntityFile(entityName);
+//		return parser.parseEntity(entityFile, entitiesNames );
+//	}
+	
+	private DomainEntity parseEntity(String entityName) {
+		File file = getEntityFile(entityName);
+		List<String> entitiesNames = new LinkedList<>();
+//		entitiesNames.add("Country");
+//		entitiesNames.add("Employee");
+//		entitiesNames.add("Gender");
+//		entitiesNames.add("Person");
+		
+		DslModelErrors errors = new DslModelErrors();
+		ParserV2 parser = new ParserV2();
+		DomainEntity entity = parser.parseEntity(file, entitiesNames, errors);
+		EntityReport.print(entity, errors);
+		assertEquals(0, errors.getNumberOfErrors());
+		return entity;
+		
 	}
 	
-	
 	@Test
-	public void testParsePerson1() throws EntityParsingError {
-		DomainEntity entity = parseEntity("Person1", new LinkedList<String>());
-		EntityReport.print(entity);
-		assertFalse(entity.hasError());
+	public void testParsePerson1()  {
+		DomainEntity entity = parseEntity("Person1");
+//		assertFalse(entity.hasError());
 		assertEquals(2, entity.getNumberOfFields());
 	}
 

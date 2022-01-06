@@ -188,8 +188,8 @@ public class DomainModel {
             sb.append(" : ");
             sb.append(entity.getNumberOfFields());
             sb.append(" field(s) ");
-            sb.append(entity.getNumberOfErrors());
-            sb.append(" errors(s) ");
+//            sb.append(entity.getNumberOfErrors());
+//            sb.append(" errors(s) ");
             sb.append("\n");
     	}
     	return sb.toString();

@@ -2,25 +2,25 @@ Employee
 
 {
 
-// Field "id"
+//--- Field "id"
 	id :                                       int {@Id @Min(1  ) 
 	  
 	  
-	  #Bar  (  12.34  )     
-	  @Max(   9999) 
+	  #Bar(  12.34  )
+   @Max(   9999) 
 	
-	@Label ( "Identifier" )    #Foo(   'abc '  )  #Id
+	@Label( "Identifier" )    #Foo(   'abc '  )  #Id
 	}; 
 	
 	
-// Field "firstName"
+//--- Field "firstName"
 	  	firstName  :  string  {  @DefaultValue(  'Bart')   #tag
-	  			@InitialValue   (   "xxx"   ) } ;
+	  			@InitialValue(   "xxx"   )  #Foo( " a b c ") } ;
 	  	    
-// Field "birthDate"
+//--- Field "birthDate"
 			birthDate :   	  date { @Future } ;
 			
-// Field "country"
+//--- Field "country"
 	country    :			 Country  {      #Foo  @Embedded    #MyTag(   123   )  }  ;  
 	
 	

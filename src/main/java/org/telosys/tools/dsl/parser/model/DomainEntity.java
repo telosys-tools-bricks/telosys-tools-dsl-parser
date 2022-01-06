@@ -22,8 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.DslModelError;
 
 public class DomainEntity {
 
@@ -42,8 +41,6 @@ public class DomainEntity {
      */
     private final Map<String, DomainField> fieldsMap;
     
-	private final List<ParsingError> errors = new LinkedList<>() ;
-
     /**
      * Constructor
      * @param name
@@ -110,8 +107,14 @@ public class DomainEntity {
     public boolean hasField(DomainField field) {
     	return fieldsMap.containsKey(field.getName());
     }
-    public void addField(DomainField field) {
-        fieldsMap.put(field.getName(), field);
+    public void addField(DomainField field) throws DslModelError {
+    	if ( this.hasField(field)) {
+    		throw new DslModelError(this.name, field.getLineNumber(), field.getName(), 
+    				"Duplicate field '" + field.getName() + "'");
+    	}
+    	else {
+            fieldsMap.put(field.getName(), field);
+    	}
     }
 
     /**
@@ -175,33 +178,6 @@ public class DomainEntity {
     }
 
     //-------------------------------------------------------------------------------------
-    // ERRORS
-    //-------------------------------------------------------------------------------------
-    /**
-     * Add a new error to the field 
-     * @param error
-     */
-    public void addError(ParsingError error) {
-    	errors.add(error);
-    }
-    
-    public boolean hasError() {
-    	return ! errors.isEmpty();
-    }
-    
-    public List<ParsingError> getErrors() {
-    	return errors;
-    }
-    
-    /**
-     * Returns the number of errors
-     * @return
-     */
-    public int getNumberOfErrors() {
-        return errors.size();
-    }
-
-    //-------------------------------------------------------------------------------------
     public String toString() {
     	StringBuilder sb = new StringBuilder();
     	sb.append("Entity name : '");
@@ -231,20 +207,6 @@ public class DomainEntity {
         	sb.append(field.toString());
         	sb.append("\n");
         }
-        /*** Errors no longer stored in entity
-    	sb.append("Errors (");
-    	sb.append(errors.size());
-    	sb.append(") : \n");
-		for ( ParsingError e : errors ) {
-	    	sb.append(" . " );
-	    	if ( e instanceof FieldParsingError ) {
-    	    	sb.append(((FieldParsingError)e).getFieldName() );
-	    	}
-	    	sb.append(" : " );
-	    	sb.append(e.getMessage() );
-	    	sb.append("\n");
-		}
-		***/
         return sb.toString();
     }
 

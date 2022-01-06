@@ -5,18 +5,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.Parser;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.DslModelErrors;
+import org.telosys.tools.dsl.parser.ParserV2;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
+import org.telosys.tools.dsl.parser.reporting.EntityReport;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 public class InvalidModelFourEntitiesTest {
 	
-	private DomainEntity parseEntityFile(String entityFileName) throws EntityParsingError {
+	private DslModelErrors parseEntityFile(String entityFileName) {
 		File file = new File(entityFileName);
 		List<String> entitiesNames = new LinkedList<>();
 		entitiesNames.add("Country");
@@ -24,81 +22,51 @@ public class InvalidModelFourEntitiesTest {
 		entitiesNames.add("Gender");
 		entitiesNames.add("Person");
 		
-		Parser parser = new Parser();
-		return parser.parseEntity(file, entitiesNames);
+//		Parser parser = new Parser();
+//		return parser.parseEntity(file, entitiesNames);
+		
+		DslModelErrors errors = new DslModelErrors();
+		ParserV2 parser = new ParserV2();
+		DomainEntity entity = parser.parseEntity(file, entitiesNames, errors);
+		EntityReport.print(entity, errors);
+		return errors;
+		
 	}
 	
-	private void print(EntityParsingError exception) {
-		if ( exception != null ) {
-			System.out.println("EntityParsingError : " + exception.getMessage() );
-			for ( ParsingError error : exception.getErrors() ) {
-				System.out.println(" . FieldParsingError : " + error.getMessage() + " [" + error.getEntityName() + "]");
-			}
-		}
-		else {
-			System.out.println("EntityParsingError = null (no exception) "  );
-		}
-	}
+//	private void print(EntityParsingError exception) {
+//		if ( exception != null ) {
+//			System.out.println("EntityParsingError : " + exception.getMessage() );
+//			for ( ParsingError error : exception.getErrors() ) {
+//				System.out.println(" . FieldParsingError : " + error.getMessage() + " [" + error.getEntityName() + "]");
+//			}
+//		}
+//		else {
+//			System.out.println("EntityParsingError = null (no exception) "  );
+//		}
+//	}
 
 	@Test
-	public void parseEntity_Employee_ERR() {
-		DomainEntity entity = null ;
-		EntityParsingError exception = null;
-		try {
-			entity = parseEntityFile("src/test/resources/model_test/invalid/FourEntities_model/Employee.entity");
-		} catch (EntityParsingError e) {
-			exception = e;
-		}
-		assertNotNull(exception);
-		assertNull(entity);
-		print(exception);
-		assertEquals(1, exception.getErrors().size() );		
+	public void parseEntityEmployeeERR() {
+		DslModelErrors errors = parseEntityFile("src/test/resources/model_test/invalid/FourEntities_model/Employee.entity");
+		assertEquals(1, errors.getNumberOfErrors() );
 	}
 
 	@Test
 	public void parseEntityCountryERR() {
-		DomainEntity entity = null ;
-		EntityParsingError exception = null;
-		try {
-			entity = parseEntityFile("src/test/resources/model_test/invalid/FourEntities_model/Country.entity");
-		} catch (EntityParsingError e) {
-			exception = e;
-		}
-		assertNotNull(exception);
-		assertNull(entity);
-		print(exception);
-		assertEquals(1, exception.getErrors().size() );		
-	}
-
-
-	@Test
-	public void parseEntity_Gender_ERR() {
-		DomainEntity entity = null ;
-		EntityParsingError exception = null;
-		try {
-			entity = parseEntityFile("src/test/resources/model_test/invalid/FourEntities_model/Gender.entity");
-		} catch (EntityParsingError e) {
-			exception = e;
-		}
-		assertNull(entity);
-		assertNotNull(exception);
-		print(exception);
-		assertEquals(2, exception.getErrors().size() );		
+		DslModelErrors errors = parseEntityFile("src/test/resources/model_test/invalid/FourEntities_model/Country.entity");
+		assertEquals(1, errors.getNumberOfErrors() );
 	}
 
 	@Test
-	public void parseEntity_Person_ERR() {
-		DomainEntity entity = null ;
-		EntityParsingError exception = null;
-		try {
-			entity = parseEntityFile("src/test/resources/model_test/invalid/FourEntities_model/Person.entity");
-		} catch (EntityParsingError e) {
-			exception = e;
-		}
-		assertNull(entity);
-		assertNotNull(exception);
-		print(exception);
-		assertEquals(5, exception.getErrors().size() );		
+	public void parseEntityGenderERR() {
+		DslModelErrors errors = parseEntityFile("src/test/resources/model_test/invalid/FourEntities_model/Gender.entity");
+		assertEquals(2, errors.getNumberOfErrors() );
+	}
+
+	@Test
+	public void parseEntityPersonERR() {
+		DslModelErrors errors = parseEntityFile("src/test/resources/model_test/invalid/FourEntities_model/Person.entity");
+		assertEquals(6, errors.getNumberOfErrors() );
 	}
 
 }

@@ -1,7 +1,7 @@
 // test v 3.3 swith FOREIGN KEY
 Employee 
 { 
-	id 		: int {@Id , @AutoIncremented,  @Max(800)}; // the id
+	id 		: int {@Id  @AutoIncremented  @Max(800)}; // the id
 	
 	firstName : string   { @DefaultValue( "   a b") #MyTag(qqq) #foo(12) } ;
 	lastName : string {  @NotBlank   	 } ;
@@ -9,8 +9,8 @@ Employee
 	birthDate : date { @Future  @NotEmpty } ;
 	
 	hour:time ;
-	foo : string { @NotBlank, }; 
-	count : int { @Max(12), @Min(  0 ), @NotNull , @SizeMax(12)};
+	foo : string { @NotBlank }; 
+	count : int { @Max(12) @Min(  0 ) @NotNull  @SizeMax(12)};
 	
 	badgeId : int  { @FK(Badge)  @FK(Toto.code) } ; // FK 
 	

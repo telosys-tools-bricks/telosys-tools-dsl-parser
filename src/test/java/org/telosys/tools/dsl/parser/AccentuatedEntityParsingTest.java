@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.Parser;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
+import org.telosys.tools.dsl.DslModelErrors;
+import org.telosys.tools.dsl.parser.ParserV2;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.reporting.EntityReport;
 
@@ -16,15 +16,16 @@ import static org.junit.Assert.assertEquals;
 public class AccentuatedEntityParsingTest {
 
 	@Test
-	public void testParser() throws EntityParsingError {
+	public void testParser() {
 
 		List<String> entitiesNames = new LinkedList<>();
 		entitiesNames.add("Car");
-		Parser parser = new Parser();
+		DslModelErrors errors = new DslModelErrors();
+		ParserV2 parser = new ParserV2();
 		DomainEntity entity = parser.parseEntity(new File("src/test/resources/entity_test_v_3_2/Employé.entity"),
-				entitiesNames);
+				entitiesNames, errors);
 
-		EntityReport.print(entity);
+		EntityReport.print(entity, errors);
 
 		System.out.println("default charset : " + Charset.defaultCharset());
 

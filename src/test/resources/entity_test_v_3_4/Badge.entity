@@ -7,7 +7,7 @@
 Badge {
 	id:int{@Id @Label("abc;de}f")  
 	
-	@OneToOne   @DefaultValue( 'a;z))e'  )  };  
+     @DefaultValue( "a;z))e"  )  };  
 	
 	name:string;
 }

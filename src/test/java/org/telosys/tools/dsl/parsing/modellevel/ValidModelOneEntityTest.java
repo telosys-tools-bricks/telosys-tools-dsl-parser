@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.Parser;
-import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
+import org.telosys.tools.dsl.parser.ParserV2;
+import org.telosys.tools.dsl.parser.ParsingResult;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -14,18 +14,18 @@ import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainTag;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class ValidModelOneEntityTest {
 	
 	@Test
-	public void test1() throws ModelParsingError {
+	public void test1() {
 		File modelFile = new File("src/test/resources/model_test/valid/OneEntity.model");
 		
-		Parser parser = new Parser();
-		DomainModel model = parser.parseModel(modelFile);
+		ParserV2 parser = new ParserV2();
+		ParsingResult result = parser.parseModel(modelFile);
+		DomainModel model = result.getModel();
 		
 		assertEquals(1, model.getNumberOfEntities());
 		assertEquals(1, model.getEntityNames().size());
@@ -60,8 +60,6 @@ public class ValidModelOneEntityTest {
 		assertEquals("abc",tags.get("Foo").getParameter());
 		assertNotNull(tags.get("Bar"));
 		assertEquals("12.34",tags.get("Bar").getParameter());
-		// Field errors
-		assertFalse(field.hasErrors());
 		
 		//---------- FIELD : firstName
 		field = entity.getField("firstName") ;
@@ -79,8 +77,6 @@ public class ValidModelOneEntityTest {
 		tags = field.getTags();
 		assertEquals(1, tags.size() );
 		assertNotNull(tags.get("tag"));
-		// Field errors
-		assertFalse(field.hasErrors());
 
 		//---------- FIELD : birthDate
 		field = entity.getField("birthDate") ;
@@ -88,8 +84,6 @@ public class ValidModelOneEntityTest {
 		assertEquals("date", field.getTypeName());
 		annotations = field.getAnnotations();
 		assertEquals(1, annotations.size() );
-		// Field errors
-		assertFalse(field.hasErrors());
 	}
 
 }

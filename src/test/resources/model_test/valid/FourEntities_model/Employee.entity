@@ -1,7 +1,7 @@
 
 Employee {
 
-	id : int { @Id,  @NotNull, @DbName(ID)  @DbComment(abc) @DbDefaultValue("") }; // the id
+	id : int { @Id  @NotNull @DbName(ID)  @DbComment(abc) @DbDefaultValue("") }; // the id
 	
 	firstName : string { @NotNull  @DbName(FIRST_NAME) @DbType("VARCHAR") @DbSize(20) };
 	

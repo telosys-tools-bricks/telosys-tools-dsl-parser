@@ -23,9 +23,9 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
-import org.telosys.tools.dsl.parser.annotation.Annotations;
+import org.telosys.tools.dsl.parser.annotation.AnnotationDefinitions;
 import org.telosys.tools.dsl.parser.commons.FkElement;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 
 public class DomainAnnotation {
 	
@@ -125,6 +125,15 @@ public class DomainAnnotation {
 		return name;
 	}
 
+	/**
+	 * Returns true if the annotation can be used multiple times in the same field
+	 * @return
+	 */
+	public boolean canBeUsedMultipleTimes() {
+		// Only "FK" annotation can be used multiple times
+		return "FK".equals(name);
+	}
+	
 	/**
 	 * Returns true if the annotation has a parameter
 	 * 
@@ -248,7 +257,7 @@ public class DomainAnnotation {
 	 * @param entity
 	 * @param attribute
 	 */
-	public void applyToAttribute(DslModel model, DslModelEntity entity, DslModelAttribute attribute ) throws ParsingError {
+	public void applyToAttribute(DslModel model, DslModelEntity entity, DslModelAttribute attribute ) throws ParamError {
     	AnnotationDefinition annotationDefinition = getAnnotationDefinition();
        	if ( annotationDefinition.hasAttributeScope() ) {
         	annotationDefinition.apply(model, entity, attribute, this.getParameter());
@@ -264,7 +273,7 @@ public class DomainAnnotation {
 	 * @param entity
 	 * @param link
 	 */
-	public void applyToLink(DslModel model, DslModelEntity entity, DslModelLink link ) throws ParsingError {
+	public void applyToLink(DslModel model, DslModelEntity entity, DslModelLink link ) throws ParamError {
     	AnnotationDefinition annotationDefinition = getAnnotationDefinition();
        	if ( annotationDefinition.hasLinkScope() ) {
     		annotationDefinition.apply(model, entity, link, this.getParameter());
@@ -278,8 +287,8 @@ public class DomainAnnotation {
 	 * Get annotation definition 
 	 * @return
 	 */
-	private AnnotationDefinition getAnnotationDefinition() {
-    	AnnotationDefinition annotationDefinition = Annotations.get(this.name);
+	public AnnotationDefinition getAnnotationDefinition() {
+    	AnnotationDefinition annotationDefinition = AnnotationDefinitions.get(this.name);
     	if ( annotationDefinition != null ) {
     		return annotationDefinition ;
     	}

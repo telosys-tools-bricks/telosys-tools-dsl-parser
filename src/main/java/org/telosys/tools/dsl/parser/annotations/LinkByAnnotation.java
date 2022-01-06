@@ -24,7 +24,7 @@ import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 
 public abstract class LinkByAnnotation extends AnnotationDefinition {
 
@@ -87,7 +87,7 @@ public abstract class LinkByAnnotation extends AnnotationDefinition {
 	 * Check there's at least 1 reference defined
 	 * @param referenceDefinitions
 	 */
-	protected void checkNotVoid(DslModelEntity entity, DslModelLink link, ReferenceDefinitions referenceDefinitions) throws ParsingError {
+	protected void checkNotVoid(DslModelEntity entity, DslModelLink link, ReferenceDefinitions referenceDefinitions) throws ParamError {
 		if ( referenceDefinitions.count() == 0 ) {
 			throw newParamError(entity, link, "no reference definition");
 		}
@@ -97,7 +97,7 @@ public abstract class LinkByAnnotation extends AnnotationDefinition {
 	 * Check referenced names are defined if more than one reference
 	 * @param referenceDefinitions
 	 */
-	protected void checkReferencedNames(DslModelEntity entity, DslModelLink link, ReferenceDefinitions referenceDefinitions) throws ParsingError {
+	protected void checkReferencedNames(DslModelEntity entity, DslModelLink link, ReferenceDefinitions referenceDefinitions) throws ParamError {
 		if ( referenceDefinitions.count() > 1 ) {
 			int referencedCount = 0;
 			for ( ReferenceDefinition rd : referenceDefinitions.getList() ) {

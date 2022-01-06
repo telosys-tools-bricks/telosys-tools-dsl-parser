@@ -15,8 +15,8 @@
  */
 package org.telosys.tools.dsl.parser.annotations;
 
-import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
+import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 

@@ -1,4 +1,6 @@
 Country {
-	id : int {@Id, @SizeMax(5)};
+	id : int {@Id @SizeMax(5)};
 	name : string;
+	
+	employees : Employee[] ;
 }

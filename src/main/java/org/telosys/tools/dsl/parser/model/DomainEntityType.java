@@ -18,14 +18,18 @@ package org.telosys.tools.dsl.parser.model;
 
 public class DomainEntityType extends DomainType {
 
-    public DomainEntityType(String name) {
-        super(name, DomainTypeNature.ENTITY);
+    public DomainEntityType(String name, DomainCardinality cardinality) {
+        super(name, cardinality, DomainTypeNature.ENTITY);
     }
 
     @Override
     public String toString() {
-        return "DomainEntityType [getName()=" + getName() + ", getNature()=" + getNature() + "]";
+//        return "DomainEntityType [getName()=" + getName() + ", getNature()=" + getNature() + "]";
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getName());
+       	if(this.getCardinality() == DomainCardinality.MANY) {
+    		sb.append("[]");
+    	}
+        return sb.toString();
     }
-
-
 }

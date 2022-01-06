@@ -15,14 +15,14 @@
  */
 package org.telosys.tools.dsl.parser.annotations;
 
-import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
+import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
 /**
@@ -46,14 +46,14 @@ public class MappedByAnnotation extends AnnotationDefinition {
 	}
 
 	@Override
-	protected void afterCreation(String entityName, String fieldName, DomainAnnotation annotation) throws ParsingError  {
+	public void afterCreation(String entityName, String fieldName, DomainAnnotation annotation) throws ParamError  {
 		if ( annotation.getParameterAsString().trim().length() == 0 ) {
-			throw newException(entityName, fieldName, "invalid link name (blank)");
+			throw newParamError(entityName, fieldName, "invalid link name (blank)");
 		}
 	}
 
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParamError {
 		checkParamValue(entity, link, paramValue);
 		link.setMappedBy((String) paramValue);
 		

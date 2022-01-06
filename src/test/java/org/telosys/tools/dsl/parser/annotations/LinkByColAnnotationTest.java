@@ -5,22 +5,22 @@ import java.util.List;
 import org.junit.Test;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 import org.telosys.tools.generic.model.JoinColumn;
 
 import static org.junit.Assert.assertEquals;
 
 public class LinkByColAnnotationTest {
 
-	private List<JoinColumn> getJoinColumns(String paramValue) throws ParsingError {
+	private List<JoinColumn> getJoinColumns(String paramValue) throws ParamError {
 		DslModelEntity entity = new DslModelEntity("Student");
 		DslModelLink link = new DslModelLink("teacher");
 		LinkByColAnnotation a = new LinkByColAnnotation();
 		return a.getJoinColumns(entity, link, paramValue);
 	}
 	
-	@Test (expected=ParsingError.class)
-	public void testErr01() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void testErr01() throws ParamError {
 		
 		getJoinColumns((String)null) ;
 //		assertTrue(jc.isEmpty());
@@ -35,13 +35,13 @@ public class LinkByColAnnotationTest {
 //		assertEquals(0, rd.count());
 	}
 
-	@Test (expected=ParsingError.class)
-	public void testErr02() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void testErr02() throws ParamError {
 		getJoinColumns("") ;
 	}
 
 	@Test
-	public void test1JoinColumn() throws ParsingError {
+	public void test1JoinColumn() throws ParamError {
 		// @LinkByCol(firstName)
 		List<JoinColumn> jc = getJoinColumns("firstName") ;
 		assertEquals(1, jc.size());
@@ -50,7 +50,7 @@ public class LinkByColAnnotationTest {
 	}
 
 	@Test
-	public void test2JoinColumns() throws ParsingError {
+	public void test2JoinColumns() throws ParamError {
 		// @LinkByCol(aaa, bbb)
 		List<JoinColumn> jc = getJoinColumns("aaa,bbb") ; 
 		assertEquals(2, jc.size());
@@ -61,7 +61,7 @@ public class LinkByColAnnotationTest {
 	}
 	
 	@Test
-	public void test2JoinColumnsWithSpaces() throws ParsingError {
+	public void test2JoinColumnsWithSpaces() throws ParamError {
 		// @LinkByCol(aaa, bbb)
 		List<JoinColumn> jc = getJoinColumns("   aaa,  bbb ") ; 
 		assertEquals(2, jc.size());
@@ -72,7 +72,7 @@ public class LinkByColAnnotationTest {
 	}
 	
 	@Test
-	public void test03() throws ParsingError {
+	public void test03() throws ParamError {
 		// @LinkByCol(aaa, bbb)
 		List<JoinColumn> jc = getJoinColumns("aaa ,    bbb  ,  ccc ") ; 
 		assertEquals(3, jc.size());

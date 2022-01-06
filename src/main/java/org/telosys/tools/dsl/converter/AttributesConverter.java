@@ -17,11 +17,11 @@ package org.telosys.tools.dsl.converter;
 
 import java.util.Collection;
 
+import org.telosys.tools.dsl.DslModelError;
 import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -35,23 +35,21 @@ import org.telosys.tools.dsl.parser.model.DomainNeutralType;
  */
 public class AttributesConverter extends AbstractConverter {
 
-//	private final AnnotationsApplicator annotationsApplicator ;
-
 	private final DslModel dslModel ;
-	private final DslModelErrors dslModelErrors;
+//	private final DslModelErrors dslModelErrors;
+	private final DslModelErrors errors;
 	
 	private final TagsConverter tagsConverter;
-//	private final DslModelErrors errors;
 	
 	/**
 	 * Constructor
 	 * @param model
 	 */
+//	public AttributesConverter(DslModel dslModel, DslModelErrors errors) {
 	public AttributesConverter(DslModel dslModel, DslModelErrors errors) {
 		super();
 		this.dslModel = dslModel;
-		this.dslModelErrors = errors;
-//		this.annotationsApplicator = new AnnotationsApplicator(dslModel, errors);
+		this.errors = errors;
 		this.tagsConverter = new TagsConverter();
 	}
 
@@ -186,8 +184,9 @@ public class AttributesConverter extends AbstractConverter {
 			for (DomainAnnotation annotation : annotations) {
 				try {
 					annotation.applyToAttribute(dslModel, dslEntity, dslAttribute);
-				} catch (ParsingError e) {
-					dslModelErrors.addError(e.getEntityName(), e.getErrorMessage());
+				} catch (Exception e) {
+					errors.addError(
+							new DslModelError( dslEntity.getClassName(), dslAttribute.getName(), e.getMessage() ) );
 				}
 			}		
 			

@@ -18,14 +18,14 @@ package org.telosys.tools.dsl.parser.annotations;
 import java.util.Arrays;
 import java.util.List;
 
-import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
+import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.generic.model.enums.GeneratedValueStrategy;
 
@@ -54,29 +54,29 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 	}
 	
 	@Override
-	protected void afterCreation(String entityName, String fieldName, 
-			 DomainAnnotation annotation) throws ParsingError {
+	public void afterCreation(String entityName, String fieldName, 
+			 DomainAnnotation annotation) throws ParamError {
 		@SuppressWarnings("unchecked")
 		List<String> list = (List<String>) annotation.getParameterAsList();
 		if ( list.isEmpty() ) {
-			throw newException(entityName, fieldName, "invalid parameter ('strategy' is required)");
+			throw newParamError(entityName, fieldName, "invalid parameter ('strategy' is required)");
 		}
 		else {
 			// Check strategy 
 			String strategy = list.get(0);
 			if ( ! stategies.contains(strategy) ) {
-				throw newException(entityName, fieldName, "invalid strategy '" + strategy + "'");
+				throw newParamError(entityName, fieldName, "invalid strategy '" + strategy + "'");
 			}
 			// Check number of parameters 
 			int n = list.size();
 			if ( strategy.equals(SEQUENCE) ) {
 				if ( n != 3 && n != 4 ) {
-					throw newException(entityName, fieldName, "invalid number of parameters for 'SEQUENCE'");
+					throw newParamError(entityName, fieldName, "invalid number of parameters for 'SEQUENCE'");
 				}
 			}
 			if ( strategy.equals(TABLE) ) {
 				if ( n != 3 && n != 6 && n != 7 ) {
-					throw newException(entityName, fieldName, "invalid number of parameters for 'TABLE'");
+					throw newParamError(entityName, fieldName, "invalid number of parameters for 'TABLE'");
 				}
 			}
 		}
@@ -84,7 +84,7 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 
 	@Override
 	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, 
-			Object paramValue) throws ParsingError {
+			Object paramValue) throws ParamError {
 		checkParamValue(entity, attribute, paramValue);
 		@SuppressWarnings("unchecked")
 		List<String> list = (List<String>)paramValue;

@@ -25,20 +25,22 @@ public abstract class DomainType {
     private final String name;
 
     /**
-     * Type nature : "neutral type" or "entity" or "enumeration"
+     * Type nature : "neutral type" or "entity" 
      */
     private final DomainTypeNature nature;
 
+    private final DomainCardinality cardinality; 
 
     /**
      * Constructor
      * @param name
      * @param nature
      */
-    protected DomainType(String name, DomainTypeNature nature) {
+    protected DomainType(String name, DomainCardinality cardinality, DomainTypeNature nature) {
         super();
         this.name = name;
         this.nature = nature;
+        this.cardinality = cardinality;
     }
 
     /**
@@ -54,6 +56,10 @@ public abstract class DomainType {
     public final DomainTypeNature getNature() {
         return nature;
     }
+    
+    public final DomainCardinality getCardinality() {
+        return cardinality;
+    }
 
     public final boolean isNeutralType() {
         return nature == DomainTypeNature.NEUTRAL_TYPE;
@@ -61,10 +67,6 @@ public abstract class DomainType {
 
     public final boolean isEntity() {
         return nature == DomainTypeNature.ENTITY;
-    }
-
-    public final boolean isEnumeration() {
-        return nature == DomainTypeNature.ENUMERATION;
     }
 
 }

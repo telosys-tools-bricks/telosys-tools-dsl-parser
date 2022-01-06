@@ -18,15 +18,15 @@ package org.telosys.tools.dsl.parser.annotations;
 import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.dsl.AnnotationName;
 import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
 import org.telosys.tools.dsl.commons.ReferenceDefinition;
 import org.telosys.tools.dsl.commons.ReferenceDefinitions;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.JoinColumn;
 
@@ -37,21 +37,21 @@ public class LinkByAttrAnnotation extends LinkByAnnotation {
 	}
 	
 	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParsingError {
+	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParamError {
 		// Example : @LinkByAttr(attr1)   @LinkByAttr(attr1 > ref1 , attr2 > ref2 )
 		checkParamValue(entity, link, paramValue);
 		List<JoinColumn> joinColumns = getJoinColumns(model, entity, link, (String)paramValue);
 		link.setJoinColumns(joinColumns);
 	}
 	
-	private ReferenceDefinitions getReferenceDefinitions(DslModelEntity entity, DslModelLink link, String paramValue) throws ParsingError {
+	private ReferenceDefinitions getReferenceDefinitions(DslModelEntity entity, DslModelLink link, String paramValue) throws ParamError {
 		ReferenceDefinitions referenceDefinitions = buildReferenceDefinitions(paramValue);
 		checkNotVoid(entity, link, referenceDefinitions);
 		checkReferencedNames(entity, link, referenceDefinitions);
 		return referenceDefinitions;
 	}
 
-	protected List<JoinColumn> getJoinColumns(DslModel model, DslModelEntity entity, DslModelLink link, String paramValue) throws ParsingError {
+	protected List<JoinColumn> getJoinColumns(DslModel model, DslModelEntity entity, DslModelLink link, String paramValue) throws ParamError {
 		ReferenceDefinitions attributesRefDef = getReferenceDefinitions(entity, link, paramValue);
 		
 //		String referencedEntityName = link.getTargetEntityClassName();
@@ -77,7 +77,7 @@ public class LinkByAttrAnnotation extends LinkByAnnotation {
 		}
 	}
 	
-	private DslModelEntity getReferencedEntity(DslModel model, DslModelEntity entity, DslModelLink link) throws ParsingError {
+	private DslModelEntity getReferencedEntity(DslModel model, DslModelEntity entity, DslModelLink link) throws ParamError {
 		String referencedEntityName = link.getTargetEntityClassName();
 		if ( referencedEntityName == null ) {
 			throw newParamError(entity, link, "invalid link : target entity name is null");

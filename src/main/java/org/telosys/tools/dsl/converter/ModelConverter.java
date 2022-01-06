@@ -33,8 +33,8 @@ import org.telosys.tools.generic.model.Model;
  */
 public class ModelConverter extends AbstractConverter {
 
-	private final DslModelErrors errors;
-	
+	private final DslModelErrors  errors;
+
 	/**
 	 * Constructor
 	 */

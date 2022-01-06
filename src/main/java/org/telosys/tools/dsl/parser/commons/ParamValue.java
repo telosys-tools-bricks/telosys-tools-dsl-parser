@@ -20,11 +20,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.dsl.parser.exceptions.AnnotationParsingError;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.FieldParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
-import org.telosys.tools.dsl.parser.exceptions.TagParsingError;
 
 public class ParamValue {
 
@@ -35,12 +30,12 @@ public class ParamValue {
 	private final ParamValueOrigin origin;
 	
 	public ParamValue(String entityName, String fieldName, 
-			String annotationOrTagName, String parameterValue, ParamValueOrigin origin) {
+			String annotationOrTagName, String rawParameterValue, ParamValueOrigin origin) {
 		super();
 		this.entityName = entityName;
 		this.fieldName = fieldName;
 		this.annotationOrTagName = annotationOrTagName;
-		this.parameterValue = parameterValue;
+		this.parameterValue = rawParameterValue;
 		this.origin = origin;
 	}
 
@@ -49,27 +44,29 @@ public class ParamValue {
 	 * @param message
 	 * @return
 	 */
-	private ParsingError newError(String message) {
-		switch(origin) {
-		case ENTITY_ANNOTATION :
-			return new AnnotationParsingError(entityName, annotationOrTagName, message);
-		case ENTITY_TAG :
-			return new TagParsingError(entityName, annotationOrTagName, message);
-		case FIELD_ANNOTATION :
-			return new AnnotationParsingError(entityName, fieldName, annotationOrTagName, message);
-		case FIELD_TAG :
-			return new TagParsingError(entityName, fieldName, annotationOrTagName, message);
-		default:
-			// can't happen
-			return new EntityParsingError(entityName, annotationOrTagName + " : " + message);
-		}
+	private ParamError newError(String message) {
+//		switch(origin) {
+//		case ENTITY_ANNOTATION :
+//			return new ParamError(entityName, annotationOrTagName, message);
+//		case ENTITY_TAG :
+//			return new ParamError(entityName, annotationOrTagName, message);
+//		case FIELD_ANNOTATION :
+//			return new ParamError(entityName, fieldName, annotationOrTagName, message);
+//		case FIELD_TAG :
+//			return new ParamError(entityName, fieldName, annotationOrTagName, message);
+//		default:
+//			// can't happen
+//			throw new IllegalStateException(entityName + annotationOrTagName + " : " + message);
+//		}
+		
+		return new ParamError(message);
 	}
 	
 	/**
 	 * Check if parameter value exist
 	 * @throws FieldParsingError
 	 */
-	private void checkParameterExistence() throws ParsingError { 
+	private void checkParameterExistence() throws ParamError { 
 		if (parameterValue == null || parameterValue.length() == 0) {
 			throw newError("parameter required");
 		}
@@ -80,7 +77,7 @@ public class ParamValue {
 	 * @return
 	 * @throws FieldParsingError
 	 */
-	public Integer getAsInteger() throws ParsingError { 
+	public Integer getAsInteger() throws ParamError { 
 		checkParameterExistence();
 		
 		try {
@@ -95,7 +92,7 @@ public class ParamValue {
 	 * @return
 	 * @throws FieldParsingError
 	 */
-	public BigDecimal getAsBigDecimal() throws ParsingError {
+	public BigDecimal getAsBigDecimal() throws ParamError {
 		checkParameterExistence();
 		
 		try {
@@ -110,7 +107,7 @@ public class ParamValue {
 	 * @return
 	 * @throws FieldParsingError
 	 */
-	public Boolean getAsBoolean() throws ParsingError {
+	public Boolean getAsBoolean() throws ParamError {
 		checkParameterExistence();
 		
 		if ( ! StrUtil.nullOrVoid(parameterValue) ) {
@@ -130,7 +127,7 @@ public class ParamValue {
 	 * @return
 	 * @throws FieldParsingError
 	 */
-	public String getAsString() throws ParsingError {
+	public String getAsString() throws ParamError {
 		checkParameterExistence();
 		
 		// remove all void chars ( blank, tab, cr, lf, ...)
@@ -138,8 +135,6 @@ public class ParamValue {
 		// remove quotes if any
 		if (s.startsWith("\"") && s.endsWith("\"")) {
 			return unquote(s, '"');
-		} else if (s.startsWith("'") && s.endsWith("'")) {
-			return unquote(s, '\'');
 		} else {
 			return s;
 		}
@@ -171,15 +166,15 @@ public class ParamValue {
 	 * Check that the parameter value conforms to the 'SIZE' format
 	 * and return it if OK
 	 * @return
-	 * @throws ParsingError
+	 * @throws ParamError
 	 */
-	public String getAsSize() throws ParsingError {
+	public String getAsSize() throws ParamError {
 		checkParameterExistence();
 		checkSizeParameter(parameterValue);
 		return parameterValue;
 	}
 	
-	private void checkSizeParameter(String p) throws ParsingError {
+	private void checkSizeParameter(String p) throws ParamError {
 		if ( p.contains(",")) {
 			String[] parts = p.split(",");
 			if (parts.length  != 2) {
@@ -193,7 +188,7 @@ public class ParamValue {
 		}
 	}
 	
-	private void checkSizeInteger(String p) throws ParsingError {
+	private void checkSizeInteger(String p) throws ParamError {
 		try {
 			Integer i = new Integer(p);
 			if ( i < 0 ) {
@@ -204,22 +199,21 @@ public class ParamValue {
 		}
 	}
 	
-	public FkElement getAsForeignKeyElement() throws ParsingError {
+	public FkElement getAsForeignKeyElement() throws ParamError {
 		checkParameterExistence();
 		FkElementBuilder builder = new FkElementBuilder(entityName, fieldName);
 		return builder.build(parameterValue);
 	}
 	
-	public List<String> getAsList() throws ParsingError {
+	public List<String> getAsList() throws ParamError {
 		checkParameterExistence();
 		return buildList(parameterValue);
 	}
 	
-	private List<String> buildList(String paramString) throws ParsingError {
+	private List<String> buildList(String paramString) throws ParamError {
 		String[] elements = StrUtil.split(paramString, ',');
 		if (elements.length == 0 ) {
-			throw new AnnotationParsingError(entityName, fieldName, annotationOrTagName, 
-					"invalid list parameter (at list 1 element expected)");
+			throw new ParamError("invalid list parameter (at list 1 element expected)");
 		}
 		
 		List<String> list = new LinkedList<>();

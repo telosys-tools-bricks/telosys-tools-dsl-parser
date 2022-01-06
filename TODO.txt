@@ -1,14 +1,49 @@
+--------------------------
 
+Check duplicated annotation / tag 
+- field level 
+- entity level 
 
- @Size   : in Generic Attribute //@Override
- 
- @Unique : in Generic Attribute //@Override
-
- 
- Tags at link level ; in Generic Ling  //@Override in DslModelLink
+Create specific classes used in entity and field :
+ - AnnotationSet
+ - TagSet
 
  --------------------------
 
- @MaxLen and @MinLen  (instead of @SizeMax and @SizeMin ) ???      
-      
-      
+(x) Check duplicated field :
+		entity.addField( buildField("foo", DomainNeutralTypes.STRING) );
+		entity.addField( buildField("foo", DomainNeutralTypes.INTEGER) );
+
+ --------------------------
+
+(x) invalid type 'Employee[]'
+DONE
+
+ --------------------------
+
+(x) @GeneratedValue : error with TABLE & SEQUENCE
+DONE
+
+ --------------------------
+ PARSER V2 
+ --------------------------
+  Error : @Label ("Identifier" ) 
+  unexpected double quote (ElementParser) 
+DONE : => unexpected '(' after ' '
+ 
+ --------------------------
+  Check Entity without fields :
+  Employee5 {
+   // no field defined in this entity
+  }
+OK : not an error
+
+ --------------------------
++ check JUnit errors
+
+Errors with "," in "{ ... }"
+  @Id, : invalid name
+  invalid element ','(annotation or tag expected)
+  
+  => check invalid characters in Annotation or Tag name ( ',' detection )
+  

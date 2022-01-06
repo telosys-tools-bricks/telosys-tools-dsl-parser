@@ -18,14 +18,15 @@ package org.telosys.tools.dsl.converter;
 import java.util.Collection;
 import java.util.List;
 
+import org.telosys.tools.dsl.DslModelError;
 import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
 import org.telosys.tools.dsl.converter.link.JoinColumnsUtil;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainCardinality;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.generic.model.Attribute;
@@ -39,7 +40,7 @@ import org.telosys.tools.generic.model.enums.Optional;
 public class LinksConverter extends AbstractConverter {
 
 	private final DslModel       dslModel;
-	private final DslModelErrors dslModelErrors;
+	private final DslModelErrors  errors;
 	
 	private int linkIdCounter = 0;
 
@@ -55,7 +56,7 @@ public class LinksConverter extends AbstractConverter {
 	public LinksConverter(DslModel dslModel, DslModelErrors errors) {
 		super();
 		this.dslModel = dslModel;
-		this.dslModelErrors = errors ;
+		this.errors = errors ;
 //		this.annotationsApplicator = new AnnotationsApplicator(dslModel, errors);
 		this.tagsConverter = new TagsConverter();
 	}
@@ -104,7 +105,8 @@ public class LinksConverter extends AbstractConverter {
 		Entity referencedEntity = dslModel.getEntityByClassName(domainField.getType().getName());
 		
 		check((referencedEntity != null),
-				"No target entity for field '" + domainField.getName() + "'. Cannot create Link");
+				"No target entity for field '" + domainField.getName() + "' "
+				+ " : " + domainField.getType().getName() + " - Cannot create Link");
 
 //		DslModelLink dslLink = new DslModelLink();
 //		// Init the new attribute with at least its name
@@ -126,7 +128,7 @@ public class LinksConverter extends AbstractConverter {
 	private void step1InitLink(DslModelLink dslLink, DomainField domainEntityField) {
 
 		// Cardinality and owning/inverse side
-		if (domainEntityField.getCardinality() == 1) {
+		if (domainEntityField.getCardinality() == DomainCardinality.ONE ) {
 			// Reference to only ONE entity => "MANY TO ONE"
 			dslLink.setCardinality(Cardinality.MANY_TO_ONE);
 			// The type is a single entity => OWNING SIDE by default
@@ -176,8 +178,13 @@ public class LinksConverter extends AbstractConverter {
 			for (DomainAnnotation annotation : annotations) {
 				try {
 					annotation.applyToLink(dslModel, dslEntity, dslLink);
-				} catch (ParsingError e) {
-					dslModelErrors.addError(e.getEntityName(), e.getErrorMessage());
+				} catch (Exception e) {
+//					dslModelErrors.addError(e.getEntityName(), e.getErrorMessage());
+//					dslModelErrors.addError(
+//							new ConverterError( dslEntity, dslAttribute, e.getMessage() );
+					errors.addError(
+						new DslModelError( dslEntity.getClassName(), dslLink.getFieldName(), e.getMessage() ) );
+
 				}
 			}
 		} else {

@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.telosys.tools.dsl.commons.ReferenceDefinitions;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 
 import static org.junit.Assert.assertEquals;
 
@@ -30,9 +30,9 @@ public class LinkByAnnotationTest {
 	 * Get and check ReferenceDefinitions (exception if void)
 	 * @param s
 	 * @return
-	 * @throws ParsingError 
+	 * @throws ParamError 
 	 */
-	private ReferenceDefinitions getReferenceDefinitionsNotVoid(String s) throws ParsingError {
+	private ReferenceDefinitions getReferenceDefinitionsNotVoid(String s) throws ParamError {
 		DslModelEntity entity = new DslModelEntity("Student");
 		DslModelLink link = new DslModelLink("teacher");
 		LinkByAnnotation a = getLinkByAnnotation() ;
@@ -46,7 +46,7 @@ public class LinkByAnnotationTest {
 	 * @param s
 	 * @return
 	 */
-	private ReferenceDefinitions getReferenceDefinitionsMultiRef(String s) throws ParsingError  {
+	private ReferenceDefinitions getReferenceDefinitionsMultiRef(String s) throws ParamError  {
 		DslModelEntity entity = new DslModelEntity("Student");
 		DslModelLink link = new DslModelLink("teacher");
 		LinkByAnnotation a = getLinkByAnnotation() ;
@@ -114,7 +114,7 @@ public class LinkByAnnotationTest {
 	}
 	
 	@Test
-	public void test5() throws ParsingError {
+	public void test5() throws ParamError {
 //		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", "aa ");
 //		ReferenceDefinitions rd = p.buildReferenceDefinitions(annotation);
 		ReferenceDefinitions rd = getReferenceDefinitionsNotVoid("aa ");
@@ -125,7 +125,7 @@ public class LinkByAnnotationTest {
 	}
 	
 	@Test
-	public void test6() throws ParsingError {
+	public void test6() throws ParamError {
 //		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", "aa > refAA ,  bb>refBB ");
 //		ReferenceDefinitions rd = p.buildReferenceDefinitions(annotation);
 		ReferenceDefinitions rd = getReferenceDefinitionsNotVoid("aa > refAA ,  bb>refBB ");
@@ -139,36 +139,36 @@ public class LinkByAnnotationTest {
 	
 	//----------------------------------------------------------------------
 
-	@Test (expected=ParsingError.class)
-	public void testErrNotVoid1() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void testErrNotVoid1() throws ParamError {
 //		LinkByAnnotation p = getLinkByAnnotation();
 //		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", " ");
 //		p.buildReferenceDefinitions(annotation);
 		getReferenceDefinitionsNotVoid(" ");
 	}
 	
-	@Test (expected=ParsingError.class)
-	public void testErrNotVoid2() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void testErrNotVoid2() throws ParamError {
 //		LinksAnnotationsProcessor p = new LinksAnnotationsProcessor(VOID_MODEL) ;
 //		DomainAnnotation annotation = new DomainAnnotation("LinkByAttr", "  > refAA ");
 //		p.buildReferenceDefinitions(annotation);
 		getReferenceDefinitionsNotVoid("  > refAA "); // "no reference definition"
 	}
 	
-	@Test (expected=ParsingError.class)
-	public void testErrNotVoid3() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void testErrNotVoid3() throws ParamError {
 		getReferenceDefinitionsNotVoid(null);
 	}
 
 	//----------------------------------------------------------------------
 	
-	@Test (expected=ParsingError.class)
-	public void testErrMultiRef1() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void testErrMultiRef1() throws ParamError {
 		getReferenceDefinitionsMultiRef(" aa  ,  bb ");
 	}
 	
-	@Test (expected=ParsingError.class)
-	public void testErrMultiRef2() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void testErrMultiRef2() throws ParamError {
 		getReferenceDefinitionsMultiRef(" aa  ,  bb > RBB ");
 	}
 	

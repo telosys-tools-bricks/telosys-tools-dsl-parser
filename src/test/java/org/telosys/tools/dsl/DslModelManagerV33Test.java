@@ -5,7 +5,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.CascadeOptions;
 import org.telosys.tools.generic.model.Entity;
@@ -30,7 +29,8 @@ public class DslModelManagerV33Test {
 		System.out.println("Loading valid model : " + modelFileName );
         DslModelManager dslModelManager = new DslModelManager();
         Model model = dslModelManager.loadModel(modelFileName);
-		PrintUtil.printErrors(dslModelManager);
+        PrintUtil.printErrors(dslModelManager.getErrors());
+//		PrintUtil.printErrors(dslModelManager);
 		if ( model == null ) {
 			System.out.println("ERROR : cannot load model");
 			System.out.println(dslModelManager.getErrorMessage());
@@ -40,46 +40,12 @@ public class DslModelManagerV33Test {
 			throw new RuntimeException("Cannot load model : " + dslModelManager.getErrorMessage());
 		}
 		// No error expected
-		assertEquals(0, dslModelManager.getErrorMessage().length() );
-		assertEquals(0, dslModelManager.getErrors().getAllErrorsCount() );
+		assertEquals(0, dslModelManager.getErrors().getNumberOfErrors());
 		return model ;
     }
     
-//    private void printErrors(DslModelManager dslModelManager) {
-//    	System.out.println("DslModelManager errors : " );
-//    	System.out.println(" Error message : " + dslModelManager.getErrorMessage() );
-//    	DslModelErrors errors = dslModelManager.getErrors();
-//    	if ( errors != null ) {
-//        	System.out.println(" All Errors Count : " + errors.getAllErrorsCount() );
-//        	if ( ! errors.getAllErrorsList().isEmpty() ) {
-//            	System.out.println(" All Errors : " );
-//        		for ( String err : errors.getAllErrorsList() ) {
-//                	System.out.println(" . " + err );
-//        		}
-//            	System.out.println(" Errors for each entity : " );
-//        		for ( String entityName : errors.getEntities() ) {
-//        			System.out.println(" --> Entity '" + entityName + "' : " );
-//        			for ( String err : errors.getErrors(entityName) ) {
-//                    	System.out.println(" . " + err );
-//        			}
-//        		}
-//        	}
-//    	}
-//    }
-    
-//    private void printForeignKeys(Entity entity) {
-//    	System.out.println("Foreign Keys for entity '" + entity.getClassName() + "' : " );
-//        List<ForeignKey> fkList = entity.getDatabaseForeignKeys();
-//        for ( ForeignKey fk : fkList ) {
-//        	System.out.println(" . '" + fk.getName()  + "' : table '" + fk.getTableName() + "' --> table '" + fk.getReferencedTableName() +"'" );
-//            for ( ForeignKeyColumn fkCol : fk.getColumns() ) {
-//            	System.out.println("   - col '" + fkCol.getColumnName() + "' --> col '" + fkCol.getReferencedColumnName() + "'" );
-//            }
-//        }
-//    }
-
     @Test
-    public void test1_PeopleModel() throws EntityParsingError {
+    public void test1_PeopleModel() {
         Model model = loadValidModel("src/test/resources/model_test_v_3_3/People.model");
         assertNotNull(model);
         //----- ENTITY "Country"
@@ -239,7 +205,7 @@ public class DslModelManagerV33Test {
     }
     
     @Test
-    public void test2_SubGroupModel() throws EntityParsingError {
+    public void test2_SubGroupModel() {
         Model model = loadValidModel("src/test/resources/model_test_v_3_3/SubGroup.model");
         
         assertNotNull(model);
@@ -279,11 +245,10 @@ public class DslModelManagerV33Test {
     }        
 
     @Test
-    public void test3_PointsModel() throws EntityParsingError {
+    public void test3_PointsModel() {
         Model model = loadValidModel("src/test/resources/model_test_v_3_3/Points.model");        
         assertNotNull(model);
         //----- 'Line' entity
-//        entity = (DslModelEntity) model.getEntityByClassName("Line");
         test3CheckLineEntity((DslModelEntity) model.getEntityByClassName("Line"));
         
 //        assertEquals(2, entity.getDatabaseForeignKeys().size());

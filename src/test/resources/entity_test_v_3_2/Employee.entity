@@ -47,5 +47,6 @@ Employee // aaa
 	
 //	ba r5 : int ; // "Invalid field name"
 
+  age:int ;
 }
  

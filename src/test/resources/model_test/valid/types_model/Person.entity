@@ -1,12 +1,12 @@
 // Entity for types tests
  Person {
-	id : int {@Id, @NotNull }; // the id
+	id : int {@Id @NotNull }; // the id
 	firstName : string { @NotEmpty } ;
 	lastName  : string { @NotBlank } ;
 	counter   : short { @AutoIncremented } ;
-	counter2  : short { @AutoIncremented, @NotNull } ;
-	counter3  : short { @PrimitiveType, @AutoIncremented } ;
+	counter2  : short { @AutoIncremented @NotNull } ;
+	counter3  : short { @PrimitiveType @AutoIncremented } ;
 	counter4  : short { @ObjectType } ;
-	counter6  : short { @ObjectType, @NotNull } ;
+	counter6  : short { @ObjectType @NotNull } ;
 	birthDate : date ;
 }

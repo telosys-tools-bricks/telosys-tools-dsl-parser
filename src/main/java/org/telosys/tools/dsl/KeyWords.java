@@ -17,7 +17,7 @@ package org.telosys.tools.dsl;
 
 import java.util.List;
 
-import org.telosys.tools.dsl.parser.annotation.Annotations;
+import org.telosys.tools.dsl.parser.annotation.AnnotationDefinitions;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 
 public class KeyWords {
@@ -131,10 +131,10 @@ public class KeyWords {
 	
 	// Lists of annotations names for Eclipse  ( cf plugin )
 	public static final List<String> getAllAnnotationsWithPrefix() {
-		return Annotations.getAllAnnotationsWithPrefix();
+		return AnnotationDefinitions.getAllAnnotationsWithPrefix();
 	}
 	
 	public static final List<String> getAllAnnotationsWithPrefixAndParentheses() {
-		return Annotations.getAllAnnotationsWithPrefixAndParentheses();
+		return AnnotationDefinitions.getAllAnnotationsWithPrefixAndParentheses();
 	}
 }

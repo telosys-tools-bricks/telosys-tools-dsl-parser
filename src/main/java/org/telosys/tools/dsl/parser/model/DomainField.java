@@ -22,21 +22,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.telosys.tools.dsl.parser.commons.FkElement;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
 
 public class DomainField {
 	
     private final int lineNumber;
     private final String name;
     private final DomainType type;
-    private final int cardinality; // if != 1 : "ONE-TO-MANY"
 
     private final Map<String, DomainAnnotation> annotations = new HashMap<>();
     private final Map<String, DomainTag> tags = new HashMap<>();
 //    private final List<DomainFK> fkDeclarations = new LinkedList<>() ; // v 3.3.0
     private final List<FkElement> fkElements = new LinkedList<>() ; // v 3.4.0
-//	private final List<AnnotationOrTagError> errors = new LinkedList<>() ;
-	private final List<ParsingError> errors = new LinkedList<>() ;
 	
     /**
      * Constructor with initial data
@@ -45,23 +41,17 @@ public class DomainField {
      * @param type
      * @param cardinality
      */
-    public DomainField(int lineNumber, String name, DomainType type, int cardinality) {
+//    public DomainField(int lineNumber, String name, DomainType type, DomainCardinality cardinality) {
+//    	this.lineNumber = lineNumber;
+//        this.name = name;
+//        this.type = type;
+//        this.cardinality = cardinality;
+//    }
+
+    public DomainField(int lineNumber, String name, DomainType type) {
     	this.lineNumber = lineNumber;
         this.name = name;
         this.type = type;
-        this.cardinality = cardinality;
-    }
-
-    /**
-     * Simplified constructor (only for tests)
-     * @param name
-     * @param type
-     */
-    public DomainField(String name, DomainType type) {
-    	this.lineNumber = 0;
-        this.name = name;
-        this.type = type;
-        this.cardinality = 1;
     }
 
     /**
@@ -96,14 +86,14 @@ public class DomainField {
     	tags.put(tag.getName(), tag);
     }
     
-    /**
-     * Add a new error to the field 
-     * @param error
-     */
-//    public void addError(AnnotationOrTagError error) {
-    public void addError(ParsingError error) {
-    	errors.add(error);
-    }
+//    /**
+//     * Add a new error to the field 
+//     * @param error
+//     */
+////    public void addError(AnnotationOrTagError error) {
+//    public void addError(ParsingError error) {
+//    	errors.add(error);
+//    }
     
     public final int getLineNumber() {
         return lineNumber;
@@ -125,37 +115,37 @@ public class DomainField {
         return type;
     }
 
-    /**
-     * Returns the cardinality of the type <br>
-     * 1 = standard <br>
-     * Not 1 = multiple (0..N) <br>
-     * @return
-     */
-    public final int getCardinality() {
-        return cardinality;
+    public final DomainCardinality getCardinality() {
+        return type.getCardinality();
     }
 
     public final String getTypeName() {
         return type.getName();
     }
 
-    public final boolean isNeutralType() {
+//    public final boolean isNeutralType() {
+//        return type.isNeutralType();
+//    }
+    public final boolean isAttribute() {
         return type.isNeutralType();
     }
 
-    public final boolean isEntity() {
+//    public final boolean isEntity() {
+//        return type.isEntity();
+//    }
+//    public final boolean isEnumeration() {
+//        return type.isEnumeration();
+//    }
+    public final boolean isLink() {
         return type.isEntity();
     }
 
-    public final boolean isEnumeration() {
-        return type.isEnumeration();
-    }
 
     //------------------------------------------------------------------------
     // ANNOTATIONS
     //------------------------------------------------------------------------
     /**
-     * Returns all the annotation names (in alphabetical order)
+     * Returns all annotation names (in alphabetical order)
      *
      * @return
      */
@@ -166,11 +156,20 @@ public class DomainField {
     }
 
     /**
-     * Return annotations
+     * Return all annotations map
      * @return annotations
      */
     public Map<String, DomainAnnotation> getAnnotations() {
         return this.annotations;
+    }
+
+    /**
+     * Return annotation by name if any (or null if none)
+     * @param annotationName
+     * @return
+     */
+    public DomainAnnotation getAnnotation(String annotationName) {
+        return this.annotations.get(annotationName);
     }
 
     //------------------------------------------------------------------------
@@ -198,21 +197,21 @@ public class DomainField {
     public List<FkElement> getFkElements() { // v 3.4.0
     	return fkElements;
     }
-    public void addFkElements(FkElement fke) { // v 3.4.0
+    public void addFkElement(FkElement fke) { // v 3.4.0
     	fkElements.add(fke); 
     }
     
-    //------------------------------------------------------------------------
-    // ERRORS
-    //------------------------------------------------------------------------
-    public boolean hasErrors() {
-    	return ! this.errors.isEmpty();
-    }
-    
-//    public List<AnnotationOrTagError> getErrors() {
-    public List<ParsingError> getErrors() {
-    	return this.errors;
-    }
+//    //------------------------------------------------------------------------
+//    // ERRORS
+//    //------------------------------------------------------------------------
+//    public boolean hasErrors() {
+//    	return ! this.errors.isEmpty();
+//    }
+//    
+////    public List<AnnotationOrTagError> getErrors() {
+//    public List<ParsingError> getErrors() {
+//    	return this.errors;
+//    }
     
     //------------------------------------------------------------------------
     @Override
@@ -222,20 +221,16 @@ public class DomainField {
     	sb.append(name);
 		sb.append( " : ");
     	// entity or enum
-    	if(isEntity()) {
-    		sb.append("(entity) ");
-    	} else if(isEnumeration()) {
-    		sb.append("(enum) ");
-    	}
+//    	if(isEntity()) {
+//    		sb.append("(entity) ");
+//    	} else if(isEnumeration()) {
+//    		sb.append("(enum) ");
+//    	}
     	// type with cardinality
-    	sb.append( type.getName() );
-    	if(cardinality != 1) {
-    		if(cardinality == -1){
-    			sb.append("[]");
-    		} else {
-    			sb.append("["+cardinality+"]");
-    		}
-    	}
+    	sb.append( type.toString() );
+//    	if(cardinality == DomainCardinality.MANY) {
+//    		sb.append("[]");
+//    	}
     	sb.append(" {");
     	// annotations
     	for (Map.Entry<String, DomainAnnotation> e : annotations.entrySet()) {

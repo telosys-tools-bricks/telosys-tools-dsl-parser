@@ -1,6 +1,7 @@
 package org.telosys.tools.dsl.parser.model;
 
 import org.junit.Test;
+import org.telosys.tools.dsl.DslModelError;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -10,6 +11,27 @@ import static org.junit.Assert.assertTrue;
 
 public class DomainEntityTest {
 
+	private void declareField(DomainEntity entity, String fieldName, String fieldType) {
+		try {
+			entity.addField( buildField(fieldName, fieldType) );
+		} catch (DslModelError e) {
+			throw new IllegalStateException(e.getErrorMessage());
+		}
+	}
+	private DomainField buildField(String fieldName, String fieldType) {
+		int lineNumber = 1 ;
+		DomainType neutralType = DomainNeutralTypes.getType(fieldType);
+		if ( neutralType != null) {
+			// Field with basic type ( string, int, etc )
+			return new DomainField(lineNumber, fieldName, neutralType );
+		}
+		else {
+			// Field with entity type ( Car, Student, etc )
+			DomainType entityType = new DomainEntityType(fieldType, DomainCardinality.ONE) ;
+			return new DomainField(lineNumber, fieldName, entityType );
+		}
+	}
+	
 	@Test
 	public void testEntity() {
 		//DomainModel model = new DomainModel("mymodel");
@@ -31,21 +53,24 @@ public class DomainEntityTest {
 		DomainEntity entity = new DomainEntity("Student") ;
 		assertTrue ( entity.getNumberOfFields() == 0 ) ;
 		
-		entity.addField( new DomainField("firstName", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
+//		entity.addField( new DomainField("firstName", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
+		declareField(entity,"firstName", DomainNeutralTypes.STRING);
+		
 		assertTrue ( entity.getNumberOfFields() == 1 ) ;
 
-		entity.addField( new DomainField("lastName", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
+//		entity.addField( new DomainField("lastName", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
+		declareField(entity,"lastName", DomainNeutralTypes.STRING);
 		assertTrue ( entity.getNumberOfFields() == 2 ) ;
 		
 		DomainField field = null ;
 		
 		field = entity.getField("firstName");
 		assertNotNull ( field ) ;
-		assertTrue ( field.isNeutralType() ) ;
+		assertTrue ( field.isAttribute() ) ;
 
 		field = entity.getField("lastName");
 		assertNotNull ( field ) ;
-		assertTrue ( field.isNeutralType() ) ;
+		assertTrue ( field.isAttribute() ) ;
 
 		field = entity.getField("xxx");
 		assertNull ( field ) ;
@@ -60,54 +85,33 @@ public class DomainEntityTest {
 		DomainEntity student = new DomainEntity("Student") ;
 		assertTrue ( student.getNumberOfFields() == 0 ) ;
 		
-		student.addField( new DomainField("teacher", new DomainEntityType("Teacher") ) );
+		declareField(student, "teacher", "Teacher");
 		assertTrue ( student.getNumberOfFields() == 1 ) ;
 		
 		DomainField field = student.getField("teacher");
-		assertTrue ( field.isEntity() );
-		assertFalse ( field.isEnumeration() );
-		assertFalse ( field.isNeutralType() );
+		assertTrue ( field.isLink() );
+		assertFalse ( field.isAttribute() );
 	}
 	
-//	@Test
-//	public void testFieldEnumerationReference() {
-//		
-//		DomainEntity student = new DomainEntity("Student") ;
-//		assertTrue ( student.getNumberOfFields() == 0 ) ;
-//		
-//		student.addField( new DomainEntityField("studentType", new DomainEnumerationForString("StudentType") ) );
-//		assertTrue ( student.getNumberOfFields() == 1 ) ;
-//		
-//		DomainEntityField field = student.getField("studentType");
-//		assertTrue ( field.isEnumeration() );
-//		assertFalse ( field.isEntity() );
-//		assertFalse ( field.isNeutralType() );
-//	}
-	
-//	@Test ( expected = DslParserException.class )
-	@Test
+	@Test ( expected = Exception.class )
 	public void testFieldDuplicated1() {
 		DomainEntity entity = new DomainEntity("Book") ;
-		entity.addField( new DomainField("lastName", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
-		entity.addField( new DomainField("lastName", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
+		declareField(entity,"lastName", DomainNeutralTypes.STRING);
+		declareField(entity,"lastName", DomainNeutralTypes.STRING);
 	}
 	
-//	@Test ( expected = DslParserException.class )
-	@Test
+	@Test ( expected = Exception.class )
 	public void testFieldDuplicated2() {
 		DomainEntity entity = new DomainEntity("Student") ;
-		entity.addField( new DomainField("teacher", new DomainEntityType("Teacher") ) );
-		entity.addField( new DomainField("teacher", new DomainEntityType("Teacher") ) );
+		declareField(entity,"teacher", "Teacher");
+		declareField(entity,"teacher", "Teacher");
 	}
 	
-//	@Test ( expected = DslParserException.class )
-	@Test
+	@Test ( expected = Exception.class )
 	public void testFieldDuplicated3() {
 		DomainEntity entity = new DomainEntity("Student") ;
-//		entity.addField( new DomainEntityField("studentType", new DomainEnumerationForString("StudentType") ) );
-//		entity.addField( new DomainEntityField("studentType", new DomainEnumerationForString("StudentType") ) );
-		entity.addField( new DomainField("studentType", DomainNeutralTypes.getType(DomainNeutralTypes.INTEGER) ) );
-		entity.addField( new DomainField("studentType", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
+		declareField(entity,"foo", DomainNeutralTypes.STRING);
+		declareField(entity,"foo", DomainNeutralTypes.INTEGER);
 	}
 	
 }

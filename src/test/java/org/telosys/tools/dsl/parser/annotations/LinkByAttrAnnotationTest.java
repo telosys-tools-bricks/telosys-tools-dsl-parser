@@ -9,7 +9,7 @@ import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
+import org.telosys.tools.dsl.parser.commons.ParamError;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.JoinColumn;
 
@@ -30,7 +30,7 @@ public class LinkByAttrAnnotationTest {
 		return link;
 	}
 	
-	private List<JoinColumn> getJoinColumnsForLinkToAuthor(String paramValue) throws ParsingError {
+	private List<JoinColumn> getJoinColumnsForLinkToAuthor(String paramValue) throws ParamError {
 		List<Attribute> attributes;
 		
 		DslModelEntity authorEntity = new DslModelEntity("Author");
@@ -83,7 +83,7 @@ public class LinkByAttrAnnotationTest {
 		model.addEntity(buildLine());
 		return model;
 	}
-	private List<JoinColumn> getJoinColumnsForLinkToPoint(String paramValue) throws ParsingError {
+	private List<JoinColumn> getJoinColumnsForLinkToPoint(String paramValue) throws ParamError {
 		DslModel model = buildLineAndPointModel();
 		DslModelLink link = buildLink("point", "Point" );
 		DslModelEntity lineEntity = (DslModelEntity) model.getEntityByClassName("Line");
@@ -121,28 +121,28 @@ public class LinkByAttrAnnotationTest {
 	}
 
 	//-----------------------------------------------------------------------------
-	@Test (expected=ParsingError.class)
-	public void test01Err() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void test01Err() throws ParamError {
 		getJoinColumnsForLinkToAuthor((String)null) ;
 	}
 
-	@Test (expected=ParsingError.class)
-	public void test02Err() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void test02Err() throws ParamError {
 		getJoinColumnsForLinkToAuthor("") ;
 	}
 
-	@Test (expected=ParsingError.class)
-	public void test03Err() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void test03Err() throws ParamError {
 		getJoinColumnsForLinkToAuthor("   ") ;
 	}
 
-	@Test (expected=ParsingError.class)
-	public void test04Err() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void test04Err() throws ParamError {
 		getJoinColumnsForLinkToAuthor(" , ,  ") ;
 	}
 
 	@Test
-	public void test05() throws ParsingError {
+	public void test05() throws ParamError {
 		// @LinkByAttr(authorId)
 		List<JoinColumn> jc = getJoinColumnsForLinkToAuthor(" authorId  ") ;
 		assertEquals(1, jc.size());
@@ -151,7 +151,7 @@ public class LinkByAttrAnnotationTest {
 	}
 
 	@Test
-	public void test06() throws ParsingError {
+	public void test06() throws ParamError {
 		// @LinkByAttr(...)
 		List<JoinColumn> jc = getJoinColumnsForLinkToAuthor(" authorId, ") ;
 		assertEquals(1, jc.size());
@@ -160,7 +160,7 @@ public class LinkByAttrAnnotationTest {
 	}
 
 	@Test
-	public void test07() throws ParsingError {
+	public void test07() throws ParamError {
 		// @LinkByAttr(...)
 		List<JoinColumn> jc = getJoinColumnsForLinkToAuthor(" ,, authorId ") ;
 		assertEquals(1, jc.size());
@@ -168,14 +168,14 @@ public class LinkByAttrAnnotationTest {
 		assertEquals("", jc.get(0).getReferencedColumnName());
 	}
 
-	@Test (expected=ParsingError.class)
-	public void test08Err() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void test08Err() throws ParamError {
 		// @LinkByAttr(...)
 		getJoinColumnsForLinkToAuthor(" authorIdxx ") ; // unknown attribute 'authorIdxx'
 	}
 
 	@Test
-	public void test08() throws ParsingError {
+	public void test08() throws ParamError {
 		// @LinkByAttr(...)
 		List<JoinColumn> jc = getJoinColumnsForLinkToAuthor("authorId > id ,, ") ;
 		assertEquals(1, jc.size());
@@ -183,8 +183,8 @@ public class LinkByAttrAnnotationTest {
 		assertEquals("ID", jc.get(0).getReferencedColumnName());
 	}
 
-	@Test (expected=ParsingError.class)
-	public void test09Err() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void test09Err() throws ParamError {
 		// @LinkByAttr(...)
 		getJoinColumnsForLinkToAuthor("authorId > idxx") ; // unknown attribute 'idxx'
 	}
@@ -192,7 +192,7 @@ public class LinkByAttrAnnotationTest {
 	//-----------------------------------------------------------------------------
 
 	@Test 
-	public void test21() throws ParsingError {
+	public void test21() throws ParamError {
 		List<JoinColumn> jc = getJoinColumnsForLinkToPoint("pointX > x, pointY > y") ; 
 		assertEquals(2, jc.size());
 		assertEquals("POINT_X", jc.get(0).getName());
@@ -201,26 +201,26 @@ public class LinkByAttrAnnotationTest {
 		assertEquals("Y",       jc.get(1).getReferencedColumnName());
 	}
 
-	@Test (expected=ParsingError.class)
-	public void test22Err() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void test22Err() throws ParamError {
 		getJoinColumnsForLinkToPoint("pointX , pointY") ; 
 		// missing referenced names
 	}
 
-	@Test (expected=ParsingError.class)
-	public void test23Err() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void test23Err() throws ParamError {
 		getJoinColumnsForLinkToPoint("pointX > a , pointY > b") ; 
 		// unknown attribute 'a' in 'Point'
 	}
 
-	@Test (expected=ParsingError.class)
-	public void test24Err() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void test24Err() throws ParamError {
 		getJoinColumnsForLinkToPoint("pointX > x , pointY > b") ; 
 		// unknown attribute 'b' in 'Point'
 	}
 
-	@Test (expected=ParsingError.class)
-	public void test25Err() throws ParsingError {
+	@Test (expected=ParamError.class)
+	public void test25Err() throws ParamError {
 		getJoinColumnsForLinkToPoint("px > x , py > y") ; 
 		// unknown attribute 'px' in 'Line'
 	}

@@ -1,22 +1,16 @@
 package org.telosys.tools.dsl;
 
-import java.io.File;
 import java.util.Map;
 
 import org.junit.Test;
-import org.telosys.tools.dsl.parser.Parser;
-import org.telosys.tools.dsl.parser.exceptions.EntityParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ModelParsingError;
-import org.telosys.tools.dsl.parser.exceptions.ParsingError;
-import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
+import org.telosys.tools.junit.utils.ModelUtil;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class DslModelManagerTest {
@@ -25,26 +19,38 @@ public class DslModelManagerTest {
 		System.out.println(s);
 	}
 
-	private Model loadValidModel(String modelFileName) {
-		println("----- " );
-		println("Loading valid model : " + modelFileName );
-        DslModelManager dslModelManager = new DslModelManager();
-        Model model = dslModelManager.loadModel(modelFileName);
-		printErrors(dslModelManager);
-		if ( model == null ) {
-			println("ERROR : cannot load model");
-			println(dslModelManager.getErrorMessage());
-			throw new IllegalStateException("Cannot load model : " + dslModelManager.getErrorMessage());
-		}
-		// No error expected
-		assertEquals(0, dslModelManager.getErrorMessage().length() );
-		assertEquals(0, dslModelManager.getErrors().getAllErrorsCount() );
-		return model ;
-    }
+//	private Model loadValidModel(String modelFileName) {
+//		println("----- " );
+//		println("Loading valid model : " + modelFileName );
+//        DslModelManager dslModelManager = new DslModelManager();
+//        Model model = dslModelManager.loadModel(modelFileName);
+//		printErrors(dslModelManager);
+//		if ( model == null ) {
+//			println("ERROR : cannot load model");
+//			println(dslModelManager.getErrorMessage());
+//			throw new IllegalStateException("Cannot load model : " + dslModelManager.getErrorMessage());
+//		}
+//		// No error expected
+//		assertEquals(0, dslModelManager.getErrorMessage().length() );
+//		assertEquals(0, dslModelManager.getErrors().getAllErrorsCount() );
+//		return model ;
+//    }
+//	private Model loadValidModel(String modelFileName) {
+//		println("----- " );
+//		println("Loading valid model : " + modelFileName );
+//        DslModelManager dslModelManager = new DslModelManager();
+//        Model model = dslModelManager.loadModel(modelFileName);
+//        PrintUtil.printErrors(dslModelManager.getErrors());
+//		if ( model == null || dslModelManager.getErrors().getNumberOfErrors() > 0 ) {
+//			println("ERROR : cannot load model");
+//			throw new RuntimeException("Cannot load model : " + dslModelManager.getErrorMessage());
+//		}
+//		return model ;
+//    }
     
     @Test
     public void testValidModelOneEntityModel() {
-        Model model = loadValidModel("src/test/resources/model_test/valid/OneEntity.model");
+        Model model = ModelUtil.loadValidModel("src/test/resources/model_test/valid/OneEntity.model");
         
         assertNotNull(model);
         
@@ -100,7 +106,7 @@ public class DslModelManagerTest {
 
     @Test
     public void testValidModelTypesModel()  {
-        Model model = loadValidModel("src/test/resources/model_test/valid/types.model");
+        Model model = ModelUtil.loadValidModel("src/test/resources/model_test/valid/types.model");
         
         assertNotNull(model);
         assertEquals(1, model.getEntities().size() );
@@ -196,7 +202,7 @@ public class DslModelManagerTest {
     
     @Test
     public void testValidModelTwoEntityModel() {
-        Model model = loadValidModel("src/test/resources/model_test/valid/TwoEntities.model");
+        Model model = ModelUtil.loadValidModel("src/test/resources/model_test/valid/TwoEntities.model");
         
         assertNotNull(model);
         
@@ -252,7 +258,7 @@ public class DslModelManagerTest {
 
     @Test
     public void testValidModelFourEntityModel() {
-        Model model = loadValidModel("src/test/resources/model_test/valid/FourEntities.model");
+        Model model = ModelUtil.loadValidModel("src/test/resources/model_test/valid/FourEntities.model");
         
         assertNotNull(model);
         
@@ -291,89 +297,6 @@ public class DslModelManagerTest {
         assertEquals("birthDate", attrib.getName() ) ;
 
         // country is a OneToMay links => not in the attributes 
-
     }    
     
-    private void testParserWithInvalidModel(String modelFile) {
-        Parser dslParser = new Parser();
-        DomainModel domainModel = null ;
-        ModelParsingError modelParsingError = null ;
-		try {
-			domainModel = dslParser.parseModel(new File(modelFile));
-		} catch (ModelParsingError e) {
-			modelParsingError = e ;
-		}    	
-        assertNull(domainModel);
-        assertNotNull(modelParsingError);
-		println("ModelParsingError message : " + modelParsingError.getMessage() );
-		for ( EntityParsingError entityError : modelParsingError.getEntitiesErrors() ) {
-			println(" . EntityParsingError : " + entityError.getMessage() );
-//			for ( FieldParsingError fieldError : entityError.getFieldsErrors() ) {
-//				println(" . . FieldParsingError : " + fieldError.getMessage() );
-//			}
-			for ( ParsingError fieldError : entityError.getErrors() ) {
-				println(" . . ParsingError : " + fieldError.getMessage() );
-			}
-		}
-    }
-
-    @Test
-    public void testParserInvalidModelFourEntityModel() { 
-    	testParserWithInvalidModel("src/test/resources/model_test/invalid/FourEntities.model") ;
-    }
-    
-    @Test
-    public void testInvalidModelTwoEntityModel() { 
-    	String modelFile = "src/test/resources/model_test/invalid/TwoEntities.model" ;
-		println("Loading model : " + modelFile );
-        DslModelManager dslModelManager = new DslModelManager();
-        Model model = dslModelManager.loadModel(modelFile);
-        printErrors(dslModelManager);
-
-        assertNull(model);
-        assertNotNull(dslModelManager.getErrorMessage());
-        assertNotNull(dslModelManager.getErrors());
-        assertTrue( dslModelManager.getErrors().getAllErrorsCount() > 0 );
-    }
-    
-    @Test
-    public void testInvalidModelFourEntityModel() { 
-    	String modelFile = "src/test/resources/model_test/invalid/FourEntities.model" ;
-		println("Loading model : " + modelFile );
-        DslModelManager dslModelManager = new DslModelManager();
-        Model model = dslModelManager.loadModel(modelFile);
-        printErrors(dslModelManager);
-        
-        assertNull(model);
-        assertNotNull(dslModelManager.getErrorMessage());
-        assertNotNull(dslModelManager.getErrors());
-        assertTrue( dslModelManager.getErrors().getAllErrorsCount() > 0 );
-    }
-    
-    private void printErrors(DslModelManager dslModelManager) {
-    	println("DslModelManager errors : " );
-    	println(" Error message : " + dslModelManager.getErrorMessage() );
-    	DslModelErrors errors = dslModelManager.getErrors();
-    	if ( errors != null ) {
-        	println(" All Errors Count : " + errors.getAllErrorsCount() );
-//    		for ( String entityName : errors.getEntities() ) {
-//            	println(" --> Entity '" + entityName + "' : " );
-//        		for ( FieldParsingError fpe : errors.getErrors(entityName) ) {
-//                	// println("   . [" + fpe.getEntityName() + "] "+ fpe.getMessage() );
-//                	println("   . [" + fpe.getEntityName() + "] field '"+ fpe.getFieldName() + "' : " + fpe.getError() );
-//        		}
-//    		}
-        	println(" All Errors : " );
-    		for ( String err : errors.getAllErrorsList() ) {
-            	println(" . " + err );
-    		}
-        	println(" Errors for each entity : " );
-    		for ( String entityName : errors.getEntities() ) {
-    			println(" --> Entity '" + entityName + "' : " );
-    			for ( String err : errors.getErrors(entityName) ) {
-                	println(" . " + err );
-    			}
-    		}
-    	}
-    }
 }

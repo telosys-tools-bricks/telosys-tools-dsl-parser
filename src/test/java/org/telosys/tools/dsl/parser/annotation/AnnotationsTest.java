@@ -15,43 +15,43 @@ public class AnnotationsTest {
 	@Test
 	public void test1() {
 
-		assertEquals(45, Annotations.getAll().size());
+		assertEquals(45, AnnotationDefinitions.getAll().size());
 
-		assertNull(Annotations.get("Abcdef"));
+		assertNull(AnnotationDefinitions.get("Abcdef"));
 		
 		AnnotationDefinition ad ;
 		
-		ad = Annotations.get("Id");
+		ad = AnnotationDefinitions.get("Id");
 		assertNotNull(ad);
 		assertEquals("Id", ad.getName());
 		assertEquals(AnnotationParamType.NONE, ad.getParamType());
 		
-		ad = Annotations.get("Size");
+		ad = AnnotationDefinitions.get("Size");
 		assertNotNull(ad);
 		assertEquals("Size", ad.getName());
 		assertEquals(AnnotationParamType.SIZE, ad.getParamType());
 		
-		ad = Annotations.get("SizeMin");
+		ad = AnnotationDefinitions.get("SizeMin");
 		assertNotNull(ad);
 		assertEquals("SizeMin", ad.getName());
 		assertEquals(AnnotationParamType.INTEGER, ad.getParamType());
 		
-		ad = Annotations.get("DbName");
+		ad = AnnotationDefinitions.get("DbName");
 		assertNotNull(ad);
 		assertEquals("DbName", ad.getName());
 		assertEquals(AnnotationParamType.STRING, ad.getParamType());
 		
-		ad = Annotations.get("Max");
+		ad = AnnotationDefinitions.get("Max");
 		assertNotNull(ad);
 		assertEquals("Max", ad.getName());
 		assertEquals(AnnotationParamType.DECIMAL, ad.getParamType());
 		
-		ad = Annotations.get("Insertable");
+		ad = AnnotationDefinitions.get("Insertable");
 		assertNotNull(ad);
 		assertEquals("Insertable", ad.getName());
 		assertEquals(AnnotationParamType.BOOLEAN, ad.getParamType());
 		
-		ad = Annotations.get("Updatable");
+		ad = AnnotationDefinitions.get("Updatable");
 		assertNotNull(ad);
 		assertEquals("Updatable", ad.getName());
 		assertEquals(AnnotationParamType.BOOLEAN, ad.getParamType());
@@ -60,7 +60,7 @@ public class AnnotationsTest {
 
 	@Test
 	public void testGetAnnotations1() {
-		List<String> list = Annotations.getAllAnnotationsWithPrefix();
+		List<String> list = AnnotationDefinitions.getAllAnnotationsWithPrefix();
 		print(list);
 		assertTrue(list.contains("@DbComment"));
 		assertTrue(list.contains("@Label"));
@@ -68,7 +68,7 @@ public class AnnotationsTest {
 
 	@Test
 	public void testGetAnnotations2() {
-		List<String> list = Annotations.getAllAnnotationsWithPrefixAndParentheses();
+		List<String> list = AnnotationDefinitions.getAllAnnotationsWithPrefixAndParentheses();
 		print(list);
 		assertTrue(list.contains("@DbComment()"));
 		assertTrue(list.contains("@Label()"));
