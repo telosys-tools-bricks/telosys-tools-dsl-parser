@@ -16,10 +16,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class MappedByAnnotationTest {
+public class DbTableAnnotationTest {
 
-	private static final String ANNOTATION_NAME = "MappedBy";
-
+	private static final String ANNOTATION_NAME = "DbTable";
+	
 	private DomainAnnotation buildAnnotation() throws DslModelError {
 		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME );
 	}
@@ -29,20 +29,20 @@ public class MappedByAnnotationTest {
 	
 	@Test
 	public void test1() {
-		AnnotationDefinition a = new MappedByAnnotation();
-		assertEquals( ANNOTATION_NAME, a.getName() );
-		assertEquals( AnnotationParamType.STRING, a.getParamType() );
+		AnnotationDefinition ad = new DbTableAnnotation();
+		assertEquals( ANNOTATION_NAME, ad.getName() );
+		assertEquals( AnnotationParamType.STRING, ad.getParamType() );
 		// Check scope
-		assertFalse( a.hasAttributeScope() );
-		assertTrue( a.hasLinkScope() );
-		assertFalse( a.hasEntityScope() );
+		assertFalse( ad.hasAttributeScope() );
+		assertFalse( ad.hasLinkScope() );
+		assertTrue( ad.hasEntityScope() );
 	}
 
 	@Test 
 	public void test2() throws DslModelError {
-		DomainAnnotation da = buildAnnotationWithParam("teacher"); 
-		assertEquals( ANNOTATION_NAME, da.getName() );
-		assertEquals( "teacher", da.getParameter()); 
+		DomainAnnotation annotation = buildAnnotationWithParam("EMPLOYEE"); // table name
+		assertEquals( ANNOTATION_NAME, annotation.getName() );
+		assertEquals( "EMPLOYEE", annotation.getParameter()); 
 	}
 
 	@Test (expected=DslModelError.class)
@@ -61,22 +61,21 @@ public class MappedByAnnotationTest {
 		// Error : invalid entity name (blank)
 	}
 	
-	@Test 
+	@Test (expected=Exception.class)
 	public void test6() throws DslModelError, ParamError {
 		DomainAnnotation da = buildAnnotationWithParam("teacher"); 
 		DslModel model = FakeModelStudent.buildModel();
 		DslModelEntity entity = (DslModelEntity) model.getEntityByClassName("Teacher");
 		DslModelLink link = (DslModelLink) entity.getLinkByFieldName("students");
 		da.applyToLink(model, entity, link);
+		// error : not applicable on link
 	}
 	
 	@Test 
 	public void test7() throws DslModelError, ParamError {
-		DomainAnnotation da = buildAnnotationWithParam("unknown");  // Not checked at this step
+		DomainAnnotation da = buildAnnotationWithParam("TEACHER"); 
 		DslModel model = FakeModelStudent.buildModel();
 		DslModelEntity entity = (DslModelEntity) model.getEntityByClassName("Teacher");
-		DslModelLink link = (DslModelLink) entity.getLinkByFieldName("students");
-		da.applyToLink(model, entity, link); // Not checked at this step
-		
+		da.applyToEntity(model, entity);
 	}
 }

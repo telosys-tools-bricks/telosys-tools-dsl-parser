@@ -19,14 +19,23 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.telosys.tools.dsl.parser.annotations.AbstractAnnotation;
+import org.telosys.tools.dsl.parser.annotations.AggregateRootAnnotation;
 import org.telosys.tools.dsl.parser.annotations.AutoIncrementedAnnotation;
+import org.telosys.tools.dsl.parser.annotations.ContextAnnotation;
+import org.telosys.tools.dsl.parser.annotations.DbCatalogAnnotation;
 import org.telosys.tools.dsl.parser.annotations.DbCommentAnnotation;
 import org.telosys.tools.dsl.parser.annotations.DbDefaultValueAnnotation;
 import org.telosys.tools.dsl.parser.annotations.DbNameAnnotation;
+import org.telosys.tools.dsl.parser.annotations.DbSchemaAnnotation;
 import org.telosys.tools.dsl.parser.annotations.DbSizeAnnotation;
+import org.telosys.tools.dsl.parser.annotations.DbTableAnnotation;
+import org.telosys.tools.dsl.parser.annotations.DbTablespaceAnnotation;
 import org.telosys.tools.dsl.parser.annotations.DbTypeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.DefaultValueAnnotation;
+import org.telosys.tools.dsl.parser.annotations.DomainAnnotation;
 import org.telosys.tools.dsl.parser.annotations.EmbeddedAnnotation;
+import org.telosys.tools.dsl.parser.annotations.ExtendsAnnotation;
 import org.telosys.tools.dsl.parser.annotations.FetchTypeEagerAnnotation;
 import org.telosys.tools.dsl.parser.annotations.FetchTypeLazyAnnotation;
 import org.telosys.tools.dsl.parser.annotations.FkAnnotation;
@@ -54,9 +63,11 @@ import org.telosys.tools.dsl.parser.annotations.NotNullAnnotation;
 import org.telosys.tools.dsl.parser.annotations.ObjectTypeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.OneToOneAnnotation;
 import org.telosys.tools.dsl.parser.annotations.OptionalAnnotation;
+import org.telosys.tools.dsl.parser.annotations.PackageAnnotation;
 import org.telosys.tools.dsl.parser.annotations.PastAnnotation;
 import org.telosys.tools.dsl.parser.annotations.PatternAnnotation;
 import org.telosys.tools.dsl.parser.annotations.PrimitiveTypeAnnotation;
+import org.telosys.tools.dsl.parser.annotations.ReadOnlyAnnotation;
 import org.telosys.tools.dsl.parser.annotations.SizeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.SizeMaxAnnotation;
 import org.telosys.tools.dsl.parser.annotations.SizeMinAnnotation;
@@ -122,12 +133,26 @@ public class AnnotationDefinitions {
 		annotationDefinitions.add(new UpdatableAnnotation());
 		annotationDefinitions.add(new LinkByJoinEntityAnnotation());
 		
-		//--- Added in ver 3.4.0
+		//--- Added in ver 3.4.0 
 		annotationDefinitions.add(new SizeAnnotation());
 		annotationDefinitions.add(new UniqueAnnotation());
 		annotationDefinitions.add(new MaxLenAnnotation());
 		annotationDefinitions.add(new MinLenAnnotation());
 		annotationDefinitions.add(new GeneratedValueAnnotation());
+		//--- Added in ver 3.4.0 - entity scope
+		annotationDefinitions.add(new DbTableAnnotation());
+		annotationDefinitions.add(new DbSchemaAnnotation());
+		annotationDefinitions.add(new DbCatalogAnnotation());
+		annotationDefinitions.add(new DbTablespaceAnnotation());
+		
+		annotationDefinitions.add(new AbstractAnnotation());
+		annotationDefinitions.add(new ExtendsAnnotation());
+		annotationDefinitions.add(new PackageAnnotation());
+		annotationDefinitions.add(new ReadOnlyAnnotation());
+		
+		annotationDefinitions.add(new AggregateRootAnnotation());
+		annotationDefinitions.add(new DomainAnnotation());
+		annotationDefinitions.add(new ContextAnnotation());
 	}
 	
 	private AnnotationDefinitions() {

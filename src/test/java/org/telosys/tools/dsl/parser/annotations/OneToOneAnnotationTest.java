@@ -2,10 +2,9 @@ package org.telosys.tools.dsl.parser.annotations;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.DslModelError;
-import org.telosys.tools.dsl.parser.AnnotationProcessor;
-import org.telosys.tools.dsl.parser.Element;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotations.tools.AnnotationTool;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
 import static org.junit.Assert.assertEquals;
@@ -17,18 +16,12 @@ public class OneToOneAnnotationTest {
 
 	private static final String ANNOTATION_NAME = "OneToOne";
 	
-	private DomainAnnotation parseAnnotation(String annotation) throws DslModelError {
-		Element element = new Element(2, annotation);
-		AnnotationProcessor annotationProcessor = new AnnotationProcessor("MyEntity", "myField");
-		return annotationProcessor.parseAnnotation(element);
-	}
 	private DomainAnnotation buildAnnotation() throws DslModelError {
-		return parseAnnotation("@" + ANNOTATION_NAME );
+		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME );
 	}
-	private DomainAnnotation buildAnnotation(String annotationParam) throws DslModelError {
-		return parseAnnotation("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
-	}
-	
+	private DomainAnnotation buildAnnotationWithParam(String annotationParam) throws DslModelError {
+		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
+	}	
 	
 	@Test
 	public void test1() {
@@ -50,7 +43,7 @@ public class OneToOneAnnotationTest {
 
 	@Test (expected=DslModelError.class)
 	public void test3() throws DslModelError {
-		buildAnnotation("paramValue");
+		buildAnnotationWithParam("paramValue");
 		// Error : unexpected parameter
 	}
 }

@@ -26,11 +26,14 @@ import org.telosys.tools.generic.model.Link;
 
 public class DslModelEntity implements Entity {
 
+	private static final String TABLE = "TABLE";
+	private static final String VIEW = "VIEW";
+
 	private final String className; // Entity name = entity class name
 	
 	private String fullName = "";
 
-	private String packageName = "";
+	private String packageName = ""; // @Package annotation
 
 	private List<Attribute> attributes = new ArrayList<>();
 	private List<ForeignKey> databaseForeignKeys = new ArrayList<>();
@@ -42,10 +45,21 @@ public class DslModelEntity implements Entity {
 	private String databaseCatalog = "";
 	private String databaseSchema  = "";
 	private String databaseComment = "" ;
-	private String databaseType    = "TABLE";
-	private Boolean tableType = true ;
-	private Boolean viewType  = false;
+	private String databaseTablespace = "" ;
+//	private String databaseType    = "TABLE";
+//	private boolean tableType = true ;
+//	private boolean viewType  = false;
+	private boolean databaseView  = false; // v 3.4.0  ( replace databaseType )
 
+	// Other 
+	private boolean readOnly = false; // v 3.4.0  annotation @ReadOnly
+	private boolean abstractClass = false; // v 3.4.0  annotation @Abstract
+	private String  superClass = ""; // v 3.4.0  annotation @Extends
+
+	private boolean aggregateRoot = false; // v 3.4.0  annotation @AggregateRoot
+	private String  domain        = ""; // v 3.4.0  annotation @Domain
+	private String  context       = ""; // v 3.4.0  annotation @Context
+	
 	/**
 	 * Constructor
 	 * @param className
@@ -92,7 +106,64 @@ public class DslModelEntity implements Entity {
 	public String getPackageName() {
 		return packageName;
 	}
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
+	}
 	
+	//--------------------------------------------------------------------------
+	// @Override // TODO
+	public String getSuperClass() { // v 3.4.0
+		return superClass;
+	}
+	public void setSuperClass(String superClass) { // v 3.4.0
+		this.superClass = superClass;
+	}
+	
+	//--------------------------------------------------------------------------
+	// @Override // TODO
+	public boolean isAbstract() { // v 3.4.0
+		return abstractClass;
+	}
+	public void setAbstract(boolean abstractClass) { // v 3.4.0
+		this.abstractClass = abstractClass;
+	}
+	
+	//--------------------------------------------------------------------------
+	// @Override // TODO
+	public boolean isReadOnly() { // v 3.4.0
+		return readOnly;
+	}
+	public void setReadOnly(boolean readOnly) { // v 3.4.0
+		this.readOnly = readOnly;
+	}
+	
+	//--------------------------------------------------------------------------
+	// @Override // TODO
+	public boolean isAggregateRoot() { // v 3.4.0
+		return aggregateRoot;
+	}
+	public void setAggregateRoot(boolean aggregateRoot) { // v 3.4.0
+		this.aggregateRoot = aggregateRoot;
+	}
+	
+	//--------------------------------------------------------------------------
+	// @Override  // TODO
+	public String getDomain() {
+		return domain;
+	}
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
+	
+	//--------------------------------------------------------------------------
+	// @Override  // TODO
+	public String getContext() {
+		return context;
+	}
+	public void setContext(String context) {
+		this.context = context;
+	}
+
 	//--------------------------------------------------------------------------
 	@Override
 	public String getDatabaseCatalog() {
@@ -143,18 +214,43 @@ public class DslModelEntity implements Entity {
 	}
 	
 	//--------------------------------------------------------------------------
+//	@Override  // TODO
+	public Boolean isDatabaseView() {
+		return databaseView;
+	}
+	public void setDatabaseView(boolean databaseView) {
+		this.databaseView = databaseView;
+	}
+	//--------------------------------------------------------------------------
+	@Override // TODO : remove
+	public String getDatabaseType() {
+		return databaseView ? VIEW : TABLE ;
+	}
+	@Override // TODO : remove
+	public Boolean isTableType() {
+		return ! isDatabaseView();
+	}
+	@Override // TODO : remove
+	public Boolean isViewType() {
+		return isDatabaseView();
+	}
+
+	//--------------------------------------------------------------------------
 	@Override
 	public String getDatabaseComment() {
 		return databaseComment;
 	}
+	public void setDatabaseComment(String databaseComment) {
+		this.databaseComment = databaseComment;
+	}
 	
 	//--------------------------------------------------------------------------
-	@Override
-	public String getDatabaseType() {
-		return databaseType;
+	// @Override  // TODO
+	public String getDatabaseTablespace() {
+		return databaseTablespace;
 	}
-	public void setDatabaseType(String databaseType) {
-		this.databaseType = databaseType;
+	public void setDatabaseTablespace(String databaseTablespace) {
+		this.databaseTablespace = databaseTablespace;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -195,26 +291,8 @@ public class DslModelEntity implements Entity {
 	
 	//--------------------------------------------------------------------------
 	@Override
-	public Boolean isTableType() {
-		return tableType;
-	}
-	public void setTableType(Boolean tableType) {
-		this.tableType = tableType;
-	}
-
-	//--------------------------------------------------------------------------
-	@Override
-	public Boolean isViewType() {
-		return viewType;
-	}
-	public void setViewType(Boolean viewType) {
-		this.viewType = viewType;
-	}
-	
-	//--------------------------------------------------------------------------
-	@Override
 	public List<String> getWarnings() {
-		List<String> warnings = new LinkedList<String>() ;
+		List<String> warnings = new LinkedList<>() ;
 		if ( hasId() == false ) {
 			warnings.add("No ID");
 		}

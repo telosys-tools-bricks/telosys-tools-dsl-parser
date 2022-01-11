@@ -15,7 +15,7 @@ public class AnnotationsTest {
 	@Test
 	public void test1() {
 
-		assertEquals(45, AnnotationDefinitions.getAll().size());
+		assertEquals(56, AnnotationDefinitions.getAll().size());
 
 		assertNull(AnnotationDefinitions.get("Abcdef"));
 		

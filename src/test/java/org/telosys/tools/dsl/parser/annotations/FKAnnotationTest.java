@@ -2,10 +2,9 @@ package org.telosys.tools.dsl.parser.annotations;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.DslModelError;
-import org.telosys.tools.dsl.parser.AnnotationProcessor;
-import org.telosys.tools.dsl.parser.Element;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotations.tools.AnnotationTool;
 import org.telosys.tools.dsl.parser.commons.FkElement;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
@@ -18,16 +17,11 @@ public class FKAnnotationTest {
 
 	private static final String ANNOTATION_NAME = "FK";
 	
-	private DomainAnnotation parseAnnotation(String annotation) throws DslModelError {
-		Element element = new Element(2, annotation);
-		AnnotationProcessor annotationProcessor = new AnnotationProcessor("MyEntity", "myField");
-		return annotationProcessor.parseAnnotation(element);
-	}
 	private DomainAnnotation buildAnnotation() throws DslModelError {
-		return parseAnnotation("@" + ANNOTATION_NAME );
+		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME );
 	}
-	private DomainAnnotation buildAnnotation(String annotationParam) throws DslModelError {
-		return parseAnnotation("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
+	private DomainAnnotation buildAnnotationWithParam(String annotationParam) throws DslModelError {
+		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
 	}
 	
 	@Test
@@ -42,7 +36,7 @@ public class FKAnnotationTest {
 
 	@Test 
 	public void test2() throws DslModelError {
-		DomainAnnotation da = buildAnnotation("FK_PER_SUBGRP, SubGroup.groupCode");
+		DomainAnnotation da = buildAnnotationWithParam("FK_PER_SUBGRP, SubGroup.groupCode");
 		assertEquals( ANNOTATION_NAME, da.getName() );
 		assertNotNull( da.getParameter());
 		FkElement fke = da.getParameterAsFKElement();
@@ -52,7 +46,7 @@ public class FKAnnotationTest {
 	}
 
 	private FkElement getFkElement(String paramValue) throws DslModelError {
-		DomainAnnotation da = buildAnnotation(paramValue);
+		DomainAnnotation da = buildAnnotationWithParam(paramValue);
 		return da.getParameterAsFKElement();
 	}
 	
@@ -128,12 +122,12 @@ public class FKAnnotationTest {
 	}
 	@Test (expected=DslModelError.class)
 	public void test4() throws DslModelError {
-		buildAnnotation("");
+		buildAnnotationWithParam("");
 		// Error : parameter required
 	}
 	@Test (expected=DslModelError.class)
 	public void test5() throws DslModelError {
-		buildAnnotation("  ");
+		buildAnnotationWithParam("  ");
 		// Error : parameter expected
 	}
 }

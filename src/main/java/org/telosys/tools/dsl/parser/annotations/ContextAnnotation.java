@@ -24,24 +24,15 @@ import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 import org.telosys.tools.dsl.parser.commons.ParamError;
 
-public class DbCommentAnnotation extends AnnotationDefinition {
+public class ContextAnnotation extends AnnotationDefinition {
 
-	public DbCommentAnnotation() {
-		super(AnnotationName.DB_COMMENT, AnnotationParamType.STRING, 
-				// 2 scopes 
-				AnnotationScope.ATTRIBUTE, AnnotationScope.ENTITY);
+	public ContextAnnotation() {
+		super(AnnotationName.CONTEXT, AnnotationParamType.STRING, AnnotationScope.ENTITY);
 	}
-	
+
 	@Override
 	public void applyToEntity(DslModel model, DslModelEntity entity, Object paramValue) throws ParamError {
 		checkParamValue(entity, paramValue);
-		entity.setDatabaseComment((String) paramValue);			
-	}
-
-	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute,
-					  Object paramValue) throws ParamError {
-		checkParamValue(entity, attribute, paramValue);
-		attribute.setDatabaseComment((String)paramValue);
+		entity.setContext((String)paramValue);
 	}
 }

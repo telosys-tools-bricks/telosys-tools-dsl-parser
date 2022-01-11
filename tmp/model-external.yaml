@@ -1,0 +1,13 @@
+model:
+  external:
+  # Entities and enumerations 
+  # usable in the model but not explicitely defined in the model
+    - org.demo.FooBar : entity
+    - org.demo.Color : enum
+    - org.demo.Status : enum
+    
+  external-entities:
+    - org.demo.FooBar
+  external-enumerations:
+    - org.demo.Color
+    - org.demo.Status

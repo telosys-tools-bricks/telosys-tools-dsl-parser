@@ -251,6 +251,16 @@ public class DomainAnnotation {
 		return sb.toString();
     }
 
+	public void applyToEntity(DslModel model, DslModelEntity entity ) throws ParamError {
+    	AnnotationDefinition annotationDefinition = getAnnotationDefinition();
+       	if ( annotationDefinition.hasEntityScope() ) {
+        	annotationDefinition.applyToEntity(model, entity, this.getParameter());
+    	}
+    	else {
+    		throw new IllegalStateException("annotation '" + this.name + "' not applicable on an entity" );
+    	}
+	}
+
 	/**
 	 * Apply annotation on the given attribute
 	 * @param model

@@ -32,7 +32,7 @@ public class EntityElementsParserTest {
 	@Test
 	public void testEntityElementsParserEmployee() throws DslModelError {
 		List<Element> elements = parseEntityFile("src/test/resources/entity_test_v_3_4/Employee.entity");
-		assertEquals(83, elements.size());
+		assertEquals(85, elements.size());
 	}
 
 	@Test

@@ -36,16 +36,15 @@ import org.telosys.tools.dsl.parser.model.DomainNeutralType;
 public class AttributesConverter extends AbstractConverter {
 
 	private final DslModel dslModel ;
-//	private final DslModelErrors dslModelErrors;
 	private final DslModelErrors errors;
 	
 	private final TagsConverter tagsConverter;
 	
 	/**
 	 * Constructor
-	 * @param model
+	 * @param dslModel
+	 * @param errors
 	 */
-//	public AttributesConverter(DslModel dslModel, DslModelErrors errors) {
 	public AttributesConverter(DslModel dslModel, DslModelErrors errors) {
 		super();
 		this.dslModel = dslModel;
@@ -69,13 +68,8 @@ public class AttributesConverter extends AbstractConverter {
 			if (domainField.getType().isNeutralType()) { 
 				log("convert field : " + domainField.getName() + " (neutral type => basic attribute)");
 				// New "basic attribute"
-//				DslModelAttribute dslAttribute = createAttribute(domainField);
-//				// Populate attribute with parsed attribute information
-//				populateAttribute(dslEntity, dslAttribute, domainField );
-				
 				DslModelAttribute dslAttribute = convertAttribute(domainField, dslEntity);
 				// Add the new "basic attribute" to the entity
-				//dslEntity.getAttributes().add(dslAttribute);
 				dslEntity.addAttribute(dslAttribute);  // v 3.4.0
 			}
 		}
@@ -103,48 +97,6 @@ public class AttributesConverter extends AbstractConverter {
 		return dslAttribute;
 	}
 	
-//	private DslModelAttribute createAttribute( DomainField domainField ) {	
-////		DslModelAttribute dslAttribute = new DslModelAttribute();
-////		// Init the new attribute with at least its name
-////		dslAttribute.setName(notNull(domainField.getName()));
-////		return dslAttribute;
-//		return new DslModelAttribute(notNull(domainField.getName())); // v 3.4.0
-//	}
-	
-//	/**
-//	 * Converts a basic "neutral type" attribute <br>
-//	 * eg : id : short {@Id}; <br>
-//	 * @param domainEntity
-//	 * @param domainField
-//	 * @param dslAttribute
-//	 */
-////	private void convertAttributeNeutralType(DomainEntity domainEntity, 
-////			DomainField domainEntityField, DslModelAttribute genericAttribute) {
-////	private void convertAttributeNeutralType(DomainField domainEntityField, 
-////			DslModelEntity dslEntity, DslModelAttribute dslAttribute) {
-//	private void populateAttribute(DslModelEntity dslEntity, DslModelAttribute dslAttribute, 
-//			DomainField domainField ) {	
-//		log("convertAttributeNeutralType() : name = " + domainField.getName());
-//
-//		DomainType domainFieldType = domainField.getType();
-//		check(domainFieldType.isNeutralType(), "Invalid field type. Neutral type expected");
-//		DomainNeutralType domainNeutralType = (DomainNeutralType) domainFieldType;
-//
-//		// the "neutral type" is now the only type managed at this level
-//		dslAttribute.setNeutralType(domainNeutralType.getName());
-//
-//		step1InitAttributeDefaultValues(dslAttribute, domainField);
-//
-//		// Apply annotations if any
-//		step2ApplyAnnotations(dslEntity, dslAttribute, domainField);
-//		
-//		// Apply tags if any
-//		step3ApplyTags(dslAttribute, domainField);
-//		
-//		// Finalize attribute state
-//		step4FinalizeAttribute(dslAttribute);
-//	}
-
 	/**
 	 * Initializes default values according with the given attribute
 	 * @param dslAttribute
@@ -173,13 +125,6 @@ public class AttributesConverter extends AbstractConverter {
 	private void step2ApplyAnnotations(DslModelEntity dslEntity, DslModelAttribute dslAttribute, DomainField domainField) {
 		if (domainField.getAnnotations() != null) {
 			log("Converter : annotations found");
-//			Collection<DomainAnnotation> fieldAnnotations = domainField.getAnnotations().values();
-//		/***
-//			AttribAnnotationsProcessor annotationsConverter = new AttribAnnotationsProcessor(domainEntity.getName());
-//			annotationsConverter.applyAnnotationsForNeutralType(genericAttribute, fieldAnnotations);
-//		***/
-//			annotationsApplicator.applyAnnotationsToAttribute(dslEntity, dslAttribute, fieldAnnotations);
-			
 			Collection<DomainAnnotation> annotations = domainField.getAnnotations().values();
 			for (DomainAnnotation annotation : annotations) {
 				try {

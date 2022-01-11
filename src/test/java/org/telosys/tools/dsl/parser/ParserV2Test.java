@@ -57,7 +57,8 @@ public class ParserV2Test {
 
 		assertEquals("Employee", entity.getName() );
 		assertEquals(11, entity.getNumberOfFields() );
-		assertTrue(entity.getAnnotationNames().isEmpty() );
+		assertFalse(entity.getAnnotationNames().isEmpty() );
+		assertEquals(2, entity.getAnnotationNames().size() );
 		assertTrue(entity.getTagNames().isEmpty() );
 		
 		DomainField badgeId = entity.getField("badgeId");

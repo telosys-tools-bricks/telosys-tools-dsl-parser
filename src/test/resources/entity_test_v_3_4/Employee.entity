@@ -1,4 +1,8 @@
 // test v 3.4  ( new parser )
+
+@Abstract
+@DbTable("EMPLOYEES")
+
 Employee 
 { 
 	id 		: int {@Id  @AutoIncremented   @Max(800) }; // the id

@@ -4,11 +4,10 @@ import java.util.List;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.DslModelError;
-import org.telosys.tools.dsl.parser.AnnotationProcessor;
-import org.telosys.tools.dsl.parser.Element;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotations.tools.AnnotationTool;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
 import static org.junit.Assert.assertEquals;
@@ -20,18 +19,12 @@ public class GeneratedValueAnnotationTest {
 
 	private static final String ANNOTATION_NAME = AnnotationName.GENERATED_VALUE ;
 	
-	private DomainAnnotation parseAnnotation(String annotation) throws DslModelError {
-		Element element = new Element(2, annotation);
-		AnnotationProcessor annotationProcessor = new AnnotationProcessor("MyEntity", "myField");
-		return annotationProcessor.parseAnnotation(element);
-	}
 	private DomainAnnotation buildAnnotation() throws DslModelError {
-		return parseAnnotation("@" + ANNOTATION_NAME );
+		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME );
 	}
-	private DomainAnnotation buildAnnotation(String annotationParam) throws DslModelError {
-		return parseAnnotation("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
+	private DomainAnnotation buildAnnotationWithParam(String annotationParam) throws DslModelError {
+		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
 	}
-	
 	
 	@Test
 	public void testTypes() {
@@ -51,7 +44,7 @@ public class GeneratedValueAnnotationTest {
 
 	@Test 
 	public void testAUTO() throws DslModelError {
-		DomainAnnotation da = buildAnnotation("  AUTO  ");
+		DomainAnnotation da = buildAnnotationWithParam("  AUTO  ");
 		assertEquals( ANNOTATION_NAME, da.getName() );
 		assertNotNull( da.getParameter());
 		List<?> list = da.getParameterAsList();
@@ -61,7 +54,7 @@ public class GeneratedValueAnnotationTest {
 
 	@Test 
 	public void testSEQUENCE() throws DslModelError {
-		DomainAnnotation da = buildAnnotation(" SEQUENCE  , seq1Generator  , MYSEQ1 , 1  ");
+		DomainAnnotation da = buildAnnotationWithParam(" SEQUENCE  , seq1Generator  , MYSEQ1 , 1  ");
 		assertEquals( ANNOTATION_NAME, da.getName() );
 		assertNotNull( da.getParameter());
 		List<?> list = da.getParameterAsList();
@@ -74,25 +67,25 @@ public class GeneratedValueAnnotationTest {
 
 	@Test (expected=DslModelError.class)
 	public void testInvalidSEQUENCE() throws DslModelError {
-		buildAnnotation(" SEQUENCE  , GeneratorName   "); 
+		buildAnnotationWithParam(" SEQUENCE  , GeneratorName   "); 
 		// invalid number of parameters 
 	}
 
 	@Test (expected=DslModelError.class)
 	public void testInvalidSEQUENCE2() throws DslModelError {
-		buildAnnotation(" SEQUENCE  , GeneratorName, MYSEQ1 , 1 , foo   "); 
+		buildAnnotationWithParam(" SEQUENCE  , GeneratorName, MYSEQ1 , 1 , foo   "); 
 		// invalid number of parameters 
 	}
 
 	@Test (expected=DslModelError.class)
 	public void testInvalidTABLE() throws DslModelError {
-		buildAnnotation(" TABLE  , GeneratorName   "); 
+		buildAnnotationWithParam(" TABLE  , GeneratorName   "); 
 		// invalid number of parameters 
 	}
 
 	@Test (expected=DslModelError.class)
 	public void testInvalidTABLE2() throws DslModelError {
-		buildAnnotation(" TABLE  , GeneratorName, tableName, foo  "); 
+		buildAnnotationWithParam(" TABLE  , GeneratorName, tableName, foo  "); 
 		// invalid number of parameters 
 	}
 

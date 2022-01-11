@@ -82,16 +82,21 @@ public abstract class AnnotationDefinition {
 	//-------------------------------------------------------------------------------------------
 	// Annotation error 
 	//-------------------------------------------------------------------------------------------
-	protected ParamError newParamError(DslModelEntity entity, DslModelAttribute attribute, 
-			String error) {
+	protected ParamError newParamError(DslModelEntity entity, DslModelAttribute attribute, String error) {
 		return new ParamError(entity.getClassName() + "." + attribute.getName() + " : " + error); 
 	}
-	protected ParamError newParamError(DslModelEntity entity, DslModelLink link, 
-			String error) {
+	protected ParamError newParamError(DslModelEntity entity, DslModelLink link, String error) {
 		return new ParamError(entity.getClassName() + "." + link.getFieldName() + " : " + error); 
 	}
 	protected ParamError newParamError(String entityName, String fieldName, String error) {
-		return new ParamError(entityName + "." + fieldName + " : " + error);
+//		return new ParamError(entityName + "." + fieldName + " : " + error);
+		StringBuilder sb = new StringBuilder();
+		sb.append(entityName);
+		if ( fieldName != null ) {
+			sb.append(".").append(fieldName);
+		}
+		sb.append(" : ").append(error);
+		return new ParamError(sb.toString());
 	}
 	protected DslModelError newError(String entityName, int lineNumber, String fieldName, String errorMessage) {
 		return new DslModelError(entityName, lineNumber, fieldName, errorMessage);
@@ -106,8 +111,11 @@ public abstract class AnnotationDefinition {
 	}
 
 	//-------------------------------------------------------------------------------------------
-	// Annotation application ( on attribute or link )
+	// Check annotation parameter value before application ( on entity or attribute or link )
 	//-------------------------------------------------------------------------------------------
+	protected void checkParamValue(DslModelEntity entity, Object paramValue) throws ParamError {
+		checkParamValue(entity.getClassName(), null, paramValue);
+	}
 	protected void checkParamValue(DslModelEntity entity, DslModelAttribute attribute, Object paramValue) throws ParamError {
 		checkParamValue(entity.getClassName(), attribute.getName(), paramValue);
 	}
@@ -199,6 +207,18 @@ public abstract class AnnotationDefinition {
 		} catch (NumberFormatException e) {
 			throw newParamError(entity, attribute, "Cannot convert '"+s+"' to int");
 		}  
+	}
+	
+	/**
+	 * Apply the current annotation to the given entity
+	 * (supposed to be overridden in the annotation)
+	 * @param model
+	 * @param entity
+	 * @param paramValue
+	 * @throws ParamError
+	 */
+	public void applyToEntity(DslModel model, DslModelEntity entity, Object paramValue) throws ParamError {
+		throw new IllegalStateException("applyToEntity() is not implemented");
 	}
 	
 	/**

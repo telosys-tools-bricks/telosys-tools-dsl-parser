@@ -2,10 +2,9 @@ package org.telosys.tools.dsl.parser.annotations;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.DslModelError;
-import org.telosys.tools.dsl.parser.AnnotationProcessor;
-import org.telosys.tools.dsl.parser.Element;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotations.tools.AnnotationTool;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 
 import static org.junit.Assert.assertEquals;
@@ -16,17 +15,12 @@ public class MaxLenAnnotationTest {
 
 	private static final String ANNOTATION_NAME = "MaxLen";
 	
-	private DomainAnnotation parseAnnotation(String annotation) throws DslModelError {
-		Element element = new Element(2, annotation);
-		AnnotationProcessor annotationProcessor = new AnnotationProcessor("Student", "firstName");
-		return annotationProcessor.parseAnnotation(element);
-	}
 	private DomainAnnotation buildAnnotation() throws DslModelError {
-		return parseAnnotation("@" + ANNOTATION_NAME );
+		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME );
 	}
-	private DomainAnnotation buildAnnotation(String annotationParam) throws DslModelError {
-		return parseAnnotation("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
-	}
+	private DomainAnnotation buildAnnotationWithParam(String annotationParam) throws DslModelError {
+		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
+	}	
 
 	@Test
 	public void test1() {
@@ -41,7 +35,7 @@ public class MaxLenAnnotationTest {
 
 	@Test 
 	public void test2() throws DslModelError {
-		DomainAnnotation da = buildAnnotation("26");
+		DomainAnnotation da = buildAnnotationWithParam("26");
 		assertEquals( ANNOTATION_NAME, da.getName() );
 		assertEquals( 26, da.getParameter()); // Integer
 	}
@@ -53,17 +47,17 @@ public class MaxLenAnnotationTest {
 	}
 	@Test (expected=DslModelError.class)
 	public void test4() throws DslModelError {
-		buildAnnotation("");
+		buildAnnotationWithParam("");
 		// Error : parameter required
 	}
 	@Test (expected=DslModelError.class)
 	public void test5() throws DslModelError {
-		buildAnnotation("  ");
+		buildAnnotationWithParam("  ");
 		// Error : invalid integer parameter
 	}
 	@Test (expected=DslModelError.class)
 	public void test6() throws DslModelError {
-		buildAnnotation("12,2");
+		buildAnnotationWithParam("12,2");
 		// Error : invalid integer parameter
 	}
 }

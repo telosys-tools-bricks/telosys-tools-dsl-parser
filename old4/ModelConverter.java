@@ -15,11 +15,14 @@
  */
 package org.telosys.tools.dsl.converter;
 
+import java.util.LinkedList;
+
 import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainModel;
+import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.Model;
 
 /**
@@ -100,19 +103,11 @@ public class ModelConverter extends AbstractConverter {
 	 * @param dslModel
 	 */
 	protected void step1CreateAllVoidEntities(DomainModel domainModel, DslModel dslModel) {
-//		// for each "DomainEntity" create a void "DslModelEntity"
-//		for (DomainEntity domainEntity : domainModel.getEntities()) {
-//			DslModelEntity genericEntity = createVoidEntity(domainEntity);
-//			dslModel.addEntity(genericEntity); // v 3.4.0
-//		}
-
-		// v 3.4.0
-		EntityConverter entityConverter = new EntityConverter(dslModel, errors);
+		// for each "DomainEntity" create a void "DslModelEntity"
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
-			DslModelEntity dslEntity = entityConverter.convertEntity(domainEntity);
-			dslModel.addEntity(dslEntity); 
+			DslModelEntity genericEntity = createVoidEntity(domainEntity);
+			dslModel.addEntity(genericEntity); // v 3.4.0
 		}
-
 	}
 	
 	/**
@@ -179,32 +174,32 @@ public class ModelConverter extends AbstractConverter {
 		}
 	}
 
-//	/**
-//	 * Creates a void entity (without attribute) <br>
-//	 * initialized with only class name and default database information 
-//	 * @param domainEntity
-//	 * @return
-//	 */
-//	private DslModelEntity createVoidEntity(DomainEntity domainEntity) {
-//		log("convertEntity(" + domainEntity.getName() + ")...");
-//		
-//		DslModelEntity dslEntity = new DslModelEntity( notNull(domainEntity.getName()) ); // v 3.3.0
-//		
-//		dslEntity.setFullName(notNull(domainEntity.getName()));
-//
-//		//--- init database information 
-//		dslEntity.setDatabaseTable(domainEntity.getDatabaseTable()); // v 3.3.0
-//		// Type is "TABLE" by default
-////		dslEntity.setDatabaseType("TABLE"); 
-//		dslEntity.setTableType(true);  // Type is "TABLE" by default
-//		dslEntity.setViewType(false);  // Type is "TABLE" by default
-//		dslEntity.setDatabaseCatalog("");
-//		dslEntity.setDatabaseSchema("");
-//		// No Foreign Keys => void list
-//		dslEntity.setDatabaseForeignKeys(new LinkedList<ForeignKey>()); 
-//
-//		return dslEntity;
-//	}
+	/**
+	 * Creates a void entity (without attribute) <br>
+	 * initialized with only class name and default database information 
+	 * @param domainEntity
+	 * @return
+	 */
+	private DslModelEntity createVoidEntity(DomainEntity domainEntity) {
+		log("convertEntity(" + domainEntity.getName() + ")...");
+		
+		DslModelEntity dslEntity = new DslModelEntity( notNull(domainEntity.getName()) ); // v 3.3.0
+		
+		dslEntity.setFullName(notNull(domainEntity.getName()));
+
+		//--- init database information 
+		dslEntity.setDatabaseTable(domainEntity.getDatabaseTable()); // v 3.3.0
+		// Type is "TABLE" by default
+//		dslEntity.setDatabaseType("TABLE"); 
+		dslEntity.setTableType(true);  // Type is "TABLE" by default
+		dslEntity.setViewType(false);  // Type is "TABLE" by default
+		dslEntity.setDatabaseCatalog("");
+		dslEntity.setDatabaseSchema("");
+		// No Foreign Keys => void list
+		dslEntity.setDatabaseForeignKeys(new LinkedList<ForeignKey>()); 
+
+		return dslEntity;
+	}
 	
 	/**
 	 * Check model consistency

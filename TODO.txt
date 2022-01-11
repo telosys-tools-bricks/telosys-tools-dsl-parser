@@ -1,5 +1,7 @@
 --------------------------
+Update doc "NEWS"
 
+--------------------------
 Check duplicated annotation / tag 
 - field level 
 - entity level 
@@ -10,6 +12,11 @@ Create specific classes used in entity and field :
 
  --------------------------
 
+(WIP) Annotations at ENTITY level
+
+Tags at ENTITY level
+
+ --------------------------
 (x) Check duplicated field :
 		entity.addField( buildField("foo", DomainNeutralTypes.STRING) );
 		entity.addField( buildField("foo", DomainNeutralTypes.INTEGER) );

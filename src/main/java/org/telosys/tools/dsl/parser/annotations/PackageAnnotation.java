@@ -16,7 +16,6 @@
 package org.telosys.tools.dsl.parser.annotations;
 
 import org.telosys.tools.dsl.model.DslModel;
-import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationName;
@@ -24,24 +23,15 @@ import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 import org.telosys.tools.dsl.parser.commons.ParamError;
 
-public class DbCommentAnnotation extends AnnotationDefinition {
+public class PackageAnnotation extends AnnotationDefinition {
 
-	public DbCommentAnnotation() {
-		super(AnnotationName.DB_COMMENT, AnnotationParamType.STRING, 
-				// 2 scopes 
-				AnnotationScope.ATTRIBUTE, AnnotationScope.ENTITY);
+	public PackageAnnotation() {
+		super(AnnotationName.PACKAGE, AnnotationParamType.STRING, AnnotationScope.ENTITY);
 	}
-	
+
 	@Override
 	public void applyToEntity(DslModel model, DslModelEntity entity, Object paramValue) throws ParamError {
 		checkParamValue(entity, paramValue);
-		entity.setDatabaseComment((String) paramValue);			
-	}
-
-	@Override
-	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute,
-					  Object paramValue) throws ParamError {
-		checkParamValue(entity, attribute, paramValue);
-		attribute.setDatabaseComment((String)paramValue);
+		entity.setPackageName((String) paramValue);
 	}
 }

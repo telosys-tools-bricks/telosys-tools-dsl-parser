@@ -80,14 +80,35 @@ public class AnnotationName {
 	public static final String UPDATABLE        = "Updatable"; // v 3.3.0
 	public static final String LINK_BY_JOIN_ENTITY = "LinkByJoinEntity"; // v 3.3.0
 
-	// Added in ver 3.4.0 : for attributes
+	// Added in ver 3.4.0 : ATTRIBUTE scope
 	public static final String SIZE      = "Size";   // v 3.4.0
 	public static final String UNIQUE    = "Unique"; // v 3.4.0
 	public static final String MIN_LEN   = "MinLen" ; // v 3.4.0
 	public static final String MAX_LEN   = "MaxLen" ; // v 3.4.0
 	public static final String GENERATED_VALUE   = "GeneratedValue" ; // v 3.4.0
 	
-	// NB : don't forget to add each new annotation in "Annotations.java"
+	// Added in ver 3.4.0 : ENITY scope
+	public static final String DB_TABLE      = "DbTable";      // v 3.4.0
+	public static final String DB_VIEW       = "DbView";       // v 3.4.0
+	public static final String DB_SCHEMA     = "DbSchema";     // v 3.4.0
+	public static final String DB_CATALOG    = "DbCatalog";    // v 3.4.0
+	public static final String DB_TABLESPACE = "DbTablespace"; // v 3.4.0
+	
+	// Added in ver 3.4.0 : ENITY scope / new data
+	public static final String EXTENDS   = "Extends"; // v 3.4.0
+	public static final String ABSTRACT  = "Abstract"; // v 3.4.0
+	public static final String PACKAGE   = "Package"; // v 3.4.0
+	public static final String READ_ONLY   = "ReadOnly"; // v 3.4.0
+	public static final String AGGREGATE_ROOT = "AggregateRoot";  // v 3.4.0 (DDD)
+	public static final String DOMAIN         = "Domain";   // v 3.4.0 (DDD)
+	public static final String CONTEXT        = "Context";  // v 3.4.0 (DDD)
+	
+	// ???
+//	public static final String EXTERNAL_ENTITY  = "ExternalEntity"; // v 3.4.0
+//	public static final String ENUM     = "Enum"; // v 3.4.0
+
+	
+	// NB : don't forget to add each new annotation in "AnnotationDefinitions.java"
 
 	// new annotations ?
     // @Comment(xxx) 
