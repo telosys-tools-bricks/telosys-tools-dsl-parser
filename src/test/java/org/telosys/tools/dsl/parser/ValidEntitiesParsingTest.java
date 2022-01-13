@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.parser.ParserV2;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.reporting.EntityReport;
+import org.telosys.tools.dsl.parser.reporting.ResultReport;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,7 +35,7 @@ public class ValidEntitiesParsingTest {
 		DslModelErrors errors = new DslModelErrors();
 		ParserV2 parser = new ParserV2();
 		DomainEntity entity = parser.parseEntity(file, entitiesNames, errors);
-		EntityReport.print(entity, errors);
+		ResultReport.print(entity, errors);
 		assertEquals(0, errors.getNumberOfErrors());
 		return entity;
 		

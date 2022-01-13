@@ -11,7 +11,7 @@ import org.telosys.tools.dsl.parser.ParserV2;
 import org.telosys.tools.dsl.parser.commons.FkElement;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
-import org.telosys.tools.dsl.parser.reporting.EntityReport;
+import org.telosys.tools.dsl.parser.reporting.ResultReport;
 
 import static org.junit.Assert.assertEquals;
 
@@ -47,7 +47,7 @@ public class ParserTest {
 	private DomainEntity parseEntityFile(String entityFile, List<String> entitiesNames, DslModelErrors errors) {
 		ParserV2 parser = new ParserV2();
 		DomainEntity entity = parser.parseEntity(entityFile, entitiesNames, errors);
-		EntityReport.print(entity, errors);
+		ResultReport.print(entity, errors);
 		return entity;
 	}
 	

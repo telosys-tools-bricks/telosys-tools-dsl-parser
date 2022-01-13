@@ -18,11 +18,12 @@ package org.telosys.tools.dsl.model;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
+import org.telosys.tools.dsl.tags.Tags;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKeyPart;
+import org.telosys.tools.generic.model.TagContainer;
 import org.telosys.tools.generic.model.enums.BooleanValue;
 import org.telosys.tools.generic.model.enums.DateType;
 import org.telosys.tools.generic.model.enums.GeneratedValueStrategy;
@@ -92,9 +93,10 @@ public class DslModelAttribute implements Attribute {
 	private boolean isPrimitiveTypeExpected = false ;
 	private boolean isUnsignedTypeExpected = false ;
 	private boolean isObjectTypeExpected = false ;
-	// private boolean isSqlTypeExpected = false ; // Removed in v 3.3.0
 	
-	private Map<String, String> tagsMap = null ; // Tags added in v 3.3.0
+//	private Map<String, String> tagsMap = null ; // Tags added in v 3.3.0
+    private TagContainer tagContainer = new Tags() ;  // Init with void Tags (never null) // v 3.4.0
+
 	
     private BooleanValue insertable = BooleanValue.UNDEFINED; // Added in v 3.3.0
     private BooleanValue updatable  = BooleanValue.UNDEFINED; // Added in v 3.3.0
@@ -117,17 +119,11 @@ public class DslModelAttribute implements Attribute {
 	public String getName() {
 		return name;
 	}
-//	public void setName(String name) {
-//		this.name = name;
-//	}
 
 	@Override
 	public String getNeutralType() {
 		return neutralType;
 	}
-//	public void setNeutralType(String neutralType) {
-//		this.neutralType = neutralType;
-//	}
 
 	@Override
 	public String getBooleanFalseValue() {
@@ -597,15 +593,15 @@ public class DslModelAttribute implements Attribute {
 	//-----------------------------------------------------------------------------------------
 	// ATTRIBUTE TAGS  (added in v 3.3.0) 
 	//-----------------------------------------------------------------------------------------
-	public void setTags(Map<String,String> tags) {
-		this.tagsMap = tags;
+	public void setTagContainer(TagContainer tags) { 
+		this.tagContainer = tags;
 	}
 	
 	@Override
-	public Map<String, String> getTagsMap() {
-		return this.tagsMap;
+	public TagContainer getTagContainer() {
+		return this.tagContainer;
 	}
-	
+
 	//-----------------------------------------------------------------------------------------
 	// FOREIGN KEYS in which the attribute is involved ( ver 3.3.0 )
 	//-----------------------------------------------------------------------------------------	

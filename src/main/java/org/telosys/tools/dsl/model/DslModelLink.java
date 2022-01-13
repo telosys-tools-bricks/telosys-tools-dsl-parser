@@ -16,12 +16,13 @@
 package org.telosys.tools.dsl.model;
 
 import java.util.List;
-import java.util.Map;
 
+import org.telosys.tools.dsl.tags.Tags;
 import org.telosys.tools.generic.model.CascadeOptions;
 import org.telosys.tools.generic.model.JoinColumn;
 import org.telosys.tools.generic.model.JoinTable;
 import org.telosys.tools.generic.model.Link;
+import org.telosys.tools.generic.model.TagContainer;
 import org.telosys.tools.generic.model.enums.BooleanValue;
 import org.telosys.tools.generic.model.enums.Cardinality;
 import org.telosys.tools.generic.model.enums.FetchType;
@@ -63,7 +64,8 @@ public class DslModelLink implements Link {
     private BooleanValue insertable = BooleanValue.UNDEFINED; // Added in v 3.3.0
     private BooleanValue updatable  = BooleanValue.UNDEFINED; // Added in v 3.3.0
 
-	private Map<String, String> tagsMap = null ; // Tags added in v 3.4.0
+    // Tags added in v 3.4.0 
+    private TagContainer tagContainer = new Tags() ;  // Init with void Tags (never null)
 
     /**
      * Constructor
@@ -119,10 +121,6 @@ public class DslModelLink implements Link {
     public String getFieldName() {
         return fieldName;
     }
-
-//    public void setFieldName(String fieldName) {
-//        this.fieldName = fieldName;
-//    }
 
     @Override
     public boolean isOwningSide() {
@@ -292,17 +290,16 @@ public class DslModelLink implements Link {
         this.updatable = b;
     }
     
-    
 	//-----------------------------------------------------------------------------------------
 	// LINK TAGS  (added in v 3.4.0) 
 	//-----------------------------------------------------------------------------------------
-	public void setTags(Map<String,String> tags) { 
-		this.tagsMap = tags;
+	public void setTagContainer(TagContainer tags) { 
+		this.tagContainer = tags;
 	}
 	
 	@Override
-	public Map<String, String> getTagsMap() {
-		return this.tagsMap;
+	public TagContainer getTagContainer() {
+		return this.tagContainer;
 	}
 
 }

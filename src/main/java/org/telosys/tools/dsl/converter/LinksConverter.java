@@ -55,7 +55,7 @@ public class LinksConverter extends AbstractConverter {
 		super();
 		this.dslModel = dslModel;
 		this.errors = errors ;
-		this.tagsConverter = new TagsConverter();
+		this.tagsConverter = new TagsConverter(errors);
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class LinksConverter extends AbstractConverter {
 				// 2) apply annotations on the link
 				step2ApplyAnnotations(dslEntity, dslLink, domainField);
 				// 3) apply tags on the link
-				step3ApplyTags(dslLink, domainField); 
+				step3ApplyTags(dslEntity, dslLink, domainField); 
 				// 4) try to infer undefined join columns
 				step4InferJoinColumns(dslEntity, dslLink);
 				// 5) finalize the link
@@ -175,11 +175,12 @@ public class LinksConverter extends AbstractConverter {
 	
 	/**
 	 * Apply tags to the given link
+	 * @param dslEntity
 	 * @param dslLink
 	 * @param domainField
 	 */
-	private void step3ApplyTags(DslModelLink dslLink, DomainField domainField) {
-		tagsConverter.applyTags(dslLink, domainField); // new in v 3.4.0
+	private void step3ApplyTags(DslModelEntity dslEntity, DslModelLink dslLink, DomainField domainField) {
+		tagsConverter.applyTagsToLink(dslEntity, dslLink, domainField); // new in v 3.4.0
 	}
 	
 	/**

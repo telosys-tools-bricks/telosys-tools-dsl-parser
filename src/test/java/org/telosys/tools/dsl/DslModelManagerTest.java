@@ -1,11 +1,10 @@
 package org.telosys.tools.dsl;
 
-import java.util.Map;
-
 import org.junit.Test;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
+import org.telosys.tools.generic.model.TagContainer;
 import org.telosys.tools.junit.utils.ModelUtil;
 
 import static org.junit.Assert.assertEquals;
@@ -60,11 +59,19 @@ public class DslModelManagerTest {
         
         Entity employeeEntity = model.getEntityByClassName("Employee");
         assertNotNull(employeeEntity);
+        // TODO
+        // employeeEntity.isAggregateRoot() ;
+        
+        TagContainer tagContainer = employeeEntity.getTagContainer();
+        // TODO 
+        // assertFalse(tagContainer.isEmpty());
+        // assertEquals(1, tagContainer.size());
+        // assertTrue(tagContainer.containsTag("MyEntityTag"));
         
         assertEquals(3, employeeEntity.getAttributes().size());    
         int i = 0 ;
         Attribute attrib = null ;
-        Map<String,String> tagsMap ;
+        TagContainer tags ;
         
         // Attributes in their original order :
         
@@ -76,12 +83,12 @@ public class DslModelManagerTest {
         assertTrue(attrib.isNotNull()); // If "@Id" => "@NotNull"
         assertTrue(attrib.isDatabaseNotNull() ); // If "@Id" => "@NotNull"
         // Tags defined for this attribute
-        tagsMap = attrib.getTagsMap();
-        assertNotNull(tagsMap);
-        assertFalse(tagsMap.isEmpty());
-        assertTrue(tagsMap.containsKey("Id"));
-        assertTrue(tagsMap.containsKey("Foo"));
-        assertEquals("abc",tagsMap.get("Foo"));
+        tags = attrib.getTagContainer();
+        assertNotNull(tags);
+//        assertFalse(tags.isEmpty());
+        assertTrue(tags.containsTag("Id"));
+        assertTrue(tags.containsTag("Foo"));
+        assertEquals("abc",tags.getTagValue("Foo"));
 
         //--- "firstName" ATTRIBUTE 
         attrib = employeeEntity.getAttributes().get(i++);
@@ -90,10 +97,10 @@ public class DslModelManagerTest {
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
         assertFalse(attrib.isDatabaseNotNull());
-        tagsMap = attrib.getTagsMap();
-        assertNotNull(tagsMap);
-        assertFalse(tagsMap.isEmpty());
-        assertTrue(tagsMap.containsKey("tag"));
+        tags = attrib.getTagContainer();
+        assertNotNull(tags);
+//        assertFalse(tags.isEmpty());
+        assertTrue(tags.containsTag("tag"));
 
         //--- "birthDate" ATTRIBUTE 
         attrib = employeeEntity.getAttributes().get(i++);

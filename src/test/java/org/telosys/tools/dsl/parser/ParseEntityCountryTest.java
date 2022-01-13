@@ -10,7 +10,7 @@ import org.telosys.tools.dsl.parser.ParserV2;
 import org.telosys.tools.dsl.parser.model.DomainCardinality;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
-import org.telosys.tools.dsl.parser.reporting.EntityReport;
+import org.telosys.tools.dsl.parser.reporting.ResultReport;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,7 +28,7 @@ public class ParseEntityCountryTest {
 		ParserV2 parser = new ParserV2();
 		DomainEntity entity = parser.parseEntity(entityFile, entitiesNames, errors );
 		
-		EntityReport.print(entity, errors);
+		ResultReport.print(entity, errors);
 		
 		assertEquals("Country", entity.getName());
 		assertEquals(2, entity.getNumberOfFields());

@@ -48,7 +48,7 @@ public class EntityConverter extends AbstractConverter {
 		super();
 		this.dslModel = dslModel;
 		this.errors = errors;
-		this.tagsConverter = new TagsConverter();
+		this.tagsConverter = new TagsConverter(errors);
 	}
 	
 	protected DslModelEntity convertEntity(DomainEntity domainEntity) {

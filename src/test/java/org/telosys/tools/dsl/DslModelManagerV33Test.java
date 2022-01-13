@@ -1,7 +1,5 @@
 package org.telosys.tools.dsl;
 
-import java.util.Map;
-
 import org.junit.Test;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
@@ -11,6 +9,7 @@ import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.JoinColumn;
 import org.telosys.tools.generic.model.Link;
 import org.telosys.tools.generic.model.Model;
+import org.telosys.tools.generic.model.TagContainer;
 import org.telosys.tools.generic.model.enums.Cardinality;
 import org.telosys.tools.generic.model.enums.FetchType;
 import org.telosys.tools.generic.model.enums.Optional;
@@ -177,12 +176,18 @@ public class DslModelManagerV33Test {
 //        assertEquals("COUNTRY_CODE2", jc.getName());
         
         DslModelLink dslLink = (DslModelLink) link ;
-        Map<String,String> tags = dslLink.getTagsMap();
+        TagContainer tags = dslLink.getTagContainer();
         assertNotNull(tags);
-        assertNotNull(tags.get("Foo"));
-        assertEquals("",tags.get("Foo"));
-        assertNotNull(tags.get("Bar"));
-        assertEquals("xyz",tags.get("Bar"));
+        assertTrue(tags.containsTag("Foo"));
+        assertEquals("", tags.getTagValue("Foo"));
+
+        assertTrue(tags.containsTag("Bar"));
+        assertEquals("xyz", tags.getTagValue("Bar"));
+        assertEquals("xyz", tags.getTagValue("Bar", "aaaa"));
+
+        assertFalse(tags.containsTag("Xyz"));
+        assertEquals("", tags.getTagValue("Xyz"));
+        assertEquals("myvalue", tags.getTagValue("Xyz", "myvalue"));
     }
     private void test1CheckAreaEntity(DslModelEntity entity ) {
     	Link link;

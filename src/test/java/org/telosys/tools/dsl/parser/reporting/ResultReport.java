@@ -5,7 +5,7 @@ import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
 
-public class EntityReport {
+public class ResultReport {
 
 	public static void print(DomainEntity entity, DslModelErrors errors) {
 		System.out.println("");
@@ -16,14 +16,14 @@ public class EntityReport {
 		for ( DomainField field : entity.getFields() ) {
 			System.out.println(" . " + field);
 		}
-//		System.out.println(" Entity hasError() ? : " + entity.hasError());
 //		System.out.println(" Entity errors :");
-////		List<FieldParsingError> errors = entity.getErrors();
-//		List<ParsingError> errors = entity.getErrors();
-//		for ( Exception e : errors ) {
-//			System.out.println(" . " + e.getClass().getSimpleName() + " : " + e.getMessage());
+//		for ( DslModelError err : errors.getErrors() ) {
+//			System.out.println(" . " + err);
 //		}
-		System.out.println(" Entity errors :");
+		print(errors);
+	}
+	public static void print(DslModelErrors errors) {
+		System.out.println(" Errors :");
 		for ( DslModelError err : errors.getErrors() ) {
 			System.out.println(" . " + err);
 		}

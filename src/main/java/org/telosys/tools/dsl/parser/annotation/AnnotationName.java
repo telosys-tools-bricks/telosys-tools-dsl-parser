@@ -99,6 +99,8 @@ public class AnnotationName {
 	public static final String ABSTRACT  = "Abstract"; // v 3.4.0
 	public static final String PACKAGE   = "Package"; // v 3.4.0
 	public static final String READ_ONLY   = "ReadOnly"; // v 3.4.0
+	public static final String IN_MEMORY_REPOSITORY = "InMemoryRepository"; // v 3.4.0
+
 	public static final String AGGREGATE_ROOT = "AggregateRoot";  // v 3.4.0 (DDD)
 	public static final String DOMAIN         = "Domain";   // v 3.4.0 (DDD)
 	public static final String CONTEXT        = "Context";  // v 3.4.0 (DDD)

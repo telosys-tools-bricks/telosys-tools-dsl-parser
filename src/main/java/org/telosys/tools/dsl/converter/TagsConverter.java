@@ -15,69 +15,89 @@
  */
 package org.telosys.tools.dsl.converter;
 
-import java.util.HashMap;
 import java.util.Map;
 
+import org.telosys.tools.dsl.DslModelError;
+import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.model.DslModelAttribute;
+import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainTag;
+import org.telosys.tools.dsl.tags.Tag;
+import org.telosys.tools.dsl.tags.TagError;
+import org.telosys.tools.dsl.tags.Tags;
 
 public class TagsConverter {
-
-	private Map<String,String> buildTags(DomainField field) { // new in v 3.4.0
-		Map<String, DomainTag> tagsMap = field.getTags();
-		if ( tagsMap == null) return null;
-		if ( tagsMap.isEmpty()) return null;
-		// Convert tags
-		Map<String,String> newTags = new HashMap<>();
-		for ( DomainTag tag : tagsMap.values() ) {
-			String name = tag.getName() ;
-//			String value = tag.getParameterAsString();
-//			if ( value == null ) {
-//				value = "";
-//			}
-			// v 3.4.0
-			String value = "";
-			if ( tag.hasParameter() ) {
-//				value = tag.getParameterAsString();
-				value = tag.getParameter();
-			}
-			newTags.put(name, value);
-		}
-		return newTags;
-	}
 	
-	/**
-	 * Apply tags to the given attribute
-	 * @param attribute
-	 * @param field
-	 */
-	public void applyTags(DslModelAttribute attribute, DomainField field) {
+	private final DslModelErrors  errors;
+	
+	public TagsConverter(DslModelErrors errors) {
+		super();
+		this.errors = errors;
+	}
+
+
+//	private Map<String,String> buildTags(DomainField field) { // new in v 3.4.0
 //		Map<String, DomainTag> tagsMap = field.getTags();
-//		if ( tagsMap == null) return ;
-//		if ( tagsMap.isEmpty()) return ;
+//		if ( tagsMap == null) return null;
+//		if ( tagsMap.isEmpty()) return null;
 //		// Convert tags
 //		Map<String,String> newTags = new HashMap<>();
 //		for ( DomainTag tag : tagsMap.values() ) {
 //			String name = tag.getName() ;
-//			String value = tag.getParameterAsString();
-//			if ( value == null ) {
-//				value = "";
+////			String value = tag.getParameterAsString();
+////			if ( value == null ) {
+////				value = "";
+////			}
+//			// v 3.4.0
+//			String value = "";
+//			if ( tag.hasParameter() ) {
+////				value = tag.getParameterAsString();
+//				value = tag.getParameter();
 //			}
 //			newTags.put(name, value);
 //		}
-//		attribute.setTags(newTags);
-
-		attribute.setTags(buildTags(field));
+//		return newTags;
+//	}
+//	
+	private Tags buildTags(Map<String, DomainTag> tagsMap, String entityName, String fieldName) {
+		Tags tags = new Tags(); // void tags collection
+		if ( tagsMap == null) return tags;
+		if ( tagsMap.isEmpty()) return tags;
+		for ( DomainTag rawTag : tagsMap.values() ) {
+			try {
+				tags.addTag( new Tag(rawTag.getName(), rawTag.getParameter()));
+			} catch (TagError e) {
+				errors.addError(
+					new DslModelError( entityName, fieldName, e.getMessage() ) );
+			}
+		}
+		return tags;
+	}
+	
+	public void applyTagsToEntity(DslModelEntity dslEntity, DomainEntity entity) {
+		dslEntity.setTagContainer(buildTags(entity.getTags(), entity.getName(), null));
+	}
+	
+	/**
+	 * Apply tags to the given attribute
+	 * @param dslEntity
+	 * @param dslAttribute
+	 * @param field
+	 */
+	public void applyTagsToAttribute(DslModelEntity dslEntity, DslModelAttribute dslAttribute, DomainField field) {
+		dslAttribute.setTagContainer(buildTags(field.getTags(), dslEntity.getClassName(), field.getName()));
 	}
 
 	/**
 	 * Apply tags to the given link
+	 * @param dslEntity
 	 * @param dslLink
-	 * @param domainField
+	 * @param field
 	 */
-	public void applyTags(DslModelLink dslLink, DomainField domainField) { // new in v 3.4.0
-		dslLink.setTags( buildTags(domainField) );
+	public void applyTagsToLink(DslModelEntity dslEntity, DslModelLink dslLink, DomainField field) {
+		dslLink.setTagContainer( buildTags(field.getTags(), dslEntity.getClassName(), field.getName()) );
 	}
 }

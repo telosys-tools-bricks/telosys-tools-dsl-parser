@@ -49,7 +49,7 @@ public class AttributesConverter extends AbstractConverter {
 		super();
 		this.dslModel = dslModel;
 		this.errors = errors;
-		this.tagsConverter = new TagsConverter();
+		this.tagsConverter = new TagsConverter(errors);
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class AttributesConverter extends AbstractConverter {
 		step2ApplyAnnotations(dslEntity, dslAttribute, domainField);
 		
 		// Apply tags if any
-		step3ApplyTags(dslAttribute, domainField);
+		step3ApplyTags(dslEntity, dslAttribute, domainField);
 		
 		// Finalize attribute state
 		step4FinalizeAttribute(dslAttribute);
@@ -142,11 +142,12 @@ public class AttributesConverter extends AbstractConverter {
 	
 	/**
 	 * Apply tags to the given attribute
+	 * @param dslEntity
 	 * @param dslAttribute
 	 * @param domainField
 	 */
-	private void step3ApplyTags(DslModelAttribute dslAttribute, DomainField domainField) {
-		tagsConverter.applyTags(dslAttribute, domainField);
+	private void step3ApplyTags(DslModelEntity dslEntity, DslModelAttribute dslAttribute, DomainField domainField) {
+		tagsConverter.applyTagsToAttribute(dslEntity, dslAttribute, domainField);
 	}
 	
 	/**

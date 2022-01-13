@@ -19,10 +19,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.telosys.tools.dsl.tags.Tags;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.Link;
+import org.telosys.tools.generic.model.TagContainer;
 
 public class DslModelEntity implements Entity {
 
@@ -60,6 +62,12 @@ public class DslModelEntity implements Entity {
 	private String  domain        = ""; // v 3.4.0  annotation @Domain
 	private String  context       = ""; // v 3.4.0  annotation @Context
 	
+	private boolean inMemoryRepository = false; // v 3.4.0  annotation @InMemoryRepository
+	
+    // Tags added in v 3.4.0 
+    private TagContainer tagContainer = new Tags() ;  // Init with void Tags (never null)
+    
+
 	/**
 	 * Constructor
 	 * @param className
@@ -126,6 +134,15 @@ public class DslModelEntity implements Entity {
 	}
 	public void setAbstract(boolean abstractClass) { // v 3.4.0
 		this.abstractClass = abstractClass;
+	}
+	
+	//--------------------------------------------------------------------------
+	// @Override // TODO
+	public boolean isInMemoryRepository() { // v 3.4.0
+		return inMemoryRepository;
+	}
+	public void setInMemoryRepository(boolean inMemoryRepository) { // v 3.4.0
+		this.inMemoryRepository = inMemoryRepository;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -370,6 +387,18 @@ public class DslModelEntity implements Entity {
 			}
 		}
 		return null;
+	}
+	
+	//-----------------------------------------------------------------------------------------
+	// TAGS  (added in v 3.4.0) 
+	//-----------------------------------------------------------------------------------------
+	public void setTagContainer(TagContainer tags) { 
+		this.tagContainer = tags;
+	}
+	
+	@Override
+	public TagContainer getTagContainer() {
+		return this.tagContainer;
 	}
 
 }

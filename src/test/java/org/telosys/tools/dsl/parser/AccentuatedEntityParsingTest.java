@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.telosys.tools.dsl.DslModelErrors;
 import org.telosys.tools.dsl.parser.ParserV2;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.dsl.parser.reporting.EntityReport;
+import org.telosys.tools.dsl.parser.reporting.ResultReport;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,7 +25,7 @@ public class AccentuatedEntityParsingTest {
 		DomainEntity entity = parser.parseEntity(new File("src/test/resources/entity_test_v_3_2/Employé.entity"),
 				entitiesNames, errors);
 
-		EntityReport.print(entity, errors);
+		ResultReport.print(entity, errors);
 
 		System.out.println("default charset : " + Charset.defaultCharset());
 

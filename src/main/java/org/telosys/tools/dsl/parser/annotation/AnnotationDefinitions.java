@@ -32,6 +32,7 @@ import org.telosys.tools.dsl.parser.annotations.DbSizeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.DbTableAnnotation;
 import org.telosys.tools.dsl.parser.annotations.DbTablespaceAnnotation;
 import org.telosys.tools.dsl.parser.annotations.DbTypeAnnotation;
+import org.telosys.tools.dsl.parser.annotations.DbViewAnnotation;
 import org.telosys.tools.dsl.parser.annotations.DefaultValueAnnotation;
 import org.telosys.tools.dsl.parser.annotations.DomainAnnotation;
 import org.telosys.tools.dsl.parser.annotations.EmbeddedAnnotation;
@@ -42,6 +43,7 @@ import org.telosys.tools.dsl.parser.annotations.FkAnnotation;
 import org.telosys.tools.dsl.parser.annotations.FutureAnnotation;
 import org.telosys.tools.dsl.parser.annotations.GeneratedValueAnnotation;
 import org.telosys.tools.dsl.parser.annotations.IdAnnotation;
+import org.telosys.tools.dsl.parser.annotations.InMemoryRepositoryAnnotation;
 import org.telosys.tools.dsl.parser.annotations.InitialValueAnnotation;
 import org.telosys.tools.dsl.parser.annotations.InputTypeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.InsertableAnnotation;
@@ -141,6 +143,7 @@ public class AnnotationDefinitions {
 		annotationDefinitions.add(new GeneratedValueAnnotation());
 		//--- Added in ver 3.4.0 - entity scope
 		annotationDefinitions.add(new DbTableAnnotation());
+		annotationDefinitions.add(new DbViewAnnotation());
 		annotationDefinitions.add(new DbSchemaAnnotation());
 		annotationDefinitions.add(new DbCatalogAnnotation());
 		annotationDefinitions.add(new DbTablespaceAnnotation());
@@ -149,6 +152,7 @@ public class AnnotationDefinitions {
 		annotationDefinitions.add(new ExtendsAnnotation());
 		annotationDefinitions.add(new PackageAnnotation());
 		annotationDefinitions.add(new ReadOnlyAnnotation());
+		annotationDefinitions.add(new InMemoryRepositoryAnnotation());
 		
 		annotationDefinitions.add(new AggregateRootAnnotation());
 		annotationDefinitions.add(new DomainAnnotation());
