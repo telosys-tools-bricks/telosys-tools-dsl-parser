@@ -1,10 +1,16 @@
+
+// TAGS : DomainEntity OK (DSL : KO )
+#SpecialClass  
+#FooBar(abc)
+
 Employee {
 
     // ATTRIBUTES
-	id : int {@Id}; // the id
-	firstName : string ;
+	id : int { @Id @Min(1) #Foo(" abc ") #Bar(12.34) }; // the id
+	firstName : string { @DefaultValue( Bart ) } ;
 	birthDate : date ;
 
     // LINKS
-	country : Country ; 
+	// TAGS : DomainLink OK (DSL : KO )
+	country : Country { @Transient  #Foo #MyTag(123) } ; 
 }

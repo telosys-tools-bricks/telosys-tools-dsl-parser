@@ -21,10 +21,10 @@ public class MappedByAnnotationTest {
 	private static final String ANNOTATION_NAME = "MappedBy";
 
 	private DomainAnnotation buildAnnotation() throws DslModelError {
-		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME );
+		return AnnotationTool.parseAnnotationInLink("@" + ANNOTATION_NAME );
 	}
 	private DomainAnnotation buildAnnotationWithParam(String annotationParam) throws DslModelError {
-		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
+		return AnnotationTool.parseAnnotationInLink("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
 	}
 	
 	@Test

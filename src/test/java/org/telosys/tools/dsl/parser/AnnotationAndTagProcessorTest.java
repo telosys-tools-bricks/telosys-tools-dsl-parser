@@ -2,10 +2,8 @@ package org.telosys.tools.dsl.parser;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.DslModelError;
-import org.telosys.tools.dsl.parser.AnnotationAndTagProcessor;
-import org.telosys.tools.dsl.parser.AnnotationProcessor;
-import org.telosys.tools.dsl.parser.Element;
-import org.telosys.tools.dsl.parser.TagProcessor;
+import org.telosys.tools.dsl.parser.model.DomainField;
+import org.telosys.tools.dsl.parser.model.DomainNeutralType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -15,7 +13,8 @@ public class AnnotationAndTagProcessorTest {
 	private AnnotationAndTagProcessor getParser(int i) {
 		if ( i == 1 ) {
 			// use "AnnotationParser" as concrete class
-			return new AnnotationProcessor("MyEntity", "myField");
+			DomainField field = new DomainField(12, "myField", new DomainNeutralType("string") );
+			return new AnnotationProcessor("MyEntity", field);
 		}
 		else {
 			// use "TagParser" as concrete class

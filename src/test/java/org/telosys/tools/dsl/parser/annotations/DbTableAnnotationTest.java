@@ -21,10 +21,10 @@ public class DbTableAnnotationTest {
 	private static final String ANNOTATION_NAME = "DbTable";
 	
 	private DomainAnnotation buildAnnotation() throws DslModelError {
-		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME );
+		return AnnotationTool.parseAnnotationInEntity("@" + ANNOTATION_NAME );
 	}
 	private DomainAnnotation buildAnnotationWithParam(String annotationParam) throws DslModelError {
-		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
+		return AnnotationTool.parseAnnotationInEntity("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
 	}
 	
 	@Test

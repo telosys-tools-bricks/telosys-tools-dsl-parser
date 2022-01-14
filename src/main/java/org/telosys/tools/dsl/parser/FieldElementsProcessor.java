@@ -233,11 +233,14 @@ public class FieldElementsProcessor {
 	private void processAnnotationOrTag(DomainField field, Element element) throws DslModelError {
 		if ( element.startsWithAnnotationPrefix() ) {
 			// @Xxxx : Annotation
-			AnnotationProcessor annotationProcessor = new AnnotationProcessor(entityName, field.getName());
+//			AnnotationProcessor annotationProcessor = new AnnotationProcessor(entityName, field.getName());
+//			DomainAnnotation annotation = annotationProcessor.parseAnnotation(element);
+//			annotationProcessor.checkAnnotationScope(element, field, annotation);
+//			annotationProcessor.checkAnnotationSingleUse(element, field, annotation);
+			
+			AnnotationProcessor annotationProcessor = new AnnotationProcessor(entityName, field);
 			DomainAnnotation annotation = annotationProcessor.parseAnnotation(element);
-			annotationProcessor.checkAnnotationScope(element, field, annotation);
-			annotationProcessor.checkAnnotationSingleUse(element, field, annotation);
-			// no error => add annotion to the field
+			// no annotation error => continue
 			if ( AnnotationName.FK.equals( annotation.getName() ) ) {
 				// Special storage for "@FK" annotation (can be used 1..N times in a field )
 				field.addFkElement(annotation.getParameterAsFKElement());				
@@ -249,8 +252,8 @@ public class FieldElementsProcessor {
 		}
 		else if ( element.startsWithTagPrefix() ) {
 			// #Xxxx : Tag
-			TagProcessor tagParser = new TagProcessor(entityName, field.getName());
-			DomainTag tag = tagParser.parseTag(element);
+			TagProcessor tagProcessor = new TagProcessor(entityName, field.getName());
+			DomainTag tag = tagProcessor.parseTag(element);
 			field.addTag(tag);
 		}
 		else {

@@ -20,10 +20,10 @@ public class GeneratedValueAnnotationTest {
 	private static final String ANNOTATION_NAME = AnnotationName.GENERATED_VALUE ;
 	
 	private DomainAnnotation buildAnnotation() throws DslModelError {
-		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME );
+		return AnnotationTool.parseAnnotationInAttribute("@" + ANNOTATION_NAME );
 	}
 	private DomainAnnotation buildAnnotationWithParam(String annotationParam) throws DslModelError {
-		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
+		return AnnotationTool.parseAnnotationInAttribute("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
 	}
 	
 	@Test

@@ -16,10 +16,10 @@ public class SizeAnnotationTest {
 	private static final String ANNOTATION_NAME = "Size";
 	
 	private DomainAnnotation buildAnnotation() throws DslModelError {
-		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME );
+		return AnnotationTool.parseAnnotationInAttribute("@" + ANNOTATION_NAME );
 	}
 	private DomainAnnotation buildAnnotationWithParam(String annotationParam) throws DslModelError {
-		return AnnotationTool.parseAnnotation("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
+		return AnnotationTool.parseAnnotationInAttribute("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
 	}	
 	
 	@Test

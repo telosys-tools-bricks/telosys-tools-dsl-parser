@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.DslModelError;
-import org.telosys.tools.dsl.parser.AnnotationProcessor;
-import org.telosys.tools.dsl.parser.Element;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
+import org.telosys.tools.dsl.parser.model.DomainCardinality;
+import org.telosys.tools.dsl.parser.model.DomainEntityType;
+import org.telosys.tools.dsl.parser.model.DomainField;
+import org.telosys.tools.dsl.parser.model.DomainNeutralType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,23 +17,28 @@ import static org.junit.Assert.assertTrue;
 
 public class AnnotationParserTest {
 
-//	private AnnotationParser getParser() {
-//		return new AnnotationParser("MyEntity", "myField");
-//	}
-
-	private DomainAnnotation parseAnnotation(String annotation) throws DslModelError {
-//		AnnotationParser parser = getParser();
-//		return parser.parseAnnotation(annotation);
-		
+	private DomainAnnotation parseAnnotationInAttribute(String annotation) throws DslModelError {
 		Element element = new Element(2, annotation);
-		AnnotationProcessor annotationProcessor = new AnnotationProcessor("MyEntity", "myField");
+		// Field : Attribute
+		DomainField field = new DomainField(12, "name", new DomainNeutralType("string") );
+		AnnotationProcessor annotationProcessor =  new AnnotationProcessor("MyEntity", field);
+		
+		return annotationProcessor.parseAnnotation(element);
+	}
+	
+	private DomainAnnotation parseAnnotationInLink(String annotation) throws DslModelError {
+		Element element = new Element(2, annotation);
+		// Field : Link
+		DomainField field = new DomainField(12, "country", new DomainEntityType("Country", DomainCardinality.ONE ) );
+		AnnotationProcessor annotationProcessor =  new AnnotationProcessor("MyEntity", field);
+		
 		return annotationProcessor.parseAnnotation(element);
 	}
 	
 	private void parseWithExpectedException(String s) {
 		DslModelError error = null ;
 		try {
-			parseAnnotation(s);
+			parseAnnotationInAttribute(s);
 		} catch (DslModelError e) {
 			error = e;
 		} 
@@ -40,55 +47,44 @@ public class AnnotationParserTest {
 	
 
 	@Test
-	public void testParseAnnotations() throws DslModelError {
-//		AnnotationParser parser = getParser();
-//		DomainAnnotation annotation ;
-		
-		DomainAnnotation annotation = parseAnnotation("@Id");
+	public void testParseAttributeAnnotations() throws DslModelError {
+		DomainAnnotation annotation = parseAnnotationInAttribute("@Id");
 		assertEquals("Id", annotation.getName());
 		assertFalse(annotation.hasParameter());
 //		assertNull(annotation.getParameterAsString());
 //		assertNull(annotation.getParameterAsBigDecimal());
 //		assertNull(annotation.getParameterAsInteger());
 		
-		annotation = parseAnnotation("@AutoIncremented");
+		annotation = parseAnnotationInAttribute("@AutoIncremented");
 		assertEquals("AutoIncremented", annotation.getName());
 		assertFalse(annotation.hasParameter());
 
-		annotation = parseAnnotation("@Embedded");
-		assertEquals("Embedded", annotation.getName());
-		assertFalse(annotation.hasParameter());
-
-		annotation = parseAnnotation("@NotBlank");
+		annotation = parseAnnotationInAttribute("@NotBlank");
 		assertEquals("NotBlank", annotation.getName());
 		assertFalse(annotation.hasParameter());
 		
-		annotation = parseAnnotation("@Max(123)");
+		annotation = parseAnnotationInAttribute("@Max(123)");
 		assertEquals("Max", annotation.getName());
 		assertTrue(annotation.hasParameter());
-//		assertNull(annotation.getParameterAsString());
 		assertEquals(new BigDecimal("123"), annotation.getParameterAsBigDecimal());
 
-		annotation = parseAnnotation("@Min(123.45)");
+		annotation = parseAnnotationInAttribute("@Min(123.45)");
 		assertEquals("Min", annotation.getName());
 		assertTrue(annotation.hasParameter());
-//		assertNull(annotation.getParameterAsString());
 		assertEquals(new BigDecimal("123.45"), annotation.getParameterAsBigDecimal());
 		
-		annotation = parseAnnotation("@SizeMax(22)");
+		annotation = parseAnnotationInAttribute("@SizeMax(22)");
 		assertEquals("SizeMax", annotation.getName());
 		assertTrue(annotation.hasParameter());
-//		assertNull(annotation.getParameterAsString());
-//		assertNull(annotation.getParameterAsBigDecimal());
 		assertEquals(new Integer("22"), annotation.getParameterAsInteger());
 
-		annotation = parseAnnotation("@DbSize(22)");
+		annotation = parseAnnotationInAttribute("@DbSize(22)");
 		assertEquals("DbSize", annotation.getName());
 		assertTrue(annotation.hasParameter());
 		assertNotNull(annotation.getParameterAsString());
 
-		annotation = parseAnnotation("@DbSize(22,4)");
-		annotation = parseAnnotation("@DbSize(22,0)");
+		annotation = parseAnnotationInAttribute("@DbSize(22,4)");
+		annotation = parseAnnotationInAttribute("@DbSize(22,0)");
 		//annotation = parser.parse("@DbSize(-22,2)"); // ERR : negative size
 		//annotation = parser.parse("@DbSize(22,-2)"); // ERR : negative size
 		//annotation = parser.parse("@DbSize(22,)"); // ERR
@@ -98,19 +94,26 @@ public class AnnotationParserTest {
 		//annotation = parser.parse("@DbSize(aa)"); //ERR
 		
 	}
-	
+	@Test
+	public void testParseLinkAnnotations() throws DslModelError {
+		DomainAnnotation annotation = parseAnnotationInLink("@OneToOne");
+		assertEquals("OneToOne", annotation.getName());
+		assertFalse(annotation.hasParameter());
+		
+		annotation = parseAnnotationInLink("@Embedded");
+		assertEquals("Embedded", annotation.getName());
+		assertFalse(annotation.hasParameter());
+	}
+
 	@Test
 	public void testParseAnnotationDbSize() throws DslModelError {
-//		AnnotationParser parser = getParser();
-//		DomainAnnotation annotation ;
-		
-		DomainAnnotation annotation = parseAnnotation("@DbSize(22)");
+		DomainAnnotation annotation = parseAnnotationInAttribute("@DbSize(22)");
 		assertEquals("DbSize", annotation.getName());
 		assertTrue(annotation.hasParameter());
 		assertNotNull(annotation.getParameterAsString());
 
-		annotation = parseAnnotation("@DbSize(22,4)");
-		annotation = parseAnnotation("@DbSize(22,0)");
+		annotation = parseAnnotationInAttribute("@DbSize(22,4)");
+		annotation = parseAnnotationInAttribute("@DbSize(22,0)");
 		
 		parseWithExpectedException("@DbSize(-22,2)"); // ERR : negative size
 		parseWithExpectedException("@DbSize(22,-2)"); // ERR : negative size
@@ -124,7 +127,7 @@ public class AnnotationParserTest {
 	@Test
 	public void testParseAnnotationSize() throws DslModelError {
 		
-		DomainAnnotation annotation = parseAnnotation("@Size(22 )"); 
+		DomainAnnotation annotation = parseAnnotationInAttribute("@Size(22 )"); 
 		assertNotNull(annotation);
 		assertNotNull(annotation.getName());
 		assertEquals("Size", annotation.getName());
@@ -133,7 +136,7 @@ public class AnnotationParserTest {
 		assertTrue(annotation.hasParameter());
 		assertNotNull(annotation.getParameterAsString());
 
-		annotation = parseAnnotation("@Size( 22,4 )");
+		annotation = parseAnnotationInAttribute("@Size( 22,4 )");
 		assertEquals("Size", annotation.getName());
 		assertEquals("22,4", annotation.getParameter());		
 
@@ -149,87 +152,98 @@ public class AnnotationParserTest {
 	
 	@Test(expected = DslModelError.class)
 	public void testParseAnnotationError1() throws DslModelError {
-		parseAnnotation("@Max(12RRR3)");
+		parseAnnotationInAttribute("@Max(12RRR3)");
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseAnnotationError2() throws DslModelError {
-		parseAnnotation("@Max()");
+		parseAnnotationInAttribute("@Max()");
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseAnnotationError3() throws DslModelError {
-		parseAnnotation("@Max(123");
+		parseAnnotationInAttribute("@Max(123");
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseAnnotationError4() throws DslModelError {
-		parseAnnotation("@Max");
+		parseAnnotationInAttribute("@Max");
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseAnnotationError5() throws DslModelError {
-		parseAnnotation("@Abcdef"); // unhknown annotation
+		parseAnnotationInAttribute("@Abcdef"); // unhknown annotation
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseAnnotationError6() throws DslModelError {
-		parseAnnotation("@Maxi(123)"); // unhknown annotation
+		parseAnnotationInAttribute("@Maxi(123)"); // unhknown annotation
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseAnnotationError7() throws DslModelError {
-		parseAnnotation("@Id(145)"); // Unexpected parameter
+		parseAnnotationInAttribute("@Id(145)"); // Unexpected parameter
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseAnnotationError8() throws DslModelError {
-		parseAnnotation("@SizeMax(44.55)"); // integer parameter required
+		parseAnnotationInAttribute("@SizeMax(44.55)"); // integer parameter required
 	}
 	
 	@Test(expected = DslModelError.class)
 	public void testParseAnnotationError9() throws DslModelError {
-		parseAnnotation("@FooBar"); // unhknown annotation
+		parseAnnotationInAttribute("@FooBar"); // unhknown annotation
 	}
-
+	
+	@Test (expected = DslModelError.class)
+	public void testParseAttributeAnnotationError1() throws DslModelError {
+		parseAnnotationInAttribute("@Embedded"); 
+		// annotation not usable in an attribute
+	}
+	
+	@Test (expected = DslModelError.class)
+	public void testParseLinkAnnotationError1() throws DslModelError {
+		parseAnnotationInLink("@Id");
+		// annotation not usable in an link
+	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseDbSizeError1() throws DslModelError {
-		parseAnnotation("@DbSize(10.2)"); 
+		parseAnnotationInAttribute("@DbSize(10.2)"); 
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseDbSizeError2() throws DslModelError {
-		parseAnnotation("@DbSize(-22,2)"); 
+		parseAnnotationInAttribute("@DbSize(-22,2)"); 
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseDbSizeError3() throws DslModelError {
-		parseAnnotation("@DbSize(22,-4)"); 
+		parseAnnotationInAttribute("@DbSize(22,-4)"); 
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseDbSizeError4() throws DslModelError {
-		parseAnnotation("@DbSize(22,)"); 
+		parseAnnotationInAttribute("@DbSize(22,)"); 
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseDbSizeError5() throws DslModelError {
-		parseAnnotation("@DbSize(,4)"); 
+		parseAnnotationInAttribute("@DbSize(,4)"); 
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseDbSizeError6() throws DslModelError {
-		parseAnnotation("@DbSize(,)"); 
+		parseAnnotationInAttribute("@DbSize(,)"); 
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseDbSizeError7() throws DslModelError {
-		parseAnnotation("@DbSize()"); 
+		parseAnnotationInAttribute("@DbSize()"); 
 	}
 
 	@Test(expected = DslModelError.class)
 	public void testParseDbSizeError8() throws DslModelError {
-		parseAnnotation("@DbSize(aa,2)"); 
+		parseAnnotationInAttribute("@DbSize(aa,2)"); 
 	}
 }

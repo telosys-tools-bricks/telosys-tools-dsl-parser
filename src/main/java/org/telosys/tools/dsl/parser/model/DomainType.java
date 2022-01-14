@@ -33,7 +33,8 @@ public abstract class DomainType {
 
     /**
      * Constructor
-     * @param name
+     * @param name for example "string", "integer", "Book", "Car"
+     * @param cardinality
      * @param nature
      */
     protected DomainType(String name, DomainCardinality cardinality, DomainTypeNature nature) {

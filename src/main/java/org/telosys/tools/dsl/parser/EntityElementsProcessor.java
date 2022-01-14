@@ -122,10 +122,12 @@ public class EntityElementsProcessor {
 	
 	private void processElementAtEntityLevel(DomainEntity domainEntity, Element element, DslModelErrors errors) { //throws ParsingError {
 		if ( element.startsWithAnnotationPrefix() ) {
-			AnnotationProcessor annotationParser = new AnnotationProcessor(entityName);
+//			AnnotationProcessor annotationParser = new AnnotationProcessor(entityName);
+			AnnotationProcessor annotationParser = new AnnotationProcessor(domainEntity);
 			DomainAnnotation annotation;
 			try {
 				annotation = annotationParser.parseAnnotation(element);
+				// no annotation error => continue
 				domainEntity.addAnnotation(annotation);
 			} catch (DslModelError e) {
 				errors.addError(e);

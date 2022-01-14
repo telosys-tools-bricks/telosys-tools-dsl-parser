@@ -127,8 +127,7 @@ public class EntityConverter extends AbstractConverter {
 	 * @param domainEntity
 	 */
 	private void step3ApplyTags(DslModelEntity dslEntity, DomainEntity domainEntity) {
-		// TODO
-		//tagsConverter.applyTagsToEntity(dslEntity, domainEntity);
+		tagsConverter.applyTagsToEntity(dslEntity, domainEntity);  // new in v 3.4.0
 	}
 	
 	/**

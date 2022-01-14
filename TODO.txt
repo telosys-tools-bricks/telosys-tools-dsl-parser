@@ -2,19 +2,27 @@
 Update doc "NEWS"
 
 --------------------------
-Check duplicated annotation / tag 
-- field level 
-- entity level 
+Check duplicate annotation :
+ - Field OK  ( attribute and link )
+ - Entity : TODO
+TO TEST
+
+Check scope  annotation for all levels (ENTITY, ATTR, LINK )
+TO TEST
+ 
+Check duplicate tag  ???
 
 Create specific classes used in entity and field :
- - AnnotationSet
- - TagSet
+(?) - AnnotationSet
+(x) - TagSet  --> TagContainer & Tags
 
  --------------------------
 
 (WIP) Annotations at ENTITY level
+. TODO : expose in EntityInContext 
 
-Tags at ENTITY level
+(x) Tags at ENTITY level 
+(x) Tags at LINK level 
 
  --------------------------
 (x) Check duplicated field :
