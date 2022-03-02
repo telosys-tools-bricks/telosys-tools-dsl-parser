@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.DslModelErrors;
+import org.telosys.tools.dsl.commons.ModelInfo;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.parser.ParserV2;
 import org.telosys.tools.dsl.parser.ParsingResult;
@@ -33,7 +34,7 @@ public class ConverterStep1Test {
 	
 	private DslModel convertModel(DomainModel domainModel) {
 		// Create a new void DSL model 
-		DslModel dslModel = new DslModel("test-model");
+		DslModel dslModel = new DslModel("test-model", new ModelInfo());
 		// Create a new void DSL model 
 		DslModelErrors errors = new DslModelErrors();
 		ModelConverter converter = new ModelConverter(errors);
@@ -45,7 +46,7 @@ public class ConverterStep1Test {
 	
 	@Test
 	public void testOneEntityModel() {
-		DomainModel domainModel = parseModel("src/test/resources/model_test/valid/OneEntity.model");
+		DomainModel domainModel = parseModel("src/test/resources/model_test/valid/OneEntityModel");
 		assertEquals(1, domainModel.getNumberOfEntities());
 		
 		DslModel dslModel = convertModel(domainModel);
@@ -77,7 +78,7 @@ public class ConverterStep1Test {
 				assertFalse(a.isKeyElement());
 				assertEquals("string", a.getNeutralType() );
 				// Annotations with string parameter
-				assertEquals("firstName", a.getLabel());
+				assertEquals("", a.getLabel()); // not defined => "" 
 				assertEquals("Bart", a.getDefaultValue());
 				assertEquals("xxx", a.getInitialValue());
 				assertEquals("", a.getPattern()); // not defined => "" 
@@ -88,7 +89,7 @@ public class ConverterStep1Test {
 				assertFalse(a.isKeyElement());
 				assertEquals("date", a.getNeutralType() );
 				// Annotations with string parameter
-				assertEquals("birthDate", a.getLabel());
+				assertEquals("", a.getLabel()); // not defined => ""
 				assertEquals("", a.getDefaultValue());
 				assertEquals("", a.getInitialValue());
 				assertEquals("date", a.getInputType()); 
@@ -110,7 +111,7 @@ public class ConverterStep1Test {
 	
 	@Test
 	public void testTwoEntitiesModel()  {
-		DomainModel domainModel = parseModel("src/test/resources/model_test/valid/TwoEntities.model");
+		DomainModel domainModel = parseModel("src/test/resources/model_test/valid/TwoEntitiesModel");
 		assertEquals(2, domainModel.getNumberOfEntities());
 		
 		DslModel dslModel = convertModel(domainModel);

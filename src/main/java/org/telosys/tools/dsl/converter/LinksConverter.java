@@ -20,8 +20,7 @@ import java.util.List;
 
 import org.telosys.tools.dsl.DslModelError;
 import org.telosys.tools.dsl.DslModelErrors;
-import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
-import org.telosys.tools.dsl.converter.link.JoinColumnsUtil;
+import org.telosys.tools.dsl.converter.link.JoinAttributesUtil;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
@@ -32,7 +31,7 @@ import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.CascadeOptions;
 import org.telosys.tools.generic.model.Entity;
-import org.telosys.tools.generic.model.JoinColumn;
+import org.telosys.tools.generic.model.LinkAttribute;
 import org.telosys.tools.generic.model.enums.Cardinality;
 import org.telosys.tools.generic.model.enums.FetchType;
 import org.telosys.tools.generic.model.enums.Optional;
@@ -103,13 +102,15 @@ public class LinksConverter extends AbstractConverter {
 		DslModelLink dslLink = new DslModelLink(notNull(domainField.getName())); // v 3.4.0
 
 		// Link ID : generated (just to ensure not null )
-		dslLink.setId("Link" + linkIdCounter); 
+//		dslLink.setId("Link" + linkIdCounter); // removed in v 3.4.0
 
-		dslLink.setSourceTableName(notNull(dslEntity.getDatabaseTable())); 
+//		dslLink.setSourceTableName(notNull(dslEntity.getDatabaseTable())); // v 3.4.0
 		
 		// Set target entity info
-		dslLink.setTargetEntityClassName(domainField.getType().getName());
-		dslLink.setTargetTableName(notNull(referencedEntity.getDatabaseTable())); // v 3.3.0
+//		dslLink.setTargetEntityClassName(domainField.getType().getName());
+//		dslLink.setTargetTableName(notNull(referencedEntity.getDatabaseTable())); // v 3.3.0
+		// v 3.4.0
+		dslLink.setReferencedEntityName(domainField.getType().getName());
 
 		return dslLink;
 	}
@@ -123,14 +124,14 @@ public class LinksConverter extends AbstractConverter {
 			// The type is a single entity => OWNING SIDE by default
 			dslLink.setOwningSide(true);
 			dslLink.setInverseSide(false);
-			dslLink.setInverseSideLinkId(null);
+//			dslLink.setInverseSideLinkId(null);
 		} else {
 			// Reference to MANY entities => "ONE TO MANY"
 			dslLink.setCardinality(Cardinality.ONE_TO_MANY);
 			// The type is a collection of entity => INVERSE SIDE by default
 			dslLink.setOwningSide(false);
 			dslLink.setInverseSide(true);
-			dslLink.setInverseSideLinkId(null);
+//			dslLink.setInverseSideLinkId(null);
 		}
 		
 		// void "cascade options"  (default values)
@@ -140,17 +141,21 @@ public class LinksConverter extends AbstractConverter {
 		dslLink.setBasedOnForeignKey(false);
 		dslLink.setForeignKeyName("");
 		
-		dslLink.setComparableString("");
+//		dslLink.setComparableString("");
 		dslLink.setFetchType(FetchType.DEFAULT); // Default value set after by annotation 
 		dslLink.setOptional(Optional.UNDEFINED); // Default value set after by annotation 
 		dslLink.setMappedBy(null); // Default value set after by annotation
 
-		dslLink.setJoinColumns(null);
+//		dslLink.setJoinColumns(null); 
+	// removed in v 3.4.0
 		
 		// For "MANY TO MANY" --> No "JOIN TABLE" in DSL ?
-		dslLink.setBasedOnJoinTable(false);
-		dslLink.setJoinTable(null);
-		dslLink.setJoinTableName(null);
+//		dslLink.setBasedOnJoinTable(false); // v 3.4.0
+		dslLink.setBasedOnJoinEntity(false); // v 3.4.0
+
+		//dslLink.setJoinTable(null);
+//		dslLink.setJoinTableName(null); // v  3.4.0
+		dslLink.setJoinEntityName(null); // v 3.4.0
 	}
 	
 	private void step2ApplyAnnotations(DslModelEntity dslEntity, DslModelLink dslLink, DomainField domainField) {
@@ -190,21 +195,34 @@ public class LinksConverter extends AbstractConverter {
 	 */
 	private void step4InferJoinColumns(DslModelEntity dslEntity, DslModelLink dslLink) {
 		// Join columns not already determined from annotations @LinkByFK or @LinkByCol ?
-		if ( ! dslLink.hasJoinColumns() && dslLink.isOwningSide() ) {
+//		if ( ! dslLink.hasJoinColumns() && dslLink.isOwningSide() ) {
+//		if ( ! dslLink.hasJoinAttributes() && dslLink.isOwningSide() ) {
+		if ( ! dslLink.hasAttributes() && dslLink.isOwningSide() ) {
 			// No join columns defined by annotations => try to infer join columns from FK
-			String referencedTableName = dslLink.getTargetTableName(); 
-			JoinColumnsBuilder jcb = new JoinColumnsBuilder("Infer Join Columns");
-			List<JoinColumn> joinColumns = jcb.tryToInferJoinColumns(dslEntity, referencedTableName);
-			if ( joinColumns != null ) {
-				dslLink.setJoinColumns(joinColumns);
+//			String referencedTableName = dslLink.getTargetTableName(); 
+			String referencedEntityName = dslLink.getReferencedEntityName();
+//			JoinColumnsBuilder jcb = new JoinColumnsBuilder("Infer Join Columns");
+//			JoinAttributesBuilder jcb = new JoinAttributesBuilder("Infer Join Attributes");
+//			List<JoinColumn> joinColumns = jcb.tryToInferJoinColumns(dslEntity, referencedTableName);
+//			List<JoinAttribute> joinAttributes = jcb.tryToInferJoinAttributes(dslEntity, referencedEntityName);
+//			List<JoinAttribute> joinAttributes = JoinAttributesUtil.tryToInferJoinAttributes(dslEntity, referencedEntityName);
+			List<LinkAttribute> linkAttributes = JoinAttributesUtil.tryToInferJoinAttributes(dslEntity, referencedEntityName);
+//			if ( joinColumns != null ) {
+//				dslLink.setJoinColumns(joinColumns);
+//			}
+			if ( linkAttributes != null ) {
+//				dslLink.setJoinAttributes(joinAttributes);
+				dslLink.setAttributes(linkAttributes);
 			}
 		}
-		checkJoinColumns(dslLink);
+//		checkJoinColumns(dslLink);
+		checkJoinAttributes(dslLink); // v 3.4.0
 	}
 	
 	private void step5FinalizeLink(DslModelLink dslLink) {
 		// If link based on a Join Table => owning side
-		if ( dslLink.isBasedOnJoinTable() ) {
+//		if ( dslLink.isBasedOnJoinTable() ) {
+		if ( dslLink.isBasedOnJoinEntity() ) {
 			dslLink.setOwningSide(true);
 			dslLink.setInverseSide(false);
 		}
@@ -222,18 +240,23 @@ public class LinksConverter extends AbstractConverter {
 		
 	}
 	
-	private void checkJoinColumns(DslModelLink dslLink) {
-		if ( dslLink.getJoinColumns() != null ) {
+//	private void checkJoinColumns(DslModelLink dslLink) {
+	private void checkJoinAttributes(DslModelLink dslLink) {
+//		if ( dslLink.getJoinColumns() != null ) {
+//		if ( dslLink.getJoinAttributes() != null ) {
+		if ( dslLink.getAttributes() != null ) {
 			//--- Check number of columns expected
-			int nbJoinColumns = dslLink.getJoinColumns().size() ;
-			String targetEntityName = dslLink.getTargetEntityClassName();
-			int nbKeyAttributesExpected = getNbKeyAttributes(targetEntityName);
+//			int nbJoinColumns = dslLink.getJoinColumns().size() ;
+			int nbJoinColumns = dslLink.getAttributes().size() ;
+			String referencedEntityName = dslLink.getReferencedEntityName();
+			int nbKeyAttributesExpected = getNbKeyAttributes(referencedEntityName);
 			if ( nbJoinColumns != nbKeyAttributesExpected ) {
 				throw new IllegalStateException("Link error : " + nbJoinColumns + " join columns, "
-						+ nbKeyAttributesExpected + " expected for a reference to '" + targetEntityName + "' entity ");
+						+ nbKeyAttributesExpected + " expected for a reference to '" + referencedEntityName + "' entity ");
 			}
 			//--- Check duplicates
-			int n = JoinColumnsUtil.numberOfDuplicates(dslLink.getJoinColumns());
+//			int n = JoinColumnsUtil.numberOfDuplicates(dslLink.getJoinColumns());
+			int n = JoinAttributesUtil.numberOfDuplicates(dslLink.getAttributes());
 			if ( n > 0 ) {
 				throw new IllegalStateException("Link error : "
 						+ n + " duplicated join column(s)");

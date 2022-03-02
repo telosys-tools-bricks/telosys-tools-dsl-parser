@@ -15,7 +15,9 @@
  */
 package org.telosys.tools.dsl.tags;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.telosys.tools.generic.model.TagContainer;
@@ -140,5 +142,9 @@ public class Tags implements TagContainer {
 			// tag is undefined 
 			return null;
 		}
+	}
+	
+	public List<Tag> getAllTags() {
+		return new ArrayList<>(tagsMap.values());
 	}
 }

@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.telosys.tools.dsl.DslModelError;
 import org.telosys.tools.dsl.DslModelErrors;
+import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKey;
-import org.telosys.tools.generic.model.ForeignKeyColumn;
+import org.telosys.tools.generic.model.ForeignKeyAttribute;
+import org.telosys.tools.generic.model.Model;
 
 public class PrintUtil {
 
@@ -45,13 +47,41 @@ public class PrintUtil {
 		}
 	}
 	
+	public static void printModel(Model model) {
+    	println("Model '" + model.getName() + "' : " );
+    	println(" . Title : " + model.getTitle() );
+    	println(" . DB id : " + model.getDatabaseId() );
+    	for ( Entity e : model.getEntities() ) {
+    		printEntity(e);
+    	}
+	}
+	public static void printEntity(Entity entity) {
+    	println("Entity '" + entity.getClassName() + "' : " );
+    	for ( Attribute a : entity.getAttributes() ) {
+    		printAttribute(a);
+    	}
+	}
+	
+	public static void printAttribute(Attribute a) {
+    	println(" . " + a.getName() + " : " + a.getNeutralType() 
+    		+ " (" + a.getDatabaseName() + " " + a.getDatabaseType() +  ")");
+	}
+	
 	public static void printForeignKeys(Entity entity) {
     	println("Foreign Keys for entity '" + entity.getClassName() + "' : " );
-        List<ForeignKey> fkList = entity.getDatabaseForeignKeys();
+//        List<ForeignKey> fkList = entity.getDatabaseForeignKeys();
+        List<ForeignKey> fkList = entity.getForeignKeys();
         for ( ForeignKey fk : fkList ) {
-        	println(" . '" + fk.getName()  + "' : table '" + fk.getTableName() + "' --> table '" + fk.getReferencedTableName() +"'" );
-            for ( ForeignKeyColumn fkCol : fk.getColumns() ) {
-            	println("   - col '" + fkCol.getColumnName() + "' --> col '" + fkCol.getReferencedColumnName() + "'" );
+//        	println(" . '" + fk.getName()  + "' : table '" + fk.getTableName() + "' --> table '" + fk.getReferencedTableName() +"'" );
+        	println(" . '" + fk.getName()  + "' : '" + fk.getOriginEntityName() + "' --> '" + fk.getReferencedEntityName() +"'" );
+        	
+//            for ( ForeignKeyColumn fkCol : fk.getColumns() ) {
+//            	println("   - col '" + fkCol.getColumnName() + "' --> col '" + fkCol.getReferencedColumnName() + "'" );
+//            }
+            for ( ForeignKeyAttribute fkAttr : fk.getAttributes() ) {
+            	println("   - (" + fkAttr.getOrdinal() + ") "
+            		+ "'" + fkAttr.getOriginAttributeName() 
+            		+ "' --> '" + fkAttr.getReferencedAttributeName() + "'" );
             }
         }
     }	

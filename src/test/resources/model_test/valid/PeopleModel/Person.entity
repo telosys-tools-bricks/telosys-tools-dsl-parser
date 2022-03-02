@@ -1,0 +1,31 @@
+
+@Abstract @Extends(Entity)
+@DbTable(TPERSON)
+    #Foo
+  #Bar(xyz)
+
+Person {
+
+	// ATTRIBUTES
+	// Basic attributes 
+	id : int {@Id}; 
+	firstName : string {@SizeMax( 3)  #Z #W(12) } ;
+	lastName : string   { @Label(Last name) } ;
+	birthDate : date ;
+	
+	// Foreing Keys usable in LINKS
+	countryCode : string   { @FK(Country) } ;
+	
+	genderId : short   { @DbName(GENDER_ID)  @FK(Gender) } ;
+	
+	deptGroupCode    : string { @DbName(DEP_GROUP_CODE) } ;
+	deptDivisionCode : int    { @DbName(DEP_DIVISION_CODE) };
+	
+	townId : int { @FK(FK_PERSON_TOWN, Town) } ;
+
+	// LINKS
+	country  : Country  { @FetchTypeLazy  @Optional } ; // FK inference
+	gender   : Gender   { @Embedded } ;  // FK inference
+	department : Department { @LinkByAttr(deptGroupCode , deptDivisionCode) }; 
+	town : Town { @LinkByFK(FK_PERSON_TOWN) } ;
+}

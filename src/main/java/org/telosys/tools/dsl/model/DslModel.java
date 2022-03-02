@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.dsl.DslModelUtil;
+import org.telosys.tools.dsl.commons.ModelInfo;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
 import org.telosys.tools.generic.model.enums.ModelType;
@@ -29,42 +29,49 @@ import org.telosys.tools.generic.model.util.EntityClassNameComparator;
 public class DslModel implements Model {
 	
 	private static final ModelType MODEL_TYPE    = ModelType.DOMAIN_SPECIFIC_LANGUAGE ;
-	private static final String    MODEL_VERSION = DslModelVersion.VERSION ;
 
-	private final String nameFromFile ;
+	private final String modelName;
 
-	private String title = "";
-	private String description = "";
+	// from model.yaml
+	private final ModelInfo modelInfo;
+	
 	private Integer databaseId;
 	private String databaseProductName	;
 	private List<Entity> entities = new ArrayList<>();
 
 	/**
 	 * Constructor
-	 * @param nameFromFile the model name extracted from 'xxx.model'
+	 * @param modelName  model name 
+	 * @param modelInfo  model information 
 	 */
-	public DslModel(String nameFromFile) {
+	public DslModel(String modelName, ModelInfo modelInfo) {
 		super();
-		if ( StrUtil.nullOrVoid(nameFromFile) ) {
+		if ( StrUtil.nullOrVoid(modelName) ) {
 			throw new IllegalArgumentException("Model name is undefined (null or void)");
 		}
-		this.nameFromFile = nameFromFile ;
+		this.modelName = modelName;
+		this.modelInfo = modelInfo;
+	}
+	
+	/**
+	 * Constructor with default model information
+	 * @param modelName  model name 
+	 */
+	public DslModel(String modelName) {
+		this(modelName, new ModelInfo());
 	}
 	
 	@Override
 	public String getName() {
 		// Model name not defined in model properties => use name from file
-		return nameFromFile ;
+		return modelName ;
 	}
 
 	@Override
 	public String getFolderName() {  // v 3.3.0
-		return DslModelUtil.getModelFolderName(nameFromFile);
-	}
-
-	@Override
-	public String getVersion() {
-		return MODEL_VERSION;
+		// return DslModelUtil.getModelFolderName(modelName);
+		// since v 3.4.0 the folder name is the model name
+		return modelName ;
 	}
 
 	@Override
@@ -73,22 +80,26 @@ public class DslModel implements Model {
 	}
 	
 	//----------------------------------------------------------------------------------------
+	public ModelInfo getModelInfo() {
+		return modelInfo;
+	}
 
 	@Override
 	public String getTitle() {
-		return title;
-	}
-	public void setTitle(String title) {
-		this.title = title;
+		return modelInfo.getTitle();
 	}
 	
 	@Override
+	public String getVersion() {
+		return modelInfo.getVersion();
+	}
+
+	@Override
 	public String getDescription() {
-		return description;
+		return modelInfo.getDescription();
 	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
+
+	//----------------------------------------------------------------------------------------
 
 	@Override
 	public Integer getDatabaseId() {

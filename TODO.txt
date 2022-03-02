@@ -2,6 +2,22 @@
 Update doc "NEWS"
 
 --------------------------
+FOREIGN KEYS management in DSL model :
+
+Create "ForeignKeysBuilder V2" with only model references
+( cf DslModelForeignKeyAttribute )
+fkBuilder.buildForeignKeys(entity);
+NB : updateAttributes() : attribute. setFKComposite(true) setFKSimple(true)  setReferencedEntityClassName(entname)
+setReferencedEntityClassName(entityName) : priority to simple FK if any
+
+Attribute : getReferencedEntityClassName
+$attrib".referencedEntityName" : used in many templates for 
+       combo-box, C# ForeignKey, spring MVC, create table (.py)
+
+Add 'ordinal' in @FK (optional )
+  @FK( ForeignKeyName, ReferencedEntity.referencedAttribute, ordinal )
+
+--------------------------
 Check duplicate annotation :
  - Field OK  ( attribute and link )
  - Entity : TODO
@@ -13,13 +29,12 @@ TO TEST
 Check duplicate tag  ???
 
 Create specific classes used in entity and field :
-(?) - AnnotationSet
+(? -> NO) - AnnotationSet
 (x) - TagSet  --> TagContainer & Tags
 
  --------------------------
 
-(WIP) Annotations at ENTITY level
-. TODO : expose in EntityInContext 
+(X) Annotations at ENTITY level
 
 (x) Tags at ENTITY level 
 (x) Tags at LINK level 

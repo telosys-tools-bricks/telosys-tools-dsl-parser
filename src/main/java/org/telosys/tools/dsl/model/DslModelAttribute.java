@@ -33,26 +33,26 @@ public class DslModelAttribute implements Attribute {
 	private final String name ;
 	private final String neutralType ;
 	
-	private String booleanFalseValue;
-	private String booleanTrueValue;
+	private String booleanFalseValue = "";
+	private String booleanTrueValue  = "";
 	private String databaseComment = "";
-	private String databaseDefaultValue;
-	private String databaseName;
-	private String databaseSize; // String for size with comma ( eg "8,2" )
-	private String databaseType;
-	private String dateAfterValue;
-	private String dateBeforeValue;
-	private DateType dateType;
-	private String defaultValue = "" ; // ver 3.2.0
+	private String databaseDefaultValue = "";
+	private String databaseName = "";
+	private String databaseSize = ""; // String for size with comma ( eg "8,2" )
+	private String databaseType = "";
+	private String dateAfterValue = "";
+	private String dateBeforeValue = "";
+	private DateType dateType = DateType.UNDEFINED;
+	private String defaultValue = "" ; 
 	private Entity entity;
 	private String generatedValueGeneratorName;
 //	private String generatedValueStrategy;
 	private GeneratedValueStrategy generatedValueStrategy = GeneratedValueStrategy.UNDEFINED; // v 3.4.0
-	private String initialValue = "" ; // ver 3.2.0
-	private String inputType = "" ; // ver 3.2.0
+	private String initialValue = "" ; 
+	private String inputType = "" ; 
 	private Integer jdbcTypeCode;
-	private String jdbcTypeName;
-	private String label = "" ; // ver 3.2.0
+	private String jdbcTypeName = "";
+	private String label = "" ; 
 	private Integer maxLength;
 	private Integer minLength;
 	private BigDecimal maxValue;

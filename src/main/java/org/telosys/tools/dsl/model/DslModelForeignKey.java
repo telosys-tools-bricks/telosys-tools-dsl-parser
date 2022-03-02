@@ -18,120 +18,97 @@ package org.telosys.tools.dsl.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.generic.model.ForeignKey;
-import org.telosys.tools.generic.model.ForeignKeyColumn;
+import org.telosys.tools.generic.model.ForeignKeyAttribute;
+import org.telosys.tools.generic.model.LinkAttribute;
 
 public class DslModelForeignKey implements ForeignKey {
 	
+	private static final String CONTRUCTOR_ERROR = "Foreign Key constructor error : ";
     private final String fkName; 
-    private final String tableName; // table holding this FK
-    private final String referencedTableName; // table referenced by this FK
+    private final String originEntityName; // entity holding this FK
+    private final String referencedEntityName; // entity referenced by this FK
     
-    private final List<ForeignKeyColumn> columns;
+    private final List<ForeignKeyAttribute> attributes;
     
-    private String deferrable;
-    private int deferrableCode;
-    private String deleteRule;
-    private int deleteRuleCode;
-    private String updateRule;
-    private int updateRuleCode;
-
-    
-    public DslModelForeignKey(String fkName, String tableName, String referencedTableName) {
+    public DslModelForeignKey(String fkName, String originEntityName, String referencedEntityName) {
 		super();
+		
+		if ( StrUtil.nullOrVoid(fkName)) {
+			throw new IllegalArgumentException(CONTRUCTOR_ERROR + "'name' is null or void");
+		}
         this.fkName = fkName;
-        this.tableName = tableName;
-        this.referencedTableName = referencedTableName;
-        this.columns = new LinkedList<>();
+        
+		if ( StrUtil.nullOrVoid(originEntityName)) {
+			throw new IllegalArgumentException(CONTRUCTOR_ERROR + "'originEntityName' is null or void");
+		}
+        this.originEntityName = originEntityName;
+        
+		if ( StrUtil.nullOrVoid(referencedEntityName)) {
+			throw new IllegalArgumentException(CONTRUCTOR_ERROR + "'referencedEntityName' is null or void");
+		}
+        this.referencedEntityName = referencedEntityName;
+        
+        this.attributes = new LinkedList<>();
 	}
 
 	@Override
     public String getName() {
         return fkName;
     }
+	
+	@Override
+    public String getOriginEntityName() {
+        return originEntityName;
+    }
+	
+	@Override
+    public String getReferencedEntityName() {
+        return referencedEntityName;
+    }
 
-//    public void setName(String name) {
-//        this.name = name;
+//    //@Override
+//    public String getTableName() {
+//        return entityName;
+//    }
+//
+//    //@Override
+//    public String getReferencedTableName() {
+//        return referencedEntityName;
 //    }
 
     @Override
-    public String getTableName() {
-        return tableName;
+    public List<ForeignKeyAttribute> getAttributes() {
+        return attributes;
     }
-
-//    public void setTableName(String tableName) {
-//        this.tableName = tableName;
-//    }
-
+	
     @Override
-    public String getReferencedTableName() {
-        return referencedTableName;
+    public boolean isComposite() {
+		return attributes.size() > 1 ;
+	}
+	
+    public void addAttribute(DslModelForeignKeyAttribute fkAttribute) {
+    	// fkAttribute has always valid attributes (not null & not void)
+        this.attributes.add(fkAttribute);
     }
 
-//    public void setReferencedTableName(String referencedTableName) {
-//        this.referencedTableName = referencedTableName;
-//    }
-
-    @Override
-    public List<ForeignKeyColumn> getColumns() {
-        return columns;
-    }
-
-    public void addColumn(ForeignKeyColumn fkCol) {
-        this.columns.add(fkCol);
-    }
-
-    @Override
-    public String getDeferrable() {
-        return deferrable;
-    }
-
-    public void setDeferrable(String deferrable) {
-        this.deferrable = deferrable;
-    }
-
-    @Override
-    public int getDeferrableCode() {
-        return deferrableCode;
-    }
-
-    public void setDeferrableCode(int deferrableCode) {
-        this.deferrableCode = deferrableCode;
-    }
-
-    @Override
-    public String getDeleteRule() {
-        return deleteRule;
-    }
-
-    public void setDeleteRule(String deleteRule) {
-        this.deleteRule = deleteRule;
-    }
-
-    @Override
-    public int getDeleteRuleCode() {
-        return deleteRuleCode;
-    }
-
-    public void setDeleteRuleCode(int deleteRuleCode) {
-        this.deleteRuleCode = deleteRuleCode;
-    }
-
-    @Override
-    public String getUpdateRule() {
-        return updateRule;
-    }
-
-    public void setUpdateRule(String updateRule) {
-        this.updateRule = updateRule;
-    }
-
-    @Override
-    public int getUpdateRuleCode() {
-        return updateRuleCode;
-    }
-
-    public void setUpdateRuleCode(int updateRuleCode) {
-        this.updateRuleCode = updateRuleCode;
-    }
+    /**
+     * Returns all the join attributes defined in this Foreign Key
+     * @return
+     * @since  3.4.0
+     */
+//	public List<JoinAttribute> getJoinAttributes() {
+	public List<LinkAttribute> getLinkAttributes() {
+//		List<JoinAttribute> joinAttributes = new LinkedList<>();
+		List<LinkAttribute> joinAttributes = new LinkedList<>();
+		for (ForeignKeyAttribute fka : this.attributes ) {
+	    	// each fk attribute has always valid attributes (not null & not void)
+			DslModelLinkAttribute linkAttribute = new DslModelLinkAttribute(
+					fka.getOriginAttributeName(),
+					fka.getReferencedAttributeName());
+			joinAttributes.add(linkAttribute);
+		}
+		return joinAttributes;
+	}
 }

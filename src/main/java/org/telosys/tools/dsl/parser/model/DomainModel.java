@@ -21,32 +21,31 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.dsl.DslModelUtil;
+import org.telosys.tools.dsl.commons.ModelInfo;
 
 /**
  * Root class for a Domain Model built after DSL files parsing
  *
- * @author L.Guerin
+ * @author Laurent GUERIN
  */
 public class DomainModel {
 
 	/**
 	 * Name of the file from which the model was loaded
 	 */
-	private final String modelFileName ; // v 3.3.0
+//	private final String modelFileName ; // v 3.3.0
 	
 	/**
 	 * Name of the file from which the model was loaded
 	 */
-	private final String modelNameFromFile ; // v 3.3.0
+//	private final String modelNameFromFile ; // v 3.3.0
+	private final String modelName ; // v 3.4.0
 	
 	/**
 	 * Model description and information (from the ".model" file)
 	 */
-	private final DomainModelInfo domainModelInfo ;
+	private final ModelInfo modelInfo ;
 
     /**
      * Map of all the entities (key is the entity name) 
@@ -62,45 +61,65 @@ public class DomainModel {
 //        domainModelInfo = new DomainModelInfo();
 //    }
 
-    /**
-     * Constructor
-     * @param modelFileName file name from which the model is loaded
-     * @param modelProperties properties loaded from the model file
-     */
-    public DomainModel(String modelFileName, Properties modelProperties) {
+//    /**
+//     * Constructor
+//     * @param modelFileName file name from which the model is loaded
+//     * @param modelProperties properties loaded from the model file
+//     */
+//    public DomainModel(String modelFileName, Properties modelProperties) {
+//    	super();
+//		if ( StrUtil.nullOrVoid(modelFileName) ) {
+//			throw new IllegalArgumentException("Model file name is undefined (null or void)");
+//		}    	
+//    	this.modelFileName = modelFileName ;
+//    	this.modelNameFromFile = DslModelUtil.getModelNameFromShortFileName(modelFileName);
+//    	this.modelNameFromFile = DslModelUtil.getModelNameFromShortFileName(modelFileName);
+//        this.domainModelInfo = new DomainModelInfo(modelProperties);
+//    }
+
+//    public DomainModel(String modelName, Properties modelProperties) {
+//    	super();
+//    	this.modelName = modelName ;
+//        this.domainModelInfo = new DomainModelInfo(modelProperties);
+//    }
+
+    public DomainModel(String modelName, ModelInfo modelInfo) {
     	super();
-		if ( StrUtil.nullOrVoid(modelFileName) ) {
-			throw new IllegalArgumentException("Model file name is undefined (null or void)");
-		}    	
-    	this.modelFileName = modelFileName ;
-    	this.modelNameFromFile = DslModelUtil.getModelNameFromShortFileName(modelFileName);
-        this.domainModelInfo = new DomainModelInfo(modelProperties);
+    	this.modelName = modelName;
+        this.modelInfo = modelInfo;
     }
 
-    /**
-     * Returns the model file name 
-     * @return
-     */
-    public final String getModelFileName() { // v 3.3.0
-        return modelFileName;
+    public ModelInfo getModelInfo() {
+    	return this.modelInfo;
+    }
+    
+//    /**
+//     * Returns the model file name 
+//     * @return
+//     */
+//    public final String getModelFileName() { // v 3.3.0
+//        return modelFileName;
+//    }
+
+//    /**
+//     * Returns the model name built from original model file name
+//     * @return
+//     */
+//    public final String getModelNameFromFile() { // v 3.3.0
+//        return modelNameFromFile;
+//    }
+    public final String getModelName() { // v 3.4.0
+        return modelName;
     }
 
-    /**
-     * Returns the model name built from original model file name
-     * @return
-     */
-    public final String getModelNameFromFile() { // v 3.3.0
-        return modelNameFromFile;
-    }
-
-    /**
-     * Returns the model name
-     *
-     * @return
-     */
-    public final String getTitle() {
-        return domainModelInfo.getTitle();
-    }
+//    /**
+//     * Returns the model name
+//     *
+//     * @return
+//     */
+//    public final String getTitle() {
+//        return domainModelInfo.getTitle();
+//    }
 
 //    /**
 //     * Returns the model version
@@ -110,13 +129,13 @@ public class DomainModel {
 //		return domainModelInfo.getVersion();
 //	}
 
-	/**
-     * Returns the model description
-	 * @return
-	 */
-	public String getDescription() {
-		return domainModelInfo.getDescription();
-	}
+//	/**
+//     * Returns the model description
+//	 * @return
+//	 */
+//	public String getDescription() {
+//		return domainModelInfo.getDescription();
+//	}
 
 	//---------------------------------------------------------------------
 	// Model ENTITIES 
@@ -178,7 +197,8 @@ public class DomainModel {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Model : ");
-        sb.append(this.getModelFileName());
+//        sb.append(this.getModelFileName());
+        sb.append(this.getModelName());
         sb.append("\n");
         sb.append("Entities : \n");
     	for (Map.Entry<String, DomainEntity> e : entities.entrySet()) {

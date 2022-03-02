@@ -1,3 +1,0 @@
-name = ModelWithTwoEntities
-version = 2.1
-description = A model with two entities (Employee references Country)

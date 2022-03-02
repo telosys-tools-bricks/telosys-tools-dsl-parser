@@ -19,7 +19,8 @@ public class ValidModelWithSpacesTest {
 
 	@Test
 	public void test() {
-		DomainModel model = ModelUtil.parseValidModel("src/test/resources/model_test/valid/TwoEntitiesWithSpaces.model");
+//		DomainModel model = ModelUtil.parseValidModel("src/test/resources/model_test/valid/TwoEntitiesWithSpaces.model");
+		DomainModel model = ModelUtil.parseValidModel("src/test/resources/model_test/valid/TwoEntitiesWithSpaces");
 		
 		assertEquals(2, model.getNumberOfEntities());
 		assertEquals(2, model.getEntityNames().size());

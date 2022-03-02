@@ -1,0 +1,1 @@
+Just to keep this empty directory in Git repository

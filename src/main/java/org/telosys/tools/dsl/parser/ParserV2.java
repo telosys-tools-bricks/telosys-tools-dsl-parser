@@ -18,18 +18,22 @@ package org.telosys.tools.dsl.parser;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 
-import org.telosys.tools.commons.PropertiesManager;
-import org.telosys.tools.dsl.DslModelUtil;
 import org.telosys.tools.dsl.DslModelError;
 import org.telosys.tools.dsl.DslModelErrors;
+import org.telosys.tools.dsl.DslModelUtil;
+import org.telosys.tools.dsl.commons.ModelInfo;
+import org.telosys.tools.dsl.commons.ModelInfoLoader;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 
+/**
+ * DSL model parser (version 2) 
+ * 
+ * @author Laurent GUERIN
+ *
+ */
 public class ParserV2 {
-
-	private static final String DOT_MODEL = ".model";
 
 	/**
 	 * Constructor
@@ -38,47 +42,56 @@ public class ParserV2 {
 		super();
 	}
 	
-	private boolean composedOfStandardAsciiCharacters(String s) {
-		byte[] bytes = s.getBytes();
-		for ( byte b : bytes ) {
-			if( b < 32 || b > 126 ) {
-				return false;
-			}
-		}
-		return true;
-	}
+//	/**
+//	 * Loads model information from the given YAML file if the file exists
+//	 * @param modelYamlFile
+//	 * @return model
+//	 */
+//	private ModelInfo loadModelInformation(File modelYamlFile) {
+//		if ( modelYamlFile.exists() && modelYamlFile.isFile() ) {
+//			YamlFileManager yaml = new YamlFileManager();
+//			return yaml.load(modelYamlFile, ModelInfo.class);
+//		}
+//		else {
+//			return new ModelInfo() ;
+//		}
+//	}
 
-	public ParsingResult parseModel(String modelFileName) {
-		return parseModel(new File(modelFileName));
+	/**
+	 * Parse the MODEL located in the given model folder name
+	 * @param modelFolderName
+	 * @return
+	 */
+	public ParsingResult parseModel(String modelFolderName) {
+		return parseModel(new File(modelFolderName));
 	}
 	
 	/**
-	 * Parse the MODEL identified by the ".model" file
-	 * 
-	 * @param file
-	 *            the model file ( file with ".model" suffix )
+	 * Parse the MODEL located in the given folder
+	 * @param modelFolder model folder (e.g. "/aa/bb/cc/modelname" )
 	 * @return
-	 * @throws ModelParsingError
 	 */
-	public ParsingResult parseModel(File file) {
+	public ParsingResult parseModel(File modelFolder) {
 
 		DslModelErrors errors = new DslModelErrors();
 		
-		//--- check model file validity
+		//--- check model folder validity
 		try {
-			checkModelFile(file);
+			checkModelFolder(modelFolder);
 		} catch (DslModelError e) {
 			errors.addError(e);
 			return new ParsingResult(null, errors);
 		}
 
-		//--- init a void model using the ".model" file
-		PropertiesManager propertiesManager = new PropertiesManager(file);
-		Properties properties = propertiesManager.load();
-		DomainModel model = new DomainModel(file.getName(), properties);
+		//--- load model info file if any
+		File modelInfoFile = DslModelUtil.getModelFileFromModelFolder(modelFolder);
+		ModelInfo modelInfo = ModelInfoLoader.loadModelInformation(modelInfoFile);
+		
+		//--- create new model
+		DomainModel model = new DomainModel(modelFolder.getName(), modelInfo);
 
 		//--- build list of entities names in the model
-		List<String> entitiesFileNames = DslModelUtil.getEntitiesAbsoluteFileNames(file);
+		List<String> entitiesFileNames = DslModelUtil.getEntityFullFileNames(modelFolder);
 		List<String> entitiesNames = new LinkedList<>();
 		for (String entityFileName : entitiesFileNames) {
 			entitiesNames.add(DslModelUtil.getEntityName(new File(entityFileName)));
@@ -101,21 +114,17 @@ public class ParserV2 {
 	}
 
 	/**
-	 * Check model file validity
-	 * @param file
+	 * Check model folder validity
+	 * @param modelFolder
 	 * @throws DslModelError
 	 */
-	protected void checkModelFile(File file) throws DslModelError {
-		if (!file.exists()) {
-			String error = "File '" + file.toString() + "' not found";
+	private void checkModelFolder(File modelFolder) throws DslModelError {
+		if (!modelFolder.exists()) {
+			String error = "Model folder '" + modelFolder.toString() + "' not found";
 			throw new DslModelError(error);
 		}
-		if (!file.isFile()) {
-			String error = "'" + file.toString() + "' is not a file";
-			throw new DslModelError(error);
-		}
-		if (!file.getName().endsWith(DOT_MODEL)) {
-			String error = "File '" + file.toString() + "' doesn't end with '" + DOT_MODEL + "'";
+		if (!modelFolder.isDirectory()) {
+			String error = "'" + modelFolder.toString() + "' is not a directory";
 			throw new DslModelError(error);
 		}
 	}

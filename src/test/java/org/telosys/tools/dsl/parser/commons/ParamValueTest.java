@@ -22,9 +22,11 @@ public class ParamValueTest {
 		assertEquals("'a'b'c'", buildParamValue("DefaultValue", "  'a'b'c'  ").getAsString() );
 		assertEquals("a", buildParamValue("DefaultValue", "  a ").getAsString() );
 		assertEquals("a 1 e", buildParamValue("DefaultValue", "  a 1 e   ").getAsString() );
+		assertEquals("say \"Hello\"", buildParamValue("DefaultValue", "say \"Hello\"").getAsString() );
 		
 		// with double quotes
 		assertEquals(" abc ", buildParamValue("DefaultValue", "\" abc \"").getAsString() );
+		assertEquals(" a\"bc ", buildParamValue("DefaultValue", "\" a\\\"bc \"").getAsString() );
 
 		assertEquals(Integer.valueOf(123), buildParamValue("XxxYyyy", "123").getAsInteger() );
 

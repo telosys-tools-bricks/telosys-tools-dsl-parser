@@ -1,11 +1,11 @@
 package org.telosys.tools.dsl.converter;
 
 import java.math.BigDecimal;
-import java.util.Properties;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.DslModelError;
 import org.telosys.tools.dsl.DslModelErrors;
+import org.telosys.tools.dsl.commons.ModelInfo;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
@@ -31,8 +31,8 @@ import static org.junit.Assert.assertTrue;
 
 public class ConverterTest {
 
-	private static final String     MODEL_FILE_NAME = "test.model" ;
-	private static final Properties MODEL_PROPERTIES = null ;
+	private static final String     MODEL_NAME = "test" ;
+//	private static final Properties MODEL_PROPERTIES = null ;
 	
 	private static final String     ENTITY1 = "Entity1" ;
 	private static final String     ENTITY2 = "Entity2" ;
@@ -67,7 +67,7 @@ public class ConverterTest {
 
 	@Test
 	public void testEmptyModel() {
-		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
+		DomainModel domainModel = new DomainModel(MODEL_NAME, new ModelInfo());
 		ModelConverter converter = getModelConverter();
 		Model model = converter.convertModel(domainModel);
 		
@@ -77,7 +77,7 @@ public class ConverterTest {
 	}
 	
 	private Model buildModelWithTwoEmptyEntities() {
-		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
+		DomainModel domainModel = new DomainModel(MODEL_NAME, new ModelInfo());
 		domainModel.addEntity(new DomainEntity(ENTITY1));
 		domainModel.addEntity(new DomainEntity(ENTITY2));		
 		//--- Convert 
@@ -109,16 +109,17 @@ public class ConverterTest {
 		assertEquals("", e.getDatabaseCatalog());
 		assertEquals("", e.getDatabaseSchema());
 		assertEquals("TABLE", e.getDatabaseType());
-		assertEquals(0, e.getDatabaseForeignKeys().size());
+		assertEquals(0, e.getForeignKeys().size());
 
-		Entity e2 = model.getEntityByTableName(ENTITY1);
-		assertEquals(ENTITY1, e2.getClassName());
+// removed in v 3.4.0 (no default table name)
+//		Entity e2 = model.getEntityByTableName(ENTITY1);
+//		assertEquals(ENTITY1, e2.getClassName());
 	}
 	
 	@Test
 	public void testAttributeWithNeutralTypes() throws DslModelError {
 		// Given
-		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
+		DomainModel domainModel = new DomainModel(MODEL_NAME, new ModelInfo());
 		DomainEntity domainEntity1 = new DomainEntity(ENTITY1);
 
 		domainModel.addEntity(domainEntity1);
@@ -162,7 +163,7 @@ public class ConverterTest {
 
 	@Test
 	public void testAttributeWithAnnotations() throws DslModelError {
-		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
+		DomainModel domainModel = new DomainModel(MODEL_NAME, new ModelInfo());
 		DomainEntity domainEntity1 = new DomainEntity(ENTITY1);
 
 		domainModel.addEntity(domainEntity1);
@@ -250,7 +251,7 @@ public class ConverterTest {
 //	}
 
 	private DomainModel buildFullModel() throws DslModelError {
-		DomainModel domainModel = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
+		DomainModel domainModel = new DomainModel(MODEL_NAME, new ModelInfo());
 
 		DomainEntity carEntity = new DomainEntity("Car");
 		DomainEntity driverEntity = new DomainEntity("Driver");
@@ -331,8 +332,9 @@ public class ConverterTest {
 		assertNotNull(model.getEntityByClassName("Driver")); 
 		
 		//--- Get by table name ( table name = class name )
-		assertNotNull(model.getEntityByTableName("Car"));
-		assertNotNull(model.getEntityByTableName("Driver"));
+// removed in v 3.4.0 (no default table nale)
+//		assertNotNull(model.getEntityByTableName("Car"));
+//		assertNotNull(model.getEntityByTableName("Driver"));
 	}
 	
 	/**
@@ -344,7 +346,8 @@ public class ConverterTest {
 		print("check 'Car' entity...");
 		
 		assertEquals("Car", carEntity.getClassName());
-		assertEquals("Car", carEntity.getDatabaseTable() );
+//		assertEquals("Car", carEntity.getDatabaseTable() );
+		assertEquals("", carEntity.getDatabaseTable() ); // v 3.4.0
 		
 		//--- "Car" attributes
 		for ( Attribute attribute : carEntity.getAttributes() ) {
@@ -368,7 +371,7 @@ public class ConverterTest {
 		
 		Link driverLink = carEntity.getLinks().get(0);
 		assertEquals(Cardinality.MANY_TO_ONE, driverLink.getCardinality() );
-		assertEquals("Driver", driverLink.getTargetEntityClassName());
+		assertEquals("Driver", driverLink.getReferencedEntityName());
 	}
 	
 	/**
@@ -378,7 +381,8 @@ public class ConverterTest {
 	private void checkDriverEntity(DslModelEntity driverEntity) {
 		print("check 'Driver' entity...");
 		assertEquals("Driver", driverEntity.getClassName() );
-		assertEquals("Driver", driverEntity.getDatabaseTable() );
+//		assertEquals("Driver", driverEntity.getDatabaseTable() );
+		assertEquals("", driverEntity.getDatabaseTable() ); // V 3.4.0
 		//--- Attributes
 		for ( Attribute attribute : driverEntity.getAttributes() ) {
 			print(" . " + attribute.getName() );
@@ -387,7 +391,7 @@ public class ConverterTest {
 		assertEquals(1, driverEntity.getLinks().size());
 		Link car = driverEntity.getLinks().get(0);
 		assertEquals(Cardinality.MANY_TO_ONE, car.getCardinality() );
-		assertEquals("Car", car.getTargetEntityClassName());
+		assertEquals("Car", car.getReferencedEntityName());
 	}
 	
 	/**
@@ -397,7 +401,8 @@ public class ConverterTest {
 	private void checkGroupEntity(DslModelEntity groupEntity) {
 		print("check 'Group' entity...");
 		assertEquals("Group", groupEntity.getClassName() );
-		assertEquals("Group", groupEntity.getDatabaseTable() );
+//		assertEquals("Group", groupEntity.getDatabaseTable() );
+		assertEquals("", groupEntity.getDatabaseTable() ); // v 3.4.0
 		
 		//--- Attributes
 		for ( Attribute attribute : groupEntity.getAttributes() ) {
@@ -431,7 +436,7 @@ public class ConverterTest {
 		assertEquals(1, groupEntity.getLinks().size());
 		Link drivers = groupEntity.getLinks().get(0);
 		assertEquals(Cardinality.ONE_TO_MANY, drivers.getCardinality() );
-		assertEquals("Driver", drivers.getTargetEntityClassName());
+		assertEquals("Driver", drivers.getReferencedEntityName());
 	}
 	
 	private Attribute getAttributeByName(Entity entity, String name) {

@@ -1,0 +1,27 @@
+FK only with attributes (no column names)
+
+FK (name, e1, e2,
+ list [
+ - e1.attr1 -> e2.attrY
+ - e1.attr2 -> e2.attrZ
+ ] )
+
+getDatabaseForeignKeys() + databaseForeignKeysCount() : deprecated
+getForeignKeys() + foreignKeysCount() : new 
+
+Usage :
+
+$entity.databaseForeignKeys
+  - database-doc-T300/database_table_doc.vm
+  - qualif-and-debug-T300/entity_content.vm
+  - qualif-and-debug-T300/entity_attributes.vm
+
+$entity.databaseForeignKeysCount 
+  - database-doc-T300/database_table_doc.vm
+  - qualif-and-debug-T300/entity_content.vm
+  - qualif-and-debug-T300/entity_attributes.vm
+
+"$fkPart" and ".fkParts" : unused  ( new in 3.3.0 )
+
+All existing bundles of templates in :
+C:\Z\POSS2019\workspace\demo2-python\TelosysTools\templates

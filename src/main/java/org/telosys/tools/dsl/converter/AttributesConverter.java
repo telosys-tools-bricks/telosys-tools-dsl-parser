@@ -109,11 +109,13 @@ public class AttributesConverter extends AbstractConverter {
 		
 		// By default the database name is the attribute name 
 		// it will be overridden by @DbName(xxx) if any
-		dslAttribute.setDatabaseName(domainField.getName()); 
+		// v 3.4.0 : no default DB name
+		// dslAttribute.setDatabaseName(domainField.getName()); 
 
 		// By default the label is the attribute name 
 		// it will be overridden by @Label(xxx) if any
-		dslAttribute.setLabel(domainField.getName());
+		// v 3.4.0 : no default label
+		// dslAttribute.setLabel(domainField.getName());
 	}
 	
 	/**

@@ -21,31 +21,34 @@ import org.telosys.tools.generic.model.ForeignKeyPart;
 public class DslModelForeignKeyPart implements ForeignKeyPart
 {		
 	private String fkName;
-	private String referencedTable;
-	private String referencedColumn;
+//	private String referencedTable; // removed in v 3.4.0
+//	private String referencedColumn; // removed in v 3.4.0
 	private String referencedEntity;
 	private String referencedAttribute;
+	
+	private IllegalArgumentException newNullOrVoidArg(String argumentName) {
+		return new IllegalArgumentException("DslModelForeignKeyPart constructor : " 
+				+ "argument '" + argumentName + "' is null or void");
+	}
 	
 	/**
 	 * Constructor
 	 * @param fkName
-	 * @param referencedTable
-	 * @param referencedColumn
 	 * @param referencedEntity
 	 * @param referencedAttribute
 	 */
 	public DslModelForeignKeyPart(String fkName, 
-			String referencedTable, String referencedColumn,
+//			String referencedTable, String referencedColumn, // removed in v 3.4.0
 			String referencedEntity, String referencedAttribute) {
 		super();
-		if ( StrUtil.nullOrVoid(fkName) ) throw new IllegalStateException("invalid 'fkName'");
-		if ( StrUtil.nullOrVoid(referencedTable) ) throw new IllegalStateException("invalid 'referencedTable'");
-		if ( StrUtil.nullOrVoid(referencedColumn) ) throw new IllegalStateException("invalid 'referencedColumn'");
-		if ( StrUtil.nullOrVoid(referencedEntity) ) throw new IllegalStateException("invalid 'referencedEntity'");
-		if ( StrUtil.nullOrVoid(referencedAttribute) ) throw new IllegalStateException("invalid 'referencedAttribute'");
+		if ( StrUtil.nullOrVoid(fkName) ) throw newNullOrVoidArg("fkName");
+//		if ( StrUtil.nullOrVoid(referencedTable) ) throw newNullOrVoidArg("referencedTable"); // removed in v 3.4.0
+//		if ( StrUtil.nullOrVoid(referencedColumn) ) throw newNullOrVoidArg("referencedColumn"); // removed in v 3.4.0
+		if ( StrUtil.nullOrVoid(referencedEntity) ) throw newNullOrVoidArg("referencedEntity");
+		if ( StrUtil.nullOrVoid(referencedAttribute) ) throw newNullOrVoidArg("referencedAttribute");
 		this.fkName = fkName;
-		this.referencedTable = referencedTable;
-		this.referencedColumn = referencedColumn;
+//		this.referencedTable = referencedTable; // removed in v 3.4.0
+//		this.referencedColumn = referencedColumn; // removed in v 3.4.0
 		this.referencedEntity = referencedEntity;
 		this.referencedAttribute = referencedAttribute;
 	}
@@ -55,15 +58,16 @@ public class DslModelForeignKeyPart implements ForeignKeyPart
 		return fkName;
 	}
 
-	@Override
-	public String getReferencedTable() {
-		return referencedTable;
-	}
-
-	@Override
-	public String getReferencedColumn() {
-		return referencedColumn;
-	}
+	// removed in v 3.4.0
+//	@Override
+//	public String getReferencedTable() {
+//		return referencedTable;
+//	}
+//
+//	@Override
+//	public String getReferencedColumn() {
+//		return referencedColumn;
+//	}
 
 	@Override
 	public String getReferencedEntity() {

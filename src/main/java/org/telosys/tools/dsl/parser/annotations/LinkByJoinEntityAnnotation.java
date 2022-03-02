@@ -15,25 +15,24 @@
  */
 package org.telosys.tools.dsl.parser.annotations;
 
+import java.util.LinkedList;
 import java.util.List;
 
-import org.telosys.tools.dsl.commons.JoinColumnsBuilder;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
-import org.telosys.tools.dsl.model.DslModelJoinTable;
 import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 import org.telosys.tools.dsl.parser.commons.ParamError;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKey;
-import org.telosys.tools.generic.model.JoinColumn;
-import org.telosys.tools.generic.model.JoinTable;
 
-public class LinkByJoinEntityAnnotation extends LinkByAnnotation {
+public class LinkByJoinEntityAnnotation extends AnnotationDefinition { // extends LinkByAnnotation {
 
 	public LinkByJoinEntityAnnotation() {
-		super(AnnotationName.LINK_BY_JOIN_ENTITY, AnnotationParamType.STRING);
+		super(AnnotationName.LINK_BY_JOIN_ENTITY, AnnotationParamType.STRING, AnnotationScope.LINK);
 	}
 
 	@Override
@@ -42,21 +41,25 @@ public class LinkByJoinEntityAnnotation extends LinkByAnnotation {
 		String joinEntityName = (String) paramValue ;
 		
 		// Try to get the join table
-		JoinTable joinTable = getJoinTable(model, entity, link, joinEntityName);
+//		JoinTable joinTable = getJoinTable(model, entity, link, joinEntityName);
 		
 		// Apply join table to link 
-		link.setJoinTable(joinTable);
+//		link.setJoinTable(joinTable);
+		link.setJoinEntityName(joinEntityName); // v 3.4.0
+		link.setBasedOnJoinEntity(true); // v 3.4.0
 		
 // Moved in  link converter (finalize)
 //		// has Join Table => owning side
 //		link.setOwningSide(true);
 //		link.setInverseSide(false);
 	}
-	
+
+/***********  
 	protected JoinTable getJoinTable(DslModel model, DslModelEntity entity, DslModelLink link, String joinEntityName) throws ParamError {
 		try {
 			DslModelEntity joinEntity = getJoinEntity( model, joinEntityName);
-			List<ForeignKey> foreignKeys = joinEntity.getDatabaseForeignKeys();
+//			List<ForeignKey> foreignKeys = joinEntity.getDatabaseForeignKeys();
+			List<ForeignKey> foreignKeys = joinEntity.getForeignKeys();
 			checkForeignKeys(foreignKeys, joinEntityName);
 			return buildJoinTable(joinEntity, link, foreignKeys);
 		} catch (Exception e) {
@@ -90,13 +93,16 @@ public class LinkByJoinEntityAnnotation extends LinkByAnnotation {
 			throw new Exception("the 2 foreign keys are identical");
 		}
 //		JoinColumnsBuilder jcb = new JoinColumnsBuilder("@"+ AnnotationName.LINK_BY_JOIN_ENTITY ) ;
-		JoinColumnsBuilder jcb = getJoinColumnsBuilder();
 
-		List<JoinColumn> joinColumns = jcb.buildJoinColumnsFromForeignKey(joinColumnsFK);
-
-		List<JoinColumn> inverseJoinColumns = jcb.buildJoinColumnsFromForeignKey(inverseJoinColumnsFK);
-		
-		return new DslModelJoinTable(joinEntity, joinColumns, inverseJoinColumns);
+	// TODO : keep JOIN COLUMNS or not ????
+//		JoinColumnsBuilder jcb = getJoinColumnsBuilder();
+//
+//		List<JoinColumn> joinColumns = jcb.buildJoinColumnsFromForeignKey(joinColumnsFK);
+//
+//		List<JoinColumn> inverseJoinColumns = jcb.buildJoinColumnsFromForeignKey(inverseJoinColumnsFK);
+//		
+//		return new DslModelJoinTable(joinEntity, joinColumns, inverseJoinColumns);
+		return new DslModelJoinTable(joinEntity, new LinkedList<JoinColumn>(),  new LinkedList<JoinColumn>() );
 	}
 	
 	private ForeignKey getFKReferencingTable(String tableName, ForeignKey fk1, ForeignKey fk2 ) throws Exception {
@@ -110,5 +116,5 @@ public class LinkByJoinEntityAnnotation extends LinkByAnnotation {
 			throw new Exception("join entity does not have FK referencing table '" + tableName + "'");
 		}
 	}
-	
+*******************/
 }

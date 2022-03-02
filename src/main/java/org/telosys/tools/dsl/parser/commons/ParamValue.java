@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.dsl.commons.StringUtil;
 
 public class ParamValue {
 
@@ -134,33 +135,34 @@ public class ParamValue {
 		String s = parameterValue.trim(); 
 		// remove quotes if any
 		if (s.startsWith("\"") && s.endsWith("\"")) {
-			return unquote(s, '"');
+//			return unquote(s, '"');
+			return StringUtil.unquote(s);
 		} else {
 			return s;
 		}
 	}
 	
-	/**
-	 * Remove quote char at the first and last position if any
-	 * 
-	 * @param s
-	 * @param quoteChar
-	 * @return
-	 */
-	private String unquote(String s, char quoteChar) {
-		if (s == null) {
-			return s;
-		}
-		if (s.length() == 0) {
-			return s;
-		}
-		int last = s.length() - 1;
-		if (s.charAt(0) == quoteChar && s.charAt(last) == quoteChar) {
-			return s.substring(1, last);
-		} else {
-			return s;
-		}
-	}
+//	/**
+//	 * Remove quote char at the first and last position if any
+//	 * 
+//	 * @param s
+//	 * @param quoteChar
+//	 * @return
+//	 */
+//	private String unquote(String s, char quoteChar) {
+//		if (s == null) {
+//			return s;
+//		}
+//		if (s.length() == 0) {
+//			return s;
+//		}
+//		int last = s.length() - 1;
+//		if (s.charAt(0) == quoteChar && s.charAt(last) == quoteChar) {
+//			return s.substring(1, last);
+//		} else {
+//			return s;
+//		}
+//	}
 	
 	/**
 	 * Check that the parameter value conforms to the 'SIZE' format

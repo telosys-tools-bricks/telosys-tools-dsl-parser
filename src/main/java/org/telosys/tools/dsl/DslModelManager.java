@@ -16,16 +16,13 @@
 package org.telosys.tools.dsl;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
-import org.telosys.tools.commons.PropertiesManager;
+import org.telosys.tools.dsl.commons.ModelInfo;
+import org.telosys.tools.dsl.commons.ModelInfoLoader;
 import org.telosys.tools.dsl.converter.ModelConverter;
 import org.telosys.tools.dsl.parser.ParserV2;
 import org.telosys.tools.dsl.parser.ParsingResult;
 import org.telosys.tools.dsl.parser.model.DomainModel;
-import org.telosys.tools.dsl.parser.model.DomainModelInfo;
 import org.telosys.tools.generic.model.Model;
 
 /**
@@ -68,46 +65,27 @@ public class DslModelManager {
 		return errors;
 	}
 
-//	public Map<String, List<String>> getErrorsMap() {
-//		return errors.getAllErrorsMap();
-//	}
-//
-
 	/**
-	 * Loads (parse) the given model file
+	 * Loads (parse) the given model folder
 	 * 
-	 * @param modelFileAbsolutePath the ".model" absolute file name
+	 * @param modelFolderAbsolutePath the model folder absolute path 
 	 * 
      * @return the model or null if errors detected during parsing 
 	 */
-	public Model loadModel(String modelFileAbsolutePath) {
-		return loadModel(new File(modelFileAbsolutePath));
+	public Model loadModel(String modelFolderAbsolutePath) {
+		return loadModel(new File(modelFolderAbsolutePath));
 	}
     
     /**
-     * Loads (parse and convert) the given model file <br>
+     * Loads (parse and convert) the model located in the given folder <br>
      * If errors occured this method returns null <br>
      * and the errors can be retrieved from this instance ( parsingErrorMessage and parsingErrors ) 
      *
-     * @param modelFile the ".model" file to be loaded
+     * @param modelFolder  the model folder containig entity files to be loaded
      * @return the generic model or null if errors detected during parsing 
      */
-    public Model loadModel(File modelFile) {
-//    	try {
-//			DomainModel domainModel = step1ParseModel(modelFile);
-//			if ( domainModel != null ) {
-//				return step2ConvertModel(domainModel);
-//			}
-//		} catch (Exception e) {
-//			// Unexpected exception
-//			String msg = e.getMessage();
-//			if ( msg == null ) { // eg NullPointerException
-//				msg = e.toString();
-//			}
-//			parsingErrorMessage = "Converter error : " + msg ;
-//		}
-//		return null ;
-		ParsingResult parsingResult = step1ParseModel(modelFile);
+    public Model loadModel(File modelFolder) {
+		ParsingResult parsingResult = step1ParseModel(modelFolder);
 		if ( parsingResult.hasErrors() ) {
 			this.errors = parsingResult.getErrors();
 			this.parsingErrorMessage = parsingResult.getErrors().getNumberOfErrors() + " parsing error(s)";
@@ -117,29 +95,16 @@ public class DslModelManager {
 			// Parsing is OK => convert model
 			return step2ConvertModel(parsingResult.getModel());
 		}
-
     }
     
     /**
-     * Parse the model files to create the 'raw model'
-     * @param modelFile
+     * Parse all the model entity files to create the 'raw model'
+     * @param modelFolder the model folder ( folder like "/aa/bb/cc/modelname" )
      * @return
      */
-    private ParsingResult step1ParseModel(File modelFile) {
-//        Parser dslParser = new Parser();
-//		try {
-//			// Try to parse the DSL model
-//			return dslParser.parseModel(modelFile);
-//		} catch (ModelParsingError modelParsingError) {
-//        	// Parsing ERRORS 
-//			// Keep errors information
-//        	parsingErrorMessage = modelParsingError.getMessage();
-//        	errors = new DslModelErrors(modelParsingError.getEntitiesErrors());
-//        	// Invalid model => return null
-//            return null;
-//		}
+    private ParsingResult step1ParseModel(File modelFolder) {
     	ParserV2 dslParser = new ParserV2();
-		return dslParser.parseModel(modelFile);
+		return dslParser.parseModel(modelFolder);
     }
     
     /**
@@ -169,26 +134,12 @@ public class DslModelManager {
     }
     
 	/**
-	 * Loads the model information from the given file
-	 * 
-	 * @param modelFile  the ".model" file
+	 * Loads model information from the given YAML file
+	 * @param modelInfoFile
 	 * @return
 	 */
-	public DomainModelInfo loadModelInformation(File modelFile) {
-		PropertiesManager propertiesManager = new PropertiesManager(modelFile);
-		Properties properties = propertiesManager.load();
-
-		return new DomainModelInfo(properties);
+	public ModelInfo loadModelInformation(File modelInfoFile) {
+		return ModelInfoLoader.loadModelInformation(modelInfoFile);
 	}
 
-	/**
-	 * Saves the model information in the given file
-	 * 
-	 * @param modelFile  the ".model" file
-	 * @param domainModelInfo
-	 */
-	public void saveModelInformation(File modelFile, DomainModelInfo domainModelInfo) {
-		PropertiesManager propertiesManager = new PropertiesManager(modelFile);
-		propertiesManager.save(domainModelInfo.getProperties());
-	}
 }

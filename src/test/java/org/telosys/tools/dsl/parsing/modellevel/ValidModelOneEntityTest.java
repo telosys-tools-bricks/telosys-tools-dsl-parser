@@ -12,6 +12,7 @@ import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.dsl.parser.model.DomainModel;
 import org.telosys.tools.dsl.parser.model.DomainTag;
+import org.telosys.tools.junit.utils.ModelUtil;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -21,11 +22,18 @@ public class ValidModelOneEntityTest {
 	
 	@Test
 	public void test1() {
-		File modelFile = new File("src/test/resources/model_test/valid/OneEntity.model");
+//		File modelFile = new File("src/test/resources/model_test/valid/OneEntity.model");
+//		
+//		ParserV2 parser = new ParserV2();
+//		ParsingResult result = parser.parseModel(modelFile);
+//		DomainModel model = result.getModel();
 		
-		ParserV2 parser = new ParserV2();
-		ParsingResult result = parser.parseModel(modelFile);
-		DomainModel model = result.getModel();
+		DomainModel model = ModelUtil.parseValidModel(new File("src/test/resources/model_test/valid/OneEntityModel"));
+		
+		assertEquals("OneEntityModel", model.getModelName());
+		assertEquals("my title", model.getModelInfo().getTitle());
+		assertEquals("1.0.0", model.getModelInfo().getVersion());
+		assertNotNull( model.getModelInfo().getDescription() );
 		
 		assertEquals(1, model.getNumberOfEntities());
 		assertEquals(1, model.getEntityNames().size());

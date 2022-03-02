@@ -16,7 +16,6 @@
 package org.telosys.tools.dsl.converter;
 
 import java.util.Collection;
-import java.util.LinkedList;
 
 import org.telosys.tools.dsl.DslModelError;
 import org.telosys.tools.dsl.DslModelErrors;
@@ -24,7 +23,6 @@ import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
-import org.telosys.tools.generic.model.ForeignKey;
 
 /**
  * Utility class to convert the "raw model" (built by DSL parser) to the standard "generic model"
@@ -83,7 +81,7 @@ public class EntityConverter extends AbstractConverter {
 		
 		//--- init database information 
 //		dslEntity.setDatabaseTable(domainEntity.getDatabaseTable()); // v 3.3.0
-		dslEntity.setDatabaseTable(notNull(domainEntity.getName())); // v 3.4.0
+//		dslEntity.setDatabaseTable(notNull(domainEntity.getName())); // v 3.4.0
 		
 //		dslEntity.setDatabaseType("TABLE");  // Type is "TABLE" by default
 //		dslEntity.setTableType(true);  // Type is "TABLE" by default
@@ -95,7 +93,8 @@ public class EntityConverter extends AbstractConverter {
 //		dslEntity.setViewType(false);
 		
 		// No Foreign Keys => void list
-		dslEntity.setDatabaseForeignKeys(new LinkedList<ForeignKey>()); 
+//		dslEntity.setDatabaseForeignKeys(new LinkedList<ForeignKey>()); 
+//		dslEntity.setForeignKeys(new LinkedList<ForeignKey>()); 
 	}
 	
 	/**

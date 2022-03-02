@@ -13,7 +13,7 @@ import org.telosys.tools.dsl.parser.reporting.ResultReport;
 import static org.junit.Assert.assertEquals;
 
 public class InvalidModelFourEntitiesTest {
-	
+
 	private DslModelErrors parseEntityFile(String entityFileName) {
 		File file = new File(entityFileName);
 		List<String> entitiesNames = new LinkedList<>();
@@ -22,15 +22,11 @@ public class InvalidModelFourEntitiesTest {
 		entitiesNames.add("Gender");
 		entitiesNames.add("Person");
 		
-//		Parser parser = new Parser();
-//		return parser.parseEntity(file, entitiesNames);
-		
 		DslModelErrors errors = new DslModelErrors();
 		ParserV2 parser = new ParserV2();
 		DomainEntity entity = parser.parseEntity(file, entitiesNames, errors);
 		ResultReport.print(entity, errors);
 		return errors;
-		
 	}
 	
 //	private void print(EntityParsingError exception) {
@@ -47,25 +43,25 @@ public class InvalidModelFourEntitiesTest {
 
 	@Test
 	public void parseEntityEmployeeERR() {
-		DslModelErrors errors = parseEntityFile("src/test/resources/model_test/invalid/FourEntities_model/Employee.entity");
+		DslModelErrors errors = parseEntityFile("src/test/resources/model_test/invalid/FourEntitiesModel/Employee.entity");
 		assertEquals(1, errors.getNumberOfErrors() );
 	}
 
 	@Test
 	public void parseEntityCountryERR() {
-		DslModelErrors errors = parseEntityFile("src/test/resources/model_test/invalid/FourEntities_model/Country.entity");
+		DslModelErrors errors = parseEntityFile("src/test/resources/model_test/invalid/FourEntitiesModel/Country.entity");
 		assertEquals(1, errors.getNumberOfErrors() );
 	}
 
 	@Test
 	public void parseEntityGenderERR() {
-		DslModelErrors errors = parseEntityFile("src/test/resources/model_test/invalid/FourEntities_model/Gender.entity");
+		DslModelErrors errors = parseEntityFile("src/test/resources/model_test/invalid/FourEntitiesModel/Gender.entity");
 		assertEquals(2, errors.getNumberOfErrors() );
 	}
 
 	@Test
 	public void parseEntityPersonERR() {
-		DslModelErrors errors = parseEntityFile("src/test/resources/model_test/invalid/FourEntities_model/Person.entity");
+		DslModelErrors errors = parseEntityFile("src/test/resources/model_test/invalid/FourEntitiesModel/Person.entity");
 		assertEquals(6, errors.getNumberOfErrors() );
 	}
 

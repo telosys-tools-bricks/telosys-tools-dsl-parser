@@ -49,7 +49,6 @@ import org.telosys.tools.dsl.parser.annotations.InputTypeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.InsertableAnnotation;
 import org.telosys.tools.dsl.parser.annotations.LabelAnnotation;
 import org.telosys.tools.dsl.parser.annotations.LinkByAttrAnnotation;
-import org.telosys.tools.dsl.parser.annotations.LinkByColAnnotation;
 import org.telosys.tools.dsl.parser.annotations.LinkByFKAnnotation;
 import org.telosys.tools.dsl.parser.annotations.LinkByJoinEntityAnnotation;
 import org.telosys.tools.dsl.parser.annotations.LongTextAnnotation;
@@ -127,7 +126,7 @@ public class AnnotationDefinitions {
 		annotationDefinitions.add(new FetchTypeLazyAnnotation());
 		annotationDefinitions.add(new MappedByAnnotation());
 		annotationDefinitions.add(new LinkByAttrAnnotation());
-		annotationDefinitions.add(new LinkByColAnnotation());
+//		annotationDefinitions.add(new LinkByColAnnotation());
 		annotationDefinitions.add(new LinkByFKAnnotation());
 		annotationDefinitions.add(new ManyToManyAnnotation());
 		annotationDefinitions.add(new OneToOneAnnotation());

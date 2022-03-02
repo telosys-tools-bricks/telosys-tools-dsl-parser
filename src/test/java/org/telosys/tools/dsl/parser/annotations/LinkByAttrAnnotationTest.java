@@ -4,20 +4,52 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
-import org.telosys.tools.dsl.commons.ReferenceDefinitions;
+import org.telosys.tools.dsl.DslModelError;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
+import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
+import org.telosys.tools.dsl.parser.annotations.tools.AnnotationTool;
 import org.telosys.tools.dsl.parser.commons.ParamError;
+import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.generic.model.Attribute;
-import org.telosys.tools.generic.model.JoinColumn;
+import org.telosys.tools.generic.model.LinkAttribute;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class LinkByAttrAnnotationTest {
 
+	private static final String ANNOTATION_NAME = "LinkByAttr";
+
+	private DomainAnnotation buildAnnotation() throws DslModelError {
+		return AnnotationTool.parseAnnotationInLink("@" + ANNOTATION_NAME );
+	}
+	private DomainAnnotation buildAnnotationWithParam(String annotationParam) throws DslModelError {
+		return AnnotationTool.parseAnnotationInLink("@" + ANNOTATION_NAME + "(" + annotationParam + ")");
+	}
+	
+	@Test
+	public void test001() {
+		AnnotationDefinition ad = new LinkByAttrAnnotation();
+		assertEquals( ANNOTATION_NAME, ad.getName() );
+		assertEquals( AnnotationParamType.LIST, ad.getParamType() );
+		// Check scope
+		assertFalse( ad.hasAttributeScope() );
+		assertTrue( ad.hasLinkScope() );
+		assertFalse( ad.hasEntityScope() );
+	}
+
+	@Test (expected=DslModelError.class)
+	public void test002() throws DslModelError {
+		buildAnnotation(); 
+		// ERR : parameter required
+	}
+	
 	private DslModelAttribute buildAttribute(String name, boolean id, String databaseName) {
 		DslModelAttribute attribute = new DslModelAttribute(name, "fake-type");
 		attribute.setKeyElement(id);
@@ -26,11 +58,18 @@ public class LinkByAttrAnnotationTest {
 	}
 	private DslModelLink buildLink(String fieldName, String targetEntityName) {
 		DslModelLink link = new DslModelLink(fieldName);
-		link.setTargetEntityClassName(targetEntityName);
+		link.setReferencedEntityName(targetEntityName);
 		return link;
 	}
 	
-	private List<JoinColumn> getJoinColumnsForLinkToAuthor(String paramValue) throws ParamError {
+//	private List<JoinAttribute> getJoinAttributesForLinkToAuthor(String paramValue) throws DslModelError {
+//		DomainAnnotation da = buildAnnotationWithParam(paramValue);
+//		da.applyToLink(model, entity, link);
+//	}
+
+	//===================================================================================================
+	
+	private List<LinkAttribute> getLinkAttributesForLinkToAuthor(String paramValue) throws DslModelError, ParamError {
 		List<Attribute> attributes;
 		
 		DslModelEntity authorEntity = new DslModelEntity("Author");
@@ -52,17 +91,24 @@ public class LinkByAttrAnnotationTest {
 		model.addEntity(authorEntity);
 		
 		DslModelLink linkToAuthor = new DslModelLink("author");
-		linkToAuthor.setTargetEntityClassName("Author");
+		linkToAuthor.setReferencedEntityName("Author");
 		
-		LinkByAttrAnnotation a = new LinkByAttrAnnotation();
-		return a.getJoinColumns(model, bookEntity, linkToAuthor, paramValue);
+//		LinkByAttrAnnotation a = new LinkByAttrAnnotation();
+////		return a.getJoinAttributes(model, bookEntity, linkToAuthor, paramValue);
+//		a.apply(model, bookEntity, linkToAuthor, paramValue);
+		DomainAnnotation da = buildAnnotationWithParam(paramValue);
+		da.applyToLink(model, bookEntity, linkToAuthor);
+
+		return linkToAuthor.getAttributes();
 	}
+
+	//===================================================================================================
 
 	private DslModelEntity buildPoint() {
 		DslModelEntity entity = new DslModelEntity("Point");
 		List<Attribute> attributes = new LinkedList<>();
-		attributes.add( buildAttribute("x",    true,  "X") ) ;
-		attributes.add( buildAttribute("y",    true,  "Y") ) ;
+		attributes.add( buildAttribute("x",    true,  "X") ) ; // PK
+		attributes.add( buildAttribute("y",    true,  "Y") ) ; // PK
 		attributes.add( buildAttribute("name", false, "NAME") ) ;
 		entity.setAttributes(attributes);
 		return entity;
@@ -83,146 +129,150 @@ public class LinkByAttrAnnotationTest {
 		model.addEntity(buildLine());
 		return model;
 	}
-	private List<JoinColumn> getJoinColumnsForLinkToPoint(String paramValue) throws ParamError {
+	private List<LinkAttribute> getLinkAttributesForLinkToPoint(String paramValue) throws DslModelError, ParamError {
 		DslModel model = buildLineAndPointModel();
 		DslModelLink link = buildLink("point", "Point" );
 		DslModelEntity lineEntity = (DslModelEntity) model.getEntityByClassName("Line");
 		assertNotNull(lineEntity);
 		
 		LinkByAttrAnnotation a = new LinkByAttrAnnotation();
-//		// check ref def
-//		ReferenceDefinitions rd = a.buildReferenceDefinitions(paramValue);
-//		assertEquals(2, rd.count());
-//		assertEquals("pointX", rd.get(0).getName());
-//		assertEquals("x", rd.get(0).getReferencedName());
-//		assertEquals("pointY", rd.get(1).getName());
-//		assertEquals("y", rd.get(1).getReferencedName());
-		
-		// get Join columns
-		return a.getJoinColumns(model, lineEntity, link, paramValue);
+		// get Join attributes
+		DomainAnnotation da = buildAnnotationWithParam(paramValue);
+		da.applyToLink(model, lineEntity, link);
+		return link.getAttributes();
 	}
-	private ReferenceDefinitions buildReferenceDefinitions(String s) {
-		LinkByAttrAnnotation a = new LinkByAttrAnnotation();
-		return a.buildReferenceDefinitions(s);
-	}
+//	private ReferenceDefinitions buildReferenceDefinitions(String s) {
+//		LinkByAttrAnnotation a = new LinkByAttrAnnotation();
+//		return a.buildReferenceDefinitions(s);
+//	}
+
+	//===================================================================================================
 
 	//-----------------------------------------------------------------------------
 	// TESTS 
 	//-----------------------------------------------------------------------------
 
-	@Test
-	public void test00() {
-		ReferenceDefinitions rd = buildReferenceDefinitions("a > refA  ,  b > refB");
-		assertEquals(2, rd.count());
-		assertEquals("a",    rd.get(0).getName());
-		assertEquals("refA", rd.get(0).getReferencedName());
-		assertEquals("b",    rd.get(1).getName());
-		assertEquals("refB", rd.get(1).getReferencedName());
-	}
+//	@Test
+//	public void test00() {
+//		ReferenceDefinitions rd = buildReferenceDefinitions("a > refA  ,  b > refB");
+//		assertEquals(2, rd.count());
+//		assertEquals("a",    rd.get(0).getName());
+//		assertEquals("refA", rd.get(0).getReferencedName());
+//		assertEquals("b",    rd.get(1).getName());
+//		assertEquals("refB", rd.get(1).getReferencedName());
+//	}
 
 	//-----------------------------------------------------------------------------
 	@Test (expected=ParamError.class)
-	public void test01Err() throws ParamError {
-		getJoinColumnsForLinkToAuthor((String)null) ;
+	public void test01Err() throws DslModelError, ParamError {
+		getLinkAttributesForLinkToAuthor((String)null) ;
+	}
+
+	@Test (expected=DslModelError.class)
+	public void test02Err() throws DslModelError, ParamError {
+		getLinkAttributesForLinkToAuthor("") ; // ERR : parameter required
+	}
+
+	@Test (expected=DslModelError.class)
+	public void test03Err() throws DslModelError, ParamError {
+		getLinkAttributesForLinkToAuthor("   ") ; // ERR : parameter required
 	}
 
 	@Test (expected=ParamError.class)
-	public void test02Err() throws ParamError {
-		getJoinColumnsForLinkToAuthor("") ;
-	}
-
-	@Test (expected=ParamError.class)
-	public void test03Err() throws ParamError {
-		getJoinColumnsForLinkToAuthor("   ") ;
-	}
-
-	@Test (expected=ParamError.class)
-	public void test04Err() throws ParamError {
-		getJoinColumnsForLinkToAuthor(" , ,  ") ;
+	public void test04Err() throws DslModelError, ParamError {
+		getLinkAttributesForLinkToAuthor(" , ,  ") ; // ERR : invalid attribute (name is void)
 	}
 
 	@Test
-	public void test05() throws ParamError {
+	public void test05() throws DslModelError, ParamError {
 		// @LinkByAttr(authorId)
-		List<JoinColumn> jc = getJoinColumnsForLinkToAuthor(" authorId  ") ;
+		List<LinkAttribute> jc = getLinkAttributesForLinkToAuthor(" authorId  ") ;
+		
+		// Book.authorId -> Author.id
 		assertEquals(1, jc.size());
-		assertEquals("AUTHOR_ID", jc.get(0).getName());
-		assertEquals("", jc.get(0).getReferencedColumnName());
+		assertEquals("authorId", jc.get(0).getOriginAttributeName()); 
+		assertEquals("id", jc.get(0).getReferencedAttributeName());
 	}
 
-	@Test
-	public void test06() throws ParamError {
+	@Test  (expected=ParamError.class)
+	public void test06Err() throws DslModelError, ParamError {
 		// @LinkByAttr(...)
-		List<JoinColumn> jc = getJoinColumnsForLinkToAuthor(" authorId, ") ;
-		assertEquals(1, jc.size());
-		assertEquals("AUTHOR_ID", jc.get(0).getName());
-		assertEquals("", jc.get(0).getReferencedColumnName());
-	}
-
-	@Test
-	public void test07() throws ParamError {
-		// @LinkByAttr(...)
-		List<JoinColumn> jc = getJoinColumnsForLinkToAuthor(" ,, authorId ") ;
-		assertEquals(1, jc.size());
-		assertEquals("AUTHOR_ID", jc.get(0).getName());
-		assertEquals("", jc.get(0).getReferencedColumnName());
+		getLinkAttributesForLinkToAuthor(" authorId, ") ; 
+		// ERR : invalid attribute (name is void)
 	}
 
 	@Test (expected=ParamError.class)
-	public void test08Err() throws ParamError {
+	public void test07Err() throws DslModelError, ParamError {
 		// @LinkByAttr(...)
-		getJoinColumnsForLinkToAuthor(" authorIdxx ") ; // unknown attribute 'authorIdxx'
-	}
-
-	@Test
-	public void test08() throws ParamError {
-		// @LinkByAttr(...)
-		List<JoinColumn> jc = getJoinColumnsForLinkToAuthor("authorId > id ,, ") ;
-		assertEquals(1, jc.size());
-		assertEquals("AUTHOR_ID", jc.get(0).getName());
-		assertEquals("ID", jc.get(0).getReferencedColumnName());
+		getLinkAttributesForLinkToAuthor(" ,, authorId ") ;
+		// ERR : invalid attribute (name is void)
 	}
 
 	@Test (expected=ParamError.class)
-	public void test09Err() throws ParamError {
+	public void test08Err() throws DslModelError, ParamError {
 		// @LinkByAttr(...)
-		getJoinColumnsForLinkToAuthor("authorId > idxx") ; // unknown attribute 'idxx'
+		getLinkAttributesForLinkToAuthor(" authorIdxx ") ; // unknown attribute 'authorIdxx'
 	}
+
+//	@Test
+//	public void test08() throws DslModelError, ParamError {
+//		// @LinkByAttr(...)
+//		List<JoinAttribute> jc = getJoinAttributesForLinkToAuthor("authorId > id ,, ") ;
+//		assertEquals(1, jc.size());
+//		assertEquals("AUTHOR_ID", jc.get(0).getOriginAttributeName());
+//		assertEquals("ID", jc.get(0).getReferencedAttributeName());
+//	}
+
+//	@Test (expected=ParamError.class)
+//	public void test09Err() throws DslModelError, ParamError {
+//		// @LinkByAttr(...)
+//		getJoinAttributesForLinkToAuthor("authorId > idxx") ; // unknown attribute 'idxx'
+//	}
 	
 	//-----------------------------------------------------------------------------
 
 	@Test 
-	public void test21() throws ParamError {
-		List<JoinColumn> jc = getJoinColumnsForLinkToPoint("pointX > x, pointY > y") ; 
+	public void test21() throws DslModelError, ParamError {
+		List<LinkAttribute> jc = getLinkAttributesForLinkToPoint(" pointX  , pointY ") ; 
 		assertEquals(2, jc.size());
-		assertEquals("POINT_X", jc.get(0).getName());
-		assertEquals("X",       jc.get(0).getReferencedColumnName());
-		assertEquals("POINT_Y", jc.get(1).getName());
-		assertEquals("Y",       jc.get(1).getReferencedColumnName());
+		assertEquals("pointX", jc.get(0).getOriginAttributeName());
+		assertEquals("x",       jc.get(0).getReferencedAttributeName());
+		assertEquals("pointY", jc.get(1).getOriginAttributeName());
+		assertEquals("y",       jc.get(1).getReferencedAttributeName());
+	}
+
+	@Test // (expected=ParamError.class)
+	public void test22Err() throws DslModelError, ParamError {
+		List<LinkAttribute> jc = getLinkAttributesForLinkToPoint("pointX , pointY") ; 
+		assertEquals(2, jc.size());
+		assertEquals("pointX", jc.get(0).getOriginAttributeName());
+		assertEquals("x",      jc.get(0).getReferencedAttributeName());
+		assertEquals("pointY", jc.get(1).getOriginAttributeName());
+		assertEquals("y",      jc.get(1).getReferencedAttributeName());
 	}
 
 	@Test (expected=ParamError.class)
-	public void test22Err() throws ParamError {
-		getJoinColumnsForLinkToPoint("pointX , pointY") ; 
-		// missing referenced names
+	public void test23Err() throws DslModelError, ParamError {
+		getLinkAttributesForLinkToPoint("pointA , pointY") ; 
+		// unknown attribute 'pointA' 
 	}
 
 	@Test (expected=ParamError.class)
-	public void test23Err() throws ParamError {
-		getJoinColumnsForLinkToPoint("pointX > a , pointY > b") ; 
-		// unknown attribute 'a' in 'Point'
+	public void test24Err() throws DslModelError, ParamError {
+		getLinkAttributesForLinkToPoint("pointX  , pointB ") ; 
+		// unknown attribute 'pointB' 
 	}
 
 	@Test (expected=ParamError.class)
-	public void test24Err() throws ParamError {
-		getJoinColumnsForLinkToPoint("pointX > x , pointY > b") ; 
-		// unknown attribute 'b' in 'Point'
+	public void test25Err() throws DslModelError, ParamError {
+		getLinkAttributesForLinkToPoint("pointX") ; 
+		// 2 attributes expected
 	}
 
 	@Test (expected=ParamError.class)
-	public void test25Err() throws ParamError {
-		getJoinColumnsForLinkToPoint("px > x , py > y") ; 
-		// unknown attribute 'px' in 'Line'
+	public void test26Err() throws DslModelError, ParamError {
+		getLinkAttributesForLinkToPoint("pointX,  pointY, color") ;  // color exists
+		// 2 attributes expected
 	}
 
 }

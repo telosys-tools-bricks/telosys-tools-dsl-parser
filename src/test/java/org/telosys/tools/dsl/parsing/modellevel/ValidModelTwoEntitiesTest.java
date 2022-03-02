@@ -20,7 +20,8 @@ public class ValidModelTwoEntitiesTest {
 
 	@Test
 	public void test() {
-		DomainModel model = ModelUtil.parseValidModel("src/test/resources/model_test/valid/TwoEntities.model");
+//		DomainModel model = ModelUtil.parseValidModel("src/test/resources/model_test/valid/TwoEntities.model");
+		DomainModel model = ModelUtil.parseValidModel("src/test/resources/model_test/valid/TwoEntitiesModel");
 		
 		assertEquals(2, model.getNumberOfEntities());
 		assertEquals(2, model.getEntityNames().size());

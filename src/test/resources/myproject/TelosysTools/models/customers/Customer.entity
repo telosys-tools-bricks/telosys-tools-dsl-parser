@@ -1,0 +1,19 @@
+@DbTable(CUSTOMER)
+@DbCatalog(TEST)
+@DbSchema(PUBLIC)
+Customer {
+  // attributes
+  code : string { @Id @DbName(CODE) @DbType("VARCHAR(5)") @NotNull @NotEmpty @Size(5) @MaxLen(5) };
+  countryCode : string { @DbName(COUNTRY_CODE) @DbType("VARCHAR(2)") @NotNull @NotEmpty @Size(2) @MaxLen(2) };
+  firstName : string { @DbName(FIRST_NAME) @DbType("VARCHAR(40)") @DbDefaultValue(" a zer") @DbComment(my comment) @Size(40) @MaxLen(40) };
+  lastName : string { @DbName(LAST_NAME) @DbType("VARCHAR(40)") @Size(40) @MaxLen(40) };
+  score : decimal { @DbName(SCORE) @DbType("DECIMAL(5,2)") @Size(5,2) };
+  login : string { @DbName(LOGIN) @DbType("VARCHAR(20)") @NotNull @NotEmpty @Size(20) @MaxLen(20) };
+  password : string { @DbName(PASSWORD) @DbType("VARCHAR(20)") @Size(20) @MaxLen(20) };
+  age : int { @DbName(AGE) @DbType(INTEGER) };
+  city : string { @DbName(CITY) @DbType("VARCHAR(45)") @Size(45) @MaxLen(45) };
+  zipCode : int { @DbName(ZIP_CODE) @DbType(INTEGER) };
+  phone : string { @DbName(PHONE) @DbType("VARCHAR(20)") @Size(20) @MaxLen(20) };
+  reviewer : short { @DbName(REVIEWER) @DbType(SMALLINT) };
+  // links
+}

@@ -49,7 +49,7 @@ public class DslModelManagerTest {
     
     @Test
     public void testValidModelOneEntityModel() {
-        Model model = ModelUtil.loadValidModel("src/test/resources/model_test/valid/OneEntity.model");
+        Model model = ModelUtil.loadValidModel("src/test/resources/model_test/valid/OneEntityModel");
         
         assertNotNull(model);
         
@@ -113,7 +113,7 @@ public class DslModelManagerTest {
 
     @Test
     public void testValidModelTypesModel()  {
-        Model model = ModelUtil.loadValidModel("src/test/resources/model_test/valid/types.model");
+        Model model = ModelUtil.loadValidModel("src/test/resources/model_test/valid/typesModel");
         
         assertNotNull(model);
         assertEquals(1, model.getEntities().size() );
@@ -209,7 +209,7 @@ public class DslModelManagerTest {
     
     @Test
     public void testValidModelTwoEntityModel() {
-        Model model = ModelUtil.loadValidModel("src/test/resources/model_test/valid/TwoEntities.model");
+        Model model = ModelUtil.loadValidModel("src/test/resources/model_test/valid/TwoEntitiesModel");
         
         assertNotNull(model);
         
@@ -265,7 +265,7 @@ public class DslModelManagerTest {
 
     @Test
     public void testValidModelFourEntityModel() {
-        Model model = ModelUtil.loadValidModel("src/test/resources/model_test/valid/FourEntities.model");
+        Model model = ModelUtil.loadValidModel("src/test/resources/model_test/valid/FourEntitiesModel");
         
         assertNotNull(model);
         

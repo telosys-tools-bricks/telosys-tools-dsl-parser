@@ -17,20 +17,19 @@ public class ModelUtil {
 		System.out.println(s);
 	}
 
-	public static ParsingResult parseModel(File modelFile) {
-        ParserV2 parser = new ParserV2();
-        return parser.parseModel(modelFile);
+	private static ParsingResult parseModel(File modelFolder) {
+        return (new ParserV2()).parseModel(modelFolder);
 	}
-	public static ParsingResult parseModel(String modelFileName) {
-        ParserV2 parser = new ParserV2();
-        return parser.parseModel(modelFileName);
-	}
+//	private static ParsingResult parseModel(String modelFolderName) {
+//        ParserV2 parser = new ParserV2();
+//        return parser.parseModel(modelFolderName);
+//	}
 	
-	public static DomainModel parseValidModel(String modelFileName) {
-		return parseValidModel(new File(modelFileName));
+	public static DomainModel parseValidModel(String modelFolderName) {
+		return parseValidModel(new File(modelFolderName));
 	}
-	public static DomainModel parseValidModel(File modelFile) {
-		ParsingResult result = parseModel(modelFile);
+	public static DomainModel parseValidModel(File modelFolder) {
+		ParsingResult result = parseModel(modelFolder);
 		if ( result.getErrors().getNumberOfErrors() > 0 ) {
 			PrintUtil.printErrors(result.getErrors());
 			throw new RuntimeException("Cannot load model : error(s) in model");
@@ -43,11 +42,11 @@ public class ModelUtil {
 		}
 	}
 	
-	public static DslModelErrors parseInvalidModel(String modelFileName) {
-		return parseInvalidModel(new File(modelFileName));
+	public static DslModelErrors parseInvalidModel(String modelFolderName) {
+		return parseInvalidModel(new File(modelFolderName));
 	}
-	public static DslModelErrors parseInvalidModel(File modelFile) {
-		ParsingResult result = parseModel(modelFile);
+	public static DslModelErrors parseInvalidModel(File modelFolder) {
+		ParsingResult result = parseModel(modelFolder);
 		if ( result.getErrors().getNumberOfErrors() == 0 ) {
 			throw new RuntimeException("No error (errors expected)");
 		}

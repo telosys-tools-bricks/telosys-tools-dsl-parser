@@ -70,9 +70,10 @@ public class ModelConverter extends AbstractConverter {
 	public Model convertModel(DomainModel domainModel) {
 
 		// Create a new void DSL model 
-		DslModel dslModel = new DslModel(domainModel.getModelNameFromFile()); // v 3.3.0
-		dslModel.setTitle(voidIfNull(domainModel.getTitle()));
-		dslModel.setDescription(voidIfNull(domainModel.getDescription()));
+//		DslModel dslModel = new DslModel(domainModel.getModelNameFromFile()); // v 3.3.0
+		DslModel dslModel = new DslModel(domainModel.getModelName(), domainModel.getModelInfo()); // v 3.4.0
+//		dslModel.setTitle(voidIfNull(domainModel.getTitle()));
+//		dslModel.setDescription(voidIfNull(domainModel.getDescription()));
 
 		// Create void entities (without attribute)
 		step1CreateAllVoidEntities(domainModel, dslModel);
@@ -166,7 +167,8 @@ public class ModelConverter extends AbstractConverter {
 	 * @param dslModel
 	 */
 	protected void step3CreateAllForeignKeys(DomainModel domainModel, DslModel dslModel) {
-		ForeignKeysBuilder fkBuilder = new ForeignKeysBuilder(dslModel);
+//		ForeignKeysBuilder fkBuilder = new ForeignKeysBuilder(dslModel);
+		ForeignKeysBuilderV2 fkBuilder = new ForeignKeysBuilderV2(dslModel);
 		// for each entity in the model
 		for (DomainEntity entity : domainModel.getEntities()) {
 			String entityName = entity.getName();

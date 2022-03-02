@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.telosys.tools.dsl.DslModelError;
+import org.telosys.tools.dsl.commons.StringUtil;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
@@ -45,6 +46,9 @@ public abstract class AnnotationDefinition {
 	protected AnnotationDefinition(String name, AnnotationParamType paramType, AnnotationScope... scopes) {
 		this.name = name ;
 		this.paramType = paramType ;
+		if ( scopes.length < 1 ) {
+			throw new IllegalArgumentException("@"+name+" : no scope");
+		}
 		for ( AnnotationScope scope : scopes ) {
 			if ( scope == AnnotationScope.ATTRIBUTE ) {
 				this.attributeScope = true ;
@@ -245,4 +249,59 @@ public abstract class AnnotationDefinition {
 		throw new IllegalStateException("apply(link) is not implemented");
 	}
 	
+	private String atName() {
+		return "@" + this.name ;
+	}
+	public String literal() {
+		if ( ! this.hasParam() ) {
+			return atName() ;
+		}
+		else {
+			throw new IllegalStateException("literal() parameter expected");
+		}
+	}
+	public String literal(String param) {
+		if ( this.hasParam() ) {
+			// protect with double quote ".." if necessary
+			return atName() + "(" + protectStringIfNecessary(param) + ")";
+		}
+		else {
+			throw new IllegalStateException("literal(String) no parameter expected");
+		}
+	}
+	public String literal(BigDecimal param) {
+		if ( this.hasParam() ) {
+			return atName() + "(" + param + ")";
+		}
+		else {
+			throw new IllegalStateException("literal(BigDecimal) no parameter expected");
+		}
+	}
+	public String literal(Integer param) {
+		if ( this.hasParam() ) {
+			return atName() + "(" + param + ")";
+		}
+		else {
+			throw new IllegalStateException("literal(Integer) no parameter expected");
+		}
+	}
+//	public String literal(boolean param) {
+//		if ( this.hasParam() ) {
+//			return atName() + "(" + param + ")";
+//		}
+//		else {
+//			throw new IllegalStateException("literal(Boolean) no parameter expected");
+//		}
+//	}
+	private String protectStringIfNecessary(String s) {
+		if ( s.startsWith(" ") || s.endsWith(" ") 
+				|| s.contains("(") || s.contains(")") 
+				|| s.contains("\"") ) {
+			return StringUtil.quote(s);
+		}
+		else {
+			return s;
+		}
+	}
+
 }

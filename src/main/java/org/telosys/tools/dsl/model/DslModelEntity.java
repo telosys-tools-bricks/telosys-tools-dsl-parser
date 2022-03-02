@@ -38,7 +38,8 @@ public class DslModelEntity implements Entity {
 	private String packageName = ""; // @Package annotation
 
 	private List<Attribute> attributes = new ArrayList<>();
-	private List<ForeignKey> databaseForeignKeys = new ArrayList<>();
+//	private List<ForeignKey> databaseForeignKeys = new ArrayList<>(); // removed in v 3.4.0
+	private List<ForeignKey> foreignKeys = new ArrayList<>(); // v 3.4.0 
 
 	private List<Link> links = new ArrayList<>();
 
@@ -119,7 +120,7 @@ public class DslModelEntity implements Entity {
 	}
 	
 	//--------------------------------------------------------------------------
-	// @Override // TODO
+	@Override
 	public String getSuperClass() { // v 3.4.0
 		return superClass;
 	}
@@ -128,7 +129,7 @@ public class DslModelEntity implements Entity {
 	}
 	
 	//--------------------------------------------------------------------------
-	// @Override // TODO
+	@Override
 	public boolean isAbstract() { // v 3.4.0
 		return abstractClass;
 	}
@@ -137,7 +138,7 @@ public class DslModelEntity implements Entity {
 	}
 	
 	//--------------------------------------------------------------------------
-	// @Override // TODO
+	@Override
 	public boolean isInMemoryRepository() { // v 3.4.0
 		return inMemoryRepository;
 	}
@@ -146,7 +147,7 @@ public class DslModelEntity implements Entity {
 	}
 	
 	//--------------------------------------------------------------------------
-	// @Override // TODO
+	@Override
 	public boolean isReadOnly() { // v 3.4.0
 		return readOnly;
 	}
@@ -155,7 +156,7 @@ public class DslModelEntity implements Entity {
 	}
 	
 	//--------------------------------------------------------------------------
-	// @Override // TODO
+	@Override
 	public boolean isAggregateRoot() { // v 3.4.0
 		return aggregateRoot;
 	}
@@ -164,7 +165,7 @@ public class DslModelEntity implements Entity {
 	}
 	
 	//--------------------------------------------------------------------------
-	// @Override  // TODO
+	@Override
 	public String getDomain() {
 		return domain;
 	}
@@ -173,7 +174,7 @@ public class DslModelEntity implements Entity {
 	}
 	
 	//--------------------------------------------------------------------------
-	// @Override  // TODO
+	@Override
 	public String getContext() {
 		return context;
 	}
@@ -191,27 +192,47 @@ public class DslModelEntity implements Entity {
 	}
 	
 	//--------------------------------------------------------------------------
+//	@Override
+//	public List<ForeignKey> getDatabaseForeignKeys() {
+//		return databaseForeignKeys;
+//	}
+//	public void setDatabaseForeignKeys(List<ForeignKey> databaseForeignKeys) {
+//		this.databaseForeignKeys = databaseForeignKeys;
+//	}
+//	/**
+//	 * Try to found a Foreign Key with the given name
+//	 * @param name
+//	 * @return
+//	 */
+//	public ForeignKey getDatabaseForeignKeyByName(String name) {
+//		for(ForeignKey fk : this.databaseForeignKeys ) {
+//			if(name.equals(fk.getName())) {
+//				return fk;
+//			}
+//		}
+//		return null;
+//	}
+
+	//--------------------------------------------------------------------------
 	@Override
-	public List<ForeignKey> getDatabaseForeignKeys() {
-		return databaseForeignKeys;
+	public List<ForeignKey> getForeignKeys() {
+		return foreignKeys;
 	}
-	public void setDatabaseForeignKeys(List<ForeignKey> databaseForeignKeys) {
-		this.databaseForeignKeys = databaseForeignKeys;
+//	public void setForeignKeys(List<ForeignKey> foreignKeys) {
+//		this.foreignKeys = foreignKeys;
+//	}
+	public void addForeignKey(ForeignKey fk) { // v 3.4.0
+		this.foreignKeys.add(fk);
 	}
-	/**
-	 * Try to found a Foreign Key with the given name
-	 * @param name
-	 * @return
-	 */
-	public ForeignKey getDatabaseForeignKeyByName(String name) {
-		for(ForeignKey fk : this.databaseForeignKeys ) {
-			if(name.equals(fk.getName())) {
+	public ForeignKey getForeignKeyByName(String fkName) {
+		for (ForeignKey fk : this.foreignKeys) {
+			if (fkName.equals(fk.getName())) {
 				return fk;
 			}
 		}
 		return null;
 	}
-
+	
 	//--------------------------------------------------------------------------
 	@Override
 	public String getDatabaseSchema() {
@@ -231,8 +252,8 @@ public class DslModelEntity implements Entity {
 	}
 	
 	//--------------------------------------------------------------------------
-//	@Override  // TODO
-	public Boolean isDatabaseView() {
+	@Override
+	public boolean isDatabaseView() {
 		return databaseView;
 	}
 	public void setDatabaseView(boolean databaseView) {
@@ -262,7 +283,7 @@ public class DslModelEntity implements Entity {
 	}
 	
 	//--------------------------------------------------------------------------
-	// @Override  // TODO
+	@Override
 	public String getDatabaseTablespace() {
 		return databaseTablespace;
 	}
@@ -298,13 +319,6 @@ public class DslModelEntity implements Entity {
 		}
 		return null;
 	}
-	
-//	public String getPackage() {
-//		return _package;
-//	}
-//	public void setPackage(String _package) {
-//		this._package = _package;
-//	}
 	
 	//--------------------------------------------------------------------------
 	@Override
@@ -353,6 +367,7 @@ public class DslModelEntity implements Entity {
 	
 	//--------------------------------------------------------------------------
 	//--------------------------------------------------------------------------
+	@Override
 	public Attribute getAttributeByName(String name) {
 		for(Attribute attribute : getAttributes()) {
 			if(name.equals(attribute.getName())) {
@@ -362,14 +377,15 @@ public class DslModelEntity implements Entity {
 		return null;
 	}
 
-	public DslModelAttribute getAttributeByDatabaseName(String dbName) {
-		for(Attribute attribute : getAttributes()) {
-			if(dbName.equals(attribute.getDatabaseName())) {
-				return (DslModelAttribute) attribute;
-			}
-		}
-		return null;
-	}
+// removed in v 3.4.0 
+//	public DslModelAttribute getAttributeByDatabaseName(String dbName) {
+//		for(Attribute attribute : getAttributes()) {
+//			if(dbName.equals(attribute.getDatabaseName())) {
+//				return (DslModelAttribute) attribute;
+//			}
+//		}
+//		return null;
+//	}
 	//--------------------------------------------------------------------------
 	/**
 	 * Replaces the attribute identified by the given name by another one
