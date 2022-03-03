@@ -1,9 +1,9 @@
 @DbTable(COUNTRY)
 @DbCatalog(TEST)
-@DbSchema(PUBLIC)
+@DbSchema(CUSTOMERS)
 Country {
   // attributes
-  code : string { @Id @DbName(CODE) @DbType("VARCHAR(2)") @NotNull @NotEmpty @Size(2) @MaxLen(2) };
-  name : string { @DbName(NAME) @DbType("VARCHAR(45)") @Size(45) @MaxLen(45) };
+  code : string { @Id @DbName(CODE) @DbType("CHARACTER VARYING(2)") @NotNull @NotEmpty @Size(2) @MaxLen(2) };
+  name : string { @DbName(NAME) @DbType("CHARACTER VARYING(45)") @Size(45) @MaxLen(45) };
   // links
 }

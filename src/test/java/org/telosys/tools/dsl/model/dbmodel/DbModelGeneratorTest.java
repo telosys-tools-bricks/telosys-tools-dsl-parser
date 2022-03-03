@@ -6,11 +6,17 @@ import org.junit.Test;
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
 import org.telosys.tools.commons.cfg.TelosysToolsCfgManager;
+import org.telosys.tools.commons.dbcfg.DatabaseConfiguration;
+import org.telosys.tools.commons.dbcfg.DatabasesConfigurations;
+import org.telosys.tools.commons.dbcfg.DbConfigManager;
 import org.telosys.tools.commons.logger.ConsoleLogger;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.generic.model.Attribute;
+import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.ForeignKeyPart;
+import org.telosys.tools.generic.model.Link;
+import org.telosys.tools.generic.model.enums.Cardinality;
 import org.telosys.tools.junit.utils.PrintUtil;
 
 import static org.junit.Assert.assertEquals;
@@ -23,7 +29,6 @@ public class DbModelGeneratorTest {
 	
 	private static final String SRC_TEST_RESOURCES = "src/test/resources/" ;
 	private static final String PROJECT_FOLDER = "myproject" ;
-	private static final int    DEFAULT_DATABASE_ID  = 1 ;
 
 	private void printSeparator(String s) {
 		System.out.println("========== " + s );
@@ -35,22 +40,27 @@ public class DbModelGeneratorTest {
 		return cfgManager.loadTelosysToolsCfg();
 	}
 
-	private DslModel generateRepositoryModel(String sqlFile, String modelName) throws TelosysToolsException {
+	private DatabaseConfiguration getDatabasesConfiguration(TelosysToolsCfg telosysToolsCfg, int dbId) throws TelosysToolsException {
+    	DbConfigManager dbConfigManager = new DbConfigManager(telosysToolsCfg) ;
+    	DatabasesConfigurations databasesConfigurations = dbConfigManager.load();
+    	return databasesConfigurations.getDatabaseConfiguration(dbId);
+	}
+	
+	private DslModel generateRepositoryModel(int dbId, String sqlFile, String modelName) throws TelosysToolsException {
+		
+		System.out.println("Get TelosysToolsCfg from "+ PROJECT_FOLDER);
+		TelosysToolsCfg telosysToolsCfg = getTelosysToolsCfg(PROJECT_FOLDER);
+
+		DatabaseConfiguration databaseConfiguration = getDatabasesConfiguration(telosysToolsCfg, dbId);
 		
 		System.out.println("Database initialization... ");
-		DatabaseInMemory databaseInMemory = new DatabaseInMemory(DEFAULT_DATABASE_ID);
+		DatabaseInMemory databaseInMemory = new DatabaseInMemory(databaseConfiguration);
 		databaseInMemory.executeSqlFile(sqlFile);
 		// do not close DB here (keep it in memory)
 		
-		System.out.println("Get configuration... ");
-		TelosysToolsCfg telosysToolsCfg = getTelosysToolsCfg(PROJECT_FOLDER);
-//		DbConfigManager dbConfigManager = new DbConfigManager(telosysToolsCfg); 
-//		DatabaseConfiguration databaseConfiguration = dbConfigManager.load().getDatabaseConfiguration(DEFAULT_DATABASE_ID);
-//		DbConnectionManager dbConnectionManager = new DbConnectionManager(telosysToolsCfg);
-		
 		System.out.println("DSL model creation from database... ");
 		DbToModelManager manager = new DbToModelManager(telosysToolsCfg, new ConsoleLogger() );
-		DslModel model = manager.createModelFromDatabase(DEFAULT_DATABASE_ID, modelName);
+		DslModel model = manager.createModelFromDatabase(dbId, modelName);
 
 		databaseInMemory.close();
 		
@@ -61,17 +71,19 @@ public class DbModelGeneratorTest {
 	@Test
 	public void test1() throws TelosysToolsException {
 		printSeparator("test1");
+		// DB ID 1
+		DslModel model = generateRepositoryModel(1, "customers.sql", "customers");
+		assertTrue(model.getDatabaseId() == 1 );
+		assertEquals(2, model.getEntities().size() );
 
-		DslModel repositoryModel = generateRepositoryModel("customers.sql", "customers");
-		assertTrue(repositoryModel.getDatabaseId() == DEFAULT_DATABASE_ID );
-		assertEquals(2, repositoryModel.getEntities().size() );
-
-		DslModelEntity customerEntity = (DslModelEntity) repositoryModel.getEntityByTableName("CUSTOMER") ;
+		DslModelEntity customerEntity = (DslModelEntity) model.getEntityByTableName("CUSTOMER") ;
 		assertNotNull( customerEntity );
 		Attribute code = customerEntity.getAttributeByName("code");
 		assertNotNull(code);
 		assertEquals ("string", code.getNeutralType() );
-		assertEquals ("VARCHAR(5)", code.getDatabaseType());
+		//assertEquals ("VARCHAR(5)", code.getDatabaseType()); // H2 ver 1.3.176
+		assertEquals ("CHARACTER VARYING(5)", code.getDatabaseType()); // h2 ver 2.1.210 : VARCHAR(5) in SQL script
+		
 		assertTrue (code.isKeyElement());
 		assertTrue (code.isNotNull());
 		assertEquals ("5", code.getDatabaseSize());
@@ -105,7 +117,7 @@ public class DbModelGeneratorTest {
 		assertEquals("5,2", score.getDatabaseSize());
 		assertEquals("5,2", score.getSize());
 
-		DslModelEntity countryEntity = (DslModelEntity) repositoryModel.getEntityByTableName("COUNTRY") ;
+		DslModelEntity countryEntity = (DslModelEntity) model.getEntityByTableName("COUNTRY") ;
 		assertNotNull( countryEntity );
 		assertNotNull( countryEntity.getAttributeByName("code") );
 		assertNotNull( countryEntity.getAttributeByName("name") );
@@ -115,21 +127,15 @@ public class DbModelGeneratorTest {
 	public void test2() throws TelosysToolsException {
 		printSeparator("test2");
 		
-		DslModel repositoryModel = generateRepositoryModel("students.sql", "students");
-		assertEquals(DEFAULT_DATABASE_ID, repositoryModel.getDatabaseId().intValue() );
-		assertEquals(2, repositoryModel.getEntities().size());
+		DslModel model = generateRepositoryModel(2, "students.sql", "students");
+		assertEquals(2, model.getDatabaseId().intValue() );
+		assertEquals(2, model.getEntities().size());
 
-		DslModelEntity studentEntity = (DslModelEntity) repositoryModel.getEntityByTableName("STUDENT");
+		DslModelEntity studentEntity = (DslModelEntity) model.getEntityByTableName("STUDENT");
 		assertNotNull(studentEntity);
 		
-		DslModelEntity teacherEntity = (DslModelEntity) repositoryModel.getEntityByTableName("TEACHER");
+		DslModelEntity teacherEntity = (DslModelEntity) model.getEntityByTableName("TEACHER");
 		assertNotNull(teacherEntity);
-		
-		//assertEquals(2, studentEntity.getLinks().size() );
-		//assertEquals(2, teacherEntity.getLinks().size() );
-
-//		checkJavaName(studentLinks[0].getFieldName(),studentLinks[1].getFieldName(), "teacher", "teacher2" );
-//		checkJavaName(teacherLinks[0].getFieldName(),teacherLinks[1].getFieldName(), "listOfStudent", "listOfStudent2" );	
 		
 		//--- Check FK information stored in Attribute
 		Attribute studentId = studentEntity.getAttributeByName("id");
@@ -161,124 +167,27 @@ public class DbModelGeneratorTest {
 		assertTrue(studentTeacherCode2.isFKSimple());
 		assertFalse(studentTeacherCode2.isFKComposite());
 		assertEquals ("Teacher", studentTeacherCode2.getReferencedEntityClassName() );
-	}
-
-/***
-	@Test
-	public void test3() throws TelosysToolsException {
-		printSeparator("test3");
 		
-		RepositoryModel repositoryModel = generateRepositoryModel(3);
-		printModel(repositoryModel);
-		assertTrue(repositoryModel.getDatabaseId() == DEFAULT_DATABASE_ID );
-		assertEquals(2, repositoryModel.getNumberOfEntities() );
-
-		EntityInDbModel studentEntity = repositoryModel.getEntityByTableName("STUDENT");
-		assertNotNull(studentEntity);
-		
-		EntityInDbModel teacherEntity = repositoryModel.getEntityByTableName("TEACHER");
-		assertNotNull(teacherEntity);
-		
-		LinkInDbModel[] studentLinks = studentEntity.getLinksArray();
-		System.out.println("STUDENT links : " + studentLinks.length);
-		assertTrue(studentLinks.length == 2);
-
-		LinkInDbModel[] teacherLinks = teacherEntity.getLinksArray();
-		System.out.println("TEACHER links : " + teacherLinks.length);
-		assertTrue(teacherLinks.length == 2);
-		
-		checkJavaName(studentLinks[0].getFieldName(),studentLinks[1].getFieldName(), "teacher2", "teacher3" );
-		checkJavaName(teacherLinks[0].getFieldName(),teacherLinks[1].getFieldName(), "listOfStudent2", "listOfStudent3" );		
-	}
-
-	@Test
-	public void test5() throws TelosysToolsException {
-		printSeparator("test5");
-		
-		RepositoryModel repositoryModel = generateRepositoryModel(5);
-		printModel(repositoryModel);
-		assertEquals(2, repositoryModel.getNumberOfEntities() );
-
-		checkStudentEntity(repositoryModel.getEntityByTableName("STUDENT"));
-		checkTeacherEntity(repositoryModel.getEntityByTableName("TEACHER"));		
-		
-		Document doc = convertToXml(repositoryModel);
-		
-		RepositoryModel model2 = convertToModel(doc);
-		assertEquals(repositoryModel.getNumberOfEntities(), model2.getNumberOfEntities());
-		
-//		checkStudentEntity(model2.getEntityByTableName("STUDENT"));
-//		checkTeacherEntity(model2.getEntityByTableName("TEACHER"));
-	}
-	
-	private void checkStudentEntity(EntityInDbModel studentEntity) {
-		System.out.println("Check STUDENT entity");
-
-		assertNotNull(studentEntity);
-		
-		assertFalse( studentEntity.isJoinTable() );
-		
-		//--- Attributes (columns)
-		assertEquals(4, studentEntity.getAttributesCount() ) ;
-
-		AttributeInDbModel studentId = studentEntity.getAttributeByColumnName("ID");
-		assertNotNull(studentId);
-		AttributeInDbModel studentFirstName = studentEntity.getAttributeByColumnName("FIRST_NAME");
-		assertNotNull(studentFirstName);
-		AttributeInDbModel studentLastName = studentEntity.getAttributeByColumnName("LAST_NAME");
-		assertNotNull(studentLastName);
-		
-		//--- Foreign Keys
-//		assertEquals(1, studentEntity.getForeignKeys().length ) ;
-		assertEquals(1, studentEntity.getForeignKeys().size() ) ;
-//		assertEquals("STUDENT", studentEntity.getForeignKeys()[0].getTableName() ) ;
-		assertEquals("Student", studentEntity.getForeignKeys().get(0).getOriginEntityName() ) ;
-//		assertEquals("TEACHER", studentEntity.getForeignKeys()[0].getReferencedTableName() ) ;
-		assertEquals("Teacher", studentEntity.getForeignKeys().get(0).getReferencedEntityName() ) ;
+		//--- Foreign keys 
+		assertEquals(2, studentEntity.getForeignKeys().size());
+		for ( ForeignKey fk : studentEntity.getForeignKeys() ) {
+			assertEquals ("Student", fk.getOriginEntityName() );
+			assertEquals ("Teacher", fk.getReferencedEntityName() );
+			assertEquals ( 1, fk.getAttributes().size() );
+		}
+		assertEquals(0, teacherEntity.getForeignKeys().size());
 		
 		//--- Links
-		LinkInDbModel[] studentLinks = studentEntity.getLinksArray();
-		System.out.println("Number of links : " + studentLinks.length);
-		assertEquals(1, studentLinks.length);
-
-		System.out.println("Student link : ");
-		LinkInDbModel studentLink = studentLinks[0] ;
-		
-		System.out.println(" . getCardinality : " + studentLink.getCardinality()  );
-		assertEquals( Cardinality.MANY_TO_ONE, studentLink.getCardinality() ); 
-		
-		System.out.println(" . getMappedBy : '" + studentLink.getMappedBy() +"'" );
-		assertNull( studentLink.getMappedBy() ); 
-		
-		System.out.println(" . isOwningSide  : " + studentLink.isOwningSide() );
-		assertTrue(studentLink.isOwningSide() );
-		System.out.println(" . isInverseSide : " + studentLink.isInverseSide() );
-		assertFalse(studentLink.isInverseSide() );
-
-		System.out.println(" . getForeignKeyName : " + studentLink.getForeignKeyName() );
-		assertNotNull(studentLink.getForeignKeyName() );
-
-//		assertNotNull(studentLink.getJoinColumns() );
-		assertNotNull(studentLink.getAttributes() );
-		
-//		List<JoinColumn> joinColumns = studentLink.getJoinColumns();
-		List<LinkAttribute> joinColumns = studentLink.getAttributes();
-		System.out.println(" . getJoinColumns / size : " + joinColumns.size() );
-		assertEquals(1, joinColumns.size() );
+		assertEquals(2, studentEntity.getLinks().size() );
+		for ( Link link : studentEntity.getLinks() ) {
+			assertEquals ("Teacher", link.getReferencedEntityName());
+			assertEquals ( Cardinality.MANY_TO_ONE, link.getCardinality() );
+		}
+		assertEquals(2, teacherEntity.getLinks().size() );
+		for ( Link link : teacherEntity.getLinks() ) {
+			assertEquals ("Student", link.getReferencedEntityName());
+			assertEquals ( Cardinality.ONE_TO_MANY, link.getCardinality() );
+		}
 	}
-	
-	private void checkTeacherEntity(EntityInDbModel teacherEntity) {
-		System.out.println("Check TEACHER entity");
-		
-		assertNotNull(teacherEntity);
-		assertFalse( teacherEntity.isJoinTable() );
-//		assertEquals(0, teacherEntity.getForeignKeys().length ) ; // No FK
-		assertEquals(0, teacherEntity.getForeignKeys().size() ) ; // No FK
-		
-//		LinkInDbModel[] teacherLinks = teacherEntity.getLinksArray();
-//		System.out.println("Number of  links : " + teacherLinks.length);
-//		assertEquals(1, teacherLinks.length);
-		assertEquals(1, teacherEntity.getLinksCount());
-	}
-***/
+
 }

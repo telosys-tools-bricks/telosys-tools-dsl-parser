@@ -1,11 +1,11 @@
 @DbTable(STUDENT)
 @DbCatalog(TEST)
-@DbSchema(PUBLIC)
+@DbSchema(STUDENTS)
 Student {
   // attributes
   id : int { @Id @DbName(ID) @DbType(INTEGER) @NotNull @NotEmpty };
-  firstName : string { @DbName(FIRST_NAME) @DbType("VARCHAR(40)") @Size(40) @MaxLen(40) };
-  lastName : string { @DbName(LAST_NAME) @DbType("VARCHAR(40)") @Size(40) @MaxLen(40) };
+  firstName : string { @DbName(FIRST_NAME) @DbType("CHARACTER VARYING(40)") @Size(40) @MaxLen(40) };
+  lastName : string { @DbName(LAST_NAME) @DbType("CHARACTER VARYING(40)") @Size(40) @MaxLen(40) };
   teacherCode1 : int { @DbName(TEACHER_CODE1) @DbType(INTEGER) @FK(FK_STU_TEACHER1, Teacher.code) };
   teacherCode2 : int { @DbName(TEACHER_CODE2) @DbType(INTEGER) @FK(FK_STU_TEACHER2, Teacher.code) };
   // links

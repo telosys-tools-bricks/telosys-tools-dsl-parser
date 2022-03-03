@@ -28,12 +28,10 @@ import org.telosys.tools.db.model.DatabaseModelManager;
 import org.telosys.tools.db.model.DatabaseTables;
 import org.telosys.tools.dsl.commons.ModelInfo;
 import org.telosys.tools.dsl.model.DslModel;
-import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.writer.ModelWriter;
-import org.telosys.tools.generic.model.ForeignKeyPart;
 
 /**
- * DB-MODEL to DSL-MODEL manager
+ * DATABASE-SCHEMA to DSL-MODEL manager
  * 
  * @author Laurent GUERIN
  * 
@@ -44,6 +42,11 @@ public class DbToModelManager {
 	private final TelosysToolsCfg    telosysToolsCfg ;
 	private final TelosysToolsLogger logger ;
 
+	/**
+	 * Constructor
+	 * @param telosysToolsCfg
+	 * @param logger
+	 */
 	public DbToModelManager(TelosysToolsCfg telosysToolsCfg, TelosysToolsLogger logger) {
 		super();
 		this.telosysToolsCfg = telosysToolsCfg ;
@@ -90,23 +93,6 @@ public class DbToModelManager {
 		return model ;
 	}
 
-//	/**
-//	 * Returns a connection using the given DatabaseConfiguration <br>
-//	 * and the ConnectionManager initialized in the constructor
-//	 * 
-//	 * @param databaseConfiguration
-//	 * @return
-//	 * @throws TelosysToolsException
-//	 */
-//	protected Connection getConnection(int databaseId) throws TelosysToolsException {
-//		if ( this.dbConnectionManager != null ) {
-//			return this.dbConnectionManager.getConnection( databaseId );
-//		}
-//		else {
-//			throw new TelosysToolsException("Cannot get DB connection (no connection manager)");
-//		}
-//	}
-
 	protected void closeConnection(Connection connection) throws TelosysToolsException {
 		if ( connection != null ) {
 			try {
@@ -117,7 +103,6 @@ public class DbToModelManager {
 		}
 	}
 	
-	//private RepositoryModel generateRepository(Connection con, DatabaseConfiguration databaseConfig) throws TelosysToolsException 
 	private DslModel createModelFromDatabase(String modelName, Connection con, DatabaseConfiguration databaseConfig) throws TelosysToolsException {
 		
 		// Load all tables (DB-Model)

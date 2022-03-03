@@ -38,9 +38,9 @@
 <!-- ==================================================================================================== -->
 
 <!-- <databases maxId="4" defaultId="0" > -->
-<databases defaultId="1" >
+<databases defaultId="0" >
 
-<db  id="1" 
+<db  id="0" 
      url="jdbc:h2:mem:test;DB_CLOSE_DELAY=0"
      driver="org.h2.Driver" 
      name="H2 in memory" poolSize="10" isolationLevel="" typeName="" dialect="" >
@@ -48,5 +48,25 @@
   <property name="password" value="sa"/>
   <metadata catalog="!" schema="!" table-name-pattern="%" table-types="TABLE   VIEW  "/>
 </db>
-	
+
+<!-- H2 schema "CUSTOMERS" -->
+<db  id="1" 
+     url="jdbc:h2:mem:test;DB_CLOSE_DELAY=0"
+     driver="org.h2.Driver" 
+     name="H2 in memory" poolSize="10" isolationLevel="" typeName="" dialect="" >
+  <property name="user"     value="sa"/>
+  <property name="password" value="sa"/>
+  <metadata catalog="!" schema="CUSTOMERS" table-name-pattern="%" table-types="TABLE"/>
+</db>
+
+<!-- H2 schema "STUDENTS" -->
+<db  id="2" 
+     url="jdbc:h2:mem:test;DB_CLOSE_DELAY=0"
+     driver="org.h2.Driver" 
+     name="H2 in memory" poolSize="10" isolationLevel="" typeName="" dialect="" >
+  <property name="user"     value="sa"/>
+  <property name="password" value="sa"/>
+  <metadata catalog="!" schema="STUDENTS" table-name-pattern="%" table-types="TABLE"/>
+</db>
+
 </databases>

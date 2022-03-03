@@ -1,12 +1,14 @@
 -- CREATE SCHEMA IF NOT EXISTS SCHEMA1;
-
+CREATE SCHEMA IF NOT EXISTS customers;
 -- SET SCHEMA SCHEMA1 ;
-DROP ALL OBJECTS;
+-- SET SCHEMA customers ;
+
+-- DROP ALL OBJECTS;
 
 -- DROP TABLE IF EXISTS customer ;
 -- DROP TABLE IF EXISTS country ;
 
-CREATE TABLE customer (
+CREATE TABLE customers.customer (
 	code VARCHAR(5),
 	country_code VARCHAR(2) NOT NULL,
 	first_name VARCHAR(40) DEFAULT ' a zer' COMMENT 'my comment',
@@ -22,7 +24,7 @@ CREATE TABLE customer (
 	PRIMARY KEY(code)
 );
 
-CREATE TABLE country ( 
+CREATE TABLE customers.country ( 
 	code VARCHAR(2),
 	name VARCHAR(45),
 	PRIMARY KEY(code)

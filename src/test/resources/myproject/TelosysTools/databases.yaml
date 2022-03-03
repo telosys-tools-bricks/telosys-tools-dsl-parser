@@ -1,0 +1,26 @@
+databases :
+
+  # First DB identified by "aaa"
+  - id: aaa
+    name: my database AAA
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=0
+    driver: org.h2.Driver
+    user: sa
+    password: sa
+    catalog: CUSTOMERS
+    schema:
+    table-name-pattern:
+    table-types:
+    
+  # Second DB identified by "bbb"
+  - id: bbb
+    name: my database BBB
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=0
+    driver: org.h2.Driver
+    user: sa
+    password: sa
+    catalog: STUDENTS
+    schema:
+    table-name-pattern:
+    table-types:
+    

@@ -20,5 +20,5 @@ CREATE TABLE student (
   last_name VARCHAR(40),
   teacher_code INTEGER,
   PRIMARY KEY(id),
-  CONSTRAINT fk_teacher FOREIGN KEY(teacher_code) REFERENCES teacher(code),
+  CONSTRAINT fk_teacher FOREIGN KEY(teacher_code) REFERENCES teacher(code)
 );

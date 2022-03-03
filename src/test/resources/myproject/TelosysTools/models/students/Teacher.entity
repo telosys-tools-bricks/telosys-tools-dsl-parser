@@ -1,10 +1,10 @@
 @DbTable(TEACHER)
 @DbCatalog(TEST)
-@DbSchema(PUBLIC)
+@DbSchema(STUDENTS)
 Teacher {
   // attributes
   code : int { @Id @DbName(CODE) @DbType(INTEGER) @NotNull @NotEmpty };
-  name : string { @DbName(NAME) @DbType("VARCHAR(40)") @Size(40) @MaxLen(40) };
+  name : string { @DbName(NAME) @DbType("CHARACTER VARYING(40)") @Size(40) @MaxLen(40) };
   // links
   studentList : Student[];
   studentList2 : Student[];
