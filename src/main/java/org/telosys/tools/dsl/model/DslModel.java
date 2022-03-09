@@ -35,8 +35,12 @@ public class DslModel implements Model {
 	// from model.yaml
 	private final ModelInfo modelInfo;
 	
-	private Integer databaseId;
-	private String databaseProductName	;
+	//private Integer databaseId;
+	//private String databaseProductName	;
+	private String databaseId	;
+	private String databaseName	;
+	private String databaseType ;
+	
 	private List<Entity> entities = new ArrayList<>();
 
 	/**
@@ -102,19 +106,27 @@ public class DslModel implements Model {
 	//----------------------------------------------------------------------------------------
 
 	@Override
-	public Integer getDatabaseId() {
+	public String getDatabaseId() {
 		return databaseId;
 	}
-	public void setDatabaseId(Integer databaseId) {
+	public void setDatabaseId(String databaseId) {
 		this.databaseId = databaseId;
 	}
 
 	@Override
-	public String getDatabaseProductName() {
-		return databaseProductName;
+	public String getDatabaseName() {
+		return databaseName;
 	}
-	public void setDatabaseProductName(String databaseProductName) {
-		this.databaseProductName = databaseProductName;
+	public void setDatabaseName(String databaseName) {
+		this.databaseName = databaseName;
+	}
+
+	@Override
+	public String getDatabaseType() {
+		return databaseType;
+	}
+	public void setDatabaseType(String databaseType) {
+		this.databaseType = databaseType;
 	}
 
 	//----------------------------------------------------------------------------------------

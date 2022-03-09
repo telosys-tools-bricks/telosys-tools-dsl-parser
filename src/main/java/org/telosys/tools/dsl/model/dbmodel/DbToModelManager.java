@@ -15,15 +15,17 @@
  */
 package org.telosys.tools.dsl.model.dbmodel;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.TelosysToolsLogger;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
-import org.telosys.tools.commons.dbcfg.DatabaseConfiguration;
-import org.telosys.tools.commons.dbcfg.DbConfigManager;
-import org.telosys.tools.commons.dbcfg.DbConnectionManager;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseConnectionProvider;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitions;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitionsLoader;
 import org.telosys.tools.db.model.DatabaseModelManager;
 import org.telosys.tools.db.model.DatabaseTables;
 import org.telosys.tools.dsl.commons.ModelInfo;
@@ -53,7 +55,7 @@ public class DbToModelManager {
 		this.logger = logger;
 	}
 	
-	public DslModel createModelFromDatabase(int databaseId, String modelName) throws TelosysToolsException {
+	public DslModel createModelFromDatabase(String databaseId, String modelName) throws TelosysToolsException {
 
 		// STEP 1 : init model from database (in memory) 
 		DslModel model = initModelFromDatabase(databaseId, modelName);
@@ -65,23 +67,16 @@ public class DbToModelManager {
 		return model ;
 	}
 	
-	protected DslModel initModelFromDatabase(int databaseId, String modelName) throws TelosysToolsException {
+	protected DslModel initModelFromDatabase(String databaseId, String modelName) throws TelosysToolsException {
 		
-		// Get database configuration 
-		DbConfigManager dbConfigManager = new DbConfigManager(telosysToolsCfg); 
-		DatabaseConfiguration databaseConfiguration = dbConfigManager.load().getDatabaseConfiguration(databaseId);
-		if (databaseConfiguration == null) {
-			throw new TelosysToolsException("No configuration for database "+databaseId);
-		}
+		DatabaseDefinition databaseDefinition = getDatabaseDefinition(databaseId);
 		
-		// Get a connection to the database
-		DbConnectionManager dbConnectionManager = new DbConnectionManager(telosysToolsCfg);
-		Connection connection = dbConnectionManager.getConnection(databaseId);
+		Connection connection = openConnection(databaseDefinition);
 		
 		//--- STEP 1 : Create the model (Entities, Attributes with Foreign Keys )
 		DslModel model;
 		try {
-			model = createModelFromDatabase(modelName, connection, databaseConfiguration);
+			model = createModelFromDatabase(modelName, connection, databaseDefinition);
 		} finally { // v 3.0.0 (finally added for connection closing)
 			closeConnection(connection); 
 		}
@@ -93,6 +88,27 @@ public class DbToModelManager {
 		return model ;
 	}
 
+	protected DatabaseDefinition getDatabaseDefinition(String databaseId) throws TelosysToolsException {
+		// Get database definitions file 
+		File dbDefinitionsFile = new File(telosysToolsCfg.getDatabasesDbCfgFileAbsolutePath());
+		// Load databases definitions
+		DatabaseDefinitionsLoader loader = new DatabaseDefinitionsLoader();
+		DatabaseDefinitions databaseDefinitions = loader.load(dbDefinitionsFile);
+		DatabaseDefinition databaseDefinition = databaseDefinitions.getDatabaseDefinition(databaseId);
+		if ( databaseDefinition != null ) {
+			return databaseDefinition;
+		}
+		else {
+			throw new TelosysToolsException("Unknown database '" + databaseId + "'");
+		}
+	}
+	
+	protected Connection openConnection(DatabaseDefinition databaseDefinition) throws TelosysToolsException {
+		// Get a connection to the database
+		DatabaseConnectionProvider databaseConnectionProvider = new DatabaseConnectionProvider(telosysToolsCfg); 
+		return databaseConnectionProvider.getConnection(databaseDefinition);
+	}
+	
 	protected void closeConnection(Connection connection) throws TelosysToolsException {
 		if ( connection != null ) {
 			try {
@@ -103,38 +119,42 @@ public class DbToModelManager {
 		}
 	}
 	
-	private DslModel createModelFromDatabase(String modelName, Connection con, DatabaseConfiguration databaseConfig) throws TelosysToolsException {
+	private DslModel createModelFromDatabase(String modelName, Connection con, DatabaseDefinition databaseDefinition) throws TelosysToolsException {
 		
 		// Load all tables (DB-Model)
-		DatabaseTables dbTables = getDatabaseTablesFromDb(con, databaseConfig);
+		DatabaseTables dbTables = getDatabaseTablesFromDb(con, databaseDefinition);
 		
 		// Convert DB-Model to DSL-Model
 		DbToModelConverter modelConverter = new DbToModelConverter(logger);
 		ModelInfo modelInfo = new ModelInfo();
-		modelInfo.setTitle("Model created from database " + databaseConfig.getDatabaseName() );
+//		modelInfo.setTitle("Model created from database " + databaseConfig.getDatabaseName() );
+		modelInfo.setTitle("Model created from database " + databaseDefinition.getName() );
 
 		DslModel model = modelConverter.createModel(modelName, modelInfo, dbTables);
 		
 		// Add additional information in model
-		model.setDatabaseId(databaseConfig.getDatabaseId());
-		model.setDatabaseProductName(databaseConfig.getTypeName());
+//		model.setDatabaseId(databaseConfig.getDatabaseId());
+//		model.setDatabaseProductName(databaseConfig.getTypeName());
+		model.setDatabaseId(databaseDefinition.getId());
+		model.setDatabaseName(databaseDefinition.getName());
+		model.setDatabaseType(databaseDefinition.getType());
 		
 		return model;
 	}
 
-	private DatabaseTables getDatabaseTablesFromDb(Connection con, DatabaseConfiguration databaseConfig) throws TelosysToolsException {
+	private DatabaseTables getDatabaseTablesFromDb(Connection con, DatabaseDefinition databaseDefinition) throws TelosysToolsException {
 		
-		String tableNamePattern = databaseConfig.getMetadataTableNamePattern();
+		String tableNamePattern = databaseDefinition.getTableNamePattern();
 		if (tableNamePattern == null) {
 			tableNamePattern = "%";
 		}
 
 		logger.log("   ... Metadata parameters : ");
-		logger.log("   ... * Catalog = " + databaseConfig.getMetadataCatalog());
-		logger.log("   ... * Schema  = " + databaseConfig.getMetadataSchema());
+		logger.log("   ... * Catalog = " + databaseDefinition.getCatalog());
+		logger.log("   ... * Schema  = " + databaseDefinition.getSchema());
 		logger.log("   ... * Table Name Pattern  = " + tableNamePattern);
 		StringBuilder sb = new StringBuilder();
-		for (String s : databaseConfig.getMetadataTableTypesArray() ) {
+		for (String s : databaseDefinition.getTableTypesArray() ) {
 			sb.append("[" + s + "] ");
 		}
 		logger.log("   ... * Table Types Array  = " + sb.toString());
@@ -143,12 +163,12 @@ public class DbToModelManager {
 		DatabaseModelManager manager = new DatabaseModelManager();
 		try {
 			return manager.getDatabaseTables(con, 
-					databaseConfig.getMetadataCatalog(), 
-					databaseConfig.getMetadataSchema(), 
+					databaseDefinition.getCatalog(), 
+					databaseDefinition.getSchema(), 
 					tableNamePattern, 
-					databaseConfig.getMetadataTableTypesArray(), 
-					databaseConfig.getMetadataTableNameInclude(), 
-					databaseConfig.getMetadataTableNameExclude());
+					databaseDefinition.getTableTypesArray(),
+					databaseDefinition.getTableNameInclude(), 
+					databaseDefinition.getTableNameExclude());
 		} catch (SQLException e) {
 			throw new TelosysToolsException("Cannot get DB-Model (SQLException)", e);
 		}

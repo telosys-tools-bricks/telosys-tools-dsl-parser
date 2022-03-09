@@ -6,54 +6,53 @@ import java.sql.SQLException;
 
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.TelosysToolsException;
-import org.telosys.tools.commons.dbcfg.DatabaseConfiguration;
-import org.telosys.tools.commons.dbcfg.DatabasesConfigurations;
-import org.telosys.tools.commons.dbcfg.DbConfigManager;
-import org.telosys.tools.commons.jdbc.ConnectionManager;
+import org.telosys.tools.commons.cfg.TelosysToolsCfg;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseConnectionProvider;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitions;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitionsLoader;
 import org.telosys.tools.commons.jdbc.SqlScriptRunner;
 
 public class DatabaseInMemory {
 	
-	private static final String DBCFG_FILE = "/dbcfg/databases-test-H2.dbcfg" ;
-	
-//	private final int databaseId ;
-	private final DatabaseConfiguration databaseConfiguration ;
+	private final DatabaseDefinition databaseDefinition ;
 	private Connection connection = null ;
-	
-//	/**
-//	 * Constructor for default database
-//	 * @throws TelosysToolsException
-//	 */
-//	public DatabaseInMemory() throws TelosysToolsException {
-//		super();
-//		DatabasesConfigurations databasesConfigurations = getDatabaseConfigurations();
-////		this.databaseId = databasesConfigurations.getDatabaseDefaultId() ;
-//		this.databaseConfiguration = databasesConfigurations.getDatabaseConfiguration() ;
-//		ConnectionManager connectionManager = new ConnectionManager();
-//		this.connection = connectionManager.getConnection(databaseConfiguration);
-//	}
-	
-//	/**
-//	 * Constructor for a specific database id
-//	 * @param databaseId
-//	 * @throws TelosysToolsException
-//	 */
-//	public DatabaseInMemory(int databaseId) throws TelosysToolsException {
-//		super();
-//		DatabasesConfigurations databasesConfigurations = getDatabaseConfigurations();
-////		this.databaseId = databaseId;
-//		this.databaseConfiguration = databasesConfigurations.getDatabaseConfiguration(databaseId);
-//		ConnectionManager connectionManager = new ConnectionManager();
-//		this.connection = connectionManager.getConnection(databaseConfiguration);
-//	}
-	
-	public DatabaseInMemory(DatabaseConfiguration databaseConfiguration) throws TelosysToolsException {
+		
+	/**
+	 * @param databaseDefinition
+	 * @throws TelosysToolsException
+	 */
+	public DatabaseInMemory(DatabaseDefinition databaseDefinition) throws TelosysToolsException {
 		super();
-		this.databaseConfiguration = databaseConfiguration;
-		ConnectionManager connectionManager = new ConnectionManager();
-		this.connection = connectionManager.getConnection(databaseConfiguration);
+		this.databaseDefinition = databaseDefinition;
+		// Get a connection to the database
+		DatabaseConnectionProvider databaseConnectionProvider = new DatabaseConnectionProvider(); 
+		this.connection = databaseConnectionProvider.getConnection(databaseDefinition);
+	}
+
+	public DatabaseInMemory(TelosysToolsCfg telosysToolsCfg, String databaseId) throws TelosysToolsException {
+		super();
+		this.databaseDefinition = getDatabaseDefinition(telosysToolsCfg, databaseId);
+		// Get a connection to the database
+		DatabaseConnectionProvider databaseConnectionProvider = new DatabaseConnectionProvider(); 
+		this.connection = databaseConnectionProvider.getConnection(databaseDefinition);
 	}
 	
+	protected DatabaseDefinition getDatabaseDefinition(TelosysToolsCfg telosysToolsCfg, String databaseId) throws TelosysToolsException {
+		// Get database definitions file 
+		File dbDefinitionsFile = new File(telosysToolsCfg.getDatabasesDbCfgFileAbsolutePath());
+		// Load databases definitions
+		DatabaseDefinitionsLoader loader = new DatabaseDefinitionsLoader();
+		DatabaseDefinitions databaseDefinitions = loader.load(dbDefinitionsFile);
+		DatabaseDefinition databaseDefinition = databaseDefinitions.getDatabaseDefinition(databaseId);
+		if ( databaseDefinition != null ) {
+			return databaseDefinition;
+		}
+		else {
+			throw new TelosysToolsException("Unknown database '" + databaseId + "'");
+		}
+	}
+
 	public void close() {
 		log("DatabaseInMemory : close()....");
 		if ( connection != null ) {
@@ -72,11 +71,11 @@ public class DatabaseInMemory {
 		throw new RuntimeException("Connection null or already closed ");
 	}
 	
-	private DatabaseConfiguration getDatabaseConfigurations(int dbId) throws TelosysToolsException {
-		DbConfigManager dbConfigManager = new DbConfigManager( FileUtil.getFileByClassPath(DBCFG_FILE) );
-		DatabasesConfigurations databasesConfigurations = dbConfigManager.load();
-		return databasesConfigurations.getDatabaseConfiguration(dbId);
-	}
+//	private DatabaseConfiguration getDatabaseConfigurations(int dbId) throws TelosysToolsException {
+//		DbConfigManager dbConfigManager = new DbConfigManager( FileUtil.getFileByClassPath(DBCFG_FILE) );
+//		DatabasesConfigurations databasesConfigurations = dbConfigManager.load();
+//		return databasesConfigurations.getDatabaseConfiguration(dbId);
+//	}
 	
 	private void log(String s) {
 		System.out.println("[LOG] " + s );
@@ -125,16 +124,10 @@ public class DatabaseInMemory {
 	}
 	
 	//=====================================================================================================
-//	public int getDatabaseId() {
-//		return this.databaseId;
-//	}
-	
-	public DatabaseConfiguration getDatabaseConfiguration() {
-		return this.databaseConfiguration ;
-	}
-	
+	public DatabaseDefinition getDatabaseDefinition() {
+		return this.databaseDefinition ;
+	}	
 	public Connection getCurrentConnection() {
 		return this.connection;
 	}
-	
 }

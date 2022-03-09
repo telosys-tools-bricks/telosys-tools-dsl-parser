@@ -6,35 +6,52 @@ import java.sql.SQLException;
 import org.junit.Test;
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.TelosysToolsException;
-import org.telosys.tools.commons.dbcfg.DatabaseConfiguration;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitions;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitionsLoader;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 public class DatabaseInMemoryTest { 
 
-	protected static final int    DATABASE_ID  = 0 ;
-	protected static final String DATABASE_CFG_FILE  = "/myproject/TelosysTools/databases.dbcfg" ;
+	//protected static final String DATABASE_CFG_FILE  = "/myproject/TelosysTools/databases.dbcfg" ;
+	protected static final String DATABASE_CFG_FILE  = "/myproject/TelosysTools/databases.yaml" ;
+	//protected static final int    DATABASE_ID  = 0 ;
+	protected static final String DATABASE_ID  = "db0" ;
 
 	private void printSeparator(String s) {
 		System.out.println("========== " + s );
 	}
 	
-	private DatabaseConfiguration getDatabaseConfiguration() throws TelosysToolsException {
-		DbConfigUtil dbConfigUtil = new DbConfigUtil();
-		DatabaseConfiguration cfg = dbConfigUtil.getDatabaseConfigurations(DATABASE_CFG_FILE, DATABASE_ID);
-		if ( cfg == null) {
-			throw new IllegalStateException("Cannot get db config #" + DATABASE_ID + " from " + DATABASE_CFG_FILE);
+//	private DatabaseConfiguration getDatabaseConfiguration() throws TelosysToolsException {
+//		DbConfigUtil dbConfigUtil = new DbConfigUtil();
+//		DatabaseConfiguration cfg = dbConfigUtil.getDatabaseConfigurations(DATABASE_CFG_FILE, DATABASE_ID);
+//		if ( cfg == null) {
+//			throw new IllegalStateException("Cannot get db config #" + DATABASE_ID + " from " + DATABASE_CFG_FILE);
+//		}
+//		return cfg;
+//	}
+	private DatabaseDefinition getDatabaseDefinition() throws TelosysToolsException {
+		// Load databases definitions
+		DatabaseDefinitionsLoader loader = new DatabaseDefinitionsLoader();
+		DatabaseDefinitions databaseDefinitions = loader.load(FileUtil.getFileByClassPath(DATABASE_CFG_FILE));
+		DatabaseDefinition databaseDefinition = databaseDefinitions.getDatabaseDefinition(DATABASE_ID);
+		if ( databaseDefinition != null ) {
+			return databaseDefinition;
 		}
-		return cfg;
+		else {
+			throw new TelosysToolsException("Unknown database '" + DATABASE_ID + "'");
+		}
 	}
+	
 	
 	
 	@Test
 	public void testExecSqlscript() throws TelosysToolsException, SQLException {
 		printSeparator("testExecSqlscript");
 		
-		DatabaseInMemory databaseInMemory = new DatabaseInMemory(getDatabaseConfiguration());
+		DatabaseInMemory databaseInMemory = new DatabaseInMemory(getDatabaseDefinition());
 		Connection conn = databaseInMemory.getCurrentConnection(); 
 		assertNotNull( conn );
 		assertFalse( conn.isClosed() );
@@ -48,7 +65,7 @@ public class DatabaseInMemoryTest {
 		
 		printSeparator("test1");
 
-		DatabaseInMemory databaseInMemory = new DatabaseInMemory(getDatabaseConfiguration() );
+		DatabaseInMemory databaseInMemory = new DatabaseInMemory(getDatabaseDefinition() );
 		Connection conn = databaseInMemory.getCurrentConnection(); 
 		assertNotNull( conn );
 		assertFalse( conn.isClosed() );
@@ -68,7 +85,7 @@ public class DatabaseInMemoryTest {
 		printSeparator("test2");
 		final int sqlScriptId = 2 ;
 
-		DatabaseInMemory databaseInMemory = new DatabaseInMemory(getDatabaseConfiguration() );
+		DatabaseInMemory databaseInMemory = new DatabaseInMemory(getDatabaseDefinition() );
 		
 		databaseInMemory.executeSqlInit(sqlScriptId); // CREATE MODEL : VERSION 1
 
@@ -80,7 +97,7 @@ public class DatabaseInMemoryTest {
 	@Test
 	public void test5() throws TelosysToolsException {
 		printSeparator("test5");
-		DatabaseInMemory databaseInMemory = new DatabaseInMemory(getDatabaseConfiguration() );
+		DatabaseInMemory databaseInMemory = new DatabaseInMemory(getDatabaseDefinition() );
 		
 		databaseInMemory.executeSqlInit(5); // script 5
 		

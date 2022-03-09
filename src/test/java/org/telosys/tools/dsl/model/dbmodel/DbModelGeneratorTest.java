@@ -6,9 +6,6 @@ import org.junit.Test;
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
 import org.telosys.tools.commons.cfg.TelosysToolsCfgManager;
-import org.telosys.tools.commons.dbcfg.DatabaseConfiguration;
-import org.telosys.tools.commons.dbcfg.DatabasesConfigurations;
-import org.telosys.tools.commons.dbcfg.DbConfigManager;
 import org.telosys.tools.commons.logger.ConsoleLogger;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
@@ -40,21 +37,23 @@ public class DbModelGeneratorTest {
 		return cfgManager.loadTelosysToolsCfg();
 	}
 
-	private DatabaseConfiguration getDatabasesConfiguration(TelosysToolsCfg telosysToolsCfg, int dbId) throws TelosysToolsException {
-    	DbConfigManager dbConfigManager = new DbConfigManager(telosysToolsCfg) ;
-    	DatabasesConfigurations databasesConfigurations = dbConfigManager.load();
-    	return databasesConfigurations.getDatabaseConfiguration(dbId);
-	}
+//	private DatabaseConfiguration getDatabasesConfiguration(TelosysToolsCfg telosysToolsCfg, int dbId) throws TelosysToolsException {
+//    	DbConfigManager dbConfigManager = new DbConfigManager(telosysToolsCfg) ;
+//    	DatabasesConfigurations databasesConfigurations = dbConfigManager.load();
+//    	return databasesConfigurations.getDatabaseConfiguration(dbId);
+//	}
 	
-	private DslModel generateRepositoryModel(int dbId, String sqlFile, String modelName) throws TelosysToolsException {
+	private DslModel generateRepositoryModel(String dbId, String sqlFile, String modelName) throws TelosysToolsException {
 		
-		System.out.println("Get TelosysToolsCfg from "+ PROJECT_FOLDER);
+		System.out.println("Get TelosysToolsCfg from project '"+ PROJECT_FOLDER+"'");
 		TelosysToolsCfg telosysToolsCfg = getTelosysToolsCfg(PROJECT_FOLDER);
 
-		DatabaseConfiguration databaseConfiguration = getDatabasesConfiguration(telosysToolsCfg, dbId);
+//		DatabaseConfiguration databaseConfiguration = getDatabasesConfiguration(telosysToolsCfg, dbId);
 		
 		System.out.println("Database initialization... ");
-		DatabaseInMemory databaseInMemory = new DatabaseInMemory(databaseConfiguration);
+		System.out.println(telosysToolsCfg.getDatabasesDbCfgFile());
+//		DatabaseInMemory databaseInMemory = new DatabaseInMemory(databaseConfiguration);
+		DatabaseInMemory databaseInMemory = new DatabaseInMemory(telosysToolsCfg, dbId);
 		databaseInMemory.executeSqlFile(sqlFile);
 		// do not close DB here (keep it in memory)
 		
@@ -72,8 +71,8 @@ public class DbModelGeneratorTest {
 	public void test1() throws TelosysToolsException {
 		printSeparator("test1");
 		// DB ID 1
-		DslModel model = generateRepositoryModel(1, "customers.sql", "customers");
-		assertTrue(model.getDatabaseId() == 1 );
+		DslModel model = generateRepositoryModel("db1", "customers.sql", "customers");
+		assertEquals("db1", model.getDatabaseId() );
 		assertEquals(2, model.getEntities().size() );
 
 		DslModelEntity customerEntity = (DslModelEntity) model.getEntityByTableName("CUSTOMER") ;
@@ -127,8 +126,8 @@ public class DbModelGeneratorTest {
 	public void test2() throws TelosysToolsException {
 		printSeparator("test2");
 		
-		DslModel model = generateRepositoryModel(2, "students.sql", "students");
-		assertEquals(2, model.getDatabaseId().intValue() );
+		DslModel model = generateRepositoryModel("db2", "students.sql", "students");
+		assertEquals("db2", model.getDatabaseId() );
 		assertEquals(2, model.getEntities().size());
 
 		DslModelEntity studentEntity = (DslModelEntity) model.getEntityByTableName("STUDENT");

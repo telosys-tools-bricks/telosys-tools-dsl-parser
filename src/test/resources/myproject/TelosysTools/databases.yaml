@@ -1,26 +1,64 @@
 databases :
 
-  # First DB identified by "aaa"
-  - id: aaa
+  # DB for default schema
+  - id: db0
     name: my database AAA
+    # JDBC connection
     url: jdbc:h2:mem:test;DB_CLOSE_DELAY=0
     driver: org.h2.Driver
     user: sa
     password: sa
-    catalog: CUSTOMERS
-    schema:
-    table-name-pattern:
-    table-types:
+    # Metadata parameters
+    catalog: !
+    schema: !
+    tableNamePattern:
+    tableNameInclude:
+    tableNameExclude:
+    tableTypes: TABLE
+    # DB model creation
+    dbModelName:
+    # Telosys DSL model creation 
+    linksManyToOne: true
+    linksOneToMany: false
+
+  # DB for "CUSTOMERS" schema
+  - id: db1
+    name: my database AAA
+    # JDBC connection
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=0
+    driver: org.h2.Driver
+    user: sa
+    password: sa
+    # Metadata parameters
+    catalog: !
+    schema: CUSTOMERS
+    tableNamePattern:
+    tableNameInclude:
+    tableNameExclude:
+    tableTypes: TABLE
+    # DB model creation
+    dbModelName:
+    # Telosys DSL model creation 
+    linksManyToOne: true
+    linksOneToMany: false
     
-  # Second DB identified by "bbb"
-  - id: bbb
+  # DB for "STUDENTS" schema
+  - id: db2
     name: my database BBB
+    # JDBC connection
     url: jdbc:h2:mem:test;DB_CLOSE_DELAY=0
     driver: org.h2.Driver
     user: sa
     password: sa
-    catalog: STUDENTS
-    schema:
-    table-name-pattern:
-    table-types:
-    
+    # Metadata parameters
+    catalog: !
+    schema: STUDENTS
+    tableNamePattern:
+    tableNameInclude:
+    tableNameExclude:
+    tableTypes: TABLE
+    # DB model creation
+    dbModelName:
+    # Telosys DSL model creation 
+    linksManyToOne: true
+    linksOneToMany: false
