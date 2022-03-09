@@ -26,6 +26,7 @@ import org.telosys.tools.commons.dbcfg.yaml.DatabaseConnectionProvider;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitions;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitionsLoader;
+import org.telosys.tools.commons.exception.TelosysRuntimeException;
 import org.telosys.tools.db.model.DatabaseModelManager;
 import org.telosys.tools.db.model.DatabaseTables;
 import org.telosys.tools.dsl.commons.ModelInfo;
@@ -51,10 +52,23 @@ public class DbToModelManager {
 	 */
 	public DbToModelManager(TelosysToolsCfg telosysToolsCfg, TelosysToolsLogger logger) {
 		super();
+		if ( telosysToolsCfg == null ) {
+			throw new IllegalArgumentException("TelosysToolsCfg is null");
+		}
+		if ( logger == null ) {
+			throw new IllegalArgumentException("TelosysToolsLogger is null");
+		}
 		this.telosysToolsCfg = telosysToolsCfg ;
 		this.logger = logger;
 	}
 	
+	/**
+	 * Creates a new DSL model from the given database
+	 * @param databaseId
+	 * @param modelName
+	 * @return
+	 * @throws TelosysToolsException
+	 */
 	public DslModel createModelFromDatabase(String databaseId, String modelName) throws TelosysToolsException {
 
 		// STEP 1 : init model from database (in memory) 
@@ -127,14 +141,11 @@ public class DbToModelManager {
 		// Convert DB-Model to DSL-Model
 		DbToModelConverter modelConverter = new DbToModelConverter(logger);
 		ModelInfo modelInfo = new ModelInfo();
-//		modelInfo.setTitle("Model created from database " + databaseConfig.getDatabaseName() );
 		modelInfo.setTitle("Model created from database " + databaseDefinition.getName() );
 
 		DslModel model = modelConverter.createModel(modelName, modelInfo, dbTables);
 		
 		// Add additional information in model
-//		model.setDatabaseId(databaseConfig.getDatabaseId());
-//		model.setDatabaseProductName(databaseConfig.getTypeName());
 		model.setDatabaseId(databaseDefinition.getId());
 		model.setDatabaseName(databaseDefinition.getName());
 		model.setDatabaseType(databaseDefinition.getType());

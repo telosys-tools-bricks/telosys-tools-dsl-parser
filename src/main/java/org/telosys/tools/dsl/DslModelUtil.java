@@ -22,7 +22,9 @@ import java.util.List;
 import org.telosys.tools.commons.DirUtil;
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.commons.logger.ConsoleLogger;
 import org.telosys.tools.dsl.commons.ModelInfo;
+import org.telosys.tools.dsl.model.dbmodel.DbToModelManager;
 import org.telosys.tools.dsl.model.writer.ModelInfoFileWriter;
 
 public class DslModelUtil {
