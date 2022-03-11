@@ -64,8 +64,8 @@ public class EntityConverter extends AbstractConverter {
 		// Apply tags if any
 		step3ApplyTags(dslEntity, domainEntity);
 		
-		// Finalize attribute state
-		step4FinalizeEntity(dslEntity);
+		// Finalize attribute state (if necessary)
+		// create "step4FinalizeEntity(dslEntity)" method 
 		
 		return dslEntity;
 	}
@@ -128,11 +128,5 @@ public class EntityConverter extends AbstractConverter {
 	private void step3ApplyTags(DslModelEntity dslEntity, DomainEntity domainEntity) {
 		tagsConverter.applyTagsToEntity(dslEntity, domainEntity);  // new in v 3.4.0
 	}
-	
-	/**
-	 * Finalize the given entity
-	 * @param dslEntity
-	 */
-	private void step4FinalizeEntity(DslModelEntity dslEntity) {	
-	}
+
 }

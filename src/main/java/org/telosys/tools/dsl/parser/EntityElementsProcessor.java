@@ -60,7 +60,7 @@ public class EntityElementsProcessor {
 		DomainEntity domainEntity = new DomainEntity(entityName);
 		for ( Element element : elements ) {
 			if ( ! inFields ) {
-				if ( element.equals("{") ) {
+				if ( element.contentEquals("{") ) {
 					// Fields start here
 					inFields = true;
 				}
@@ -74,7 +74,7 @@ public class EntityElementsProcessor {
 //				}
 			}
 			else {
-				if ( element.equals("}") && fieldElements == null ) {
+				if ( element.contentEquals("}") && fieldElements == null ) {
 					// Closing brace and not in a field definition => End of fields
 					inFields = false;
 				}
@@ -83,7 +83,7 @@ public class EntityElementsProcessor {
 					if ( fieldElements == null ) {
 						fieldElements = new LinkedList<>();
 					}
-					if ( element.equals(";") ) {
+					if ( element.contentEquals(";") ) {
 						// End of field definition => process this field
 //						DomainField field = fieldElementsProcessor.processFieldElements(fieldElements, errors);
 //						if ( field != null ) {
@@ -146,7 +146,7 @@ public class EntityElementsProcessor {
 		else {
 			// Supposed to be the entity name 
 			if ( ! entityNameChecked ) {
-				if ( element.equals(entityName) ) {
+				if ( element.contentEquals(entityName) ) {
 					entityNameChecked = true ;
 				}
 				else {

@@ -201,14 +201,14 @@ public class FieldElementsProcessor {
 		for ( Element element : elements ) {
 			position++;
 			if ( position > 3 ) { // Skip "field name", ":" and "field type"
-				if ( element.equals("{") ) {
+				if ( element.contentEquals("{") ) {
 					if ( openingBracePosition != 0 ) {
 						throw new DslModelError(entityName, element.getLineNumber(), fieldName, "multiple '{' ");
 					}
 					inAnnotationsAndTags = true ;
 					openingBracePosition = position ;
 				}
-				else if ( element.equals("}") ) {
+				else if ( element.contentEquals("}") ) {
 					if ( closingBracePosition != 0 ) {
 						throw new DslModelError(entityName, element.getLineNumber(), fieldName, "multiple '}' ");
 					}

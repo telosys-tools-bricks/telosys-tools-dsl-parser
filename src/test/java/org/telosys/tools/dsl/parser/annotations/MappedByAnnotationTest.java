@@ -68,6 +68,7 @@ public class MappedByAnnotationTest {
 		DslModelEntity entity = (DslModelEntity) model.getEntityByClassName("Teacher");
 		DslModelLink link = (DslModelLink) entity.getLinkByFieldName("students");
 		da.applyToLink(model, entity, link);
+		assertEquals("teacher", link.getMappedBy());
 	}
 	
 	@Test 
@@ -77,6 +78,6 @@ public class MappedByAnnotationTest {
 		DslModelEntity entity = (DslModelEntity) model.getEntityByClassName("Teacher");
 		DslModelLink link = (DslModelLink) entity.getLinkByFieldName("students");
 		da.applyToLink(model, entity, link); // Not checked at this step
-		
+		assertEquals("unknown", link.getMappedBy());		
 	}
 }

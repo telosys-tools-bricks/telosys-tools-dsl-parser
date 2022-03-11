@@ -148,7 +148,12 @@ public class DomainModel {
      * @param entity
      */
     public final void addEntity(DomainEntity entity) {
-        entities.put(entity.getName(), entity);
+    	if ( entities.get(entity.getName())  != null ) {
+    		throw new IllegalStateException("Entity '" + entity.getName() + "' allready defined");
+    	}
+    	else {
+            entities.put(entity.getName(), entity);
+    	}
     }
 
     /**

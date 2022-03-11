@@ -53,7 +53,7 @@ public class Element {
 		return content != null && content.startsWith("#") ; 
 	}
 	
-	public boolean equals(String s) {
+	public boolean contentEquals(String s) {
 		return content != null && content.equals(s);
 	}
 	

@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.DslModelError;
-import org.telosys.tools.dsl.parser.Element;
-import org.telosys.tools.dsl.parser.EntityElementsParser;
 
 import static org.junit.Assert.assertEquals;
 
@@ -43,13 +41,17 @@ public class EntityElementsParserTest {
 
 	@Test
 	public void testEntityFileParserV33() throws DslModelError {
-		parseEntityFile("src/test/resources/entity_test_v_3_3/Country.entity");
-		parseEntityFile("src/test/resources/entity_test_v_3_3/Employee.entity");
+		List<Element> elements;
+		elements = parseEntityFile("src/test/resources/entity_test_v_3_3/Country.entity");
+		assertEquals(21, elements.size());
+		elements = parseEntityFile("src/test/resources/entity_test_v_3_3/Employee.entity");
+		assertEquals(83, elements.size());
 	}
 
 	@Test
 	public void testEntityFileParserV32() throws DslModelError {
-		parseEntityFile("src/test/resources/entity_test_v_3_2/Employee.entity");
+		List<Element> elements = parseEntityFile("src/test/resources/entity_test_v_3_2/Employee.entity");
+		assertEquals(111, elements.size());
 	}
 
 	private List<Element> parseLine(String line) throws DslModelError {

@@ -11,12 +11,10 @@ import static org.junit.Assert.assertTrue;
 
 public class DomainModelTest {
 	
-	private final static String     MODEL_FILE_NAME = "test.model" ;
-//	private final static Properties MODEL_PROPERTIES = null ;
+	private static final String     MODEL_FILE_NAME = "test.model" ;
 
 	@Test
 	public void testEntity() {
-//		DomainModel model = new DomainModel(MODEL_FILE_NAME, MODEL_PROPERTIES);
 		DomainModel model = new DomainModel(MODEL_FILE_NAME, new ModelInfo());
 		assertTrue( model.getNumberOfEntities() == 0 ) ;
 		
@@ -36,24 +34,17 @@ public class DomainModelTest {
 		
 		List<String> entityNames = model.getEntityNames();
 		assertTrue(entityNames.size() == 3 ) ;		
-		System.out.println("Entity names : ");
-		for ( String name : entityNames ) {
-			System.out.println(" . " + name);
-		}
+//		System.out.println("Entity names : ");
+//		for ( String name : entityNames ) {
+//			System.out.println(" . " + name);
+//		}
 	}
 
-//	@Test ( expected = DslParserException.class )
-	@Test
+	@Test ( expected = IllegalStateException.class )
 	public void testEntityDuplicated() {
 		DomainModel model = new DomainModel(MODEL_FILE_NAME, new ModelInfo());
 		model.addEntity( new DomainEntity("Book") );
 		model.addEntity( new DomainEntity("Book") ); // ERROR expected
-	}
-
-	@Test
-	public void testEntityWithNeutralTypeName() {
-		DomainModel model = new DomainModel(MODEL_FILE_NAME, new ModelInfo());
-		model.addEntity( new DomainEntity("string") ); // ERROR expected
 	}
 
 }

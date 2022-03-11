@@ -77,5 +77,7 @@ public class DbTableAnnotationTest {
 		DslModel model = FakeModelStudent.buildModel();
 		DslModelEntity entity = (DslModelEntity) model.getEntityByClassName("Teacher");
 		da.applyToEntity(model, entity);
+		
+		assertEquals( "TEACHER", entity.getDatabaseTable()); 
 	}
 }
