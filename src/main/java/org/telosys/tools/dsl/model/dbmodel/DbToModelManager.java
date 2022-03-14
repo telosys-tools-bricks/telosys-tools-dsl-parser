@@ -19,6 +19,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.TelosysToolsLogger;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
@@ -156,19 +157,23 @@ public class DbToModelManager {
 	private DatabaseTables getDatabaseTablesFromDb(Connection con, DatabaseDefinition databaseDefinition) throws TelosysToolsException {
 		
 		String tableNamePattern = databaseDefinition.getTableNamePattern();
-		if (tableNamePattern == null) {
+//		if (tableNamePattern == null) {
+		if ( StrUtil.nullOrVoid(tableNamePattern) ) {
+			// Not set => use "%" by default
 			tableNamePattern = "%";
 		}
 
-		logger.log("   ... Metadata parameters : ");
-		logger.log("   ... * Catalog = " + databaseDefinition.getCatalog());
-		logger.log("   ... * Schema  = " + databaseDefinition.getSchema());
-		logger.log("   ... * Table Name Pattern  = " + tableNamePattern);
 		StringBuilder sb = new StringBuilder();
 		for (String s : databaseDefinition.getTableTypesArray() ) {
 			sb.append("[" + s + "] ");
 		}
-		logger.log("   ... * Table Types Array  = " + sb.toString());
+		logger.log("   Metadata parameters : ");
+		logger.log("    . Catalog = " + databaseDefinition.getCatalog());
+		logger.log("    . Schema  = " + databaseDefinition.getSchema());
+		logger.log("    . Table Name Pattern = " + tableNamePattern);
+		logger.log("    . Table Types Array  = " + sb.toString());
+		logger.log("    . Table Name Include = " + databaseDefinition.getTableNameInclude());
+		logger.log("    . Table Name Exclude = " + databaseDefinition.getTableNameExclude());
 
 		//--- Load the Database Model
 		DatabaseModelManager manager = new DatabaseModelManager();

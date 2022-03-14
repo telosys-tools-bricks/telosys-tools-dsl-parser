@@ -7,6 +7,7 @@ import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.cfg.TelosysToolsCfg;
 import org.telosys.tools.commons.cfg.TelosysToolsCfgManager;
 import org.telosys.tools.commons.logger.ConsoleLogger;
+import org.telosys.tools.commons.logger.GlobalLoggingConfig;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.generic.model.Attribute;
@@ -59,7 +60,9 @@ public class DbModelGeneratorTest {
 		
 		System.out.println("DSL model creation from database... ");
 		DbToModelManager manager = new DbToModelManager(telosysToolsCfg, new ConsoleLogger() );
+		GlobalLoggingConfig.enableLog();
 		DslModel model = manager.createModelFromDatabase(dbId, modelName);
+		GlobalLoggingConfig.disableLog();
 
 		databaseInMemory.close();
 		

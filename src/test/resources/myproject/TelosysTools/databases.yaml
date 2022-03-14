@@ -10,7 +10,7 @@ databases :
     password: sa
     # Metadata parameters
     catalog: !
-    schema: !
+    schema: CUSTOMERS
     tableNamePattern:
     tableNameInclude:
     tableNameExclude:
