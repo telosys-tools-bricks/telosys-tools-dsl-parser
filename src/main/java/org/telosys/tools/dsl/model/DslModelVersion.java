@@ -20,7 +20,7 @@ package org.telosys.tools.dsl.model;
  */
 public class DslModelVersion {
 
-    public static final String VERSION = "3.4.0";
+    public static final String VERSION = "4.0.0";
 
     private DslModelVersion(){}
 }
