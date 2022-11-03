@@ -152,8 +152,8 @@ public class DbModelGeneratorTest {
 		assertTrue(studentTeacherCode1.hasFKParts());
 		assertEquals(1, studentTeacherCode1.getFKParts().size() );
 		ForeignKeyPart fkPart = studentTeacherCode1.getFKParts().get(0);
-		assertEquals ("Teacher", fkPart.getReferencedEntity());
-		assertEquals ("code", fkPart.getReferencedAttribute());
+		assertEquals ("Teacher", fkPart.getReferencedEntityName());
+		assertEquals ("code", fkPart.getReferencedAttributeName());
 		assertTrue(studentTeacherCode1.isFK());
 		assertTrue(studentTeacherCode1.isFKSimple());
 		assertFalse(studentTeacherCode1.isFKComposite());
@@ -163,8 +163,8 @@ public class DbModelGeneratorTest {
 		assertNotNull(studentTeacherCode2);
 		assertEquals(1, studentTeacherCode2.getFKParts().size() );
 		fkPart = studentTeacherCode2.getFKParts().get(0);
-		assertEquals ("Teacher", fkPart.getReferencedEntity());
-		assertEquals ("code", fkPart.getReferencedAttribute());
+		assertEquals ("Teacher", fkPart.getReferencedEntityName());
+		assertEquals ("code", fkPart.getReferencedAttributeName());
 		assertTrue(studentTeacherCode2.isFK());
 		assertTrue(studentTeacherCode2.isFKSimple());
 		assertFalse(studentTeacherCode2.isFKComposite());

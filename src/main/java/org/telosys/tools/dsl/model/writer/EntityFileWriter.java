@@ -353,14 +353,14 @@ public class EntityFileWriter extends AbstractWriter {
 			sb.append(", ") ;
 		}
 		// Referenced entity (mandatory)
-		if ( StrUtil.nullOrVoid(fkPart.getReferencedEntity() ) ) {
+		if ( StrUtil.nullOrVoid(fkPart.getReferencedEntityName() ) ) {
 			throw new IllegalStateException("ForeignKeyPart has no referenced entity");
 		}
-		sb.append(fkPart.getReferencedEntity()) ;
+		sb.append(fkPart.getReferencedEntityName()) ;
 		// Referenced attribute (optional if FK not composite)
-		if ( ! StrUtil.nullOrVoid( fkPart.getReferencedAttribute() ) ) {
+		if ( ! StrUtil.nullOrVoid( fkPart.getReferencedAttributeName() ) ) {
 			sb.append(".") ;
-			sb.append(fkPart.getReferencedAttribute());
+			sb.append(fkPart.getReferencedAttributeName());
 		}
 		sb.append(")") ;
 		return sb.toString();

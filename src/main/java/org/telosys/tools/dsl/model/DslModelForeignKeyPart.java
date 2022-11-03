@@ -21,10 +21,8 @@ import org.telosys.tools.generic.model.ForeignKeyPart;
 public class DslModelForeignKeyPart implements ForeignKeyPart
 {		
 	private String fkName;
-//	private String referencedTable; // removed in v 3.4.0
-//	private String referencedColumn; // removed in v 3.4.0
-	private String referencedEntity;
-	private String referencedAttribute;
+	private String referencedEntityName;
+	private String referencedAttributeName;
 	
 	private IllegalArgumentException newNullOrVoidArg(String argumentName) {
 		return new IllegalArgumentException("DslModelForeignKeyPart constructor : " 
@@ -34,23 +32,18 @@ public class DslModelForeignKeyPart implements ForeignKeyPart
 	/**
 	 * Constructor
 	 * @param fkName
-	 * @param referencedEntity
-	 * @param referencedAttribute
+	 * @param referencedEntityName
+	 * @param referencedAttributeName
 	 */
 	public DslModelForeignKeyPart(String fkName, 
-//			String referencedTable, String referencedColumn, // removed in v 3.4.0
-			String referencedEntity, String referencedAttribute) {
+			String referencedEntityName, String referencedAttributeName) {
 		super();
 		if ( StrUtil.nullOrVoid(fkName) ) throw newNullOrVoidArg("fkName");
-//		if ( StrUtil.nullOrVoid(referencedTable) ) throw newNullOrVoidArg("referencedTable"); // removed in v 3.4.0
-//		if ( StrUtil.nullOrVoid(referencedColumn) ) throw newNullOrVoidArg("referencedColumn"); // removed in v 3.4.0
-		if ( StrUtil.nullOrVoid(referencedEntity) ) throw newNullOrVoidArg("referencedEntity");
-		if ( StrUtil.nullOrVoid(referencedAttribute) ) throw newNullOrVoidArg("referencedAttribute");
+		if ( StrUtil.nullOrVoid(referencedEntityName) ) throw newNullOrVoidArg("referencedEntityName");
+		if ( StrUtil.nullOrVoid(referencedAttributeName) ) throw newNullOrVoidArg("referencedAttributeName");
 		this.fkName = fkName;
-//		this.referencedTable = referencedTable; // removed in v 3.4.0
-//		this.referencedColumn = referencedColumn; // removed in v 3.4.0
-		this.referencedEntity = referencedEntity;
-		this.referencedAttribute = referencedAttribute;
+		this.referencedEntityName = referencedEntityName;
+		this.referencedAttributeName = referencedAttributeName;
 	}
 
 	@Override
@@ -58,24 +51,13 @@ public class DslModelForeignKeyPart implements ForeignKeyPart
 		return fkName;
 	}
 
-	// removed in v 3.4.0
-//	@Override
-//	public String getReferencedTable() {
-//		return referencedTable;
-//	}
-//
-//	@Override
-//	public String getReferencedColumn() {
-//		return referencedColumn;
-//	}
-
 	@Override
-	public String getReferencedEntity() {
-		return referencedEntity;
+	public String getReferencedEntityName() {
+		return referencedEntityName;
 	}
 
 	@Override
-	public String getReferencedAttribute() {
-		return referencedAttribute;
+	public String getReferencedAttributeName() {
+		return referencedAttributeName;
 	}
 }

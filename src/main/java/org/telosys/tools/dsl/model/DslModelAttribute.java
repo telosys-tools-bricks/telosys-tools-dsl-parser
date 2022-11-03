@@ -40,13 +40,18 @@ public class DslModelAttribute implements Attribute {
 	private String databaseName = "";
 	private String databaseSize = ""; // String for size with comma ( eg "8,2" )
 	private String databaseType = "";
+	
+//	private boolean isDateAfter = false;
+//	private boolean isDateBefore = false;
+	private boolean isDateFuture = false; // @Future
+	private boolean isDatePast = false; // @Past
 	private String dateAfterValue = "";
 	private String dateBeforeValue = "";
+	
 	private DateType dateType = DateType.UNDEFINED;
 	private String defaultValue = "" ; 
 	private Entity entity;
 	private String generatedValueGeneratorName;
-//	private String generatedValueStrategy;
 	private GeneratedValueStrategy generatedValueStrategy = GeneratedValueStrategy.UNDEFINED; // v 3.4.0
 	private String initialValue = "" ; 
 	private String inputType = "" ; 
@@ -59,28 +64,19 @@ public class DslModelAttribute implements Attribute {
 	private BigDecimal minValue;
 	private String pattern = "" ; // ver 3.2.0
 	private Integer generatedValueAllocationSize;
-//	private String sequenceGeneratorName; // removed in v 3.4.0
 	private String generatedValueSequenceName;
-//	private String tableGeneratorName; // removed in v 3.4.0
 	private String generatedValueTablePkColumnName;
 	private String generatedValueTablePkColumnValue;
 	private String generatedValueTableName;
 	private String generatedValueTableValueColumnName;
 	private boolean autoIncremented = false ;
 	private boolean databaseNotNull = false ;
-//	private boolean generatedValue = false; // removed v 3.4.0
 	private boolean keyElement = false;
 	private boolean longText = false;
 	private boolean notBlank = false;
 	private boolean notEmpty = false;
 	private boolean notNull = false;
 	private boolean selected = true; // SELECTED BY DEFAULT
-//	private boolean hasSequenceGenerator = false; // removed v 3.4.0
-//	private boolean hasTableGenerator = false; // removed v 3.4.0
-	private boolean isDateAfter = false;
-	private boolean isDateBefore = false;
-	private boolean isDateFuture = false;
-	private boolean isDatePast = false;
     private boolean isTransient = false ; // v 3.3.0
 	
 	// An attribute can be involved in many FK, it can be both in a SIMPLE FK and in a COMPOSITE FK 
@@ -94,9 +90,7 @@ public class DslModelAttribute implements Attribute {
 	private boolean isUnsignedTypeExpected = false ;
 	private boolean isObjectTypeExpected = false ;
 	
-//	private Map<String, String> tagsMap = null ; // Tags added in v 3.3.0
     private TagContainer tagContainer = new Tags() ;  // Init with void Tags (never null) // v 3.4.0
-
 	
     private BooleanValue insertable = BooleanValue.UNDEFINED; // Added in v 3.3.0
     private BooleanValue updatable  = BooleanValue.UNDEFINED; // Added in v 3.3.0
@@ -258,14 +252,6 @@ public class DslModelAttribute implements Attribute {
 
 	//----------------------------------------------------------------------------------------
 	
-//	@Override
-//	public String getTableGeneratorName() {
-//		return tableGeneratorName;
-//	}
-//	public void setTableGeneratorName(String tableGeneratorName) {
-//		this.tableGeneratorName = tableGeneratorName;
-//	}
-
 	@Override
 	public String getGeneratedValueTableName() {
 		return generatedValueTableName;
@@ -273,7 +259,6 @@ public class DslModelAttribute implements Attribute {
 	public void setGeneratedValueTableName(String tableName) {
 		this.generatedValueTableName = tableName;
 	}
-
 
 	@Override
 	public String getGeneratedValueTablePkColumnName() {
@@ -321,17 +306,17 @@ public class DslModelAttribute implements Attribute {
 	public Integer getJdbcTypeCode() {
 		return jdbcTypeCode;
 	}
-	public void setJdbcTypeCode(Integer jdbcTypeCode) {
-		this.jdbcTypeCode = jdbcTypeCode;
-	}
+//	public void setJdbcTypeCode(Integer jdbcTypeCode) {
+//		this.jdbcTypeCode = jdbcTypeCode;
+//	}
 
 	@Override
 	public String getJdbcTypeName() {
 		return jdbcTypeName;
 	}
-	public void setJdbcTypeName(String jdbcTypeName) {
-		this.jdbcTypeName = jdbcTypeName;
-	}
+//	public void setJdbcTypeName(String jdbcTypeName) {
+//		this.jdbcTypeName = jdbcTypeName;
+//	}
 
 	@Override
 	public String getLabel() {
@@ -381,32 +366,6 @@ public class DslModelAttribute implements Attribute {
 		this.pattern = pattern;
 	}
 
-//	@Override
-//	public String getSequenceGeneratorName() {
-//		return sequenceGeneratorName;
-//	}
-//	public void setSequenceGeneratorName(String sequenceGeneratorName) {
-//		this.sequenceGeneratorName = sequenceGeneratorName;
-//	}
-
-//	@Override
-//	public boolean hasSequenceGenerator() {
-////		return hasSequenceGenerator;
-//		return generatedValueStrategy == GeneratedValueStrategy.SEQUENCE ; // v 3.4.0
-//	}
-//	public void setHasSequenceGenerator(boolean hasSequenceGenerator) {
-//		this.hasSequenceGenerator = hasSequenceGenerator;
-//	}
-
-//	@Override
-//	public boolean hasTableGenerator() {
-////		return hasTableGenerator;
-//		return generatedValueStrategy == GeneratedValueStrategy.TABLE ; // v 3.4.0
-//	}
-//	public void setHasTableGenerator(boolean hasTableGenerator) {
-//		this.hasTableGenerator = hasTableGenerator;
-//	}
-
 	@Override
 	public boolean isAutoIncremented() {
 		return autoIncremented;
@@ -423,35 +382,35 @@ public class DslModelAttribute implements Attribute {
 		this.databaseNotNull = databaseNotNull;
 	}
 
-	@Override
-	public boolean isDateAfter() {
-		return isDateAfter;
-	}
-	public void setDateAfter(boolean isDateAfter) {
-		this.isDateAfter = isDateAfter;
-	}
+//	@Override
+//	public boolean isDateAfter() {
+//		return isDateAfter;
+//	}
+//	public void setDateAfter(boolean isDateAfter) {
+//		this.isDateAfter = isDateAfter;
+//	}
+
+//	@Override
+//	public boolean isDateBefore() {
+//		return isDateBefore;
+//	}
+//	public void setDateBefore(boolean isDateBefore) {
+//		this.isDateBefore = isDateBefore;
+//	}
 
 	@Override
-	public boolean isDateBefore() {
-		return isDateBefore;
-	}
-	public void setDateBefore(boolean isDateBefore) {
-		this.isDateBefore = isDateBefore;
-	}
-
-	@Override
-	public boolean isDateFuture() {
+	public boolean isDateFuture() { // @Future
 		return isDateFuture;
 	}
-	public void setDateFuture(boolean isDateFuture) {
+	public void setDateFuture(boolean isDateFuture) { // @Future
 		this.isDateFuture = isDateFuture;
 	}
 
 	@Override
-	public boolean isDatePast() {
+	public boolean isDatePast() { // @Past
 		return isDatePast;
 	}
-	public void setDatePast(boolean isDatePast) {
+	public void setDatePast(boolean isDatePast) { // @Past
 		this.isDatePast = isDatePast;
 	}
 
