@@ -55,8 +55,9 @@ public class DslModelAttribute implements Attribute {
 	private GeneratedValueStrategy generatedValueStrategy = GeneratedValueStrategy.UNDEFINED; // v 3.4.0
 	private String initialValue = "" ; 
 	private String inputType = "" ; 
-	private Integer jdbcTypeCode;
-	private String jdbcTypeName = "";
+// removed in ver 4.1
+//	private Integer jdbcTypeCode;
+//	private String jdbcTypeName = "";
 	private String label = "" ; 
 	private Integer maxLength;
 	private Integer minLength;
@@ -302,18 +303,19 @@ public class DslModelAttribute implements Attribute {
 		this.inputType = inputType;
 	}
 
-	@Override
-	public Integer getJdbcTypeCode() {
-		return jdbcTypeCode;
-	}
+// removed in ver 4.1
+//	@Override
+//	public Integer getJdbcTypeCode() {
+//		return jdbcTypeCode;
+//	}
 //	public void setJdbcTypeCode(Integer jdbcTypeCode) {
 //		this.jdbcTypeCode = jdbcTypeCode;
 //	}
-
-	@Override
-	public String getJdbcTypeName() {
-		return jdbcTypeName;
-	}
+//
+//	@Override
+//	public String getJdbcTypeName() {
+//		return jdbcTypeName;
+//	}
 //	public void setJdbcTypeName(String jdbcTypeName) {
 //		this.jdbcTypeName = jdbcTypeName;
 //	}
