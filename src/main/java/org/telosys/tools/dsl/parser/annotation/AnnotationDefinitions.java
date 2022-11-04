@@ -64,6 +64,7 @@ import org.telosys.tools.dsl.parser.annotations.NotNullAnnotation;
 import org.telosys.tools.dsl.parser.annotations.ObjectTypeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.OneToOneAnnotation;
 import org.telosys.tools.dsl.parser.annotations.OptionalAnnotation;
+import org.telosys.tools.dsl.parser.annotations.OrphanRemovalAnnotation;
 import org.telosys.tools.dsl.parser.annotations.PackageAnnotation;
 import org.telosys.tools.dsl.parser.annotations.PastAnnotation;
 import org.telosys.tools.dsl.parser.annotations.PatternAnnotation;
@@ -126,7 +127,6 @@ public class AnnotationDefinitions {
 		annotationDefinitions.add(new FetchTypeLazyAnnotation());
 		annotationDefinitions.add(new MappedByAnnotation());
 		annotationDefinitions.add(new LinkByAttrAnnotation());
-//		annotationDefinitions.add(new LinkByColAnnotation());
 		annotationDefinitions.add(new LinkByFKAnnotation());
 		annotationDefinitions.add(new ManyToManyAnnotation());
 		annotationDefinitions.add(new OneToOneAnnotation());
@@ -156,6 +156,10 @@ public class AnnotationDefinitions {
 		annotationDefinitions.add(new AggregateRootAnnotation());
 		annotationDefinitions.add(new DomainAnnotation());
 		annotationDefinitions.add(new ContextAnnotation());
+		
+		//--- Added in ver 4.1.0
+		annotationDefinitions.add(new OrphanRemovalAnnotation()); 
+
 	}
 	
 	private AnnotationDefinitions() {

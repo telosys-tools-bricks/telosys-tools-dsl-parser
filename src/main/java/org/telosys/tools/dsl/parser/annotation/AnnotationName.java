@@ -105,6 +105,7 @@ public class AnnotationName {
 	public static final String DOMAIN         = "Domain";   // v 3.4.0 (DDD)
 	public static final String CONTEXT        = "Context";  // v 3.4.0 (DDD)
 	
+	public static final String ORPHAN_REMOVAL = "OrphanRemoval";  // v 4.1.0 (ORM)
 	// ???
 //	public static final String EXTERNAL_ENTITY  = "ExternalEntity"; // v 3.4.0
 //	public static final String ENUM     = "Enum"; // v 3.4.0

@@ -12,12 +12,14 @@ import org.telosys.tools.dsl.parser.model.DomainNeutralType;
 
 public class AnnotationTool {
 	
+	private static final String ENTITY_NAME = "MyEntity";
+	
 	private AnnotationTool() {}
 	
 	public static DomainAnnotation parseAnnotationInEntity(String annotation) throws DslModelError {
 		Element element = new Element(2, annotation);
 		// Entity level
-		DomainEntity entity = new DomainEntity("MyEntity");
+		DomainEntity entity = new DomainEntity(ENTITY_NAME);
 		AnnotationProcessor annotationProcessor =  new AnnotationProcessor(entity);
 		// Parse
 		return annotationProcessor.parseAnnotation(element);
@@ -27,7 +29,7 @@ public class AnnotationTool {
 		Element element = new Element(2, annotation);
 		// Field : Attribute
 		DomainField field = new DomainField(12, "name", new DomainNeutralType("string") );
-		AnnotationProcessor annotationProcessor =  new AnnotationProcessor("MyEntity", field);
+		AnnotationProcessor annotationProcessor =  new AnnotationProcessor(ENTITY_NAME, field);
 		// Parse
 		return annotationProcessor.parseAnnotation(element);
 	}
@@ -36,7 +38,7 @@ public class AnnotationTool {
 		Element element = new Element(2, annotation);
 		// Field : Link
 		DomainField field = new DomainField(12, "country", new DomainEntityType("Country", DomainCardinality.ONE ) );
-		AnnotationProcessor annotationProcessor =  new AnnotationProcessor("MyEntity", field);
+		AnnotationProcessor annotationProcessor =  new AnnotationProcessor(ENTITY_NAME, field);
 		// Parse
 		return annotationProcessor.parseAnnotation(element);
 	}

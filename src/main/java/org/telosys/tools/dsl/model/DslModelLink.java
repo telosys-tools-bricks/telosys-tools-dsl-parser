@@ -72,6 +72,8 @@ public class DslModelLink implements Link {
 
     // Tags added in v 3.4.0 
     private TagContainer tagContainer = new Tags() ;  // Init with void Tags (never null)
+    
+    private boolean orphanRemoval = false; // Added in v 4.1.0
 
     /**
      * Constructor
@@ -336,5 +338,15 @@ public class DslModelLink implements Link {
 	public TagContainer getTagContainer() {
 		return this.tagContainer;
 	}
+
+	
+    @Override
+    public boolean isOrphanRemoval() {
+        return this.orphanRemoval;
+    }
+    public void setOrphanRemoval(boolean b) {
+        this.orphanRemoval = b;
+    }
+    
 
 }
