@@ -36,26 +36,11 @@ public class AnnotationProcessor extends AnnotationAndTagProcessor {
 	private final DomainEntity entity; // to work at ENTITY level
 	private final DomainField field; // to work at FIELD level
 	
-//	/**
-//	 * Constructor for parsing at ENTITY level
-//	 * 
-//	 * @param entityName
-//	 */
 	public AnnotationProcessor(DomainEntity entity) {
 		super(entity.getName());
 		this.entity = entity;
 		this.field = null ;
 	}
-	
-//	/**
-//	 * Constructor for parsing at FIELD level
-//	 * 
-//	 * @param entityName
-//	 * @param fieldName
-//	 */
-//	public AnnotationProcessor(String entityName, String fieldName) {
-//		super(entityName, fieldName);
-//	}
 	
 	public AnnotationProcessor(String entityName, DomainField field) {
 		super(entityName, field.getName());
@@ -70,27 +55,6 @@ public class AnnotationProcessor extends AnnotationAndTagProcessor {
 	 * @throws DslModelError
 	 */
 	public DomainAnnotation parseAnnotation(Element element) throws DslModelError {
-		
-//		// get the name 
-//		String annotationName = getName(element);
-//
-//		// get the raw parameter value if any
-//		String annotationParameter = getParameterValue(element);
-//
-//		// use annotation definition to build a new annotation instance
-//		AnnotationDefinition ad = AnnotationDefinitions.get(annotationName);
-//		if ( ad != null ) {
-//			try {
-//				DomainAnnotation annotation = buildAnnotation(annotationName, annotationParameter, ad.getParamType());
-//				ad.afterCreation(getEntityName(), getFieldName(), annotation);
-//				return annotation;
-//			} catch (ParamError e) {
-//				throw newError(element.getLineNumber(), "'" + element.getContent() + "' : " + e.getMessage() );
-//			} 
-//		}
-//		else {
-//			throw newError(element.getLineNumber(), "'" + element.getContent() + "' : unknown annotation");
-//		}
 		DomainAnnotation annotation = buildAnnotation(element);
 		checkAnnotationScope(element, annotation);
 		checkAnnotationSingleUse(element, annotation);
@@ -112,12 +76,10 @@ public class AnnotationProcessor extends AnnotationAndTagProcessor {
 				ad.afterCreation(getEntityName(), getFieldName(), annotation);
 				return annotation;
 			} catch (ParamError e) {
-//				throw newError(element.getLineNumber(), "'" + element.getContent() + "' : " + e.getMessage() );
 				throw newError(element, e.getMessage());
 			} 
 		}
 		else {
-//			throw newError(element.getLineNumber(), "'" + element.getContent() + "' : unknown annotation");
 			throw newError(element, "unknown annotation");
 		}
 	}
@@ -168,15 +130,11 @@ public class AnnotationProcessor extends AnnotationAndTagProcessor {
 		AnnotationDefinition ad = annotation.getAnnotationDefinition();
 		if ( field.isAttribute() ) {
 			if ( ! ad.hasAttributeScope() ) {
-//				throw newError(element.getLineNumber(), "'" + element.getContent() 
-//					+ "' : annotation not usable in an attribute (invalid scope)");
 				throw newError(element, "annotation not usable in an attribute level (invalid scope)");
 			}
 		}
 		else if ( field.isLink() ) {
 			if ( ! ad.hasLinkScope() ) {
-//				throw newError(element.getLineNumber(), "'" + element.getContent() 
-//					+ "' : annotation not usable in a link (invalid scope)");
 				throw newError(element, "annotation not usable in a link level (invalid scope)");
 			}
 		}
@@ -208,18 +166,6 @@ public class AnnotationProcessor extends AnnotationAndTagProcessor {
 		}
 	}
 	
-////	public void checkAnnotationSingleUse(Element element, DomainField field, DomainAnnotation annotation) throws DslModelError {
-//	public void checkAnnotationSingleUseForField(Element element, DomainAnnotation annotation) throws DslModelError {
-//		if ( annotation.canBeUsedMultipleTimes() ) {
-//			return ; // No checking
-//		}
-//		if ( field.hasAnnotation(annotation) ) {
-////			throw newError(element.getLineNumber(), "'" + element.getContent() 
-////			+ "' : annotation used more than once");
-//			throw newError(element, "annotation used more than once");
-//		}
-//	}
-
 	private DslModelError newError(Element element, String shortMessage) {
 		String longMessage = "'" + element.getContent() + "' : " + shortMessage ;
 		return newError(element.getLineNumber(), longMessage);

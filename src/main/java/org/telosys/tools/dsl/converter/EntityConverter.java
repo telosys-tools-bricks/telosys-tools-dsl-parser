@@ -76,25 +76,7 @@ public class EntityConverter extends AbstractConverter {
 	 * @param domainEntity
 	 */
 	private void step1InitEntity(DslModelEntity dslEntity, DomainEntity domainEntity) {
-
 		dslEntity.setFullName(notNull(domainEntity.getName()));
-		
-		//--- init database information 
-//		dslEntity.setDatabaseTable(domainEntity.getDatabaseTable()); // v 3.3.0
-//		dslEntity.setDatabaseTable(notNull(domainEntity.getName())); // v 3.4.0
-		
-//		dslEntity.setDatabaseType("TABLE");  // Type is "TABLE" by default
-//		dslEntity.setTableType(true);  // Type is "TABLE" by default
-//		dslEntity.setViewType(false);  // Type is "TABLE" by default
-//		dslEntity.setDatabaseCatalog("");
-//		dslEntity.setDatabaseSchema("");
-//		dslEntity.setDatabaseTablespace(xx);
-//		dslEntity.setTableType(true);
-//		dslEntity.setViewType(false);
-		
-		// No Foreign Keys => void list
-//		dslEntity.setDatabaseForeignKeys(new LinkedList<ForeignKey>()); 
-//		dslEntity.setForeignKeys(new LinkedList<ForeignKey>()); 
 	}
 	
 	/**

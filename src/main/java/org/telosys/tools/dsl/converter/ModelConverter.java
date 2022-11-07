@@ -70,10 +70,7 @@ public class ModelConverter extends AbstractConverter {
 	public Model convertModel(DomainModel domainModel) {
 
 		// Create a new void DSL model 
-//		DslModel dslModel = new DslModel(domainModel.getModelNameFromFile()); // v 3.3.0
 		DslModel dslModel = new DslModel(domainModel.getModelName(), domainModel.getModelInfo()); // v 3.4.0
-//		dslModel.setTitle(voidIfNull(domainModel.getTitle()));
-//		dslModel.setDescription(voidIfNull(domainModel.getDescription()));
 
 		// Create void entities (without attribute)
 		step1CreateAllVoidEntities(domainModel, dslModel);
@@ -101,19 +98,12 @@ public class ModelConverter extends AbstractConverter {
 	 * @param dslModel
 	 */
 	protected void step1CreateAllVoidEntities(DomainModel domainModel, DslModel dslModel) {
-//		// for each "DomainEntity" create a void "DslModelEntity"
-//		for (DomainEntity domainEntity : domainModel.getEntities()) {
-//			DslModelEntity genericEntity = createVoidEntity(domainEntity);
-//			dslModel.addEntity(genericEntity); // v 3.4.0
-//		}
-
 		// v 3.4.0
 		EntityConverter entityConverter = new EntityConverter(dslModel, errors);
 		for (DomainEntity domainEntity : domainModel.getEntities()) {
 			DslModelEntity dslEntity = entityConverter.convertEntity(domainEntity);
 			dslModel.addEntity(dslEntity); 
 		}
-
 	}
 	
 	/**
@@ -167,7 +157,6 @@ public class ModelConverter extends AbstractConverter {
 	 * @param dslModel
 	 */
 	protected void step3CreateAllForeignKeys(DomainModel domainModel, DslModel dslModel) {
-//		ForeignKeysBuilder fkBuilder = new ForeignKeysBuilder(dslModel);
 		ForeignKeysBuilderV2 fkBuilder = new ForeignKeysBuilderV2(dslModel);
 		// for each entity in the model
 		for (DomainEntity entity : domainModel.getEntities()) {
@@ -181,33 +170,6 @@ public class ModelConverter extends AbstractConverter {
 		}
 	}
 
-//	/**
-//	 * Creates a void entity (without attribute) <br>
-//	 * initialized with only class name and default database information 
-//	 * @param domainEntity
-//	 * @return
-//	 */
-//	private DslModelEntity createVoidEntity(DomainEntity domainEntity) {
-//		log("convertEntity(" + domainEntity.getName() + ")...");
-//		
-//		DslModelEntity dslEntity = new DslModelEntity( notNull(domainEntity.getName()) ); // v 3.3.0
-//		
-//		dslEntity.setFullName(notNull(domainEntity.getName()));
-//
-//		//--- init database information 
-//		dslEntity.setDatabaseTable(domainEntity.getDatabaseTable()); // v 3.3.0
-//		// Type is "TABLE" by default
-////		dslEntity.setDatabaseType("TABLE"); 
-//		dslEntity.setTableType(true);  // Type is "TABLE" by default
-//		dslEntity.setViewType(false);  // Type is "TABLE" by default
-//		dslEntity.setDatabaseCatalog("");
-//		dslEntity.setDatabaseSchema("");
-//		// No Foreign Keys => void list
-//		dslEntity.setDatabaseForeignKeys(new LinkedList<ForeignKey>()); 
-//
-//		return dslEntity;
-//	}
-	
 	/**
 	 * Check model consistency
 	 * @param dslModel

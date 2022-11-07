@@ -38,30 +38,6 @@ public class TagsConverter {
 		this.errors = errors;
 	}
 
-
-//	private Map<String,String> buildTags(DomainField field) { // new in v 3.4.0
-//		Map<String, DomainTag> tagsMap = field.getTags();
-//		if ( tagsMap == null) return null;
-//		if ( tagsMap.isEmpty()) return null;
-//		// Convert tags
-//		Map<String,String> newTags = new HashMap<>();
-//		for ( DomainTag tag : tagsMap.values() ) {
-//			String name = tag.getName() ;
-////			String value = tag.getParameterAsString();
-////			if ( value == null ) {
-////				value = "";
-////			}
-//			// v 3.4.0
-//			String value = "";
-//			if ( tag.hasParameter() ) {
-////				value = tag.getParameterAsString();
-//				value = tag.getParameter();
-//			}
-//			newTags.put(name, value);
-//		}
-//		return newTags;
-//	}
-//	
 	private Tags buildTags(Map<String, DomainTag> tagsMap, String entityName, String fieldName) {
 		Tags tags = new Tags(); // void tags collection
 		if ( tagsMap == null) return tags;

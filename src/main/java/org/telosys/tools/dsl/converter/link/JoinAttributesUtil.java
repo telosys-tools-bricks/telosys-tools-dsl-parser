@@ -38,11 +38,9 @@ public class JoinAttributesUtil {
 	 * @param referencedTableName
 	 * @return
 	 */
-//	public static List<JoinAttribute> tryToInferJoinAttributes(DslModelEntity entity, String referencedEntityName) {
 	public static List<LinkAttribute> tryToInferJoinAttributes(DslModelEntity entity, String referencedEntityName) {
 		DslModelForeignKey fk = findUniqueFKForReferencedEntityName(entity, referencedEntityName);
 		if ( fk != null ) {
-//			return fk.getJoinAttributes();
 			return fk.getLinkAttributes();
 		}
 		return null;
@@ -68,10 +66,8 @@ public class JoinAttributesUtil {
 	 * @param list
 	 * @return
 	 */
-//	public static int numberOfDuplicates(List<JoinAttribute> list) {
 	public static int numberOfDuplicates(List<LinkAttribute> list) {
 		List<String> names = new LinkedList<>();
-//	    for(JoinAttribute jc : list) {
 	    for(LinkAttribute jc : list) {
 	    	names.add(jc.getOriginAttributeName());
 	    }
