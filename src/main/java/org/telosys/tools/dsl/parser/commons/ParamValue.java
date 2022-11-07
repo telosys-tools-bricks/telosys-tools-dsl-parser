@@ -46,20 +46,6 @@ public class ParamValue {
 	 * @return
 	 */
 	private ParamError newError(String message) {
-//		switch(origin) {
-//		case ENTITY_ANNOTATION :
-//			return new ParamError(entityName, annotationOrTagName, message);
-//		case ENTITY_TAG :
-//			return new ParamError(entityName, annotationOrTagName, message);
-//		case FIELD_ANNOTATION :
-//			return new ParamError(entityName, fieldName, annotationOrTagName, message);
-//		case FIELD_TAG :
-//			return new ParamError(entityName, fieldName, annotationOrTagName, message);
-//		default:
-//			// can't happen
-//			throw new IllegalStateException(entityName + annotationOrTagName + " : " + message);
-//		}
-		
 		return new ParamError(message);
 	}
 	
@@ -135,34 +121,11 @@ public class ParamValue {
 		String s = parameterValue.trim(); 
 		// remove quotes if any
 		if (s.startsWith("\"") && s.endsWith("\"")) {
-//			return unquote(s, '"');
 			return StringUtil.unquote(s);
 		} else {
 			return s;
 		}
 	}
-	
-//	/**
-//	 * Remove quote char at the first and last position if any
-//	 * 
-//	 * @param s
-//	 * @param quoteChar
-//	 * @return
-//	 */
-//	private String unquote(String s, char quoteChar) {
-//		if (s == null) {
-//			return s;
-//		}
-//		if (s.length() == 0) {
-//			return s;
-//		}
-//		int last = s.length() - 1;
-//		if (s.charAt(0) == quoteChar && s.charAt(last) == quoteChar) {
-//			return s.substring(1, last);
-//		} else {
-//			return s;
-//		}
-//	}
 	
 	/**
 	 * Check that the parameter value conforms to the 'SIZE' format
