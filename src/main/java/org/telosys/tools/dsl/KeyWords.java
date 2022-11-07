@@ -120,15 +120,6 @@ public class KeyWords {
 		return DomainNeutralTypes.getNames();
 	}
 	
-//	/**
-//	 * Return the list of annotations keywords with specific ending character if any<br>
-//	 * e.g. 'Id', 'NotNull', 'Min#', 'Max#', etc
-//	 * @return
-//	 */
-//	public static final List<String> getAnnotations() {
-//		return new LinkedList<>(Arrays.asList(annotations));
-//	}
-	
 	// Lists of annotations names for Eclipse  ( cf plugin )
 	public static final List<String> getAllAnnotationsWithPrefix() {
 		return AnnotationDefinitions.getAllAnnotationsWithPrefix();
