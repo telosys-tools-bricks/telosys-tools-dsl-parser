@@ -16,7 +16,6 @@
 package org.telosys.tools.dsl.parser.commons;
 
 import org.telosys.tools.commons.StrUtil;
-import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 
 public class FkElementBuilder {
 	
@@ -41,40 +40,35 @@ public class FkElementBuilder {
 	}
 
 	private final String entityName ; 
-	private final String fieldName ; 
 	
 	/**
 	 * Constructor
 	 * @param entityName
-	 * @param fieldName
 	 */
-	public FkElementBuilder(String entityName, String fieldName) {
+	public FkElementBuilder(String entityName) {
 		super();
 		this.entityName = entityName;
-		this.fieldName = fieldName;
 	}
 
 	public FkElement build(String s) throws ParamError {
 		String[] parts = StrUtil.split(s, ',');
 		switch(parts.length) {
 		case 1 :
-			return buildFKWithoutName(parts[0]);
+			return buildFkElementWithoutName(parts[0]);
 		case 2 :
-			return buildFKWithName(parts[0], parts[1]);
+			return buildFkElementWithName(parts[0], parts[1]);
 		default :
-//			throw new ParamError(entityName, fieldName,
-//					"invalid parameter (0 or 1 ',' expected)");
-			throw new ParamError("invalid parameter (0 or 1 ',' expected)");
+			throw new ParamError("invalid parameters (1 or 2 param expected)");
 		}
 	}
 	
 	/**
-	 * Builds a FK without name specified in the annotation => use the default FK name
+	 * Builds a FK element without name specified in the annotation => use the default FK name
 	 * @param ref
 	 * @return
-	 * @throws AnnotationOrTagError
+	 * @throws ParamError
 	 */
-	private FkElement buildFKWithoutName(String ref) throws ParamError {
+	private FkElement buildFkElementWithoutName(String ref) throws ParamError {
 		// Parse reference part
 		RefParts refParts = parseRef(ref);
 		// Build default FK name 
@@ -83,13 +77,13 @@ public class FkElementBuilder {
 	}
 	
 	/**
-	 * Builds a FK with a name specified before ',' in the annotation
+	 * Builds a FK element with a name specified before ',' in the annotation
 	 * @param fkNameParam
 	 * @param ref
 	 * @return
-	 * @throws AnnotationOrTagError
+	 * @throws ParamError
 	 */
-	private FkElement buildFKWithName(String fkNameParam, String ref) throws ParamError {
+	private FkElement buildFkElementWithName(String fkNameParam, String ref) throws ParamError {
 		// Parse reference part
 		RefParts refParts = parseRef(ref);
 		// Check FK name not empty
@@ -113,12 +107,10 @@ public class FkElementBuilder {
 	 * Parse the 'reference' part of the annotation 
 	 * @param s FK reference ('Entity' or 'Entity.field' expected )
 	 * @return
-	 * @throws AnnotationOrTagError
+	 * @throws ParamError
 	 */
-	protected RefParts parseRef(String s) throws ParamError {
+	private RefParts parseRef(String s) throws ParamError {
 		if ( StrUtil.nullOrVoid(s)) {
-//			throw new ParamError(entityName, fieldName, AnnotationName.FK, 
-//					"parameter expected (at least entity name)" ) ;
 			throw new ParamError("parameter expected (at least entity name)" ) ;
 		}
 		String[] parts = StrUtil.split(s, '.');
@@ -130,16 +122,12 @@ public class FkElementBuilder {
 			// 2 parts : Referenced entity name + Referenced field name)
 			return buildRefParts(parts[0], parts[1]);
 		default :
-//			throw new ParamError(entityName, fieldName,  
-//					"invalid reference parameter : '" + s + "' (0 or 1 '.' expected)");
-			throw new ParamError("invalid reference parameter : '" + s + "' (0 or 1 '.' expected)");
+			throw new ParamError("invalid reference parameter : '" + s + "' (Entity[.field] expected)");
 		}
 	}
 	
 	private RefParts buildRefParts(String referencedEntityName, String referencedFieldName) throws ParamError {
 		if ( StrUtil.nullOrVoid(referencedEntityName)) {
-//			throw new ParamError(entityName, fieldName, 
-//					"referenced entity name expected");
 			throw new ParamError("referenced entity name expected");
 		}
 		return new RefParts(referencedEntityName, referencedFieldName);

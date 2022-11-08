@@ -16,7 +16,6 @@
 package org.telosys.tools.dsl.converter;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -74,92 +73,15 @@ public class ForeignKeysBuilderV2 {
 			}
 		}
 		// Convert Foreign Keys to List and set in entity
-		//List<ForeignKey> fkList = new LinkedList<>();
 		for ( ForeignKey fk : foreignKeys.values() ) {
 			// check if the FK is valid
 			checkForeignKeyValidity(entity.getName(), fk);
-			//fkList.add(fk);
 			dslModelEntity.addForeignKey(fk);
-
 			// Added 2022-02-16
 			AttributeFKUtil.applyFKToAttributes(fk, model);
 		}
-		//dslModelEntity.setForeignKeys(fkList);
-		
-		// updateAttributes(dslModelEntity);
-/*** removed 2022-02-16
-		ForeignKeysToAttributeV2 tool = new ForeignKeysToAttributeV2(model) ;
-		tool.updateAttributes(dslModelEntity);
-***/	
 	}
 
-//	/**
-//	 * Update attributes for the given entity after changes in entity Foreign Keys
-//	 * @param dslModelEntity
-//	 */
-//	private void updateAttributes(DslModelEntity dslModelEntity) {
-//		for ( ForeignKey fk : dslModelEntity.getDatabaseForeignKeys() ) {
-//			String referencedTableName = fk.getReferencedTableName();
-//			String referencedEntityName = null ;
-//			Entity referencedEntity = model.getEntityByTableName(referencedTableName);
-//			if (referencedEntity != null) {
-//				referencedEntityName = referencedEntity.getClassName();
-//			}
-//			else {
-//				throw new IllegalStateException( "FK error : no table '" + referencedTableName + "' in model" 
-//						+ " (FK '" + fk.getName() + "' in entity '" + dslModelEntity.getClassName() +"')");
-//			}
-//			// Set FK flags for all the attributes concerned by the current FK
-//			List<ForeignKeyColumn> fkColumns = fk.getColumns();
-//			for ( ForeignKeyColumn fkCol : fkColumns ) {
-//				DslModelAttribute attribute = dslModelEntity.getAttributeByDatabaseName(fkCol.getColumnName());
-//				if ( attribute != null ) {					
-//					if ( fkColumns.size() > 1 ) {
-//						attribute.setFKComposite(true);
-//						// NB : not reliable if attribute involved in multiple FK
-//						attribute.setReferencedEntityClassName(referencedEntityName);
-//					}
-//					else {
-//						attribute.setFKSimple(true);
-//						// NB : not reliable if attribute involved in multiple FK
-//						attribute.setReferencedEntityClassName(referencedEntityName);
-//					}
-//				}
-//				else {
-//					throw new IllegalStateException( "Cannot found attribute with database name '" + fkCol.getColumnName() 
-//							+ "' in entity '" + dslModelEntity.getClassName() + "'" );
-//				}
-//			}
-//			// Set FK Parts for all the attributes concerned by the current FK
-//			setAttributesFKParts(dslModelEntity, fk);
-//		}	
-//	}
-//	
-//	/**
-//	 * Setting 'Foreign Key Parts' for attributes involved in the given Foreign Key
-//	 * Added in ver 3.3.0
-//	 * @param entity
-//	 * @param fk
-//	 */
-//	private void setAttributesFKParts(DslModelEntity entity, ForeignKey fk ) {
-//		DslModelEntity referencedEntity = (DslModelEntity) model.getEntityByTableName(fk.getReferencedTableName());
-//		List<ForeignKeyColumn> fkColumns = fk.getColumns() ;
-//		if ( fkColumns != null ) {
-//			for ( ForeignKeyColumn fkCol : fkColumns ) {
-//				DslModelAttribute attribute = entity.getAttributeByDatabaseName(fkCol.getColumnName());
-//				if ( attribute != null ) {
-//					// Build FK part
-//					DslModelAttribute referencedAttribute = referencedEntity.getAttributeByName(
-//							fkCol.getReferencedColumnName());
-//					DslModelForeignKeyPart fkPart = new DslModelForeignKeyPart(fk.getName(),
-//											referencedEntity.getClassName(), referencedAttribute.getName());
-//					// Add FK part
-//					attribute.addFKPart(fkPart);
-//				}
-//			}
-//		}
-//	}
-	
 	/**
 	 * Process the given field : build all FK or FK parts defined for this field
 	 * @param entity
@@ -179,16 +101,12 @@ public class ForeignKeysBuilderV2 {
 				if ( fk == null ) {
 					// Init a new void FK in the map
 					DslModelEntity referencedEntity = getReferencedEntity(entityField, fkElement);
-//					fk = new DslModelForeignKey(fkDef.getFkName(), entity.getDatabaseTable(), referencedEntity.getDatabaseTable() );
 					fk = new DslModelForeignKey(fkElement.getFkName(), originEntityName, referencedEntity.getClassName() );
 					foreignKeys.put(fkElement.getFkName(), fk);
 				}
-				// Build a new FK column 
-//				DslModelForeignKeyColumn fkCol = buildFKColumn(entityField, attribute, fkDef, getNextSequence(fk));
 				// Build a new FK attribute 
 				DslModelForeignKeyAttribute fkAttribute = buildFKAttribute(entityField, attribute, fkElement, getNextSequence(fk));
 				// and add it in FK
-//				fk.addColumn(fkCol);
 				fk.addAttribute(fkAttribute);
 			}
 		}
@@ -247,7 +165,6 @@ public class ForeignKeysBuilderV2 {
 	}
 	
 	private int getNextSequence(DslModelForeignKey fk ) {
-//		return fk.getColumns().size() + 1 ; 
 		return fk.getAttributes().size() + 1 ; 
 	}
 	
@@ -309,26 +226,6 @@ public class ForeignKeysBuilderV2 {
 		}
 	}
 	
-//	private DslModelForeignKeyColumn buildFKColumn(String entityField, DslModelAttribute field, FkElement fkDef, int sequence) {
-//
-//		//--- ORIGIN COLUMN
-//		String column = field.getDatabaseName();
-//		
-//		//--- REFERENCED COLUMN 
-//		// Referenced entity
-//		DslModelEntity referencedEntity = getReferencedEntity(entityField, fkDef);
-//		// Referenced field
-//		DslModelAttribute referencedField = (DslModelAttribute) referencedEntity.getAttributeByName(fkDef.getReferencedFieldName());
-//		if ( referencedField == null ) {
-//			throw new IllegalStateException( entityField
-//				+ " : FK error : invalid referenced field " + fkDef.getReferencedFieldName() );
-//		}
-//		String referencedColumn = referencedField.getDatabaseName();
-//		
-//		//--- NEW FK COLUMN 
-//		return new DslModelForeignKeyColumn(sequence, column, referencedColumn);
-//	}
-	
 	private DslModelForeignKeyAttribute buildFKAttribute(String entityField, DslModelAttribute field, FkElement fkDef, int ordinal) {
 
 		//--- ORIGIN ATTRIBUTE
@@ -343,32 +240,12 @@ public class ForeignKeysBuilderV2 {
 			throw new IllegalStateException( entityField
 				+ " : FK error : invalid referenced field " + fkDef.getReferencedFieldName() );
 		}
-//		String referencedAttributeName = referencedField.getDatabaseName();
 		String referencedAttributeName = referencedField.getName();
 		
 		//--- NEW FK ATTRIBUTE 
 		return new DslModelForeignKeyAttribute(ordinal, originAttributeName, referencedAttributeName);
 	}
-	
-//	private void checkForeignKeyValidity(String entityName, DslModelForeignKey fk) {
-//		List<ForeignKeyColumn> columns = fk.getColumns() ;
-//		if ( columns.isEmpty() ) {
-//			throw new IllegalStateException( entityName
-//					+ " : FK error '" +fk.getName()+"' has no columns");
-//		}
-//		String referencedTableName = fk.getReferencedTableName();
-//		DslModelEntity referencedEntity = (DslModelEntity) model.getEntityByTableName(referencedTableName);
-//		if ( referencedEntity == null ) {
-//			throw new IllegalStateException( entityName
-//					+ " : FK '" +fk.getName()+"' references invalid table '" + referencedTableName + "'");
-//		}
-//		int expectedColumnsCount = referencedEntity.getIdCount();
-//		if ( columns.size() != expectedColumnsCount ) {
-//			throw new IllegalStateException( entityName
-//					+ " : FK '" +fk.getName()+"' invalid number of columns : " + columns.size() 
-//					+ " (" + expectedColumnsCount + " expected)" );
-//		}
-//	}
+
 	private void checkForeignKeyValidity(String entityName, ForeignKey fk) {
 		List<ForeignKeyAttribute> fkAttributes = fk.getAttributes() ;
 		if ( fkAttributes.isEmpty() ) {

@@ -166,7 +166,7 @@ public class ParamValue {
 	
 	public FkElement getAsForeignKeyElement() throws ParamError {
 		checkParameterExistence();
-		FkElementBuilder builder = new FkElementBuilder(entityName, fieldName);
+		FkElementBuilder builder = new FkElementBuilder(entityName);
 		return builder.build(parameterValue);
 	}
 	
@@ -178,7 +178,7 @@ public class ParamValue {
 	private List<String> buildList(String paramString) throws ParamError {
 		String[] elements = StrUtil.split(paramString, ',');
 		if (elements.length == 0 ) {
-			throw new ParamError("invalid list parameter (at list 1 element expected)");
+			throw newError("invalid list parameter (at list 1 element expected)");
 		}
 		
 		List<String> list = new LinkedList<>();
