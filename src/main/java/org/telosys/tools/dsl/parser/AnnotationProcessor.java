@@ -36,12 +36,21 @@ public class AnnotationProcessor extends AnnotationAndTagProcessor {
 	private final DomainEntity entity; // to work at ENTITY level
 	private final DomainField field; // to work at FIELD level
 	
+	/**
+	 * Constructor for annotation processor at ENTITY level
+	 * @param entity
+	 */
 	public AnnotationProcessor(DomainEntity entity) {
 		super(entity.getName());
 		this.entity = entity;
 		this.field = null ;
 	}
 	
+	/**
+	 * Constructor for annotation processor at FIELD level
+	 * @param entityName
+	 * @param field
+	 */
 	public AnnotationProcessor(String entityName, DomainField field) {
 		super(entityName, field.getName());
 		this.entity = null;
@@ -57,7 +66,9 @@ public class AnnotationProcessor extends AnnotationAndTagProcessor {
 	public DomainAnnotation parseAnnotation(Element element) throws DslModelError {
 		DomainAnnotation annotation = buildAnnotation(element);
 		checkAnnotationScope(element, annotation);
-		checkAnnotationSingleUse(element, annotation);
+		if ( ! annotation.canBeUsedMultipleTimes() ) {
+			checkAnnotationSingleUse(element, annotation);
+		}
 		return annotation;
 	}
 	
@@ -115,7 +126,6 @@ public class AnnotationProcessor extends AnnotationAndTagProcessor {
 			}
 			return new DomainAnnotation(annotationName);
 		}
-		
 	}
 	
 	private void checkAnnotationScope(Element element, DomainAnnotation annotation) throws DslModelError {
@@ -130,12 +140,12 @@ public class AnnotationProcessor extends AnnotationAndTagProcessor {
 		AnnotationDefinition ad = annotation.getAnnotationDefinition();
 		if ( field.isAttribute() ) {
 			if ( ! ad.hasAttributeScope() ) {
-				throw newError(element, "annotation not usable in an attribute level (invalid scope)");
+				throw newError(element, "annotation not usable at attribute level (invalid scope)");
 			}
 		}
 		else if ( field.isLink() ) {
 			if ( ! ad.hasLinkScope() ) {
-				throw newError(element, "annotation not usable in a link level (invalid scope)");
+				throw newError(element, "annotation not usable at link level (invalid scope)");
 			}
 		}
 	}
@@ -146,23 +156,17 @@ public class AnnotationProcessor extends AnnotationAndTagProcessor {
 		}
 	}
 
+	/**
+	 * Check annotation is used only 1 time 
+	 * @param element
+	 * @param annotation
+	 * @throws DslModelError
+	 */
 	private void checkAnnotationSingleUse(Element element, DomainAnnotation annotation) throws DslModelError {
-		if ( annotation.canBeUsedMultipleTimes() ) {
-			return ; // No checking
-		}
-		else {
-			if ( this.field != null ) {
-				// Check at FIELD level
-				if ( field.hasAnnotation(annotation) ) {
-					throw newError(element, "annotation used more than once");
-				}
-			}
-			else  if ( this.entity != null ) {
-				// Check at ENTITY level
-				if ( entity.hasAnnotation(annotation) ) {
-					throw newError(element, "annotation used more than once");
-				}
-			}		
+		// Check if already used at FIELD level and ENTITY level
+		if ( ( this.field  != null && field.hasAnnotation(annotation)  ) 
+		  || ( this.entity != null && entity.hasAnnotation(annotation) ) ) {
+			throw newError(element, "annotation used more than once");
 		}
 	}
 	

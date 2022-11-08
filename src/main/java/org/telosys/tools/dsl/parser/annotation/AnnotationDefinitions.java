@@ -22,6 +22,7 @@ import java.util.List;
 import org.telosys.tools.dsl.parser.annotations.AbstractAnnotation;
 import org.telosys.tools.dsl.parser.annotations.AggregateRootAnnotation;
 import org.telosys.tools.dsl.parser.annotations.AutoIncrementedAnnotation;
+import org.telosys.tools.dsl.parser.annotations.CascadeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.ContextAnnotation;
 import org.telosys.tools.dsl.parser.annotations.DbCatalogAnnotation;
 import org.telosys.tools.dsl.parser.annotations.DbCommentAnnotation;
@@ -159,6 +160,7 @@ public class AnnotationDefinitions {
 		
 		//--- Added in ver 4.1.0
 		annotationDefinitions.add(new OrphanRemovalAnnotation()); 
+		annotationDefinitions.add(new CascadeAnnotation()); 
 
 	}
 	
