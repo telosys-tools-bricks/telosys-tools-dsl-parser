@@ -8,6 +8,7 @@ import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.CascadeOptions;
 import org.telosys.tools.generic.model.Entity;
+import org.telosys.tools.generic.model.ForeignKeyPart;
 import org.telosys.tools.generic.model.Link;
 import org.telosys.tools.generic.model.LinkAttribute;
 import org.telosys.tools.generic.model.Model;
@@ -141,10 +142,18 @@ public class DslModelManagerV33Test {
         assertEquals(Cardinality.MANY_TO_ONE, link.getCardinality());
         assertEquals("Country", link.getReferencedEntityName() );
         
-        //--- 1 FK : 1 implicit FK
+        //--- 1 FK : 1 implicit FK ('FK_IMPLICIT_1_Town_Country' : 'Town' --> 'Country' )
         PrintUtil.printForeignKeys(entity);
         assertEquals(1, entity.getForeignKeys().size());
-        
+        //--- is attribute aware of FK and FK parts ?
+        Attribute countryCode = entity.getAttributeByName("countryCode");
+        assertTrue(countryCode.isFK());
+        assertTrue(countryCode.isFKSimple());
+        assertFalse(countryCode.isFKComposite());
+        List<ForeignKeyPart> fkParts = countryCode.getFKParts();
+        assertEquals(1, fkParts.size());
+        assertEquals("Country", fkParts.get(0).getReferencedEntityName());
+        assertEquals("code", fkParts.get(0).getReferencedAttributeName());
         
         // Join attributes (v 3.4.0) 
         List<LinkAttribute> ja = link.getAttributes();

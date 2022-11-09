@@ -79,8 +79,9 @@ public class ForeignKeysBuilderV2 {
 		for ( ForeignKey fk : foreignKeys.values() ) {
 			// check if the FK is valid
 			checkForeignKeyValidity(entity.getName(), fk);
+			// register the FK in the entity it belongs to
 			dslModelEntity.addForeignKey(fk);
-			// Added 2022-02-16
+			// appply FK on all attributes involved in it 
 			AttributeFKUtil.applyFKToAttributes(fk, model);
 		}
 	}
@@ -284,8 +285,11 @@ public class ForeignKeysBuilderV2 {
 			if ( dslModelLink.isBasedOnAttributes() ) {
 				// this link is based on @LinkByAttr(...)
 				fkNum++;
-				ForeignKey fk = createImplicitForeignKeyFromLink(dslModelEntity, dslModelLink, fkNum);				
+				ForeignKey fk = createImplicitForeignKeyFromLink(dslModelEntity, dslModelLink, fkNum);
+				// register the FK in the entity it belongs to
 				dslModelEntity.addForeignKey(fk);
+				// appply FK on all attributes involved in it 
+				AttributeFKUtil.applyFKToAttributes(fk, model);		
 			}
 		}
 	}
