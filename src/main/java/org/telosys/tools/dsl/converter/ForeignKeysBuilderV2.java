@@ -26,12 +26,15 @@ import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelForeignKey;
 import org.telosys.tools.dsl.model.DslModelForeignKeyAttribute;
+import org.telosys.tools.dsl.model.DslModelLink;
 import org.telosys.tools.dsl.parser.commons.FkElement;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.ForeignKeyAttribute;
+import org.telosys.tools.generic.model.Link;
+import org.telosys.tools.generic.model.LinkAttribute;
 
 public class ForeignKeysBuilderV2 {
 
@@ -48,7 +51,7 @@ public class ForeignKeysBuilderV2 {
 	}
 
 	/**
-	 * Build all the Foreign Keys declared in the given entity (with '@FK' annotations)
+	 * Build all explicit Foreign Keys declared in the given entity (with '@FK' annotations)
 	 * and set them in the generic entity
 	 * @param entity
 	 * @return
@@ -63,12 +66,12 @@ public class ForeignKeysBuilderV2 {
 		if (entity.getFields() != null) {
 			// for each entity field : store all defined FK (FK part or entire FK ) 
 			for (DomainField field : entity.getFields()) {
-				if ( field.isAttribute() ) { // FK are defined in attributes not in links
+				if ( field.isAttribute() ) { // Explicit FK are defined in attributes not in links
 					DslModelAttribute dslModelAttribute = (DslModelAttribute) dslModelEntity.getAttributeByName(field.getName());
 					if (dslModelAttribute == null ) {
 						throw new IllegalStateException( "Cannot found attribute '" + field.getName() + "' in entity '" + entity.getName() + "'" );
 					}
-					buildForeignKeysForAttribute(dslModelEntity, dslModelAttribute, field.getFkElements());
+					buildForeignKeysFromAttribute(dslModelEntity, dslModelAttribute, field.getFkElements());
 				}
 			}
 		}
@@ -88,14 +91,14 @@ public class ForeignKeysBuilderV2 {
 	 * @param attribute
 	 * @param fkElements
 	 */
-	private void buildForeignKeysForAttribute(DslModelEntity entity, DslModelAttribute attribute, List<FkElement> fkElements) {
+	private void buildForeignKeysFromAttribute(DslModelEntity entity, DslModelAttribute attribute, List<FkElement> fkElements) {
 		String originEntityName = entity.getClassName();
 		String entityField = originEntityName + attribute.getName();
 		if ( fkElements != null ) {
 			// Get all "@FK" definitions for this field 
-			for ( FkElement originalFkDef : fkElements ) {
-				// Complete the FK definition if necessary
-				FkElement fkElement = completeFK(originEntityName, attribute.getName(), originalFkDef) ;
+			for ( FkElement rawFkElement : fkElements ) {
+				// Check and complete FK element if necessary
+				FkElement fkElement = buildValidFkElement(attribute.getName(), rawFkElement) ;
 				// Is FK already defined 
 				DslModelForeignKey fk = foreignKeys.get(fkElement.getFkName());
 				if ( fk == null ) {
@@ -105,7 +108,8 @@ public class ForeignKeysBuilderV2 {
 					foreignKeys.put(fkElement.getFkName(), fk);
 				}
 				// Build a new FK attribute 
-				DslModelForeignKeyAttribute fkAttribute = buildFKAttribute(entityField, attribute, fkElement, getNextSequence(fk));
+				int ordinal = getNextAttributeOrdinal(fk);
+				DslModelForeignKeyAttribute fkAttribute = buildFKAttribute(entityField, attribute, fkElement, ordinal);
 				// and add it in FK
 				fk.addAttribute(fkAttribute);
 			}
@@ -113,8 +117,8 @@ public class ForeignKeysBuilderV2 {
 	}
 	
 	/**
-	 * Complete the given FK if necessary 
-	 * 
+	 * Checks given FkElement validity, creates and return a full and valid FkElement 
+	 *  
 	 * Examples for "Score" entity referenced entity "Student" with single PK "id" 
 	 *   FK(Student)        --> "FK_Score_Student", "Student", "id" 
 	 *   FK(Student.id)     --> "FK_Score_Student", "Student", "id" 
@@ -127,12 +131,11 @@ public class ForeignKeysBuilderV2 {
 	 *   FK(FK2, Course.topic) --> "FK2", "Course", "topic"  
 	 *   FK(FK2, Course.no   ) --> "FK2", "Course", "no"  
 	 * 
-	 * @param entityName
 	 * @param fieldName
 	 * @param fkElement
-	 * @return 
+	 * @return
 	 */
-	private FkElement completeFK(String entityName, String fieldName, FkElement fkElement) {
+	private FkElement buildValidFkElement(String fieldName, FkElement fkElement) {
 		String fkName = fkElement.getFkName() ;
 		String referencedEntityName = fkElement.getReferencedEntityName() ;
 		
@@ -160,11 +163,11 @@ public class ForeignKeysBuilderV2 {
 					+ " : FK error : FK name is null or void" );
 		}
 		
-		//--- Return the complete FK
+		//--- Return a full and valid FK element
 		return new FkElement(fkName, referencedEntityName, referencedAttribute.getName());
 	}
 	
-	private int getNextSequence(DslModelForeignKey fk ) {
+	private int getNextAttributeOrdinal(DslModelForeignKey fk ) {
 		return fk.getAttributes().size() + 1 ; 
 	}
 	
@@ -264,5 +267,52 @@ public class ForeignKeysBuilderV2 {
 					+ " : FK '" +fk.getName()+"' invalid number of references : " + fkAttributes.size() 
 					+ " (" + expectedColumnsCount + " expected)" );
 		}
+	}
+	
+	/**
+	 * Build all implicit Foreign Keys declared in the links of the given entity <br>
+	 * Implicit FK are based on link attributes defined with '@LinkByAttr' annotation
+	 * 
+	 * @param dslModelEntity
+	 * @return
+	 * @since 4.1.0
+	 */
+	public void buildImplicitForeignKeys(DslModelEntity dslModelEntity) {
+		for ( Link link : dslModelEntity.getLinks() ) {
+			DslModelLink dslModelLink = (DslModelLink) link ;
+			int fkNum = 0;
+			if ( dslModelLink.isBasedOnAttributes() ) {
+				// this link is based on @LinkByAttr(...)
+				fkNum++;
+				ForeignKey fk = createImplicitForeignKeyFromLink(dslModelEntity, dslModelLink, fkNum);				
+				dslModelEntity.addForeignKey(fk);
+			}
+		}
+	}
+
+	private ForeignKey createImplicitForeignKeyFromLink(DslModelEntity entity, DslModelLink link, int fkNum) {
+		
+		// New FK without attributes
+		String originEntityName = entity.getClassName();
+		String referencedEntityName = link.getReferencedEntityName();
+		String fkName = createImplicitForeignKeyName(originEntityName, referencedEntityName, fkNum);
+		
+		DslModelForeignKey fk = new DslModelForeignKey(fkName, originEntityName, referencedEntityName );
+		// TODO : add marker "implicit FK"
+		
+		for ( LinkAttribute linkAttribute : link.getAttributes() ) {
+			int ordinal = getNextAttributeOrdinal(fk);
+			// Build a new FK attribute 
+			DslModelForeignKeyAttribute fkAttribute = new DslModelForeignKeyAttribute(ordinal, 
+					linkAttribute.getOriginAttributeName(), 
+					linkAttribute.getReferencedAttributeName());
+			// and add it in FK
+			fk.addAttribute(fkAttribute);			
+		}
+		return fk;
+	}
+	
+	private String createImplicitForeignKeyName(String originEntityName, String referencedEntityName, int fkNum) {
+		return "FK_IMPLICIT_" + fkNum + "_" + originEntityName + "_" + referencedEntityName  ;	
 	}
 }

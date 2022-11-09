@@ -65,9 +65,9 @@ public class DslModelManagerV33Test {
 
     	assertNotNull(personEntity);
         
-        //--- 
+        //--- 4 FK : 3 + 1 implicit FK
         PrintUtil.printForeignKeys(personEntity);
-        assertEquals(3, personEntity.getForeignKeys().size());
+        assertEquals(4, personEntity.getForeignKeys().size());
         
         //--- FK referencing 'Gender'
         attrib = personEntity.getAttributeByName("genderId");
@@ -140,6 +140,11 @@ public class DslModelManagerV33Test {
         link = entity.getLinkByFieldName("country");
         assertEquals(Cardinality.MANY_TO_ONE, link.getCardinality());
         assertEquals("Country", link.getReferencedEntityName() );
+        
+        //--- 1 FK : 1 implicit FK
+        PrintUtil.printForeignKeys(entity);
+        assertEquals(1, entity.getForeignKeys().size());
+        
         
         // Join attributes (v 3.4.0) 
         List<LinkAttribute> ja = link.getAttributes();

@@ -19,4 +19,5 @@ public class ConverterLogStatus {
 
 	protected static final boolean LOG = false;
 
+	private ConverterLogStatus() {}
 }

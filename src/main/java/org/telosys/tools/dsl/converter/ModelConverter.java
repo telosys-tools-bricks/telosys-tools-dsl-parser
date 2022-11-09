@@ -20,6 +20,7 @@ import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainModel;
+import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
 
 /**
@@ -75,19 +76,25 @@ public class ModelConverter extends AbstractConverter {
 		// Create void entities (without attribute)
 		step1CreateAllVoidEntities(domainModel, dslModel);
 
-		// Create attributes (only basic fields with neutral type) 
+		// Create attributes : fields with basic neutral type (apply annotations and tags) 
 		step2CreateAllAttributes(domainModel, dslModel);
 		
-		// Create Foreign Keys defined in attributes ( with @FK(xx) annotation )
-		step3CreateAllForeignKeys(domainModel, dslModel); // Added in v 3.3
+		// Create explicit Foreign Keys defined in attributes ( with @FK(xx) annotation )
+		step3CreateAllExplicitForeignKeys(domainModel, dslModel);
 		
-		// Create links (fields referencing entities) 
-		step4CreateAllLinks(domainModel, dslModel); // Keep at the end (to be able to found Foreign Keys)
+		// Create links : fields referencing entities (apply annotations and tags) 
+		// Keep it AFTER FK creation (to be able to found Foreign Keys)
+		step4CreateAllLinks(domainModel, dslModel); 
 		
-		// Finally sort the entities by class name
+		// Create implicit Foreign Keys defined in links ( with @LinkByAttr(xx) annotation )
+		// Keep it AFTER LINKS creation (to be able to found Link attributes)
+		step5CreateAllImplicitForeignKeys(dslModel); 
+
+		// Sort all entities by class name
 		dslModel.sortEntitiesByClassName();
 
-		step5CheckModel(dslModel);
+		// Finally check model
+		step6CheckModel(dslModel);
 		
 		return dslModel;
 	}
@@ -156,7 +163,7 @@ public class ModelConverter extends AbstractConverter {
 	 * @param domainModel
 	 * @param dslModel
 	 */
-	protected void step3CreateAllForeignKeys(DomainModel domainModel, DslModel dslModel) {
+	protected void step3CreateAllExplicitForeignKeys(DomainModel domainModel, DslModel dslModel) {
 		ForeignKeysBuilderV2 fkBuilder = new ForeignKeysBuilderV2(dslModel);
 		// for each entity in the model
 		for (DomainEntity entity : domainModel.getEntities()) {
@@ -171,10 +178,23 @@ public class ModelConverter extends AbstractConverter {
 	}
 
 	/**
+	 * Creates all implicit Foreign Keys (if any) for the given model 
+	 * @param dslModel
+	 */
+	protected void step5CreateAllImplicitForeignKeys(DslModel dslModel) {
+		ForeignKeysBuilderV2 fkBuilder = new ForeignKeysBuilderV2(dslModel);
+		// for each entity in the model
+		for ( Entity entity : dslModel.getEntities() ) {
+			DslModelEntity dslModelEntity = (DslModelEntity)entity;
+			fkBuilder.buildImplicitForeignKeys(dslModelEntity);
+		}
+	}
+
+	/**
 	 * Check model consistency
 	 * @param dslModel
 	 */
-	protected void step5CheckModel(DslModel dslModel) {
+	protected void step6CheckModel(DslModel dslModel) {
 		// Add consistency checking here
 	}
 }

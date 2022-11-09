@@ -77,7 +77,7 @@ public class LinksConverter extends AbstractConverter {
 				// 2) apply annotations on the link
 				step2ApplyAnnotations(dslEntity, dslLink, domainField);
 				// 3) apply tags on the link
-				step3ApplyTags(dslEntity, dslLink, domainField); 
+				step3ApplyTags(dslEntity, dslLink, domainField);				
 				// 4) try to infer undefined join attributes
 				step4InferJoinAttributes(dslEntity, dslLink);
 				// 5) finalize the link
