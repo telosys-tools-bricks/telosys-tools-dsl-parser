@@ -105,7 +105,7 @@ public class DslModelForeignKey implements ForeignKey {
 		return attributes.size() > 1 ;
 	}
 	
-    //@Override
+    @Override
     public boolean isExplicit() {
 		return this.explicitFK ;
 	}
