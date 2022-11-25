@@ -26,14 +26,18 @@ import org.telosys.tools.generic.model.LinkAttribute;
 public class DslModelForeignKey implements ForeignKey {
 	
 	private static final String CONTRUCTOR_ERROR = "Foreign Key constructor error : ";
+	private static int implicitForeignKeyIdentifier = 0 ;
+	
     private final String fkName; 
     private final String originEntityName; // entity holding this FK
     private final String referencedEntityName; // entity referenced by this FK
+    private final boolean explicitFK; 
     
-    private final List<ForeignKeyAttribute> attributes;
+    private final List<ForeignKeyAttribute> attributes = new LinkedList<>();
     
-    public DslModelForeignKey(String fkName, String originEntityName, String referencedEntityName) {
+    private DslModelForeignKey(boolean explicit, String fkName, String originEntityName, String referencedEntityName) {
 		super();
+		this.explicitFK = explicit;
 		
 		if ( StrUtil.nullOrVoid(fkName)) {
 			throw new IllegalArgumentException(CONTRUCTOR_ERROR + "'name' is null or void");
@@ -49,10 +53,33 @@ public class DslModelForeignKey implements ForeignKey {
 			throw new IllegalArgumentException(CONTRUCTOR_ERROR + "'referencedEntityName' is null or void");
 		}
         this.referencedEntityName = referencedEntityName;
-        
-        this.attributes = new LinkedList<>();
+    }
+    
+    /**
+     * Constructor for an explicit Foreign Key (with an explicit name)
+     * @param fkName
+     * @param originEntityName
+     * @param referencedEntityName
+     */
+    public DslModelForeignKey(String fkName, String originEntityName, String referencedEntityName) {
+		this(true, fkName, originEntityName, referencedEntityName); 
 	}
-
+    
+    /**
+     * Constructor for an implicit Foreign Key (without explicit name)
+     * @param originEntityName
+     * @param referencedEntityName
+     */
+    public DslModelForeignKey(String originEntityName, String referencedEntityName) {
+		this(false, createImplicitForeignKeyName(originEntityName, referencedEntityName), 
+				originEntityName, referencedEntityName);
+    }
+	
+    private static final String createImplicitForeignKeyName(String originEntityName, String referencedEntityName) {
+    	implicitForeignKeyIdentifier++;
+		return "FK_IMPLICIT" + implicitForeignKeyIdentifier + "_" + originEntityName + "_" + referencedEntityName ;	
+	}
+	
 	@Override
     public String getName() {
         return fkName;
@@ -68,16 +95,6 @@ public class DslModelForeignKey implements ForeignKey {
         return referencedEntityName;
     }
 
-//    //@Override
-//    public String getTableName() {
-//        return entityName;
-//    }
-//
-//    //@Override
-//    public String getReferencedTableName() {
-//        return referencedEntityName;
-//    }
-
     @Override
     public List<ForeignKeyAttribute> getAttributes() {
         return attributes;
@@ -88,19 +105,22 @@ public class DslModelForeignKey implements ForeignKey {
 		return attributes.size() > 1 ;
 	}
 	
+    //@Override
+    public boolean isExplicit() {
+		return this.explicitFK ;
+	}
+	
     public void addAttribute(DslModelForeignKeyAttribute fkAttribute) {
     	// fkAttribute has always valid attributes (not null & not void)
         this.attributes.add(fkAttribute);
     }
 
     /**
-     * Returns all the join attributes defined in this Foreign Key
+     * Returns all the link attributes defined in this Foreign Key
      * @return
      * @since  3.4.0
      */
-//	public List<JoinAttribute> getJoinAttributes() {
 	public List<LinkAttribute> getLinkAttributes() {
-//		List<JoinAttribute> joinAttributes = new LinkedList<>();
 		List<LinkAttribute> joinAttributes = new LinkedList<>();
 		for (ForeignKeyAttribute fka : this.attributes ) {
 	    	// each fk attribute has always valid attributes (not null & not void)

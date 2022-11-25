@@ -281,11 +281,9 @@ public class ForeignKeysBuilderV2 {
 	public void buildImplicitForeignKeys(DslModelEntity dslModelEntity) {
 		for ( Link link : dslModelEntity.getLinks() ) {
 			DslModelLink dslModelLink = (DslModelLink) link ;
-			int fkNum = 0;
 			if ( dslModelLink.isBasedOnAttributes() ) {
 				// this link is based on @LinkByAttr(...)
-				fkNum++;
-				ForeignKey fk = createImplicitForeignKeyFromLink(dslModelEntity, dslModelLink, fkNum);
+				ForeignKey fk = createImplicitForeignKeyFromLink(dslModelEntity, dslModelLink);
 				// register the FK in the entity it belongs to
 				dslModelEntity.addForeignKey(fk);
 				// appply FK on all attributes involved in it 
@@ -294,15 +292,13 @@ public class ForeignKeysBuilderV2 {
 		}
 	}
 
-	private ForeignKey createImplicitForeignKeyFromLink(DslModelEntity entity, DslModelLink link, int fkNum) {
+	private ForeignKey createImplicitForeignKeyFromLink(DslModelEntity entity, DslModelLink link) {
 		
 		// New FK without attributes
 		String originEntityName = entity.getClassName();
 		String referencedEntityName = link.getReferencedEntityName();
-		String fkName = createImplicitForeignKeyName(originEntityName, referencedEntityName, fkNum);
 		
-		DslModelForeignKey fk = new DslModelForeignKey(fkName, originEntityName, referencedEntityName );
-		// TODO : add marker "implicit FK"
+		DslModelForeignKey fk = new DslModelForeignKey(originEntityName, referencedEntityName );
 		
 		for ( LinkAttribute linkAttribute : link.getAttributes() ) {
 			int ordinal = getNextAttributeOrdinal(fk);
@@ -314,9 +310,5 @@ public class ForeignKeysBuilderV2 {
 			fk.addAttribute(fkAttribute);			
 		}
 		return fk;
-	}
-	
-	private String createImplicitForeignKeyName(String originEntityName, String referencedEntityName, int fkNum) {
-		return "FK_IMPLICIT_" + fkNum + "_" + originEntityName + "_" + referencedEntityName  ;	
 	}
 }
