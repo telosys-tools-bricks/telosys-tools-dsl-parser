@@ -77,7 +77,7 @@ public class DslModelAttribute implements Attribute {
 	private boolean notBlank = false;
 	private boolean notEmpty = false;
 	private boolean notNull = false;
-	private boolean selected = true; // SELECTED BY DEFAULT
+//	private boolean selected = true; // SELECTED BY DEFAULT // removed in v 4.1.0
     private boolean isTransient = false ; // v 3.3.0
 	
 	// An attribute can be involved in many FK, it can be both in a SIMPLE FK and in a COMPOSITE FK 
@@ -467,14 +467,15 @@ public class DslModelAttribute implements Attribute {
 		this.notNull = v;
 	}
 
-	@Override
-	public boolean isSelected() {
-		return selected;
-	}
-	public void setSelected(boolean selected) {
-		this.selected = selected;
-	}
-
+	// removed in v 4.1.0	
+//	@Override
+//	public boolean isSelected() {
+//		return selected;
+//	}
+//	public void setSelected(boolean selected) {
+//		this.selected = selected;
+//	}
+//
 
 	//----------------------------------------------------------------------------------
 	// FOREIGN KEY (simple or composite)
