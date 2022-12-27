@@ -42,21 +42,6 @@ public class ParserV2 {
 		super();
 	}
 	
-//	/**
-//	 * Loads model information from the given YAML file if the file exists
-//	 * @param modelYamlFile
-//	 * @return model
-//	 */
-//	private ModelInfo loadModelInformation(File modelYamlFile) {
-//		if ( modelYamlFile.exists() && modelYamlFile.isFile() ) {
-//			YamlFileManager yaml = new YamlFileManager();
-//			return yaml.load(modelYamlFile, ModelInfo.class);
-//		}
-//		else {
-//			return new ModelInfo() ;
-//		}
-//	}
-
 	/**
 	 * Parse the MODEL located in the given model folder name
 	 * @param modelFolderName

@@ -103,8 +103,6 @@ public class ModelFKChecker {
 				return true ;
 			}
 			// in the same entity but not referencing the same entity => duplicated
-//			if ( ! fullFK.getFk().getReferencedEntityName().equals(
-//					    e.getFk().getReferencedEntityName()) ) {
 			if ( ! fullFK.getFkElement().getReferencedEntityName().equals(
 				        e.getFkElement().getReferencedEntityName()) ) {
 				return true ;

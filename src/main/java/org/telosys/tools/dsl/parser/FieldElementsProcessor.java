@@ -128,15 +128,6 @@ public class FieldElementsProcessor {
 	}
 	
 	private DomainType parseFieldType(String fieldName, Element typeElement) throws DslModelError {
-//		if (DomainNeutralTypes.exists(typeName)) { 
-//		// Simple neutral type ( string, int, date, etc )
-//		return DomainNeutralTypes.getType(typeName);
-//	} else if (entitiesNamesInModel.contains(typeName)) {
-//		// Entity type (it is supposed to be known ) eg : 'Book', 'Car', etc
-//		return new DomainEntityType(typeName); 
-//	} else {
-//		throw new ParserError(entityName, element.getLineNumber(), fieldName, "invalid type '" + typeName + "'");
-//	}
 		String type = typeElement.getContent();
 		DomainType neutralType = DomainNeutralTypes.getType(type);
 		if ( neutralType != null ) {
@@ -232,12 +223,7 @@ public class FieldElementsProcessor {
 	
 	private void processAnnotationOrTag(DomainField field, Element element) throws DslModelError {
 		if ( element.startsWithAnnotationPrefix() ) {
-			// @Xxxx : Annotation
-//			AnnotationProcessor annotationProcessor = new AnnotationProcessor(entityName, field.getName());
-//			DomainAnnotation annotation = annotationProcessor.parseAnnotation(element);
-//			annotationProcessor.checkAnnotationScope(element, field, annotation);
-//			annotationProcessor.checkAnnotationSingleUse(element, field, annotation);
-			
+			// @Xxxx : Annotation			
 			AnnotationProcessor annotationProcessor = new AnnotationProcessor(entityName, field);
 			DomainAnnotation annotation = annotationProcessor.parseAnnotation(element);
 			// no annotation error => continue

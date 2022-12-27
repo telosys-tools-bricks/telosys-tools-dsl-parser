@@ -35,8 +35,7 @@ public class NotNullAnnotation extends AnnotationDefinition {
 		checkParamValue(entity, attribute, paramValue);
 		attribute.setNotNull(true);
 
-// Moved in step4FinalizeAttribute()
-//		// if Field Not Null => Database Not Null 
-//		attribute.setDatabaseNotNull(true);
+		// Moved in step4FinalizeAttribute()
+		// if Field Not Null => Database Not Null 
 	}
 }

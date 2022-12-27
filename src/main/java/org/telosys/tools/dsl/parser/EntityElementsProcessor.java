@@ -68,10 +68,6 @@ public class EntityElementsProcessor {
 					// ENTITY LEVEL ( NOT IN FIELDS )
 					processElementAtEntityLevel(domainEntity, element, errors);
 				}
-//				r = processElementAtEntityLevel(domainEntity, element);
-//				if ( r == OPENING_BRACE_IN_ENTITY ) {
-//					inFields = true;
-//				}
 			}
 			else {
 				if ( element.contentEquals("}") && fieldElements == null ) {
@@ -85,15 +81,6 @@ public class EntityElementsProcessor {
 					}
 					if ( element.contentEquals(";") ) {
 						// End of field definition => process this field
-//						DomainField field = fieldElementsProcessor.processFieldElements(fieldElements, errors);
-//						if ( field != null ) {
-//							// Add the field in the current entity
-//							try {
-//								domainEntity.addField(field);
-//							} catch (DslModelError error) {
-//								errors.addError(error);
-//							}
-//						}
 						declareNewField(domainEntity, fieldElements, errors);
 						// Reset field elements
 						fieldElements = null ;  // to start a new list of field elements
@@ -120,9 +107,8 @@ public class EntityElementsProcessor {
 		}
 	}
 	
-	private void processElementAtEntityLevel(DomainEntity domainEntity, Element element, DslModelErrors errors) { //throws ParsingError {
+	private void processElementAtEntityLevel(DomainEntity domainEntity, Element element, DslModelErrors errors) {
 		if ( element.startsWithAnnotationPrefix() ) {
-//			AnnotationProcessor annotationParser = new AnnotationProcessor(entityName);
 			AnnotationProcessor annotationParser = new AnnotationProcessor(domainEntity);
 			DomainAnnotation annotation;
 			try {
@@ -151,9 +137,6 @@ public class EntityElementsProcessor {
 				}
 				else {
 					// ERROR : invalid entity name
-//					throw new EntityParsingError(entityName, 
-//							"Entity name '" + element.getContent()
-//							+ "' different from file name '" + entityName +"' ");
 					errors.addError( new DslModelError(entityName, element.getLineNumber(), 
 							"Entity name '" + element.getContent()
 							+ "' different from file name '" + entityName +"' "));
@@ -161,8 +144,6 @@ public class EntityElementsProcessor {
 			}
 			else {
 				// ERROR : unexpected element 
-//				throw new EntityParsingError(entityName, 
-//						"unexpected element '" + element.getContent()+"' ");
 				errors.addError( new DslModelError(entityName, element.getLineNumber(),
 						"unexpected element '" + element.getContent()+"' "));
 			}

@@ -22,11 +22,8 @@ import org.telosys.tools.dsl.commons.AttributeFKUtil;
 import org.telosys.tools.dsl.commons.ModelInfo;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
-import org.telosys.tools.dsl.model.DslModelForeignKey;
-import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKey;
-import org.telosys.tools.generic.model.LinkAttribute;
 
 /**
  * DB-MODEL to DSL-MODEL : Model converter

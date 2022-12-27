@@ -16,7 +16,6 @@
 package org.telosys.tools.dsl.parser.annotations;
 
 import org.telosys.tools.dsl.model.DslModel;
-import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationName;

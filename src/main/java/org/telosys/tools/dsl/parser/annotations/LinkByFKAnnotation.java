@@ -92,30 +92,4 @@ public class LinkByFKAnnotation extends AnnotationDefinition {
 		}
 	}
 
-//	private List<LinkAttribute> buildJoinAttributes(DslModelEntity entity, DslModelLink link, DslModelForeignKey fk) throws ParamError {
-//		List<LinkAttribute> joinAttributes = new LinkedList<>();
-//		if ( fk != null ) {
-//			for ( ForeignKeyAttribute fkAttribute : fk.getAttributes() ) {
-//				DslModelLinkAttribute jc = buildJoinAttribute(entity, link,
-//						fkAttribute.getOriginAttributeName(), 
-//						fkAttribute.getReferencedAttributeName());
-//				joinAttributes.add(jc);
-//			}
-//		}
-//		return joinAttributes;
-//	}
-
-//	private DslModelLinkAttribute buildJoinAttribute(DslModelEntity entity, DslModelLink link, 
-//			String attributeName, String referencedAttributeName) throws ParamError {
-//	    if ( StrUtil.nullOrVoid(attributeName) ) {
-//			throw newParamError(entity.getClassName(), link.getFieldName(), "no origin attribute" );
-//	    }
-//	    if ( StrUtil.nullOrVoid(referencedAttributeName) ) {
-//	    	throw newParamError(entity.getClassName(), link.getFieldName(),  "no referenced attribute");
-//	    }
-//	    else {
-//		    return new DslModelLinkAttribute(attributeName, referencedAttributeName);
-//	    }
-//	}
-
 }

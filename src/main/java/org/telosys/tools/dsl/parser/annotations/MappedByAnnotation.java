@@ -57,10 +57,8 @@ public class MappedByAnnotation extends AnnotationDefinition {
 		checkParamValue(entity, link, paramValue);
 		link.setMappedBy((String) paramValue);
 		
-// Moved in  link converter (finalize)
-//		// has MappedBy => inverse side
-//		link.setInverseSide(true);
-//		link.setOwningSide(false);
+		// Moved in  link converter (finalize)
+		// has MappedBy => inverse side : true / owning side : false
 	}
 
 }

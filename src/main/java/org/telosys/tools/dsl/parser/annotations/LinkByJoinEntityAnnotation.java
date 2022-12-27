@@ -15,9 +15,6 @@
  */
 package org.telosys.tools.dsl.parser.annotations;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelLink;
@@ -26,10 +23,8 @@ import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 import org.telosys.tools.dsl.parser.commons.ParamError;
-import org.telosys.tools.generic.model.Entity;
-import org.telosys.tools.generic.model.ForeignKey;
 
-public class LinkByJoinEntityAnnotation extends AnnotationDefinition { // extends LinkByAnnotation {
+public class LinkByJoinEntityAnnotation extends AnnotationDefinition {
 
 	public LinkByJoinEntityAnnotation() {
 		super(AnnotationName.LINK_BY_JOIN_ENTITY, AnnotationParamType.STRING, AnnotationScope.LINK);

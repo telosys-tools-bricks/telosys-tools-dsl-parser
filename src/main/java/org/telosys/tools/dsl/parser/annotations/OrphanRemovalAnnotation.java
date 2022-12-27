@@ -23,7 +23,6 @@ import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 import org.telosys.tools.dsl.parser.commons.ParamError;
-import org.telosys.tools.generic.model.enums.Cardinality;
 
 /**
  * "OrphanRemoval" annotation, usable with ORM like JPA, Doctrine, etc

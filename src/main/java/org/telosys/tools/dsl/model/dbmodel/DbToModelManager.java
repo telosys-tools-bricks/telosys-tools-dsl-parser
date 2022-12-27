@@ -27,7 +27,6 @@ import org.telosys.tools.commons.dbcfg.yaml.DatabaseConnectionProvider;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitions;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitionsLoader;
-import org.telosys.tools.commons.exception.TelosysRuntimeException;
 import org.telosys.tools.db.model.DatabaseModelManager;
 import org.telosys.tools.db.model.DatabaseTables;
 import org.telosys.tools.dsl.commons.ModelInfo;
