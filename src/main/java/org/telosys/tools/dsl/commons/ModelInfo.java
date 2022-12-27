@@ -44,6 +44,16 @@ public class ModelInfo {
     }
 
     /**
+     * Returns "" if the given string is null, else keep it
+     * To avoid null values set by SnakeYaml if no value in the file
+     * @param s
+     * @return
+     */
+    private String voidIfNull(String s) {
+    	return s != null ? s : "" ;
+    }
+    
+    /**
      * Returns the model title
      *
      * @return
@@ -57,7 +67,7 @@ public class ModelInfo {
      * @param modelTitle
      */
     public final void setTitle(String modelTitle) {
-        this.modelTitle = modelTitle ;
+        this.modelTitle = voidIfNull(modelTitle) ;
     }
 
     //-----------------------------------------------------------------------------
@@ -74,7 +84,7 @@ public class ModelInfo {
      * @param modelVersion
      */
     public final void setVersion(String modelVersion) {
-    	this.modelVersion = modelVersion ;
+    	this.modelVersion = voidIfNull(modelVersion) ;
     }
 
     //-----------------------------------------------------------------------------
@@ -91,7 +101,7 @@ public class ModelInfo {
      * @param modelDescription
      */
     public final void setDescription(String modelDescription) {
-    	this.modelDescription = modelDescription ;
+    	this.modelDescription = voidIfNull(modelDescription) ;
     }
     
     //-----------------------------------------------------------------------------
