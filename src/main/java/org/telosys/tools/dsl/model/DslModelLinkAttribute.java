@@ -24,7 +24,7 @@ import org.telosys.tools.generic.model.LinkAttribute;
  * @author L.Guerin
  * 
  */
-/*
+/***
   JPA examples :
  
    @ManyToOne 
@@ -38,8 +38,7 @@ import org.telosys.tools.generic.model.LinkAttribute;
    })
    private Address address;
     
- */
-//public class DslModelJoinAttribute implements JoinAttribute {
+***/
 public class DslModelLinkAttribute implements LinkAttribute {
 	
 	private static final String CONTRUCTOR_ERROR = "Join Attribute constructor error : ";
@@ -48,7 +47,6 @@ public class DslModelLinkAttribute implements LinkAttribute {
 	private final String name;
 
 	// JPA doc : (Optional) The name of the attribute referenced by this foreign key column.
-	//private String referencedColumnName = ""; // JPA doc : Default: ""
 	private final String referencedName ; 
 
 	// JPA doc : (Optional) Whether the property is a unique key.
@@ -67,15 +65,6 @@ public class DslModelLinkAttribute implements LinkAttribute {
 	// . table : (Optional) The name of the table that contains the column.
 	// . columnDefinition : (Optional) The SQL fragment that is used when generating the DDL for the column.
 	
-//	/**
-//	 * Constructor
-//	 * @param name
-//	 */
-//	public DslModelJoinAttribute(String name) {
-//		this.name = name;
-//		this.referencedColumnName = ""; // JPA doc : Default: ""
-//	}
-
 	/**
 	 * Constructor
 	 * @param name
@@ -92,19 +81,11 @@ public class DslModelLinkAttribute implements LinkAttribute {
 		this.referencedName = referencedName;
 	}
 	
-//	@Override
-//	public String getName() {
-//		return name;
-//	}
 	@Override
 	public String getOriginAttributeName() {
 		return name;
 	}
 
-//	@Override
-//	public String getReferencedColumnName() {
-//		return referencedColumnName;
-//	}
 	@Override
 	public String getReferencedAttributeName() {
 		return referencedName;

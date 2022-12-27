@@ -35,8 +35,6 @@ public class DslModel implements Model {
 	// from model.yaml
 	private final ModelInfo modelInfo;
 	
-	//private Integer databaseId;
-	//private String databaseProductName	;
 	private String databaseId	;
 	private String databaseName	;
 	private String databaseType ;
@@ -73,7 +71,6 @@ public class DslModel implements Model {
 
 	@Override
 	public String getFolderName() {  // v 3.3.0
-		// return DslModelUtil.getModelFolderName(modelName);
 		// since v 3.4.0 the folder name is the model name
 		return modelName ;
 	}

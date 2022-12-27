@@ -38,7 +38,6 @@ public class DslModelEntity implements Entity {
 	private String packageName = ""; // @Package annotation
 
 	private List<Attribute> attributes = new ArrayList<>();
-//	private List<ForeignKey> databaseForeignKeys = new ArrayList<>(); // removed in v 3.4.0
 	private List<ForeignKey> foreignKeys = new ArrayList<>(); // v 3.4.0 
 
 	private List<Link> links = new ArrayList<>();
@@ -49,9 +48,6 @@ public class DslModelEntity implements Entity {
 	private String databaseSchema  = "";
 	private String databaseComment = "" ;
 	private String databaseTablespace = "" ;
-//	private String databaseType    = "TABLE";
-//	private boolean tableType = true ;
-//	private boolean viewType  = false;
 	private boolean databaseView  = false; // v 3.4.0  ( replace databaseType )
 
 	// Other 
@@ -192,35 +188,10 @@ public class DslModelEntity implements Entity {
 	}
 	
 	//--------------------------------------------------------------------------
-//	@Override
-//	public List<ForeignKey> getDatabaseForeignKeys() {
-//		return databaseForeignKeys;
-//	}
-//	public void setDatabaseForeignKeys(List<ForeignKey> databaseForeignKeys) {
-//		this.databaseForeignKeys = databaseForeignKeys;
-//	}
-//	/**
-//	 * Try to found a Foreign Key with the given name
-//	 * @param name
-//	 * @return
-//	 */
-//	public ForeignKey getDatabaseForeignKeyByName(String name) {
-//		for(ForeignKey fk : this.databaseForeignKeys ) {
-//			if(name.equals(fk.getName())) {
-//				return fk;
-//			}
-//		}
-//		return null;
-//	}
-
-	//--------------------------------------------------------------------------
 	@Override
 	public List<ForeignKey> getForeignKeys() {
 		return foreignKeys;
 	}
-//	public void setForeignKeys(List<ForeignKey> foreignKeys) {
-//		this.foreignKeys = foreignKeys;
-//	}
 	public void addForeignKey(ForeignKey fk) { // v 3.4.0
 		this.foreignKeys.add(fk);
 	}
@@ -305,9 +276,6 @@ public class DslModelEntity implements Entity {
 	public List<Link> getLinks() {
 		return links;
 	}
-//	public void setLinks(List<Link> links) { // Unused : removed v 3.4.0
-//		this.links = links;
-//	}
 	public void addLink(Link link) { // v 3.4.0
 		this.links.add(link);
 	}
@@ -377,16 +345,6 @@ public class DslModelEntity implements Entity {
 		return null;
 	}
 
-// removed in v 3.4.0 
-//	public DslModelAttribute getAttributeByDatabaseName(String dbName) {
-//		for(Attribute attribute : getAttributes()) {
-//			if(dbName.equals(attribute.getDatabaseName())) {
-//				return (DslModelAttribute) attribute;
-//			}
-//		}
-//		return null;
-//	}
-	//--------------------------------------------------------------------------
 	/**
 	 * Replaces the attribute identified by the given name by another one
 	 * @param name

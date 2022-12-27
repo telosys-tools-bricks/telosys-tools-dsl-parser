@@ -84,38 +84,13 @@ public class DslModelLink implements Link {
         this.fieldName = fieldName;
 	}
 
-//	@Override
-//    public String getId() { // removed in v 3.4.0
-//        return id;
-//    }
-//
-//    public void setId(String id) { // removed in v 3.4.0
-//        this.id = id;
-//    }
-
-//    @Override
-//    public List<JoinColumn> getJoinColumns() {
-//        return joinColumns;
-//    }
-//    public void setJoinColumns(List<JoinColumn> joinColumns) {
-//        this.joinColumns = joinColumns;
-//    }
-//    public boolean hasJoinColumns() {
-//        if ( this.joinColumns != null ) {
-//        	return ! this.joinColumns.isEmpty() ;
-//        }
-//        return false;
-//    }
     @Override
-//    public List<JoinAttribute> getJoinAttributes() {
     public List<LinkAttribute> getAttributes() {
         return linkAttributes;
     }
-//    public void setJoinAttributes(List<JoinAttribute> joinAttributes) {
     public void setAttributes(List<LinkAttribute> linkAttributes) {
         this.linkAttributes = linkAttributes;
     }
-//    public boolean hasJoinAttributes() {
     public boolean hasAttributes() {
         if ( this.linkAttributes != null ) {
         	return ! this.linkAttributes.isEmpty() ;
@@ -123,21 +98,11 @@ public class DslModelLink implements Link {
         return false;
     }
 
-//    @Override
-//    public String getTargetTableName() {
-//        return targetTableName;
-//    }
-//    public void setTargetTableName(String targetTableName) {
-//        this.targetTableName = targetTableName;
-//    }
-
     @Override
-    //public String getTargetEntityClassName() {
     public String getReferencedEntityName() {
         return referencedEntityName;
     }
-    //public void setTargetEntityClassName(String targetEntityClassName) {
-        public void setReferencedEntityName(String referencedEntityName) {
+    public void setReferencedEntityName(String referencedEntityName) {
         this.referencedEntityName = referencedEntityName;
     }
 
@@ -167,14 +132,6 @@ public class DslModelLink implements Link {
         return true; // Always "TRUE" ( "SELECTED" )
     }
 
-//    @Override
-//    public String getSourceTableName() {
-//        return sourceTableName;
-//    }
-//    public void setSourceTableName(String sourceTableName) {
-//        this.sourceTableName = sourceTableName;
-//    }
-
     @Override
     public boolean isInverseSide() {
         return inverseSide;
@@ -182,14 +139,6 @@ public class DslModelLink implements Link {
     public void setInverseSide(boolean inverseSide) {
         this.inverseSide = inverseSide;
     }
-
-//    @Override
-//    public String getInverseSideLinkId() { // removed in v 3.4.0
-//        return inverseSideLinkId;
-//    }
-//    public void setInverseSideLinkId(String inverseSideLinkId) { // removed in v 3.4.0
-//        this.inverseSideLinkId = inverseSideLinkId;
-//    }
 
     @Override
     public Optional getOptional() {
@@ -232,13 +181,6 @@ public class DslModelLink implements Link {
         this.foreignKeyName = foreignKeyName;
     }
 
-//    @Override
-//    public boolean isBasedOnJoinTable() {
-//        return basedOnJoinTable;
-//    }
-//    public void setBasedOnJoinTable(boolean basedOnJoinTable) {
-//        this.basedOnJoinTable = basedOnJoinTable;
-//    }
     @Override // link defined by annotation : "@LinkByJoinEntity(...)"
     public boolean isBasedOnJoinEntity() {
         return basedOnJoinEntity;
@@ -263,21 +205,6 @@ public class DslModelLink implements Link {
         this.basedOnAttributes = basedOnAttributes;
     }
 
-//    @Override
-//    public JoinTable getJoinTable() {
-//        return joinTable;
-//    }
-//    public void setJoinTable(JoinTable joinTable) {
-//        this.joinTable = joinTable;
-//    }
-//    @Override
-//    public String getJoinTableName() {
-//        return joinTableName;
-//    }
-//    public void setJoinTableName(String joinTableName) {
-//        this.joinTableName = joinTableName;
-//    }
-// v 3.4.0
     @Override
     public String getJoinEntityName() {
         return joinEntityName;
@@ -285,15 +212,6 @@ public class DslModelLink implements Link {
     public void setJoinEntityName(String joinEntityName) {
         this.joinEntityName = joinEntityName;
     }
-
-//    @Override
-//    public String getComparableString() { // removed in v 3.4.0
-//        return comparableString;
-//    }
-//
-//    public void setComparableString(String comparableString) { // removed in v 3.4.0
-//        this.comparableString = comparableString;
-//    }
 
     @Override
     public boolean isEmbedded() {

@@ -41,8 +41,6 @@ public class DslModelAttribute implements Attribute {
 	private String databaseSize = ""; // String for size with comma ( eg "8,2" )
 	private String databaseType = "";
 	
-//	private boolean isDateAfter = false;
-//	private boolean isDateBefore = false;
 	private boolean isDateFuture = false; // @Future
 	private boolean isDatePast = false; // @Past
 	private String dateAfterValue = "";
@@ -55,9 +53,6 @@ public class DslModelAttribute implements Attribute {
 	private GeneratedValueStrategy generatedValueStrategy = GeneratedValueStrategy.UNDEFINED; // v 3.4.0
 	private String initialValue = "" ; 
 	private String inputType = "" ; 
-// removed in ver 4.1
-//	private Integer jdbcTypeCode;
-//	private String jdbcTypeName = "";
 	private String label = "" ; 
 	private Integer maxLength;
 	private Integer minLength;
@@ -77,7 +72,6 @@ public class DslModelAttribute implements Attribute {
 	private boolean notBlank = false;
 	private boolean notEmpty = false;
 	private boolean notNull = false;
-//	private boolean selected = true; // SELECTED BY DEFAULT // removed in v 4.1.0
     private boolean isTransient = false ; // v 3.3.0
 	
 	// An attribute can be involved in many FK, it can be both in a SIMPLE FK and in a COMPOSITE FK 
@@ -303,23 +297,6 @@ public class DslModelAttribute implements Attribute {
 		this.inputType = inputType;
 	}
 
-// removed in ver 4.1
-//	@Override
-//	public Integer getJdbcTypeCode() {
-//		return jdbcTypeCode;
-//	}
-//	public void setJdbcTypeCode(Integer jdbcTypeCode) {
-//		this.jdbcTypeCode = jdbcTypeCode;
-//	}
-//
-//	@Override
-//	public String getJdbcTypeName() {
-//		return jdbcTypeName;
-//	}
-//	public void setJdbcTypeName(String jdbcTypeName) {
-//		this.jdbcTypeName = jdbcTypeName;
-//	}
-
 	@Override
 	public String getLabel() {
 		return label;
@@ -384,22 +361,6 @@ public class DslModelAttribute implements Attribute {
 		this.databaseNotNull = databaseNotNull;
 	}
 
-//	@Override
-//	public boolean isDateAfter() {
-//		return isDateAfter;
-//	}
-//	public void setDateAfter(boolean isDateAfter) {
-//		this.isDateAfter = isDateAfter;
-//	}
-
-//	@Override
-//	public boolean isDateBefore() {
-//		return isDateBefore;
-//	}
-//	public void setDateBefore(boolean isDateBefore) {
-//		this.isDateBefore = isDateBefore;
-//	}
-
 	@Override
 	public boolean isDateFuture() { // @Future
 		return isDateFuture;
@@ -418,14 +379,10 @@ public class DslModelAttribute implements Attribute {
 
 	@Override
 	public boolean isGeneratedValue() {
-//		return generatedValue;
 		return generatedValueStrategy != null 
 				&& generatedValueStrategy != GeneratedValueStrategy.UNDEFINED ; // v 3.4.0
 		
 	}
-//	public void setGeneratedValue(boolean generatedValue) {
-//		this.generatedValue = generatedValue;
-//	}
 	
 	@Override
 	public boolean isKeyElement() {
@@ -466,16 +423,6 @@ public class DslModelAttribute implements Attribute {
 	public void setNotNull(boolean v) {
 		this.notNull = v;
 	}
-
-	// removed in v 4.1.0	
-//	@Override
-//	public boolean isSelected() {
-//		return selected;
-//	}
-//	public void setSelected(boolean selected) {
-//		this.selected = selected;
-//	}
-//
 
 	//----------------------------------------------------------------------------------
 	// FOREIGN KEY (simple or composite)
