@@ -39,23 +39,18 @@ public class DbToEntityConverter {
 	 * @param dbTable
 	 * @return
 	 */
-//	protected EntityInDbModel addEntity(RepositoryModel repositoryModel, DatabaseTable dbTable)
 	public DslModelEntity createEntity(DatabaseTable dbTable) {
 
 		//--- Get the VO Bean class name from the Table Name
-//		String beanClassName = repositoryRules.getEntityClassName(entity.getDatabaseTable() );
 		String entityName = NameConverter.tableNameToEntityName(dbTable.getTableName());
 
 		//--- Create Entity from the Database TABLE
-//		EntityInDbModel entity = new EntityInDbModel();
 		DslModelEntity entity = new DslModelEntity(entityName);
 		entity.setDatabaseTable( dbTable.getTableName() );
 
-//		entity.setClassName(beanClassName);		
 		entity.setDatabaseCatalog( dbTable.getCatalogName() ); 
 		entity.setDatabaseSchema( dbTable.getSchemaName() ); 
 		entity.setDatabaseComment( dbTable.getComment() );
-//		entity.setDatabaseType( dbTable.getTableType() ) ; 
 		if ( "VIEW".equalsIgnoreCase(dbTable.getTableType()) ) {
 			entity.setDatabaseView(true);
 		}

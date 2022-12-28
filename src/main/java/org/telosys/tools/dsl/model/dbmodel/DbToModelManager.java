@@ -156,7 +156,6 @@ public class DbToModelManager {
 	private DatabaseTables getDatabaseTablesFromDb(Connection con, DatabaseDefinition databaseDefinition) throws TelosysToolsException {
 		
 		String tableNamePattern = databaseDefinition.getTableNamePattern();
-//		if (tableNamePattern == null) {
 		if ( StrUtil.nullOrVoid(tableNamePattern) ) {
 			// Not set => use "%" by default
 			tableNamePattern = "%";

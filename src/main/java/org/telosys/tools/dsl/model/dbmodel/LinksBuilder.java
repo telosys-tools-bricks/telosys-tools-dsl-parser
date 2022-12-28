@@ -96,10 +96,8 @@ public class LinksBuilder {
 	/**
 	 * Creates a OneToMany inverse side link for the given FK
 	 * @param model
-	 * @param entity
 	 * @param fk
 	 */
-//	protected void createLinkOneToMany(DslModel model, DslModelEntity entity, DslModelForeignKey fk) {
 	protected void createLinkOneToMany(DslModel model, DslModelForeignKey fk) {
 		String referencedEntityName = fk.getReferencedEntityName();
 		DslModelEntity referencedEntity = (DslModelEntity) model.getEntityByClassName(fk.getReferencedEntityName());

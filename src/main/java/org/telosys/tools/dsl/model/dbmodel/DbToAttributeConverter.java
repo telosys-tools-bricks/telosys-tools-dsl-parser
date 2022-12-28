@@ -41,7 +41,7 @@ public class DbToAttributeConverter {
 
 		//--- Create a new "attribute" for this "column"
 		String attributeName = NameConverter.columnNameToAttributeName(dbCol.getColumnName());
-		String attributeType = AttributeTypeConverter.getAttributeType(dbCol.getJdbcTypeCode());
+		String attributeType = AttributeUtils.getAttributeType(dbCol.getJdbcTypeCode());
 		DslModelAttribute attribute = new DslModelAttribute(attributeName, attributeType);
 		
 		String size = builSize(dbCol); // usable as attribute size and database size 
@@ -59,7 +59,8 @@ public class DbToAttributeConverter {
     	// DB default value
     	if ( ! StrUtil.nullOrVoid(dbCol.getDefaultValue()) ) {
     		// default value is returned between single quotes => remove single quotes if any
-    		attribute.setDatabaseDefaultValue( StrUtil.removeQuotes(dbCol.getDefaultValue(), '\'') ); 
+    		//attribute.setDatabaseDefaultValue( StrUtil.removeQuotes(dbCol.getDefaultValue(), '\'') ); 
+    		attribute.setDatabaseDefaultValue( AttributeUtils.cleanDefaultValue(dbCol.getDefaultValue()) ); 
     	}
     	// DB comment
     	if ( ! StrUtil.nullOrVoid(dbCol.getDefaultValue()) ) {
@@ -106,8 +107,9 @@ public class DbToAttributeConverter {
     			return DateType.TIME_ONLY ;
     		case Types.TIMESTAMP : 
     			return DateType.DATE_AND_TIME ;
+    		default:
+    			return DateType.UNDEFINED ;
     	}
-    	return DateType.UNDEFINED ;
     }
 	
     private String builSize(DatabaseColumn dbCol) {
