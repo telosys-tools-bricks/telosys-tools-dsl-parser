@@ -15,11 +15,10 @@ databases :
     tableNameInclude:
     tableNameExclude:
     tableTypes: TABLE
-    # DB model creation
-    dbModelName:
     # Telosys DSL model creation 
     linksManyToOne: true
     linksOneToMany: false
+    linksManyToMany: false
 
   # DB for "CUSTOMERS" schema
   - id: db1
@@ -36,11 +35,10 @@ databases :
     tableNameInclude:
     tableNameExclude:
     tableTypes: TABLE
-    # DB model creation
-    dbModelName:
     # Telosys DSL model creation 
     linksManyToOne: true
     linksOneToMany: false
+    linksManyToMany: false
     
   # DB for "STUDENTS" schema
   - id: db2
@@ -57,8 +55,8 @@ databases :
     tableNameInclude:
     tableNameExclude:
     tableTypes: TABLE
-    # DB model creation
-    dbModelName:
     # Telosys DSL model creation 
     linksManyToOne: true
-    linksOneToMany: false
+    linksOneToMany: true
+    linksManyToMany: true
+    

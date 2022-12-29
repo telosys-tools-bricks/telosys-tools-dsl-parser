@@ -23,3 +23,18 @@ CREATE TABLE students.student (
   CONSTRAINT FK_STU_TEACHER1 FOREIGN KEY(teacher_code1) REFERENCES teacher(code),
   CONSTRAINT FK_STU_TEACHER2 FOREIGN KEY(teacher_code2) REFERENCES teacher(code)
 );
+
+CREATE TABLE students.course (
+  id   VARCHAR(2) NOT NULL ,
+  name VARCHAR(40),
+  PRIMARY KEY(id)
+);
+
+CREATE TABLE students.course_teacher (
+  id   VARCHAR(2) NOT NULL ,
+  code INTEGER NOT NULL,
+  PRIMARY KEY(id,code),
+  CONSTRAINT FK_COURSE_TEACHER_COURSE  FOREIGN KEY(id)   REFERENCES course(id),
+  CONSTRAINT FK_COURSE_TEACHER_TEACHER FOREIGN KEY(code) REFERENCES teacher(code)
+);
+

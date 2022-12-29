@@ -15,23 +15,13 @@ import static org.junit.Assert.assertNotNull;
 
 public class DatabaseInMemoryTest { 
 
-	//protected static final String DATABASE_CFG_FILE  = "/myproject/TelosysTools/databases.dbcfg" ;
 	protected static final String DATABASE_CFG_FILE  = "/myproject/TelosysTools/databases.yaml" ;
-	//protected static final int    DATABASE_ID  = 0 ;
 	protected static final String DATABASE_ID  = "db0" ;
 
 	private void printSeparator(String s) {
 		System.out.println("========== " + s );
 	}
 	
-//	private DatabaseConfiguration getDatabaseConfiguration() throws TelosysToolsException {
-//		DbConfigUtil dbConfigUtil = new DbConfigUtil();
-//		DatabaseConfiguration cfg = dbConfigUtil.getDatabaseConfigurations(DATABASE_CFG_FILE, DATABASE_ID);
-//		if ( cfg == null) {
-//			throw new IllegalStateException("Cannot get db config #" + DATABASE_ID + " from " + DATABASE_CFG_FILE);
-//		}
-//		return cfg;
-//	}
 	private DatabaseDefinition getDatabaseDefinition() throws TelosysToolsException {
 		// Load databases definitions
 		DatabaseDefinitionsLoader loader = new DatabaseDefinitionsLoader();
@@ -44,8 +34,6 @@ public class DatabaseInMemoryTest {
 			throw new TelosysToolsException("Unknown database '" + DATABASE_ID + "'");
 		}
 	}
-	
-	
 	
 	@Test
 	public void testExecSqlscript() throws TelosysToolsException, SQLException {

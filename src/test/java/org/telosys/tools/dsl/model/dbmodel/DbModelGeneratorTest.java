@@ -38,22 +38,13 @@ public class DbModelGeneratorTest {
 		return cfgManager.loadTelosysToolsCfg();
 	}
 
-//	private DatabaseConfiguration getDatabasesConfiguration(TelosysToolsCfg telosysToolsCfg, int dbId) throws TelosysToolsException {
-//    	DbConfigManager dbConfigManager = new DbConfigManager(telosysToolsCfg) ;
-//    	DatabasesConfigurations databasesConfigurations = dbConfigManager.load();
-//    	return databasesConfigurations.getDatabaseConfiguration(dbId);
-//	}
-	
 	private DslModel generateRepositoryModel(String dbId, String sqlFile, String modelName) throws TelosysToolsException {
 		
 		System.out.println("Get TelosysToolsCfg from project '"+ PROJECT_FOLDER+"'");
 		TelosysToolsCfg telosysToolsCfg = getTelosysToolsCfg(PROJECT_FOLDER);
 
-//		DatabaseConfiguration databaseConfiguration = getDatabasesConfiguration(telosysToolsCfg, dbId);
-		
 		System.out.println("Database initialization... ");
 		System.out.println(telosysToolsCfg.getDatabasesDbCfgFile());
-//		DatabaseInMemory databaseInMemory = new DatabaseInMemory(databaseConfiguration);
 		DatabaseInMemory databaseInMemory = new DatabaseInMemory(telosysToolsCfg, dbId);
 		databaseInMemory.executeSqlFile(sqlFile);
 		// do not close DB here (keep it in memory)
@@ -131,13 +122,16 @@ public class DbModelGeneratorTest {
 		
 		DslModel model = generateRepositoryModel("db2", "students.sql", "students");
 		assertEquals("db2", model.getDatabaseId() );
-		assertEquals(2, model.getEntities().size());
+		assertEquals(4, model.getEntities().size());
 
 		DslModelEntity studentEntity = (DslModelEntity) model.getEntityByTableName("STUDENT");
 		assertNotNull(studentEntity);
 		
 		DslModelEntity teacherEntity = (DslModelEntity) model.getEntityByTableName("TEACHER");
 		assertNotNull(teacherEntity);
+		
+		DslModelEntity courseEntity = (DslModelEntity) model.getEntityByTableName("COURSE");
+		assertNotNull(courseEntity);
 		
 		//--- Check FK information stored in Attribute
 		Attribute studentId = studentEntity.getAttributeByName("id");
@@ -185,11 +179,20 @@ public class DbModelGeneratorTest {
 			assertEquals ("Teacher", link.getReferencedEntityName());
 			assertEquals ( Cardinality.MANY_TO_ONE, link.getCardinality() );
 		}
-		assertEquals(2, teacherEntity.getLinks().size() );
+		assertEquals(3, teacherEntity.getLinks().size() );
 		for ( Link link : teacherEntity.getLinks() ) {
-			assertEquals ("Student", link.getReferencedEntityName());
-			assertEquals ( Cardinality.ONE_TO_MANY, link.getCardinality() );
+			String ref = link.getReferencedEntityName();
+			Cardinality cardinality = link.getCardinality();
+			assertTrue ("Student".equals(ref) || "Course".equals(ref));
+			assertTrue (cardinality == Cardinality.ONE_TO_MANY || cardinality == Cardinality.MANY_TO_MANY );
+			if ( cardinality == Cardinality.MANY_TO_MANY ) {
+				assertTrue ("Course".equals(ref) );
+			}
 		}
+		assertEquals(1, courseEntity.getLinks().size() );
+		Link link = courseEntity.getLinks().get(0);
+		assertEquals ("Teacher", link.getReferencedEntityName());
+		assertEquals ( Cardinality.MANY_TO_MANY, link.getCardinality() );
 	}
 
 }

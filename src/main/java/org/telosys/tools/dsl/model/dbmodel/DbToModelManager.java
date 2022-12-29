@@ -96,7 +96,7 @@ public class DbToModelManager {
 		}
 		
 		//--- STEP 2 : Create the links between entities (based on FK)
-		LinksBuilder linksBuilder = new LinksBuilder();
+		LinksBuilder linksBuilder = new LinksBuilder(databaseDefinition);
 		linksBuilder.createLinks(model);
 		
 		return model ;

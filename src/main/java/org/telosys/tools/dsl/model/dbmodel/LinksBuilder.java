@@ -15,11 +15,15 @@
  */
 package org.telosys.tools.dsl.model.dbmodel;
 
+import java.util.List;
+
 import org.telosys.tools.commons.NamingStyleConverter;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelForeignKey;
 import org.telosys.tools.dsl.model.DslModelLink;
+import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.enums.Cardinality;
@@ -34,38 +38,71 @@ import org.telosys.tools.generic.model.enums.Cardinality;
 public class LinksBuilder {
 	
 	private final NamingStyleConverter nameConverter = new NamingStyleConverter();
+	
+	private final DatabaseDefinition databaseDefinition;
+
+	/**
+	 * Constructor
+	 * @param databaseDefinition
+	 */
+	public LinksBuilder(DatabaseDefinition databaseDefinition) {
+		super();
+		this.databaseDefinition = databaseDefinition;
+	}
 
 	/**
 	 * Create links from foreign keys for all entities
 	 * @param model
 	 * @return
 	 */
-	public int createLinks(DslModel model) {
-		int count = 0 ;
+	public void createLinks(DslModel model) {
 		for ( Entity entity : model.getEntities() ) {
-			count = count + createLinks(model, (DslModelEntity) entity);
+			if ( isJoinEntity(entity) ) {
+				createManyToManyLinks(model, (DslModelEntity) entity);
+			}
+			else {
+				createLinks(model, (DslModelEntity) entity);
+			}
 		}
-		return count ;
 	}
 
+	private boolean isJoinEntity(Entity entity) {
+		//--- Check if entity has 2 Foreign Keys
+		if ( entity.getForeignKeys().size() != 2 ) {
+			return false;
+		}
+		//--- Check if all attributes are in the PK and in a FK
+		for ( Attribute attribute : entity.getAttributes() ) {
+			if ( ! attribute.isKeyElement() ) { 
+				return false ; // at least one attribute is not in PK 
+			}
+			if ( ! attribute.isFK() ) {
+				return false ; // at least one attribute is not in FK
+			}
+		}
+		//--- all conditions are met : this is a "Join Entity"
+		return true ;
+	}
+	
 	/**
 	 * Create links from foreign keys for the given entity
 	 * @param model
 	 * @param entity
 	 * @return
 	 */
-	protected int createLinks(DslModel model, DslModelEntity entity) {
-		int count = 0 ;
+	protected void createLinks(DslModel model, DslModelEntity entity) {
 		for ( ForeignKey fk : entity.getForeignKeys() ) {
-			count = count + createLinks(model, entity, (DslModelForeignKey) fk);
+			createLinks(model, entity, (DslModelForeignKey) fk);
 		}
-		return count ;
 	}
 
-	protected int createLinks(DslModel model, DslModelEntity entity, DslModelForeignKey fk) {
-		createLinkManyToOne(entity, fk);
-		createLinkOneToMany(model, fk);
-		return 1;
+	protected void createLinks(DslModel model, DslModelEntity entity, DslModelForeignKey fk) {
+		if ( databaseDefinition.isLinksManyToOne() ) {
+			createLinkManyToOne(entity, fk);
+		}
+		if ( databaseDefinition.isLinksOneToMany() ) {
+			createLinkOneToMany(model, fk);
+		}
 	}
 
 	/**
@@ -140,5 +177,50 @@ public class LinksBuilder {
 			return true;
 		}
 		return false;
+	}
+	
+	protected void createManyToManyLinks(DslModel model, DslModelEntity entity) {
+		List<ForeignKey> foreignKeys = entity.getForeignKeys();
+		if ( foreignKeys.size() == 2 ) {
+			DslModelForeignKey fk1 = (DslModelForeignKey) foreignKeys.get(0);
+			DslModelForeignKey fk2 = (DslModelForeignKey) foreignKeys.get(1);
+			DslModelEntity referencedEntity1 = getReferencedEntity(model, fk1);
+			DslModelEntity referencedEntity2 = getReferencedEntity(model, fk2);
+			createLinkManyToMany(referencedEntity1, referencedEntity2.getClassName()) ;
+			createLinkManyToMany(referencedEntity2, referencedEntity1.getClassName()) ;
+		}
+	}
+	
+	private void createLinkManyToMany(DslModelEntity entity, String referencedEntityName) {
+		String linkFieldName = buildCollectionFieldName(entity, referencedEntityName);
+		// create link
+		DslModelLink link = new DslModelLink(linkFieldName);
+		link.setReferencedEntityName(referencedEntityName);
+		link.setCardinality(Cardinality.MANY_TO_MANY);
+		link.setOwningSide(false); // no matter
+		link.setInverseSide(false); // no matter
+		// add link in entity
+		entity.addLink(link);
+	}
+	
+	private DslModelEntity getReferencedEntity(DslModel model, DslModelForeignKey fk) {
+		String referencedEntityName = fk.getReferencedEntityName();
+		DslModelEntity referencedEntity = (DslModelEntity) model.getEntityByClassName(referencedEntityName);
+		if ( referencedEntity == null ) {
+			throw new IllegalStateException("FK "+fk.getName()+ ": invalid referenced entity " + referencedEntityName);
+		}
+		return referencedEntity;
+	}
+	
+	/**
+	 * Build the link field name for a collection
+	 * @param entity the entity in which the field will be added
+	 * @param entityInCollection eg "Person"
+	 * @return the collection name, eg "personList"
+	 */
+	private String buildCollectionFieldName(DslModelEntity entity, String entityInCollection) {
+		// entity "Person" --ref--> Other entity => inverse side field = "personList"
+		String basicFieldName = nameConverter.toCamelCase(entityInCollection)+"List";
+		return getNonDuplicateFieldName(basicFieldName, entity) ; 
 	}
 }

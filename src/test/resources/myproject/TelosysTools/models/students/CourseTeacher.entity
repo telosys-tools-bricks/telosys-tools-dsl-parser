@@ -1,0 +1,9 @@
+@DbTable(COURSE_TEACHER)
+@DbCatalog(TEST)
+@DbSchema(STUDENTS)
+CourseTeacher {
+  // attributes
+  id : string { @Id @DbName(ID) @DbType("CHARACTER VARYING(2)") @NotNull @NotEmpty @Size(2) @MaxLen(2) @FK(FK_COURSE_TEACHER_COURSE, Course.id) };
+  code : int { @Id @DbName(CODE) @DbType(INTEGER) @NotNull @NotEmpty @FK(FK_COURSE_TEACHER_TEACHER, Teacher.code) };
+  // links
+}
