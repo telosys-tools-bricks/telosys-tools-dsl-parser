@@ -33,38 +33,6 @@ public class DbToForeignKeyConverter
 	}
 
 	public DslModelForeignKey createForeignKey( DatabaseForeignKey dbFK )  {	
-		// ForeignKeyInDbModel foreignKey = new ForeignKeyInDbModel(dbFK.getForeignKeyName());	
-		
-//		String originTableName = "";
-//		String referencedTableName = "";
-//		for ( DatabaseForeignKeyColumn dbFkCol : dbFK.getForeignKeyColumns() ) {
-//			// keep table names for FK
-//			originTableName = dbFkCol.getFkTableName();
-//			referencedTableName = dbFkCol.getPkTableName();
-//
-//			int ordinal = dbFkCol.getFkSequence();
-//			String originAttributeName = repositoryRules.getAttributeName(dbFkCol.getFkColumnName()) ;
-//			String referencedAttributeName = repositoryRules.getAttributeName(dbFkCol.getPkColumnName());
-//			ForeignKeyAttributeInDbModel foreignKeyColumn = new ForeignKeyAttributeInDbModel(
-//					ordinal, originAttributeName, referencedAttributeName);
-//					
-//			foreignKeyColumn.setOriginAttributeName(repositoryRules.getAttributeName(dbFkCol.getFkColumnName()));
-//			foreignKeyColumn.setReferencedAttributeName(referencedAttributeName);
-//			
-//			foreignKeyColumn.setUpdateRuleCode( dbFkCol.getUpdateRule() );
-//			foreignKeyColumn.setDeleteRuleCode( dbFkCol.getDeleteRule() );
-//			foreignKeyColumn.setDeferrableCode( dbFkCol.getDeferrability() );
-//			
-//			//foreignKey.storeForeignKeyColumn(foreignKeyColumn);
-//			foreignKey.addAttribute(foreignKeyColumn);
-//		}
-//		
-//		String originEntityName = repositoryRules.getEntityClassName(originTableName);
-//		String referencedEntityName = repositoryRules.getEntityClassName(referencedTableName);
-//		foreignKey.setOriginEntityName(originEntityName);
-//		foreignKey.setReferencedEntityName(referencedEntityName);
-
-		//------------------------------------------------------------------
 		String originTableName = "";
 		String referencedTableName = "";
 		//--- Create all FK attributes

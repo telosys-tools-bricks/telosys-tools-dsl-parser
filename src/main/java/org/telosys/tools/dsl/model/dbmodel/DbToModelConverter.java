@@ -34,6 +34,8 @@ import org.telosys.tools.generic.model.ForeignKey;
 
 public class DbToModelConverter {
 	
+	private static final String SEPARATOR = "   --------------------------------------------------------------";
+	
 	private final TelosysToolsLogger  logger ;
 
 	private final DbToEntityConverter  entityConverter  = new DbToEntityConverter();
@@ -50,7 +52,7 @@ public class DbToModelConverter {
 		int tablesCount = 0;
 		for ( DatabaseTable dbTable : dbTables ) {
 			tablesCount++;
-			logger.log("   --------------------------------------------------------------");
+			logger.log(SEPARATOR);
 			logger.log("   Table '" + dbTable.getTableName() 
 					+ "' ( catalog = '" + dbTable.getCatalogName() 
 					+ "', schema = '"+ dbTable.getSchemaName() + "' )");
@@ -60,9 +62,9 @@ public class DbToModelConverter {
 			model.addEntity(entity);
 			logger.log("   --> Entity '" + entity.getClassName() + "'" );
 		}
-		logger.log("   --------------------------------------------------------------");
+		logger.log(SEPARATOR);
 		logger.log("   " + tablesCount + " table(s) converted.");
-		logger.log("   --------------------------------------------------------------");
+		logger.log(SEPARATOR);
 
 		applyFkToAttributes(model);
 		

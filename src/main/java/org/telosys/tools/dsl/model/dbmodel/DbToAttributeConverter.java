@@ -59,7 +59,6 @@ public class DbToAttributeConverter {
     	// DB default value
     	if ( ! StrUtil.nullOrVoid(dbCol.getDefaultValue()) ) {
     		// default value is returned between single quotes => remove single quotes if any
-    		//attribute.setDatabaseDefaultValue( StrUtil.removeQuotes(dbCol.getDefaultValue(), '\'') ); 
     		attribute.setDatabaseDefaultValue( AttributeUtils.cleanDefaultValue(dbCol.getDefaultValue()) ); 
     	}
     	// DB comment
