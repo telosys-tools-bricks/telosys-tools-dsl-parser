@@ -6,7 +6,7 @@ Teacher {
   code : int { @Id @DbName(CODE) @DbType(INTEGER) @NotNull @NotEmpty };
   name : string { @DbName(NAME) @DbType("CHARACTER VARYING(40)") @Size(40) @MaxLen(40) };
   // links
-  courseList : Course[] { @ManyToMany };
+  courseList : Course[] { @ManyToMany @LinkByJoinEntity(CourseTeacher) };
   studentList : Student[];
   studentList2 : Student[];
 }

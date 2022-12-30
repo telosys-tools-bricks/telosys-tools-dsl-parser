@@ -6,5 +6,5 @@ Course {
   id : string { @Id @DbName(ID) @DbType("CHARACTER VARYING(2)") @NotNull @NotEmpty @Size(2) @MaxLen(2) };
   name : string { @DbName(NAME) @DbType("CHARACTER VARYING(40)") @Size(40) @MaxLen(40) };
   // links
-  teacherList : Teacher[] { @ManyToMany };
+  teacherList : Teacher[] { @ManyToMany @LinkByJoinEntity(CourseTeacher) };
 }

@@ -114,7 +114,7 @@ public class LinksBuilder {
 	 * @param entity
 	 * @param fk
 	 */
-	protected void createLinkManyToOne(DslModelEntity entity, DslModelForeignKey fk) {
+	private void createLinkManyToOne(DslModelEntity entity, DslModelForeignKey fk) {
 		String referencedEntityName = fk.getReferencedEntityName();
 		String fieldName = buildFieldNameManyToOne(referencedEntityName, entity);
 		// create link
@@ -139,7 +139,7 @@ public class LinksBuilder {
 	 * @param model
 	 * @param fk
 	 */
-	protected void createLinkOneToMany(DslModel model, DslModelForeignKey fk) {
+	private void createLinkOneToMany(DslModel model, DslModelForeignKey fk) {
 		DslModelEntity referencedEntity = getReferencedEntity(model, fk);
 		String originEntityName = fk.getOriginEntityName();
 		String fieldName = buildCollectionFieldName(referencedEntity, originEntityName);		
@@ -167,24 +167,40 @@ public class LinksBuilder {
 		return ( entity.getAttributeByName(fieldName) != null ) || ( entity.getLinkByFieldName(fieldName) != null ) ;
 	}
 	
-	protected void createManyToManyLinks(DslModel model, DslModelEntity entity) {
-		List<ForeignKey> foreignKeys = entity.getForeignKeys();
+	/**
+	 * Creates 2 ManyToMany links, one in each entity referenced by the given join entity
+	 * @param model
+	 * @param joinEntity
+	 */
+	protected void createManyToManyLinks(DslModel model, DslModelEntity joinEntity) {
+		String joinEntityName = joinEntity.getClassName();
+		List<ForeignKey> foreignKeys = joinEntity.getForeignKeys();
 		if ( foreignKeys.size() == 2 ) {
 			DslModelForeignKey fk1 = (DslModelForeignKey) foreignKeys.get(0);
 			DslModelForeignKey fk2 = (DslModelForeignKey) foreignKeys.get(1);
 			DslModelEntity referencedEntity1 = getReferencedEntity(model, fk1);
 			DslModelEntity referencedEntity2 = getReferencedEntity(model, fk2);
-			createLinkManyToMany(referencedEntity1, referencedEntity2.getClassName()) ;
-			createLinkManyToMany(referencedEntity2, referencedEntity1.getClassName()) ;
+			createLinkManyToMany(referencedEntity1, referencedEntity2.getClassName(), joinEntityName) ;
+			createLinkManyToMany(referencedEntity2, referencedEntity1.getClassName(), joinEntityName) ;
 		}
 	}
 	
-	private void createLinkManyToMany(DslModelEntity entity, String referencedEntityName) {
+	/**
+	 * Creates a ManyToMany link in the given entity 
+	 * @param entity
+	 * @param referencedEntityName
+	 * @param joinEntityName
+	 */
+	private void createLinkManyToMany(DslModelEntity entity, String referencedEntityName, String joinEntityName) {
 		String linkFieldName = buildCollectionFieldName(entity, referencedEntityName);
 		// create link
 		DslModelLink link = new DslModelLink(linkFieldName);
 		link.setReferencedEntityName(referencedEntityName);
 		link.setCardinality(Cardinality.MANY_TO_MANY);
+		// based on a "join entity"
+		link.setJoinEntityName(joinEntityName);
+		link.setBasedOnJoinEntity(true);
+		// no owning or inverse side for this link
 		link.setOwningSide(false); // no matter
 		link.setInverseSide(false); // no matter
 		// add link in entity
