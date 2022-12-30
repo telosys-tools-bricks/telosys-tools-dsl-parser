@@ -48,6 +48,7 @@ import org.telosys.tools.dsl.parser.annotations.InMemoryRepositoryAnnotation;
 import org.telosys.tools.dsl.parser.annotations.InitialValueAnnotation;
 import org.telosys.tools.dsl.parser.annotations.InputTypeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.InsertableAnnotation;
+import org.telosys.tools.dsl.parser.annotations.JoinEntityAnnotation;
 import org.telosys.tools.dsl.parser.annotations.LabelAnnotation;
 import org.telosys.tools.dsl.parser.annotations.LinkByAttrAnnotation;
 import org.telosys.tools.dsl.parser.annotations.LinkByFKAnnotation;
@@ -161,7 +162,8 @@ public class AnnotationDefinitions {
 		//--- Added in ver 4.1.0
 		annotationDefinitions.add(new OrphanRemovalAnnotation()); 
 		annotationDefinitions.add(new CascadeAnnotation()); 
-
+		annotationDefinitions.add(new JoinEntityAnnotation()); 
+		
 	}
 	
 	private AnnotationDefinitions() {

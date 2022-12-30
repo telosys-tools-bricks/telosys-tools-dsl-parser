@@ -105,8 +105,9 @@ public class AnnotationName {
 	public static final String DOMAIN         = "Domain";   // v 3.4.0 (DDD)
 	public static final String CONTEXT        = "Context";  // v 3.4.0 (DDD)
 	
-	public static final String ORPHAN_REMOVAL = "OrphanRemoval";  // v 4.1.0 (ORM)
-	public static final String CASCADE = "Cascade";  // v 4.1.0 (ORM)
+	public static final String ORPHAN_REMOVAL = "OrphanRemoval"; // v 4.1.0 (ORM)
+	public static final String CASCADE        = "Cascade";       // v 4.1.0 (ORM)
+	public static final String JOIN_ENTITY    = "JoinEntity";    // v 4.1.0
 	
 	// NB : don't forget to add each new annotation in "AnnotationDefinitions.java"
 

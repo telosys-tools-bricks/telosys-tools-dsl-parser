@@ -23,7 +23,6 @@ import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.dsl.model.DslModelForeignKey;
 import org.telosys.tools.dsl.model.DslModelLink;
-import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKey;
 import org.telosys.tools.generic.model.enums.Cardinality;
@@ -50,24 +49,6 @@ public class LinksBuilder {
 		this.databaseDefinition = databaseDefinition;
 	}
 
-	private boolean isJoinEntity(Entity entity) {
-		//--- Check if entity has 2 Foreign Keys
-		if ( entity.getForeignKeys().size() != 2 ) {
-			return false;
-		}
-		//--- Check if all attributes are in the PK and in a FK
-		for ( Attribute attribute : entity.getAttributes() ) {
-			if ( ! attribute.isKeyElement() ) { 
-				return false ; // at least one attribute is not in PK 
-			}
-			if ( ! attribute.isFK() ) {
-				return false ; // at least one attribute is not in FK
-			}
-		}
-		//--- all conditions are met : this is a "Join Entity"
-		return true ;
-	}
-	
 	/**
 	 * Create links from foreign keys for all entities
 	 * @param model
@@ -77,7 +58,7 @@ public class LinksBuilder {
 		for ( Entity entity : model.getEntities() ) {
 			if ( databaseDefinition.isLinksManyToMany()) {
 				// Special processing for "join entities" 
-				if ( isJoinEntity(entity) ) {
+				if ( entity.isJoinEntity() ) {
 					createManyToManyLinks(model, (DslModelEntity) entity);
 				}
 				else {

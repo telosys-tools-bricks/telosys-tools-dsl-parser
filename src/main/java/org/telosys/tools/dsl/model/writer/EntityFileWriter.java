@@ -50,6 +50,7 @@ import org.telosys.tools.dsl.parser.annotations.InMemoryRepositoryAnnotation;
 import org.telosys.tools.dsl.parser.annotations.InitialValueAnnotation;
 import org.telosys.tools.dsl.parser.annotations.InputTypeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.InsertableAnnotation;
+import org.telosys.tools.dsl.parser.annotations.JoinEntityAnnotation;
 import org.telosys.tools.dsl.parser.annotations.LabelAnnotation;
 import org.telosys.tools.dsl.parser.annotations.LinkByFKAnnotation;
 import org.telosys.tools.dsl.parser.annotations.LinkByJoinEntityAnnotation;
@@ -136,6 +137,8 @@ public class EntityFileWriter extends AbstractWriter {
 		buildAnnotation(lines, new DbCommentAnnotation(), entity.getDatabaseComment());
 		buildAnnotation(lines, new DbTablespaceAnnotation(), entity.getDatabaseTablespace());
 		buildAnnotationWithoutParam(lines, new DbViewAnnotation(), entity.isDatabaseView());
+		// Join Entity ( v 4.1.0 )
+		buildAnnotationWithoutParam(lines, new JoinEntityAnnotation(), entity.isJoinEntity());
 		// Domain & context annotations
 		buildAnnotation(lines, new DomainAnnotation(), entity.getDomain());
 		buildAnnotation(lines, new ContextAnnotation(), entity.getContext());

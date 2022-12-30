@@ -94,8 +94,12 @@ public class DbToModelManager {
 		} finally { // v 3.0.0 (finally added for connection closing)
 			closeConnection(connection); 
 		}
+
+		//--- STEP 2 : Detect all "Join Entities" in the model
+		JoinEntityDetector joinEntityDetector = new JoinEntityDetector();
+		joinEntityDetector.detectJoinEntities(model);
 		
-		//--- STEP 2 : Create the links between entities (based on FK)
+		//--- STEP 3 : Create the links between entities (based on FK)
 		LinksBuilder linksBuilder = new LinksBuilder(databaseDefinition);
 		linksBuilder.createLinks(model);
 		

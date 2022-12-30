@@ -1,6 +1,7 @@
 @DbTable(COURSE_TEACHER)
 @DbCatalog(TEST)
 @DbSchema(STUDENTS)
+@JoinEntity
 CourseTeacher {
   // attributes
   id : string { @Id @DbName(ID) @DbType("CHARACTER VARYING(2)") @NotNull @NotEmpty @Size(2) @MaxLen(2) @FK(FK_COURSE_TEACHER_COURSE, Course.id) };

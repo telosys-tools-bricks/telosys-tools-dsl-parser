@@ -60,6 +60,8 @@ public class DslModelEntity implements Entity {
 	private String  context       = ""; // v 3.4.0  annotation @Context
 	
 	private boolean inMemoryRepository = false; // v 3.4.0  annotation @InMemoryRepository
+
+	private boolean joinEntity = false; // v 4.1.0  annotation @JoinEntity
 	
     // Tags added in v 3.4.0 
     private TagContainer tagContainer = new Tags() ;  // Init with void Tags (never null)
@@ -158,6 +160,15 @@ public class DslModelEntity implements Entity {
 	}
 	public void setAggregateRoot(boolean aggregateRoot) { // v 3.4.0
 		this.aggregateRoot = aggregateRoot;
+	}
+	
+	//--------------------------------------------------------------------------
+	@Override
+	public boolean isJoinEntity() { // v 4.1.0
+		return joinEntity;
+	}
+	public void setJoinEntity(boolean joinEntity) { // v 4.1.0
+		this.joinEntity = joinEntity;
 	}
 	
 	//--------------------------------------------------------------------------
