@@ -50,22 +50,6 @@ public class LinksBuilder {
 		this.databaseDefinition = databaseDefinition;
 	}
 
-	/**
-	 * Create links from foreign keys for all entities
-	 * @param model
-	 * @return
-	 */
-	public void createLinks(DslModel model) {
-		for ( Entity entity : model.getEntities() ) {
-			if ( isJoinEntity(entity) ) {
-				createManyToManyLinks(model, (DslModelEntity) entity);
-			}
-			else {
-				createLinks(model, (DslModelEntity) entity);
-			}
-		}
-	}
-
 	private boolean isJoinEntity(Entity entity) {
 		//--- Check if entity has 2 Foreign Keys
 		if ( entity.getForeignKeys().size() != 2 ) {
@@ -85,23 +69,43 @@ public class LinksBuilder {
 	}
 	
 	/**
-	 * Create links from foreign keys for the given entity
+	 * Create links from foreign keys for all entities
+	 * @param model
+	 * @return
+	 */
+	public void createLinks(DslModel model) {
+		for ( Entity entity : model.getEntities() ) {
+			if ( databaseDefinition.isLinksManyToMany()) {
+				// Special processing for "join entities" 
+				if ( isJoinEntity(entity) ) {
+					createManyToManyLinks(model, (DslModelEntity) entity);
+				}
+				else {
+					createBasicLinks(model, (DslModelEntity) entity);
+				}
+			}
+			else {
+				// Just create ManyToOne and OneToMany for each FK for all entities
+				createBasicLinks(model, (DslModelEntity) entity);
+			}
+		}
+	}
+
+	/**
+	 * Create links for each Foreign Key in the given entity (ManyToOne and inverse OneToMany)
 	 * @param model
 	 * @param entity
 	 * @return
 	 */
-	protected void createLinks(DslModel model, DslModelEntity entity) {
-		for ( ForeignKey fk : entity.getForeignKeys() ) {
-			createLinks(model, entity, (DslModelForeignKey) fk);
-		}
-	}
-
-	protected void createLinks(DslModel model, DslModelEntity entity, DslModelForeignKey fk) {
-		if ( databaseDefinition.isLinksManyToOne() ) {
-			createLinkManyToOne(entity, fk);
-		}
-		if ( databaseDefinition.isLinksOneToMany() ) {
-			createLinkOneToMany(model, fk);
+	protected void createBasicLinks(DslModel model, DslModelEntity entity) {
+		for ( ForeignKey fk0 : entity.getForeignKeys() ) {
+			DslModelForeignKey fk = (DslModelForeignKey) fk0;
+			if ( databaseDefinition.isLinksManyToOne() ) {
+				createLinkManyToOne(entity, fk);
+			}
+			if ( databaseDefinition.isLinksOneToMany() ) {
+				createLinkOneToMany(model, fk);
+			}
 		}
 	}
 
@@ -136,13 +140,9 @@ public class LinksBuilder {
 	 * @param fk
 	 */
 	protected void createLinkOneToMany(DslModel model, DslModelForeignKey fk) {
-		String referencedEntityName = fk.getReferencedEntityName();
-		DslModelEntity referencedEntity = (DslModelEntity) model.getEntityByClassName(fk.getReferencedEntityName());
-		if ( referencedEntity == null ) {
-			throw new IllegalStateException("FK "+fk.getName()+ ": invalid referenced entity " + referencedEntityName);
-		}
+		DslModelEntity referencedEntity = getReferencedEntity(model, fk);
 		String originEntityName = fk.getOriginEntityName();
-		String fieldName = buildFieldNameOneToMany(originEntityName, referencedEntity);
+		String fieldName = buildCollectionFieldName(referencedEntity, originEntityName);		
 		// create link
 		DslModelLink link = new DslModelLink(fieldName);
 		link.setReferencedEntityName(originEntityName);
@@ -153,12 +153,6 @@ public class LinksBuilder {
 		referencedEntity.addLink(link);
 	}
 
-	private String buildFieldNameOneToMany(String originEntityName, DslModelEntity entity) {
-		// entity "Person" --ref--> Other entity => inverse side field = "personList"
-		String basicFieldName = nameConverter.toCamelCase(originEntityName)+"List";
-		return getNonDuplicateFieldName(basicFieldName, entity) ; 
-	}
-	
 	private String getNonDuplicateFieldName(String basicFieldName, DslModelEntity entity) {
 		String fieldName = basicFieldName ;
 		int n = 1;
@@ -170,13 +164,7 @@ public class LinksBuilder {
 	}
 	
 	private boolean fieldExistsInEntity(String fieldName, DslModelEntity entity) {
-		if ( entity.getAttributeByName(fieldName) != null ) {
-			return true;
-		}
-		if ( entity.getLinkByFieldName(fieldName) != null ) {
-			return true;
-		}
-		return false;
+		return ( entity.getAttributeByName(fieldName) != null ) || ( entity.getLinkByFieldName(fieldName) != null ) ;
 	}
 	
 	protected void createManyToManyLinks(DslModel model, DslModelEntity entity) {
