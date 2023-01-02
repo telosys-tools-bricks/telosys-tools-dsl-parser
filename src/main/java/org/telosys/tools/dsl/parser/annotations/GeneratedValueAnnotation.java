@@ -18,6 +18,7 @@ package org.telosys.tools.dsl.parser.annotations;
 import java.util.Arrays;
 import java.util.List;
 
+import org.telosys.tools.dsl.commons.StringUtil;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.dsl.model.DslModelEntity;
@@ -99,8 +100,8 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 		case SEQUENCE :
 			attribute.setGeneratedValueStrategy(GeneratedValueStrategy.SEQUENCE);
 			if ( list.size() >= 3 ) {
-				attribute.setGeneratedValueGeneratorName(list.get(1));
-				attribute.setGeneratedValueSequenceName(list.get(2));
+				attribute.setGeneratedValueGeneratorName(stringValue(list.get(1)));
+				attribute.setGeneratedValueSequenceName(stringValue(list.get(2)));
 			}
 			if ( list.size() >= 4 ) {
 				attribute.setGeneratedValueAllocationSize(toInt(entity, attribute, list.get(3)));
@@ -109,13 +110,13 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 		case TABLE:
 			attribute.setGeneratedValueStrategy(GeneratedValueStrategy.TABLE);
 			if ( list.size() >= 3 ) {
-				attribute.setGeneratedValueGeneratorName(list.get(1));
-				attribute.setGeneratedValueTableName(list.get(2));
+				attribute.setGeneratedValueGeneratorName(stringValue(list.get(1)));
+				attribute.setGeneratedValueTableName(stringValue(list.get(2)));
 			}
 			if ( list.size() >= 6 ) {
-				attribute.setGeneratedValueTablePkColumnName(list.get(3));
-				attribute.setGeneratedValueTablePkColumnValue(list.get(4));
-				attribute.setGeneratedValueTableValueColumnName(list.get(5));
+				attribute.setGeneratedValueTablePkColumnName(stringValue(list.get(3)));
+				attribute.setGeneratedValueTablePkColumnValue(stringValue(list.get(4)));
+				attribute.setGeneratedValueTableValueColumnName(stringValue(list.get(5)));
 			}
 			if ( list.size() >= 7 ) {
 				attribute.setGeneratedValueAllocationSize(toInt(entity, attribute, list.get(6)));
@@ -123,6 +124,17 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 			break;
 		default:
 			throw newParamError(entity, attribute, "invalid strategy '" + strategy + "'");
+		}
+	}
+	
+	private String stringValue(String value) {
+		// remove all void chars ( blank, tab, cr, lf, ...)
+		String s = value.trim(); 
+		// remove quotes if any
+		if (s.startsWith("\"") && s.endsWith("\"")) {
+			return StringUtil.unquote(s);
+		} else {
+			return s;
 		}
 	}
 }
