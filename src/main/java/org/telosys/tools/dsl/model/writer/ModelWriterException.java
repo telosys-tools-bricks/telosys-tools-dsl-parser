@@ -15,34 +15,31 @@
  */
 package org.telosys.tools.dsl.model.writer;
 
-import org.telosys.tools.dsl.commons.ModelInfo;
-
 /**
- * DSL model information file writer ("model.yaml" file)
+ * Exception thrown when an error occurs while writing a model file
  * 
  * @author Laurent Guerin
  *
  */
-public class ModelInfoFileWriter extends AbstractWriter {
+public class ModelWriterException extends RuntimeException { 
 
+	private static final long serialVersionUID = 1L;
+	
 	/**
-	 * Constructor
-	 * @param directory
+	 * Constructor with message
+	 * @param msg
 	 */
-	public ModelInfoFileWriter(String directory ) {
-		super(directory);
+	public ModelWriterException(String msg) {
+		super(msg);
 	}
 
 	/**
-	 * Writes model info in file
-	 * @param modelInfo
+	 * Constructor with message and cause
+	 * @param msg
+	 * @param exception
 	 */
-	public void writeModelInfoFile(ModelInfo modelInfo) {
-		openFile(ModelInfo.FILE_NAME);
-		printLine("# Telosys model info ");
-		printLine(ModelInfo.TITLE + ": " + modelInfo.getTitle());
-		printLine(ModelInfo.VERSION + ": " + modelInfo.getVersion());
-		printLine(ModelInfo.DESCRIPTION + ": " + modelInfo.getDescription());
-		closeFile();
+	public ModelWriterException(String msg, Exception exception) {
+		super(msg, exception);
 	}
+
 }

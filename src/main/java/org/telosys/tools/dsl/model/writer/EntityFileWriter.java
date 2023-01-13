@@ -88,14 +88,28 @@ import org.telosys.tools.generic.model.enums.Cardinality;
 import org.telosys.tools.generic.model.enums.FetchType;
 import org.telosys.tools.generic.model.enums.Optional;
 
+/**
+ * DSL entity file writer 
+ * 
+ * @author Laurent Guerin
+ *
+ */
 public class EntityFileWriter extends AbstractWriter {
 
 	private static final String INDENTATION = "  " ;
 	
+	/**
+	 * Constructor 
+	 * @param directory
+	 */
 	public EntityFileWriter(String directory ) {
 		super(directory);
 	}
 	
+	/**
+	 * Writes the given entity in a ".entity" file
+	 * @param entity
+	 */
 	public void writeEntity(DslModelEntity entity) {
 		String entityFileName = entity.getClassName() + ".entity";
 		openFile(entityFileName);

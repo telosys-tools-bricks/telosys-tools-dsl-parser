@@ -22,8 +22,19 @@ import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelEntity;
 import org.telosys.tools.generic.model.Entity;
 
+/**
+ * DSL model writer (to create a model and write all its files)  
+ * 
+ * @author Laurent Guerin
+ *
+ */
 public class ModelWriter {
 
+	/**
+	 * Writes the given model in the given directory
+	 * @param model
+	 * @param modelDirectory
+	 */
 	public void writeModel(DslModel model, String modelDirectory) {
 		
 		// 1) check model directory existence (create it if not exist)
