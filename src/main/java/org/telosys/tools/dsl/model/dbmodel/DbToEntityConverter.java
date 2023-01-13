@@ -15,6 +15,7 @@
  */
 package org.telosys.tools.dsl.model.dbmodel;
 
+import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
 import org.telosys.tools.db.model.DatabaseColumn;
 import org.telosys.tools.db.model.DatabaseForeignKey;
@@ -47,7 +48,12 @@ public class DbToEntityConverter {
 
 		entity.setDatabaseCatalog( dbTable.getCatalogName() ); 
 		entity.setDatabaseSchema( dbTable.getSchemaName() ); 
-		entity.setDatabaseComment( dbTable.getComment() );
+		
+		// DB comment (if option is TRUE in config file)
+		if ( databaseDefinition.isDatabaseComment() && ( ! StrUtil.nullOrVoid(dbTable.getComment()) ) ) { // v 4.1.0
+			entity.setDatabaseComment( dbTable.getComment() );
+		}
+		
 		if ( "VIEW".equalsIgnoreCase(dbTable.getTableType()) ) {
 			entity.setDatabaseView(true);
 		}

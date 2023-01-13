@@ -65,12 +65,12 @@ public class DbToAttributeConverter {
     	if ( ! StrUtil.nullOrVoid(size) ) {
     		attribute.setDatabaseSize(size);
     	}
-    	// DB default value (if option is TRUE in config file)
+    	// DB default value (if option is TRUE in config file) // v 4.1.0
     	if ( databaseDefinition.isDatabaseDefaultValue() && ( ! StrUtil.nullOrVoid(dbCol.getDefaultValue()) ) ) {
     		// default value is returned between single quotes => remove single quotes if any
     		attribute.setDatabaseDefaultValue( AttributeUtils.cleanDefaultValue(dbCol.getDefaultValue()) ); 
     	}
-    	// DB comment (if option is TRUE in config file)
+    	// DB comment (if option is TRUE in config file) // v 4.1.0
     	if ( databaseDefinition.isDatabaseComment() && ( ! StrUtil.nullOrVoid(dbCol.getComment()) ) ) { // Bug Fix ver 4.1.0 : dbCol.getDefaultValue() --> dbCol.getComment()
     		attribute.setDatabaseComment( dbCol.getComment() ); 
     	}
