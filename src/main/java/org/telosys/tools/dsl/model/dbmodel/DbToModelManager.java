@@ -37,9 +37,7 @@ import org.telosys.tools.dsl.model.writer.ModelWriter;
  * DATABASE-SCHEMA to DSL-MODEL manager
  * 
  * @author Laurent GUERIN
- * 
  */
-
 public class DbToModelManager {
 	
 	private final TelosysToolsCfg    telosysToolsCfg ;
@@ -71,23 +69,53 @@ public class DbToModelManager {
 	 */
 	public DslModel createModelFromDatabase(String databaseId, String modelName) throws TelosysToolsException {
 
+		// STEP 0 : get database definition (configuration) from configuration file
+		DatabaseDefinition databaseDefinition = getDatabaseDefinition(databaseId);
+
 		// STEP 1 : init model from database (in memory) 
-		DslModel model = initModelFromDatabase(databaseId, modelName);
+		DslModel model = initModelFromDatabase(modelName, databaseDefinition);
+		
 		// STEP 2 : write model in the model folder
 		String modelDirectory = telosysToolsCfg.getModelFolderAbsolutePath(modelName);
 		ModelWriter modelWriter = new ModelWriter();
 		modelWriter.writeModel(model, modelDirectory);
+		
 		// return the model
 		return model ;
 	}
 	
-	protected DslModel initModelFromDatabase(String databaseId, String modelName) throws TelosysToolsException {
-		
-		DatabaseDefinition databaseDefinition = getDatabaseDefinition(databaseId);
-		
-		Connection connection = openConnection(databaseDefinition);
+	/**
+	 * Loads the database definition for the given database id 
+	 * @param databaseId
+	 * @return
+	 * @throws TelosysToolsException
+	 */
+	private DatabaseDefinition getDatabaseDefinition(String databaseId) throws TelosysToolsException {
+		// Get database definitions file 
+		File dbDefinitionsFile = new File(telosysToolsCfg.getDatabasesDbCfgFileAbsolutePath());
+		// Load databases definitions
+		DatabaseDefinitionsLoader loader = new DatabaseDefinitionsLoader();
+		DatabaseDefinitions databaseDefinitions = loader.load(dbDefinitionsFile);
+		DatabaseDefinition databaseDefinition = databaseDefinitions.getDatabaseDefinition(databaseId);
+		if ( databaseDefinition != null ) {
+			return databaseDefinition;
+		}
+		else {
+			throw new TelosysToolsException("Unknown database '" + databaseId + "'");
+		}
+	}
+	
+	/**
+	 * Creates a new DSL model in memory from the given database metadata
+	 * @param modelName
+	 * @param databaseDefinition
+	 * @return
+	 * @throws TelosysToolsException
+	 */
+	private DslModel initModelFromDatabase(String modelName, DatabaseDefinition databaseDefinition) throws TelosysToolsException {
 		
 		//--- STEP 1 : Create the model (Entities, Attributes with Foreign Keys )
+		Connection connection = openConnection(databaseDefinition);
 		DslModel model;
 		try {
 			model = createModelFromDatabase(modelName, connection, databaseDefinition);
@@ -106,28 +134,13 @@ public class DbToModelManager {
 		return model ;
 	}
 
-	protected DatabaseDefinition getDatabaseDefinition(String databaseId) throws TelosysToolsException {
-		// Get database definitions file 
-		File dbDefinitionsFile = new File(telosysToolsCfg.getDatabasesDbCfgFileAbsolutePath());
-		// Load databases definitions
-		DatabaseDefinitionsLoader loader = new DatabaseDefinitionsLoader();
-		DatabaseDefinitions databaseDefinitions = loader.load(dbDefinitionsFile);
-		DatabaseDefinition databaseDefinition = databaseDefinitions.getDatabaseDefinition(databaseId);
-		if ( databaseDefinition != null ) {
-			return databaseDefinition;
-		}
-		else {
-			throw new TelosysToolsException("Unknown database '" + databaseId + "'");
-		}
-	}
-	
-	protected Connection openConnection(DatabaseDefinition databaseDefinition) throws TelosysToolsException {
+	private Connection openConnection(DatabaseDefinition databaseDefinition) throws TelosysToolsException {
 		// Get a connection to the database
 		DatabaseConnectionProvider databaseConnectionProvider = new DatabaseConnectionProvider(telosysToolsCfg); 
 		return databaseConnectionProvider.getConnection(databaseDefinition);
 	}
 	
-	protected void closeConnection(Connection connection) throws TelosysToolsException {
+	private void closeConnection(Connection connection) throws TelosysToolsException {
 		if ( connection != null ) {
 			try {
 				connection.close();
@@ -147,7 +160,7 @@ public class DbToModelManager {
 		ModelInfo modelInfo = new ModelInfo();
 		modelInfo.setTitle("Model created from database " + databaseDefinition.getName() );
 
-		DslModel model = modelConverter.createModel(modelName, modelInfo, dbTables);
+		DslModel model = modelConverter.createModel(modelName, modelInfo, dbTables, databaseDefinition);
 		
 		// Add additional information in model
 		model.setDatabaseId(databaseDefinition.getId());

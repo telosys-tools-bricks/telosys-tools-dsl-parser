@@ -18,22 +18,31 @@ package org.telosys.tools.dsl.model.dbmodel;
 import java.sql.Types;
 
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
 import org.telosys.tools.db.model.DatabaseColumn;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.generic.model.enums.DateType;
 import org.telosys.tools.generic.model.types.NeutralType;
 
+/**
+ * Converter : Database column to DSL model attribute
+ * @author Laurent Guerin
+ *
+ */
 public class DbToAttributeConverter {
 
+	private final DatabaseDefinition databaseDefinition;
+	
 	/**
 	 * Constructor
 	 */
-	public DbToAttributeConverter() {
+	public DbToAttributeConverter(DatabaseDefinition databaseDefinition) {
 		super();
+		this.databaseDefinition = databaseDefinition;
 	}
-	
+
 	/**
-	 * Creates an attribute from the given database column
+	 * Creates a model attribute from the given database column
 	 * @param dbCol
 	 * @return
 	 */
@@ -56,13 +65,13 @@ public class DbToAttributeConverter {
     	if ( ! StrUtil.nullOrVoid(size) ) {
     		attribute.setDatabaseSize(size);
     	}
-    	// DB default value
-    	if ( ! StrUtil.nullOrVoid(dbCol.getDefaultValue()) ) {
+    	// DB default value (if option is TRUE in config file)
+    	if ( databaseDefinition.isDatabaseDefaultValue() && ( ! StrUtil.nullOrVoid(dbCol.getDefaultValue()) ) ) {
     		// default value is returned between single quotes => remove single quotes if any
     		attribute.setDatabaseDefaultValue( AttributeUtils.cleanDefaultValue(dbCol.getDefaultValue()) ); 
     	}
-    	// DB comment
-    	if ( ! StrUtil.nullOrVoid(dbCol.getDefaultValue()) ) {
+    	// DB comment (if option is TRUE in config file)
+    	if ( databaseDefinition.isDatabaseComment() && ( ! StrUtil.nullOrVoid(dbCol.getComment()) ) ) { // Bug Fix ver 4.1.0 : dbCol.getDefaultValue() --> dbCol.getComment()
     		attribute.setDatabaseComment( dbCol.getComment() ); 
     	}
 

@@ -16,6 +16,7 @@
 package org.telosys.tools.dsl.model.dbmodel;
 
 import org.telosys.tools.commons.TelosysToolsLogger;
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
 import org.telosys.tools.db.model.DatabaseTable;
 import org.telosys.tools.db.model.DatabaseTables;
 import org.telosys.tools.dsl.commons.AttributeFKUtil;
@@ -31,7 +32,6 @@ import org.telosys.tools.generic.model.ForeignKey;
  * @author Laurent GUERIN
  * 
  */
-
 public class DbToModelConverter {
 	
 	private static final String SEPARATOR = "   --------------------------------------------------------------";
@@ -40,11 +40,23 @@ public class DbToModelConverter {
 
 	private final DbToEntityConverter  entityConverter  = new DbToEntityConverter();
 
+	/**
+	 * Constructor
+	 * @param logger
+	 */
 	public DbToModelConverter(TelosysToolsLogger logger) {
 		this.logger = logger;
 	}
 
-	public DslModel createModel(String modelName, ModelInfo modelInfo, DatabaseTables dbTables) {
+	/**
+	 * Create a DSL model from the given database tables metadata
+	 * @param modelName
+	 * @param modelInfo
+	 * @param dbTables
+	 * @param databaseDefinition
+	 * @return
+	 */
+	public DslModel createModel(String modelName, ModelInfo modelInfo, DatabaseTables dbTables, DatabaseDefinition databaseDefinition) {
 		
 		DslModel model = new DslModel(modelName, modelInfo); 
 		
@@ -57,7 +69,7 @@ public class DbToModelConverter {
 					+ "' ( catalog = '" + dbTable.getCatalogName() 
 					+ "', schema = '"+ dbTable.getSchemaName() + "' )");
 			//--- Create a new entity from the database table
-			DslModelEntity entity = entityConverter.createEntity(dbTable);
+			DslModelEntity entity = entityConverter.createEntity(dbTable, databaseDefinition);
 			//--- Add the entity in the model
 			model.addEntity(entity);
 			logger.log("   --> Entity '" + entity.getClassName() + "'" );
@@ -71,6 +83,10 @@ public class DbToModelConverter {
 		return model ;
 	}
 	
+	/**
+	 * Apply all model Foreign Keys to attributes involved in it 
+	 * @param model
+	 */
 	private void applyFkToAttributes(DslModel model) {
 		for ( Entity entity : model.getEntities() ) {
 			for ( ForeignKey fk : entity.getForeignKeys() ) {

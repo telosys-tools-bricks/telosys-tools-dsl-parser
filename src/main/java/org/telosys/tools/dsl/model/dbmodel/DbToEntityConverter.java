@@ -15,6 +15,7 @@
  */
 package org.telosys.tools.dsl.model.dbmodel;
 
+import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
 import org.telosys.tools.db.model.DatabaseColumn;
 import org.telosys.tools.db.model.DatabaseForeignKey;
 import org.telosys.tools.db.model.DatabaseTable;
@@ -28,18 +29,14 @@ import org.telosys.tools.dsl.model.DslModelForeignKey;
  * @author Laurent GUERIN
  * 
  */
-
 public class DbToEntityConverter {
 	
-	private final DbToAttributeConverter  attributeConverter  = new DbToAttributeConverter();
-	private final DbToForeignKeyConverter foreignKeyConverter = new DbToForeignKeyConverter();
-
 	/**
 	 * Creates an new entity from the given database table 
 	 * @param dbTable
 	 * @return
 	 */
-	public DslModelEntity createEntity(DatabaseTable dbTable) {
+	public DslModelEntity createEntity(DatabaseTable dbTable, DatabaseDefinition databaseDefinition) {
 
 		//--- Get the VO Bean class name from the Table Name
 		String entityName = NameConverter.tableNameToEntityName(dbTable.getTableName());
@@ -56,7 +53,7 @@ public class DbToEntityConverter {
 		}
 		
 		//--- Create attributes from table columns
-		createAttributes(entity, dbTable) ;
+		createAttributes(entity, dbTable, databaseDefinition) ;
 				
 		//--- Create Foreign Keys defined in the table
 		createForeignKeys(entity, dbTable);
@@ -64,7 +61,14 @@ public class DbToEntityConverter {
 		return entity ;
 	}
 	
-	private void createAttributes(DslModelEntity entity, DatabaseTable dbTable) {
+	/**
+	 * Create one model attribute for each database column 
+	 * @param entity
+	 * @param dbTable
+	 * @param databaseDefinition
+	 */
+	private void createAttributes(DslModelEntity entity, DatabaseTable dbTable, DatabaseDefinition databaseDefinition) {
+		DbToAttributeConverter  attributeConverter = new DbToAttributeConverter(databaseDefinition);
 		//--- For each column of the table ...
 		for ( DatabaseColumn dbCol : dbTable.getColumns() ) {
 			// Create a new attribute from the database model
@@ -74,7 +78,13 @@ public class DbToEntityConverter {
 		}
 	}
 	
+	/**
+	 * Create one model FK for each database FK
+	 * @param entity
+	 * @param dbTable
+	 */
 	private void createForeignKeys(DslModelEntity entity, DatabaseTable dbTable) {
+		DbToForeignKeyConverter foreignKeyConverter = new DbToForeignKeyConverter();
 		//--- For each foreign key of the table ...
 		for ( DatabaseForeignKey dbFK : dbTable.getForeignKeys() ) {
 			// Create a new FK from the database model
