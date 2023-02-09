@@ -44,17 +44,26 @@ public class DbToEntityConverter {
 
 		//--- Create Entity from the Database TABLE
 		DslModelEntity entity = new DslModelEntity(entityName);
-		entity.setDatabaseTable( dbTable.getTableName() );
-
-		entity.setDatabaseCatalog( dbTable.getCatalogName() ); 
-		entity.setDatabaseSchema( dbTable.getSchemaName() ); 
 		
-		// DB comment (if option is TRUE in config file)
-		if ( databaseDefinition.isDatabaseComment() && ( ! StrUtil.nullOrVoid(dbTable.getComment()) ) ) { // v 4.1.0
+		if ( databaseDefinition.isDbTable() ) { // v 4.1.0
+			entity.setDatabaseTable( dbTable.getTableName() );
+		}
+
+		if ( databaseDefinition.isDbCatalog() ) { // v 4.1.0
+			entity.setDatabaseCatalog( dbTable.getCatalogName() );
+		}
+		
+		if ( databaseDefinition.isDbSchema() ) { // v 4.1.0
+			entity.setDatabaseSchema( dbTable.getSchemaName() ); 
+		}
+		
+		// @DbComment(x) (if option is TRUE in config file)
+		if ( databaseDefinition.isDbComment() && ( ! StrUtil.nullOrVoid(dbTable.getComment()) ) ) { // v 4.1.0
 			entity.setDatabaseComment( dbTable.getComment() );
 		}
 		
-		if ( "VIEW".equalsIgnoreCase(dbTable.getTableType()) ) {
+		// @DbView (if option is TRUE in config file)
+		if ( databaseDefinition.isDbView() && "VIEW".equalsIgnoreCase(dbTable.getTableType()) ) {  // v 4.1.0
 			entity.setDatabaseView(true);
 		}
 		

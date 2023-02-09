@@ -55,23 +55,26 @@ public class DbToAttributeConverter {
 		
 		String size = builSize(dbCol); // usable as attribute size and database size 
 		//--- Database info (@DbXxx)
-    	// DB name
-		attribute.setDatabaseName(dbCol.getColumnName());
-    	// DB type
-		attribute.setDatabaseType(buildSqlFullType(dbCol)); 
+		if ( databaseDefinition.isDbName() ) { // v 4.1.0
+			attribute.setDatabaseName(dbCol.getColumnName());
+		}
+		if ( databaseDefinition.isDbType() ) { // v 4.1.0
+			attribute.setDatabaseType(buildSqlFullType(dbCol));
+		}
     	// DB not null
-		attribute.setDatabaseNotNull(dbCol.isNotNull());
+		// attribute.setDatabaseNotNull(dbCol.isNotNull()); // removed in v 4.1
+		
     	// DB size
-    	if ( ! StrUtil.nullOrVoid(size) ) {
-    		attribute.setDatabaseSize(size);
-    	}
+//    	if ( ! StrUtil.nullOrVoid(size) ) {
+//    		attribute.setDatabaseSize(size); // removed in v 4.1
+//    	}
     	// DB default value (if option is TRUE in config file) // v 4.1.0
-    	if ( databaseDefinition.isDatabaseDefaultValue() && ( ! StrUtil.nullOrVoid(dbCol.getDefaultValue()) ) ) {
+    	if ( databaseDefinition.isDbDefaultValue() && ( ! StrUtil.nullOrVoid(dbCol.getDefaultValue()) ) ) {
     		// default value is returned between single quotes => remove single quotes if any
     		attribute.setDatabaseDefaultValue( AttributeUtils.cleanDefaultValue(dbCol.getDefaultValue()) ); 
     	}
     	// DB comment (if option is TRUE in config file) // v 4.1.0
-    	if ( databaseDefinition.isDatabaseComment() && ( ! StrUtil.nullOrVoid(dbCol.getComment()) ) ) { // Bug Fix ver 4.1.0 : dbCol.getDefaultValue() --> dbCol.getComment()
+    	if ( databaseDefinition.isDbComment() && ( ! StrUtil.nullOrVoid(dbCol.getComment()) ) ) { // Bug Fix ver 4.1.0 : dbCol.getDefaultValue() --> dbCol.getComment()
     		attribute.setDatabaseComment( dbCol.getComment() ); 
     	}
 

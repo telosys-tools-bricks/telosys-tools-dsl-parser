@@ -79,7 +79,6 @@ public class DbModelGeneratorTest {
 		
 		assertTrue (code.isKeyElement());
 		assertTrue (code.isNotNull());
-		assertEquals ("5", code.getDatabaseSize());
 		assertEquals ("5", code.getSize());
 		assertEquals (5, code.getMaxLength().intValue() );
 		
@@ -107,7 +106,6 @@ public class DbModelGeneratorTest {
 		assertEquals ("decimal", score.getNeutralType() );
 		assertEquals("", score.getDatabaseDefaultValue() );
 		assertEquals("", score.getDatabaseComment());
-		assertEquals("5,2", score.getDatabaseSize());
 		assertEquals("5,2", score.getSize());
 
 		DslModelEntity countryEntity = (DslModelEntity) model.getEntityByTableName("COUNTRY") ;

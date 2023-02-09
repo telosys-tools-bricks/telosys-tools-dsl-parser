@@ -66,7 +66,7 @@ public class DslModelAttribute implements Attribute {
 	private String generatedValueTableName;
 	private String generatedValueTableValueColumnName;
 	private boolean autoIncremented = false ;
-	private boolean databaseNotNull = false ;
+	// private boolean databaseNotNull = false ; // removed in v 4.1
 	private boolean keyElement = false;
 	private boolean longText = false;
 	private boolean notBlank = false;
@@ -353,13 +353,14 @@ public class DslModelAttribute implements Attribute {
 		this.autoIncremented = autoIncremented;
 	}
 
-	@Override
-	public boolean isDatabaseNotNull() {
-		return databaseNotNull;
-	}
-	public void setDatabaseNotNull(boolean databaseNotNull) {
-		this.databaseNotNull = databaseNotNull;
-	}
+// removed in v 4.1
+//	@Override
+//	public boolean isDatabaseNotNull() {
+//		return databaseNotNull;
+//	}
+//	public void setDatabaseNotNull(boolean databaseNotNull) {
+//		this.databaseNotNull = databaseNotNull;
+//	}
 
 	@Override
 	public boolean isDateFuture() { // @Future

@@ -161,10 +161,11 @@ public class AttributesConverter extends AbstractConverter {
 		if ( dslAttribute.isKeyElement() ) {
 			dslAttribute.setNotNull(true);
 		}
-		// If attribute is NOT NULL ( @NotNull ) => Database NOT NULL
-		if ( dslAttribute.isNotNull() ) {
-			dslAttribute.setDatabaseNotNull(true);
-		}
+// removed in v 4.1
+//		// If attribute is NOT NULL ( @NotNull ) => Database NOT NULL
+//		if ( dslAttribute.isNotNull() ) {
+//			dslAttribute.setDatabaseNotNull(true);
+//		}
 		// If database size is not defined use max length if any 
 		if ( dslAttribute.getDatabaseSize() == null && dslAttribute.getMaxLength() != null ) {
 			dslAttribute.setDatabaseSize(dslAttribute.getMaxLength().toString());

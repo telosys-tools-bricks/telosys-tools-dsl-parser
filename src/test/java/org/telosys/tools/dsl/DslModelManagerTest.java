@@ -81,7 +81,6 @@ public class DslModelManagerTest {
 		assertEquals("int", attrib.getNeutralType() ); 
         assertTrue(attrib.isKeyElement());
         assertTrue(attrib.isNotNull()); // If "@Id" => "@NotNull"
-        assertTrue(attrib.isDatabaseNotNull() ); // If "@Id" => "@NotNull"
         // Tags defined for this attribute
         tags = attrib.getTagContainer();
         assertNotNull(tags);
@@ -96,7 +95,6 @@ public class DslModelManagerTest {
 		assertEquals("string", attrib.getNeutralType() ); 
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
-        assertFalse(attrib.isDatabaseNotNull());
         tags = attrib.getTagContainer();
         assertNotNull(tags);
 //        assertFalse(tags.isEmpty());
@@ -108,7 +106,6 @@ public class DslModelManagerTest {
 		assertEquals("date", attrib.getNeutralType() ); 
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
-        assertFalse(attrib.isDatabaseNotNull());
     }
 
     @Test
@@ -188,7 +185,6 @@ public class DslModelManagerTest {
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertTrue(attribute.isNotNull());
-        		assertTrue(attribute.isDatabaseNotNull());
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
         		assertTrue(attribute.isObjectTypeExpected());
@@ -198,7 +194,6 @@ public class DslModelManagerTest {
         		assertEquals("short", attribute.getNeutralType()); 
 
         		assertTrue(attribute.isNotNull());
-        		assertTrue(attribute.isDatabaseNotNull());
 
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
@@ -231,7 +226,6 @@ public class DslModelManagerTest {
 		assertEquals("int", attrib.getNeutralType() ); 
         assertTrue(attrib.isKeyElement());
         assertTrue(attrib.isNotNull()); // If "@Id" => "@NotNull"
-        assertTrue(attrib.isDatabaseNotNull() ); // If "@Id" => "@NotNull"
         assertFalse(attrib.isFK());
         assertFalse(attrib.isFKSimple());
         assertFalse(attrib.isFKComposite());
@@ -246,7 +240,6 @@ public class DslModelManagerTest {
 		assertEquals("string", attrib.getNeutralType() ); 
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
-        assertFalse(attrib.isDatabaseNotNull());
         assertFalse(attrib.isFK());
         assertFalse(attrib.isFKSimple());
         assertFalse(attrib.isFKComposite());
@@ -256,7 +249,6 @@ public class DslModelManagerTest {
 		assertEquals("date", attrib.getNeutralType() ); 
         assertFalse(attrib.isKeyElement());
         assertFalse(attrib.isNotNull());
-        assertFalse(attrib.isDatabaseNotNull());
         assertFalse(attrib.isFK());
         assertFalse(attrib.isFKSimple());
         assertFalse(attrib.isFKComposite());
