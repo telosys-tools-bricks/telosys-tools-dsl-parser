@@ -27,6 +27,7 @@ import org.telosys.tools.commons.dbcfg.yaml.DatabaseConnectionProvider;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitions;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitionsLoader;
+import org.telosys.tools.commons.exception.TelosysYamlException;
 import org.telosys.tools.db.model.DatabaseModelManager;
 import org.telosys.tools.db.model.DatabaseTables;
 import org.telosys.tools.dsl.commons.ModelInfo;
@@ -95,7 +96,12 @@ public class DbToModelManager {
 		File dbDefinitionsFile = new File(telosysToolsCfg.getDatabasesDbCfgFileAbsolutePath());
 		// Load databases definitions
 		DatabaseDefinitionsLoader loader = new DatabaseDefinitionsLoader();
-		DatabaseDefinitions databaseDefinitions = loader.load(dbDefinitionsFile);
+		DatabaseDefinitions databaseDefinitions;
+		try {
+			databaseDefinitions = loader.load(dbDefinitionsFile);
+		} catch (TelosysYamlException e) {
+			throw new TelosysToolsException("Cannot load databases config (YAML error)");
+		}
 		DatabaseDefinition databaseDefinition = databaseDefinitions.getDatabaseDefinition(databaseId);
 		if ( databaseDefinition != null ) {
 			return databaseDefinition;

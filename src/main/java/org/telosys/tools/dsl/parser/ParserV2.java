@@ -70,7 +70,13 @@ public class ParserV2 {
 
 		//--- load model info file if any
 		File modelInfoFile = DslModelUtil.getModelFileFromModelFolder(modelFolder);
-		ModelInfo modelInfo = ModelInfoLoader.loadModelInformation(modelInfoFile);
+		ModelInfo modelInfo;
+		try {
+			modelInfo = ModelInfoLoader.loadModelInformation(modelInfoFile);
+		} catch (DslModelError e) {
+			errors.addError(e);
+			return new ParsingResult(null, errors);
+		}
 		
 		//--- create new model
 		DomainModel model = new DomainModel(modelFolder.getName(), modelInfo);

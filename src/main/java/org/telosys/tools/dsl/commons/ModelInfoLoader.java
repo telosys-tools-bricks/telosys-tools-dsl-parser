@@ -18,6 +18,8 @@ package org.telosys.tools.dsl.commons;
 import java.io.File;
 
 import org.telosys.tools.commons.YamlFileManager;
+import org.telosys.tools.commons.exception.TelosysYamlException;
+import org.telosys.tools.dsl.DslModelError;
 
 public class ModelInfoLoader {
 
@@ -31,12 +33,17 @@ public class ModelInfoLoader {
 	 * Loads model information from the given YAML file if the file exists <br>
 	 * if the file doesn't exist a void ModelInfo is returned 
 	 * @param modelYamlFile
-	 * @return model
+	 * @return model information load from YAML file 
+	 * @throws DslModelError 
 	 */
-	public static ModelInfo loadModelInformation(File modelYamlFile) {
+	public static ModelInfo loadModelInformation(File modelYamlFile) throws DslModelError {
 		if ( modelYamlFile.exists() && modelYamlFile.isFile() ) {
 			YamlFileManager yaml = new YamlFileManager();
-			return yaml.load(modelYamlFile, ModelInfo.class);
+			try {
+				return yaml.load(modelYamlFile, ModelInfo.class);
+			} catch (TelosysYamlException e) {
+				throw new DslModelError("Invalid model file : YAML error" );
+			}
 		}
 		else {
 			return new ModelInfo() ;

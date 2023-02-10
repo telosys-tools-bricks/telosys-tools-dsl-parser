@@ -3,6 +3,7 @@ package org.telosys.tools.dsl.commons;
 import java.io.File;
 
 import org.junit.Test;
+import org.telosys.tools.dsl.DslModelError;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -10,7 +11,7 @@ import static org.junit.Assert.assertNotNull;
 public class ModelInfoLoaderTest {
 
 	@Test
-	public void test1() {
+	public void test1() throws DslModelError {
 		
 		File modelYamlFile = new File("src/test/resources/model-yaml-files/model1.yaml") ;
 		ModelInfo modelInfo = ModelInfoLoader.loadModelInformation(modelYamlFile);
@@ -29,7 +30,7 @@ public class ModelInfoLoaderTest {
 	}
 	
 	@Test
-	public void test2() {
+	public void test2() throws DslModelError {
 		
 		File modelYamlFile = new File("src/test/resources/model-yaml-files/model2.yaml") ;
 		ModelInfo modelInfo = ModelInfoLoader.loadModelInformation(modelYamlFile);

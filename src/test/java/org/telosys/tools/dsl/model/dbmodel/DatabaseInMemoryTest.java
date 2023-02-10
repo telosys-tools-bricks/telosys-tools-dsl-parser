@@ -9,6 +9,7 @@ import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitions;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitionsLoader;
+import org.telosys.tools.commons.exception.TelosysYamlException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -25,7 +26,12 @@ public class DatabaseInMemoryTest {
 	private DatabaseDefinition getDatabaseDefinition() throws TelosysToolsException {
 		// Load databases definitions
 		DatabaseDefinitionsLoader loader = new DatabaseDefinitionsLoader();
-		DatabaseDefinitions databaseDefinitions = loader.load(FileUtil.getFileByClassPath(DATABASE_CFG_FILE));
+		DatabaseDefinitions databaseDefinitions;
+		try {
+			databaseDefinitions = loader.load(FileUtil.getFileByClassPath(DATABASE_CFG_FILE));
+		} catch (TelosysYamlException e) {
+			throw new TelosysToolsException("Cannot load databases definitions (YAML error)");
+		}
 		DatabaseDefinition databaseDefinition = databaseDefinitions.getDatabaseDefinition(DATABASE_ID);
 		if ( databaseDefinition != null ) {
 			return databaseDefinition;

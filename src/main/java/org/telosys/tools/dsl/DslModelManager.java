@@ -132,14 +132,15 @@ public class DslModelManager {
 			return null ;
 		}
     }
-    
-	/**
-	 * Loads model information from the given YAML file
-	 * @param modelInfoFile
-	 * @return
-	 */
-	public ModelInfo loadModelInformation(File modelInfoFile) {
-		return ModelInfoLoader.loadModelInformation(modelInfoFile);
-	}
+
+// removed in v 4.1.0
+//	/**
+//	 * Loads model information from the given YAML file
+//	 * @param modelInfoFile
+//	 * @return
+//	 */
+//	public ModelInfo loadModelInformation(File modelInfoFile) {
+//		return ModelInfoLoader.loadModelInformation(modelInfoFile);
+//	}
 
 }
