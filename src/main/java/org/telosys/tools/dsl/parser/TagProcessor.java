@@ -18,7 +18,6 @@ package org.telosys.tools.dsl.parser;
 import org.telosys.tools.dsl.DslModelError;
 import org.telosys.tools.dsl.parser.commons.ParamError;
 import org.telosys.tools.dsl.parser.commons.ParamValue;
-import org.telosys.tools.dsl.parser.commons.ParamValueOrigin;
 import org.telosys.tools.dsl.parser.model.DomainTag;
 
 /**
@@ -61,7 +60,8 @@ public class TagProcessor extends AnnotationAndTagProcessor {
 		String rawParameterValue = getParameterValue(element);
 		
 		if ( rawParameterValue != null ) {
-			ParamValue paramValue = buildTagParamValue(tagName, rawParameterValue);
+//			ParamValue paramValue = buildTagParamValue(tagName, rawParameterValue);
+			ParamValue paramValue = new ParamValue(getEntityName(), rawParameterValue); 
 			try {
 				return new DomainTag(tagName, paramValue.getAsString());
 			} catch (ParamError e) {
@@ -73,18 +73,18 @@ public class TagProcessor extends AnnotationAndTagProcessor {
 		}
 	}
 	
-	protected ParamValue buildTagParamValue(String tagName, String rawParameterValue) {
-		String entityName = getEntityName();
-		String fieldName = getFieldName();
-		if ( fieldName != null ) {
-			// Tag defined at FIELD level
-			return new ParamValue(entityName, fieldName, tagName, rawParameterValue, 
-					ParamValueOrigin.FIELD_TAG);
-		}
-		else {
-			// Tag defined at ENTITY level
-			return new ParamValue(entityName, "", tagName, rawParameterValue, 
-					ParamValueOrigin.ENTITY_TAG);
-		}
-	}	
+//	protected ParamValue buildTagParamValue(String tagName, String rawParameterValue) {
+//		String entityName = getEntityName();
+//		String fieldName = getFieldName();
+//		if ( fieldName != null ) {
+//			// Tag defined at FIELD level
+//			return new ParamValue(entityName, fieldName, tagName, rawParameterValue, 
+//					ParamValueOrigin.FIELD_TAG);
+//		}
+//		else {
+//			// Tag defined at ENTITY level
+//			return new ParamValue(entityName, "", tagName, rawParameterValue, 
+//					ParamValueOrigin.ENTITY_TAG);
+//		}
+//	}	
 }

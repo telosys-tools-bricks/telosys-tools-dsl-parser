@@ -82,8 +82,8 @@ public class AttributesConverter extends AbstractConverter {
 		// New attribute 
 		DslModelAttribute dslAttribute = new DslModelAttribute(attributeName, attributeType);
 		
-		// Init attribute state
-		step1InitAttributeDefaultValues(dslAttribute, domainField);
+		// Init attribute state (useless => removed in ver 4.1.0)
+		// step1InitAttributeDefaultValues(dslAttribute, domainField);
 
 		// Apply annotations if any
 		step2ApplyAnnotations(dslEntity, dslAttribute, domainField);
@@ -97,26 +97,21 @@ public class AttributesConverter extends AbstractConverter {
 		return dslAttribute;
 	}
 	
-	/**
-	 * Initializes default values according with the given attribute
-	 * @param dslAttribute
-	 * @param domainField
-	 */
-	private void step1InitAttributeDefaultValues(DslModelAttribute dslAttribute, DomainField domainField) {
-
-		// All the default attribute values are set in the attribute class
-		// Here some default values can be set depending on other attribute information 
-		
-		// By default the database name is the attribute name 
-		// it will be overridden by @DbName(xxx) if any
-		// v 3.4.0 : no default DB name
-		// dslAttribute.setDatabaseName(domainField.getName()); 
-
-		// By default the label is the attribute name 
-		// it will be overridden by @Label(xxx) if any
-		// v 3.4.0 : no default label
-		// dslAttribute.setLabel(domainField.getName());
-	}
+//	/**
+//	 * Initializes default values according with the given attribute
+//	 * @param dslAttribute
+//	 * @param domainField
+//	 */
+//	private void step1InitAttributeDefaultValues(DslModelAttribute dslAttribute, DomainField domainField) {
+//
+//		// All the default attribute values are set in the attribute class
+//		// Here some default values can be set depending on other attribute information 
+//		
+//		// By default the label is the attribute name 
+//		// it will be overridden by @Label(xxx) if any
+//		// v 3.4.0 : no default label
+//		// dslAttribute.setLabel(domainField.getName());
+//	}
 	
 	/**
 	 * Apply annotations to the given attribute

@@ -21,7 +21,6 @@ import org.telosys.tools.dsl.parser.annotation.AnnotationDefinitions;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.commons.ParamError;
 import org.telosys.tools.dsl.parser.commons.ParamValue;
-import org.telosys.tools.dsl.parser.commons.ParamValueOrigin;
 import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.model.DomainField;
@@ -99,9 +98,10 @@ public class AnnotationProcessor extends AnnotationAndTagProcessor {
 			AnnotationParamType paramType) throws ParamError {
 		
 		// Build param value 
-		ParamValue paramValue = new ParamValue(getEntityName(), getFieldName(), 
-				annotationName, annotationParameter,
-				ParamValueOrigin.FIELD_ANNOTATION);
+//		ParamValue paramValue = new ParamValue(getEntityName(), getFieldName(), 
+//				annotationName, annotationParameter,
+//				ParamValueOrigin.FIELD_ANNOTATION);
+		ParamValue paramValue = new ParamValue(getEntityName(), annotationParameter);
 
 		switch(paramType) {
 		case STRING :

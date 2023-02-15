@@ -70,15 +70,11 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 			}
 			// Check number of parameters 
 			int n = list.size();
-			if ( strategy.equals(SEQUENCE) ) {
-				if ( n != 3 && n != 4 ) {
-					throw newParamError(entityName, fieldName, "invalid number of parameters for 'SEQUENCE'");
-				}
+			if ( strategy.equals(SEQUENCE) && n != 3 && n != 4 ) {
+				throw newParamError(entityName, fieldName, "invalid number of parameters for 'SEQUENCE'");
 			}
-			if ( strategy.equals(TABLE) ) {
-				if ( n != 3 && n != 6 && n != 7 ) {
-					throw newParamError(entityName, fieldName, "invalid number of parameters for 'TABLE'");
-				}
+			if ( strategy.equals(TABLE) && n != 3 && n != 6 && n != 7 ) {
+				throw newParamError(entityName, fieldName, "invalid number of parameters for 'TABLE'");
 			}
 		}
 	}

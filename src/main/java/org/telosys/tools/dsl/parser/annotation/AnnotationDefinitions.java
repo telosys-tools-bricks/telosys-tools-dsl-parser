@@ -82,87 +82,87 @@ import org.telosys.tools.dsl.parser.annotations.UpdatableAnnotation;
 
 public class AnnotationDefinitions {
 
-	private static List<AnnotationDefinition> annotationDefinitions = new LinkedList<>();
+	private static List<AnnotationDefinition> annotations = new LinkedList<>();
 	static {
 		
-		annotationDefinitions.add(new IdAnnotation());
+		annotations.add(new IdAnnotation());
 		
-		annotationDefinitions.add(new AutoIncrementedAnnotation());
+		annotations.add(new AutoIncrementedAnnotation());
 
-		annotationDefinitions.add(new NotNullAnnotation());
-		annotationDefinitions.add(new NotEmptyAnnotation());
-		annotationDefinitions.add(new NotBlankAnnotation());
+		annotations.add(new NotNullAnnotation());
+		annotations.add(new NotEmptyAnnotation());
+		annotations.add(new NotBlankAnnotation());
 		
-		annotationDefinitions.add(new MinAnnotation());
-		annotationDefinitions.add(new MaxAnnotation());
+		annotations.add(new MinAnnotation());
+		annotations.add(new MaxAnnotation());
 		
-		annotationDefinitions.add(new SizeMinAnnotation());
-		annotationDefinitions.add(new SizeMaxAnnotation());
+		annotations.add(new SizeMinAnnotation());
+		annotations.add(new SizeMaxAnnotation());
 
-		annotationDefinitions.add(new PastAnnotation());
-		annotationDefinitions.add(new FutureAnnotation());
+		annotations.add(new PastAnnotation());
+		annotations.add(new FutureAnnotation());
 
-		annotationDefinitions.add(new PrimitiveTypeAnnotation());
-		annotationDefinitions.add(new UnsignedTypeAnnotation());
-		annotationDefinitions.add(new ObjectTypeAnnotation());
-		annotationDefinitions.add(new LongTextAnnotation());
-		annotationDefinitions.add(new EmbeddedAnnotation());
+		annotations.add(new PrimitiveTypeAnnotation());
+		annotations.add(new UnsignedTypeAnnotation());
+		annotations.add(new ObjectTypeAnnotation());
+		annotations.add(new LongTextAnnotation());
+		annotations.add(new EmbeddedAnnotation());
 	
 		//--- Added in ver 3.2.0
-		annotationDefinitions.add(new DefaultValueAnnotation());
-		annotationDefinitions.add(new InitialValueAnnotation());
-		annotationDefinitions.add(new LabelAnnotation());
-		annotationDefinitions.add(new InputTypeAnnotation());
-		annotationDefinitions.add(new PatternAnnotation());
+		annotations.add(new DefaultValueAnnotation());
+		annotations.add(new InitialValueAnnotation());
+		annotations.add(new LabelAnnotation());
+		annotations.add(new InputTypeAnnotation());
+		annotations.add(new PatternAnnotation());
 
-		annotationDefinitions.add(new DbNameAnnotation());
-		annotationDefinitions.add(new DbTypeAnnotation());
-		annotationDefinitions.add(new DbDefaultValueAnnotation());
-		annotationDefinitions.add(new DbCommentAnnotation());
-		annotationDefinitions.add(new DbSizeAnnotation());
+		annotations.add(new DbNameAnnotation());
+		annotations.add(new DbTypeAnnotation());
+		annotations.add(new DbDefaultValueAnnotation());
+		annotations.add(new DbCommentAnnotation());
+		annotations.add(new DbSizeAnnotation());
 		
 		//--- Added in ver 3.3.0
-		annotationDefinitions.add(new FkAnnotation());
-		annotationDefinitions.add(new OptionalAnnotation());
-		annotationDefinitions.add(new TransientAnnotation());
-		annotationDefinitions.add(new FetchTypeEagerAnnotation());
-		annotationDefinitions.add(new FetchTypeLazyAnnotation());
-		annotationDefinitions.add(new MappedByAnnotation());
-		annotationDefinitions.add(new LinkByAttrAnnotation());
-		annotationDefinitions.add(new LinkByFKAnnotation());
-		annotationDefinitions.add(new ManyToManyAnnotation());
-		annotationDefinitions.add(new OneToOneAnnotation());
-		annotationDefinitions.add(new InsertableAnnotation());
-		annotationDefinitions.add(new UpdatableAnnotation());
-		annotationDefinitions.add(new LinkByJoinEntityAnnotation());
+		annotations.add(new FkAnnotation());
+		annotations.add(new OptionalAnnotation());
+		annotations.add(new TransientAnnotation());
+		annotations.add(new FetchTypeEagerAnnotation());
+		annotations.add(new FetchTypeLazyAnnotation());
+		annotations.add(new MappedByAnnotation());
+		annotations.add(new LinkByAttrAnnotation());
+		annotations.add(new LinkByFKAnnotation());
+		annotations.add(new ManyToManyAnnotation());
+		annotations.add(new OneToOneAnnotation());
+		annotations.add(new InsertableAnnotation());
+		annotations.add(new UpdatableAnnotation());
+		annotations.add(new LinkByJoinEntityAnnotation());
 		
 		//--- Added in ver 3.4.0 
-		annotationDefinitions.add(new SizeAnnotation());
-		annotationDefinitions.add(new UniqueAnnotation());
-		annotationDefinitions.add(new MaxLenAnnotation());
-		annotationDefinitions.add(new MinLenAnnotation());
-		annotationDefinitions.add(new GeneratedValueAnnotation());
+		annotations.add(new SizeAnnotation());
+		annotations.add(new UniqueAnnotation());
+		annotations.add(new MaxLenAnnotation());
+		annotations.add(new MinLenAnnotation());
+		annotations.add(new GeneratedValueAnnotation());
 		//--- Added in ver 3.4.0 - entity scope
-		annotationDefinitions.add(new DbTableAnnotation());
-		annotationDefinitions.add(new DbViewAnnotation());
-		annotationDefinitions.add(new DbSchemaAnnotation());
-		annotationDefinitions.add(new DbCatalogAnnotation());
-		annotationDefinitions.add(new DbTablespaceAnnotation());
+		annotations.add(new DbTableAnnotation());
+		annotations.add(new DbViewAnnotation());
+		annotations.add(new DbSchemaAnnotation());
+		annotations.add(new DbCatalogAnnotation());
+		annotations.add(new DbTablespaceAnnotation());
 		
-		annotationDefinitions.add(new AbstractAnnotation());
-		annotationDefinitions.add(new ExtendsAnnotation());
-		annotationDefinitions.add(new PackageAnnotation());
-		annotationDefinitions.add(new ReadOnlyAnnotation());
-		annotationDefinitions.add(new InMemoryRepositoryAnnotation());
+		annotations.add(new AbstractAnnotation());
+		annotations.add(new ExtendsAnnotation());
+		annotations.add(new PackageAnnotation());
+		annotations.add(new ReadOnlyAnnotation());
+		annotations.add(new InMemoryRepositoryAnnotation());
 		
-		annotationDefinitions.add(new AggregateRootAnnotation());
-		annotationDefinitions.add(new DomainAnnotation());
-		annotationDefinitions.add(new ContextAnnotation());
+		annotations.add(new AggregateRootAnnotation());
+		annotations.add(new DomainAnnotation());
+		annotations.add(new ContextAnnotation());
 		
 		//--- Added in ver 4.1.0
-		annotationDefinitions.add(new OrphanRemovalAnnotation()); 
-		annotationDefinitions.add(new CascadeAnnotation()); 
-		annotationDefinitions.add(new JoinEntityAnnotation()); 
+		annotations.add(new OrphanRemovalAnnotation()); 
+		annotations.add(new CascadeAnnotation()); 
+		annotations.add(new JoinEntityAnnotation()); 
 		
 	}
 	
@@ -174,7 +174,7 @@ public class AnnotationDefinitions {
 	 * @return
 	 */
 	public static List<AnnotationDefinition> getAll() {
-		return annotationDefinitions;
+		return annotations;
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class AnnotationDefinitions {
 	 * @return
 	 */
 	public static AnnotationDefinition get(String annotationName) {
-		for ( AnnotationDefinition ad : annotationDefinitions ) {
+		for ( AnnotationDefinition ad : annotations ) {
 			if ( ad.getName().equals(annotationName) ) {
 				return ad;
 			}
@@ -213,7 +213,7 @@ public class AnnotationDefinitions {
 	 */
 	private static List<String> buildAnnotationsList(boolean withParentheses) {
 		List<String> list = new LinkedList<>();
-		for ( AnnotationDefinition ad : annotationDefinitions ) {
+		for ( AnnotationDefinition ad : annotations ) {
 			String annotation = "@" + ad.getName() ;
 			if( withParentheses && ad.hasParam() ) {
 				annotation = annotation + "()" ;

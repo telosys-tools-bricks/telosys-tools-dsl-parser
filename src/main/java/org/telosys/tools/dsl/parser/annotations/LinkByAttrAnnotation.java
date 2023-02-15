@@ -121,30 +121,27 @@ public class LinkByAttrAnnotation extends AnnotationDefinition {
 			Attribute referencedAttribute) throws ParamError {
 		String referencedType = referencedAttribute.getNeutralType();
 		String originType = originAttribute.getNeutralType();
-		if ( referencedType.equals(originType) ) {
-			return ;
+		if ( ! compatibleTypes(referencedType, originType) ) {
+			throw newParamError(entity.getClassName(), link.getFieldName(), 
+					"attribute type '" + originType +"' incompatible with referenced type '" + referencedType + "'");
+		}
+	}
+	private boolean compatibleTypes(String type1, String type2) {
+		if ( type1.equals(type2) ) {
+			return true ;
 		}
 		else {
 			// tolerance: acceptable if both are integers
-			if ( isIntegerType(referencedType) && isIntegerType(originType) ) {
-				return ;
-			}
-			else {
-				throw newParamError(entity.getClassName(), link.getFieldName(), 
-						"attribute type '" + originType +"' incompatible with referenced type");
+			if ( isIntegerType(type1) && isIntegerType(type2) ) {
+				return true;
 			}
 		}
+		return false;
 	}
-	
 	private boolean isIntegerType(String type) {
-		if ( 	DomainNeutralTypes.LONG.equals(type) ||
+		return DomainNeutralTypes.LONG.equals(type) ||
 				DomainNeutralTypes.INTEGER.equals(type) ||
-				DomainNeutralTypes.SHORT.equals(type) ) {
-			return true;
-		}
-		else {
-			return false;
-		}
+				DomainNeutralTypes.SHORT.equals(type) ;
 	}
 
 }

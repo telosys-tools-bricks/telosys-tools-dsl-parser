@@ -93,7 +93,6 @@ public abstract class AnnotationDefinition {
 		return new ParamError(entity.getClassName() + "." + link.getFieldName() + " : " + error); 
 	}
 	protected ParamError newParamError(String entityName, String fieldName, String error) {
-//		return new ParamError(entityName + "." + fieldName + " : " + error);
 		StringBuilder sb = new StringBuilder();
 		sb.append(entityName);
 		if ( fieldName != null ) {
@@ -116,6 +115,7 @@ public abstract class AnnotationDefinition {
 
 	//-------------------------------------------------------------------------------------------
 	// Check annotation parameter value before application ( on entity or attribute or link )
+	// Ultimate check (no errors expected at this level, already checked in parameter constructor)
 	//-------------------------------------------------------------------------------------------
 	protected void checkParamValue(DslModelEntity entity, Object paramValue) throws ParamError {
 		checkParamValue(entity.getClassName(), null, paramValue);
@@ -127,49 +127,40 @@ public abstract class AnnotationDefinition {
 		checkParamValue(entity.getClassName(), link.getFieldName(), paramValue);
 	}
 
+	private void checkParamType(String entityName, String fieldName, Object paramValue, Class<?> expectedClass, String expectedMsg ) throws ParamError {
+		if ( paramValue == null ) {
+			throw newParamError(entityName, fieldName, "Parameter is null (parameter expected)");
+		}
+		else {
+			// check if paramValue is instance of the expected class
+			if ( ! ( expectedClass.isInstance(paramValue) ) ) {
+				throw newParamError(entityName, fieldName, 
+							expectedMsg + " expected, actual type is " + getParamValueActualType(paramValue));
+			}
+		}
+	}
 	private void checkParamValue(String entityName, String fieldName, Object paramValue) throws ParamError {
 		switch ( this.paramType ) {
 		case STRING:
-			if ( ! ( paramValue instanceof String ) ) {
-				throw newParamError(entityName, fieldName, "String value expected, actual type is " 
-							+ getParamValueActualType( paramValue));
-			}
+			checkParamType(entityName, fieldName, paramValue, String.class, "String value");
 			break;
 		case SIZE: // Size is stored as a String
-			if ( ! ( paramValue instanceof String ) ) {
-				throw newParamError(entityName, fieldName, "Size value expected, actual type is " 
-							+ getParamValueActualType( paramValue));
-			}
+			checkParamType(entityName, fieldName, paramValue, String.class, "Size value");
 			break;
 		case FK_ELEMENT: // FK element is stored as a String
-			if ( ! ( paramValue instanceof String ) ) {
-				throw newParamError(entityName, fieldName, "FK element expected, actual type is " 
-							+ getParamValueActualType( paramValue));
-			}
+			checkParamType(entityName, fieldName, paramValue, String.class, "FK element");
 			break;
 		case INTEGER:
-			if ( ! ( paramValue instanceof Integer ) ) {
-				throw newParamError(entityName, fieldName, "Integer value expected, actual type is " 
-							+ getParamValueActualType( paramValue));
-			}
+			checkParamType(entityName, fieldName, paramValue, Integer.class, "Integer value");
 			break;
 		case DECIMAL:
-			if ( ! ( paramValue instanceof BigDecimal ) ) {
-				throw newParamError(entityName, fieldName, "BigDecimal value expected, actual type is " 
-							+ getParamValueActualType( paramValue));
-			}
+			checkParamType(entityName, fieldName, paramValue, BigDecimal.class, "BigDecimal value");
 			break;
 		case BOOLEAN:
-			if ( ! ( paramValue instanceof Boolean ) ) {
-				throw newParamError(entityName, fieldName, "Boolean value expected, actual type is " 
-							+ getParamValueActualType( paramValue));
-			}
+			checkParamType(entityName, fieldName, paramValue, Boolean.class, "Boolean value");
 			break;
 		case LIST:
-			if ( ! ( paramValue instanceof List<?> ) ) {
-				throw newParamError(entityName, fieldName, "List value expected, actual type is " 
-							+ getParamValueActualType( paramValue));
-			}
+			checkParamType(entityName, fieldName, paramValue, List.class, "List value");
 			break;
 		case NONE:
 			if ( paramValue != null ) {
@@ -285,14 +276,6 @@ public abstract class AnnotationDefinition {
 			throw new IllegalStateException("literal(Integer) no parameter expected");
 		}
 	}
-//	public String literal(boolean param) {
-//		if ( this.hasParam() ) {
-//			return atName() + "(" + param + ")";
-//		}
-//		else {
-//			throw new IllegalStateException("literal(Boolean) no parameter expected");
-//		}
-//	}
 	private String protectStringIfNecessary(String s) {
 		if ( s.startsWith(" ") || s.endsWith(" ") 
 				|| s.contains("(") || s.contains(")") 

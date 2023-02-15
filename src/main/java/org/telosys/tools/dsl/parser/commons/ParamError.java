@@ -16,7 +16,7 @@
 package org.telosys.tools.dsl.parser.commons;
 
 /**
- * DSL Parser Exception 
+ * Annotation or Tag parameter error
  * 
  * @author Laurent GUERIN
  *
@@ -24,34 +24,6 @@ package org.telosys.tools.dsl.parser.commons;
 public class ParamError extends Exception {
 
     private static final long serialVersionUID = 1L;
-    
-//    // Entity name (if known)
-//	private final String entityName;
-//
-//    // Field name (if known)
-//	private final String fieldName;
-//
-//	private final String annotationOrTagName;
-//	
-//    // Standard exception message
-//	private final String errorMessage ;
-//
-//    /**
-//	 * ENTITY level error 
-//     */
-//    public ParamError(String entityName, String annotationOrTagName, String errorMessage) {
-//    	this(entityName, null, annotationOrTagName, errorMessage);
-//    }
-//    
-//    /**
-//	 * FIELD level error 
-//     */
-//    public ParamError(String entityName, String fieldName, String annotationOrTagName, String errorMessage) {
-//    	this.entityName = entityName ;
-//    	this.fieldName = fieldName ;
-//    	this.annotationOrTagName = annotationOrTagName;
-//    	this.errorMessage = errorMessage ;
-//    }
     
     public ParamError(String errorMessage) {
     	super(errorMessage);

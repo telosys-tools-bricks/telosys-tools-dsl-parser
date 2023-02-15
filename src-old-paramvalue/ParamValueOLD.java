@@ -22,26 +22,30 @@ import java.util.List;
 import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.commons.StringUtil;
 
-/**
- * Parameter value for Annotation or Tag with conversion methods
- *  
- * @author Laurent Guerin
- *
- */
-public class ParamValue {
+public class ParamValueOLD {
 
 	private final String entityName;
+	private final String fieldName;
+	private final String annotationOrTagName;
 	private final String parameterValue;
+	private final ParamValueOrigin origin;
 	
 	/**
 	 * Constructor
 	 * @param entityName
+	 * @param fieldName
+	 * @param annotationOrTagName
 	 * @param rawParameterValue
+	 * @param origin
 	 */
-	public ParamValue(String entityName, String rawParameterValue) {
+	public ParamValueOLD(String entityName, String fieldName, 
+			String annotationOrTagName, String rawParameterValue, ParamValueOrigin origin) {
 		super();
 		this.entityName = entityName;
+		this.fieldName = fieldName;
+		this.annotationOrTagName = annotationOrTagName;
 		this.parameterValue = rawParameterValue;
+		this.origin = origin;
 	}
 
 	/**
@@ -53,14 +57,23 @@ public class ParamValue {
 		return new ParamError(message);
 	}
 	
-	private ParamError newInvalidParmError(String type) {
-		return new ParamError("invalid " + type + " parameter '" + parameterValue + "'");
-	}
-
-	private ParamError newInvalidSizeParmError(String cause) {
-		return new ParamError("invalid size parameter '" + parameterValue + "' (" + cause +")");
-		
-	}
+//	private String getBeginningOfMessage() {
+//		StringBuilder sb = new StringBuilder();
+//		sb.append(entityName);
+//		sb.append(".");
+//		if ( origin == ParamValueOrigin.FIELD_ANNOTATION || origin == ParamValueOrigin.FIELD_TAG ) {
+//			sb.append(fieldName);
+//		}
+//		sb.append(" : ");
+//		if ( origin == ParamValueOrigin.FIELD_ANNOTATION || origin == ParamValueOrigin.ENTITY_ANNOTATION ) {
+//			sb.append("@");
+//		}
+//		if ( origin == ParamValueOrigin.FIELD_TAG || origin == ParamValueOrigin.ENTITY_TAG ) {
+//			sb.append("#");
+//		}
+//		sb.append(annotationOrTagName);
+//		return sb.toString();
+//	}
 	
 	/**
 	 * Check if parameter value exist
@@ -83,8 +96,7 @@ public class ParamValue {
 		try {
 			return new Integer(parameterValue);
 		} catch (NumberFormatException e) {
-//			throw newError("invalid integer parameter '" + parameterValue + "'");
-			throw newInvalidParmError("integer");
+			throw newError("invalid integer parameter '" + parameterValue + "'");
 		}
 	}
 	
@@ -99,8 +111,7 @@ public class ParamValue {
 		try {
 			return new BigDecimal(parameterValue);
 		} catch (NumberFormatException e) {
-//			throw newError("invalid decimal parameter '" + parameterValue + "'");
-			throw newInvalidParmError("decimal");
+			throw newError("invalid decimal parameter '" + parameterValue + "'");
 		}
 	}
 	
@@ -121,8 +132,7 @@ public class ParamValue {
 				return Boolean.FALSE ;
 			}
 		}
-//		throw newError("invalid boolean parameter '" + parameterValue + "'");
-		throw newInvalidParmError("boolean");
+		throw newError("invalid boolean parameter '" + parameterValue + "'");
 	}
 	
 	/**
@@ -159,8 +169,7 @@ public class ParamValue {
 		if ( p.contains(",")) {
 			String[] parts = p.split(",");
 			if (parts.length  != 2) {
-//				throw newError("invalid size parameter '" + p + "' (xx,xx expected)");
-				throw newInvalidSizeParmError("xx,xx expected");
+				throw newError("invalid size parameter '" + p + "' (xx,xx expected)");
 			}
 			checkSizeInteger(parts[0]);
 			checkSizeInteger(parts[1]);
@@ -174,12 +183,10 @@ public class ParamValue {
 		try {
 			Integer i = new Integer(p);
 			if ( i < 0 ) {
-//				throw newError("invalid size parameter '" + p + "' (negative value)");
-				throw newInvalidSizeParmError("negative value");
+				throw newError("invalid size parameter '" + p + "' (negative value)");
 			}
 		} catch (NumberFormatException e) {
-//			throw newError("invalid size parameter '" + p + "' (not a number)");
-			throw newInvalidSizeParmError("not a number");
+			throw newError("invalid size parameter '" + p + "' (not a number)");
 		}
 	}
 	
