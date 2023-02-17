@@ -49,7 +49,7 @@ public class DslModelAttribute implements Attribute {
 	private DateType dateType = DateType.UNDEFINED;
 	private String defaultValue = "" ; 
 	private Entity entity;
-	private String generatedValueGeneratorName;
+	// private String generatedValueGeneratorName; // removed in v 4.1.0
 	private GeneratedValueStrategy generatedValueStrategy = GeneratedValueStrategy.UNDEFINED; // v 3.4.0
 	private String initialValue = "" ; 
 	private String inputType = "" ; 
@@ -60,6 +60,7 @@ public class DslModelAttribute implements Attribute {
 	private BigDecimal minValue;
 	private String pattern = "" ; // ver 3.2.0
 	private Integer generatedValueAllocationSize;
+	private Integer generatedValueInitialValue; // v 4.1.0
 	private String generatedValueSequenceName;
 	private String generatedValueTablePkColumnName;
 	private String generatedValueTablePkColumnValue;
@@ -221,13 +222,14 @@ public class DslModelAttribute implements Attribute {
 		this.generatedValueStrategy = strategy;
 	}
 
-	@Override // Generator name (used by 'sequence' and 'table' )
-	public String getGeneratedValueGeneratorName() {
-		return generatedValueGeneratorName;
-	}
-	public void setGeneratedValueGeneratorName(String generatorName) {
-		this.generatedValueGeneratorName = generatorName;
-	}
+// removed in v 4.1.0
+//	@Override // Generator name (used by 'sequence' and 'table' )
+//	public String getGeneratedValueGeneratorName() {
+//		return generatedValueGeneratorName;
+//	}
+//	public void setGeneratedValueGeneratorName(String generatorName) {
+//		this.generatedValueGeneratorName = generatorName;
+//	}
 	
 	@Override
 	public String getGeneratedValueSequenceName() {
@@ -245,6 +247,14 @@ public class DslModelAttribute implements Attribute {
 		this.generatedValueAllocationSize = v;
 	}
 
+	@Override  // InitialValue (used by 'sequence' and 'table' )
+	public Integer getGeneratedValueInitialValue() { // v 4.1.0
+		return generatedValueInitialValue;
+	}
+	public void setGeneratedValueInitialValue(int v) { // v 4.1.0
+		this.generatedValueInitialValue = v;
+	}
+	
 	//----------------------------------------------------------------------------------------
 	
 	@Override
@@ -255,7 +265,7 @@ public class DslModelAttribute implements Attribute {
 		this.generatedValueTableName = tableName;
 	}
 
-	@Override
+	//@Override // TODO : remove or rename 
 	public String getGeneratedValueTablePkColumnName() {
 		return generatedValueTablePkColumnName;
 	}
@@ -271,7 +281,7 @@ public class DslModelAttribute implements Attribute {
 		this.generatedValueTablePkColumnValue = pkColumnValue;
 	}
 
-	@Override
+	// @Override // TODO : remove or rename 
 	public String getGeneratedValueTableValueColumnName() {
 		return generatedValueTableValueColumnName;
 	}

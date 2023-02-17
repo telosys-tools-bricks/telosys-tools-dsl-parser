@@ -430,10 +430,11 @@ public class EntityFileWriter extends AbstractWriter {
 	}
 	private void completeGeneratedValueSequence(StringBuilder sb, DslModelAttribute attribute) {
 		sb.append("SEQUENCE");
-		String generator = attribute.getGeneratedValueGeneratorName();
+//		String generator = attribute.getGeneratedValueGeneratorName(); // removed in v 4.1.0
 		String sequence  = attribute.getGeneratedValueSequenceName();
-		if ( ( ! StrUtil.nullOrVoid(generator) ) && ( ! StrUtil.nullOrVoid(sequence) ) ) {
-			sb.append(", ").append(generator);
+//		if ( ( ! StrUtil.nullOrVoid(generator) ) && ( ! StrUtil.nullOrVoid(sequence) ) ) {
+//			sb.append(", ").append(generator);
+		if ( ! StrUtil.nullOrVoid(sequence) ) {
 			sb.append(", ").append(sequence);
 			if ( attribute.getGeneratedValueAllocationSize() != null ) {
 				sb.append(", ").append(attribute.getGeneratedValueAllocationSize());
@@ -442,10 +443,11 @@ public class EntityFileWriter extends AbstractWriter {
 	}
 	private void completeGeneratedValueTable(StringBuilder sb, DslModelAttribute attribute) {
 		sb.append("TABLE");
-		String generator = attribute.getGeneratedValueGeneratorName();
+//		String generator = attribute.getGeneratedValueGeneratorName(); // removed in v 4.1.0
 		String table = attribute.getGeneratedValueTableName();
-		if ( ( ! StrUtil.nullOrVoid(generator) ) && ( ! StrUtil.nullOrVoid(table) ) ) {
-			sb.append(", ").append(generator);
+//		if ( ( ! StrUtil.nullOrVoid(generator) ) && ( ! StrUtil.nullOrVoid(table) ) ) {
+//			sb.append(", ").append(generator);
+		if ( ! StrUtil.nullOrVoid(table) ) {
 			sb.append(", ").append(table);
 			String pkColName = attribute.getGeneratedValueTablePkColumnName();
 			String pkColVal  = attribute.getGeneratedValueTablePkColumnValue();

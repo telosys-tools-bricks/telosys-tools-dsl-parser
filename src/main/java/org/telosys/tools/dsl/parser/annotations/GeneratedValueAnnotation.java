@@ -63,17 +63,27 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 			throw newParamError(entityName, fieldName, "invalid parameter ('strategy' is required)");
 		}
 		else {
-			// Check strategy 
+			//--- Check strategy 
 			String strategy = list.get(0);
 			if ( ! stategies.contains(strategy) ) {
 				throw newParamError(entityName, fieldName, "invalid strategy '" + strategy + "'");
 			}
-			// Check number of parameters 
+			//--- Check number of parameters 
 			int n = list.size();
-			if ( strategy.equals(SEQUENCE) && n != 3 && n != 4 ) {
+			// GeneratedValue(AUTO) 
+			if ( strategy.equals(AUTO) && n != 1 ) {
+				throw newParamError(entityName, fieldName, "invalid number of parameters for 'AUTO'");
+			}
+			// GeneratedValue(IDENTITY) 
+			if ( strategy.equals(IDENTITY) && n != 1 ) {
+				throw newParamError(entityName, fieldName, "invalid number of parameters for 'IDENTITY'");
+			}
+			// GeneratedValue(SEQUENCE, sequenceName [, allocationSize [, initialValue ] ] ) 
+			if ( strategy.equals(SEQUENCE) && n != 2 && n != 3 && n != 4 ) {
 				throw newParamError(entityName, fieldName, "invalid number of parameters for 'SEQUENCE'");
 			}
-			if ( strategy.equals(TABLE) && n != 3 && n != 6 && n != 7 ) {
+			// GeneratedValue(TABLE, pkValueId [, allocationSize [, initialValue ] ] ) 
+			if ( strategy.equals(TABLE) && n != 2 && n != 3 && n != 4 ) {
 				throw newParamError(entityName, fieldName, "invalid number of parameters for 'TABLE'");
 			}
 		}
@@ -94,28 +104,44 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 			attribute.setGeneratedValueStrategy(GeneratedValueStrategy.IDENTITY);
 			break;
 		case SEQUENCE :
+			// GeneratedValue(SEQUENCE, sequenceName [, allocationSize [, initialValue ] ] ) 
 			attribute.setGeneratedValueStrategy(GeneratedValueStrategy.SEQUENCE);
+			attribute.setGeneratedValueSequenceName(stringValue(list.get(1)));
 			if ( list.size() >= 3 ) {
-				attribute.setGeneratedValueGeneratorName(stringValue(list.get(1)));
-				attribute.setGeneratedValueSequenceName(stringValue(list.get(2)));
-			}
-			if ( list.size() >= 4 ) {
 				attribute.setGeneratedValueAllocationSize(toInt(entity, attribute, list.get(3)));
 			}
+			if ( list.size() >= 4 ) {
+				attribute.setGeneratedValueInitialValue(toInt(entity, attribute, list.get(4)));
+			}
+//			if ( list.size() >= 3 ) {
+//				attribute.setGeneratedValueGeneratorName(stringValue(list.get(1)));
+//				attribute.setGeneratedValueSequenceName(stringValue(list.get(2)));
+//			}
+//			if ( list.size() >= 4 ) {
+//				attribute.setGeneratedValueAllocationSize(toInt(entity, attribute, list.get(3)));
+//			}
 			break;
 		case TABLE:
+			// GeneratedValue(TABLE, pkValueId [, allocationSize [, initialValue ] ] ) 
 			attribute.setGeneratedValueStrategy(GeneratedValueStrategy.TABLE);
+//			if ( list.size() >= 3 ) {
+//				attribute.setGeneratedValueGeneratorName(stringValue(list.get(1)));
+//				attribute.setGeneratedValueTableName(stringValue(list.get(2)));
+//			}
+//			if ( list.size() >= 6 ) {
+//				attribute.setGeneratedValueTablePkColumnName(stringValue(list.get(3)));
+//				attribute.setGeneratedValueTablePkColumnValue(stringValue(list.get(4)));
+//				attribute.setGeneratedValueTableValueColumnName(stringValue(list.get(5)));
+//			}
+//			if ( list.size() >= 7 ) {
+//				attribute.setGeneratedValueAllocationSize(toInt(entity, attribute, list.get(6)));
+//			}
+			attribute.setGeneratedValueTablePkColumnValue(stringValue(list.get(1)));
 			if ( list.size() >= 3 ) {
-				attribute.setGeneratedValueGeneratorName(stringValue(list.get(1)));
-				attribute.setGeneratedValueTableName(stringValue(list.get(2)));
+				attribute.setGeneratedValueAllocationSize(toInt(entity, attribute, list.get(3)));
 			}
-			if ( list.size() >= 6 ) {
-				attribute.setGeneratedValueTablePkColumnName(stringValue(list.get(3)));
-				attribute.setGeneratedValueTablePkColumnValue(stringValue(list.get(4)));
-				attribute.setGeneratedValueTableValueColumnName(stringValue(list.get(5)));
-			}
-			if ( list.size() >= 7 ) {
-				attribute.setGeneratedValueAllocationSize(toInt(entity, attribute, list.get(6)));
+			if ( list.size() >= 4 ) {
+				attribute.setGeneratedValueInitialValue(toInt(entity, attribute, list.get(4)));
 			}
 			break;
 		default:
