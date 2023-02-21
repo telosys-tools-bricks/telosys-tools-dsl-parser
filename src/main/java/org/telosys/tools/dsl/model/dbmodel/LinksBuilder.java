@@ -104,8 +104,8 @@ public class LinksBuilder {
 		link.setCardinality(Cardinality.MANY_TO_ONE);
 		link.setForeignKeyName(fk.getName());
 		link.setBasedOnForeignKey(true);
-		link.setOwningSide(true);
-		link.setInverseSide(false);
+		// link.setOwningSide(true); // removed in v 4.1.0
+		// link.setInverseSide(false); // removed in v 4.1.0
 		// add link in entity
 		entity.addLink(link);
 	}
@@ -128,8 +128,8 @@ public class LinksBuilder {
 		DslModelLink link = new DslModelLink(fieldName);
 		link.setReferencedEntityName(originEntityName);
 		link.setCardinality(Cardinality.ONE_TO_MANY);
-		link.setOwningSide(false);
-		link.setInverseSide(true);
+		// link.setOwningSide(false); // removed in v 4.1.0
+		// link.setInverseSide(true); // removed in v 4.1.0
 		// add link in entity
 		referencedEntity.addLink(link);
 	}
@@ -182,8 +182,8 @@ public class LinksBuilder {
 		link.setJoinEntityName(joinEntityName);
 		link.setBasedOnJoinEntity(true);
 		// no owning or inverse side for this link
-		link.setOwningSide(false); // no matter
-		link.setInverseSide(false); // no matter
+		// link.setOwningSide(false); // no matter // removed in v 4.1.0
+		// link.setInverseSide(false); // no matter // removed in v 4.1.0
 		// add link in entity
 		entity.addLink(link);
 	}

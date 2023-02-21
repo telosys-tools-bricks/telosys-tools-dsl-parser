@@ -111,14 +111,14 @@ public class LinksConverter extends AbstractConverter {
 			// Reference to only ONE entity => "MANY TO ONE"
 			dslLink.setCardinality(Cardinality.MANY_TO_ONE);
 			// The type is a single entity => OWNING SIDE by default
-			dslLink.setOwningSide(true);
-			dslLink.setInverseSide(false);
+			// dslLink.setOwningSide(true); // removed in v 4.1.0
+			// dslLink.setInverseSide(false); // removed in v 4.1.0
 		} else {
 			// Reference to MANY entities => "ONE TO MANY"
 			dslLink.setCardinality(Cardinality.ONE_TO_MANY);
 			// The type is a collection of entity => INVERSE SIDE by default
-			dslLink.setOwningSide(false);
-			dslLink.setInverseSide(true);
+			// dslLink.setOwningSide(false); // removed in v 4.1.0
+			// dslLink.setInverseSide(true); // removed in v 4.1.0
 		}
 		
 		// void "cascade options"  (default values)
@@ -175,7 +175,8 @@ public class LinksConverter extends AbstractConverter {
 	 */
 	private void step4InferJoinAttributes(DslModelEntity dslEntity, DslModelLink dslLink) {
 		// Join attributes not already determined from annotations @LinkByFK or @LinkByAttr ?
-		if ( ! dslLink.hasAttributes() && dslLink.isOwningSide() ) {
+//		if ( ! dslLink.hasAttributes() && dslLink.isOwningSide() ) {
+		if ( ! dslLink.hasAttributes() && isForeignKeyHolder(dslLink) ) { // changed in v 4.1.0
 			// No join columns defined by annotations => try to infer join columns from FK
 			String referencedEntityName = dslLink.getReferencedEntityName();
 			List<LinkAttribute> linkAttributes = JoinAttributesUtil.tryToInferJoinAttributes(dslEntity, referencedEntityName);
@@ -185,17 +186,41 @@ public class LinksConverter extends AbstractConverter {
 		}
 		checkJoinAttributes(dslLink); // v 3.4.0
 	}
+
+	private boolean isForeignKeyHolder(DslModelLink dslLink) { // added in v 4.1.0
+		switch ( dslLink.getCardinality() ) {
+		case ONE_TO_ONE:
+			if ( dslLink.getMappedBy() != null ) {
+				// @MappedBy(xxx) : not sure to have a FK
+				return false;
+			} else {
+				// no @MappedBy(xxx) => the side supposed to have a FK
+				return true;
+			}
+		case ONE_TO_MANY:
+			// One to many => cannot hold the FK
+			return false ;
+		case MANY_TO_ONE:
+			// Many to One => supposed to hold the FK
+			return true ;
+		case MANY_TO_MANY:
+			// Many to many => cannot hold a direct FK 
+			return false ;
+		default:
+			return false ;
+		}
+	}
 	
 	private void step5FinalizeLink(DslModelLink dslLink) {
 		// If link based on a Join Table => owning side
 		if ( dslLink.isBasedOnJoinEntity() ) {
-			dslLink.setOwningSide(true);
-			dslLink.setInverseSide(false);
+			// dslLink.setOwningSide(true); // removed in v 4.1.0
+			// dslLink.setInverseSide(false); // removed in v 4.1.0
 		}
 		// If link is "mapped by" another entity => inverse side
 		if ( dslLink.getMappedBy() != null ) {
-			dslLink.setInverseSide(true);
-			dslLink.setOwningSide(false);
+			// dslLink.setInverseSide(true); // removed in v 4.1.0
+			// dslLink.setOwningSide(false); // removed in v 4.1.0
 		}
 		// TODO : Check MappedBy validity AFTER all "apply"  (next step) (?)
 		// check existence :

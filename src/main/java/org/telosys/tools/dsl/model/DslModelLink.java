@@ -41,10 +41,10 @@ public class DslModelLink implements Link {
     private String referencedEntityName;
 //    private String targetTableName; // table associated with the target entity  // v 3.4.0
     
-    private boolean owningSide;
+//    private boolean owningSide; removed in v 4.1.0
     private String mappedBy;
     
-    private boolean inverseSide;
+//    private boolean inverseSide; // removed in 4.1.0
 //    private String  inverseSideLinkId; // removed in v 3.4.0
     
     private Optional       optional    = Optional.UNDEFINED;
@@ -111,13 +111,14 @@ public class DslModelLink implements Link {
         return fieldName;
     }
 
-    @Override
-    public boolean isOwningSide() {
-        return owningSide;
-    }
-    public void setOwningSide(boolean owningSide) {
-        this.owningSide = owningSide;
-    }
+// removed in v 4.1.0
+//    @Override
+//    public boolean isOwningSide() {
+//        return owningSide;
+//    }
+//    public void setOwningSide(boolean owningSide) {
+//        this.owningSide = owningSide;
+//    }
 
     @Override
     public String getMappedBy() {
@@ -132,13 +133,14 @@ public class DslModelLink implements Link {
         return true; // Always "TRUE" ( "SELECTED" )
     }
 
-    @Override
-    public boolean isInverseSide() {
-        return inverseSide;
-    }
-    public void setInverseSide(boolean inverseSide) {
-        this.inverseSide = inverseSide;
-    }
+// removed in v 4.1.0
+//    @Override
+//    public boolean isInverseSide() {
+//        return inverseSide;
+//    }
+//    public void setInverseSide(boolean inverseSide) {
+//        this.inverseSide = inverseSide;
+//    }
 
     @Override
     public Optional getOptional() {

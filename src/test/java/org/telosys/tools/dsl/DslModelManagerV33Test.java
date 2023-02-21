@@ -280,9 +280,6 @@ public class DslModelManagerV33Test {
         assertFalse(cascadeOptions.isCascadeRefresh());
         assertFalse(cascadeOptions.isCascadeRemove());
         
-        assertTrue(link.isOwningSide());
-        assertFalse(link.isInverseSide());
-        
         assertTrue(link.isSelected()); // Always
         
         assertFalse(link.isEmbedded()); // @Embedded
