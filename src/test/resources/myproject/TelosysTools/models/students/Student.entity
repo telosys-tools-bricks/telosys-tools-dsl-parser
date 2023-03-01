@@ -3,11 +3,11 @@
 @DbSchema(STUDENTS)
 Student {
   // attributes
-  id : int { @Id @DbName(ID) @DbType(INTEGER) @NotNull @NotEmpty };
-  firstName : string { @DbName(FIRST_NAME) @DbType("CHARACTER VARYING(40)") @Size(40) @MaxLen(40) };
-  lastName : string { @DbName(LAST_NAME) @DbType("CHARACTER VARYING(40)") @Size(40) @MaxLen(40) };
-  teacherCode1 : int { @DbName(TEACHER_CODE1) @DbType(INTEGER) @FK(FK_STU_TEACHER1, Teacher.code) };
-  teacherCode2 : int { @DbName(TEACHER_CODE2) @DbType(INTEGER) @FK(FK_STU_TEACHER2, Teacher.code) };
+  id : int { @Id @GeneratedValue(IDENTITY) @DbName(ID) @DbType(INTEGER) @NotNull @NotEmpty };
+  firstName : string { @GeneratedValue(IDENTITY) @DbName(FIRST_NAME) @DbType("CHARACTER VARYING(40)") @Size(40) @MaxLen(40) };
+  lastName : string { @GeneratedValue(IDENTITY) @DbName(LAST_NAME) @DbType("CHARACTER VARYING(40)") @Size(40) @MaxLen(40) };
+  teacherCode1 : int { @GeneratedValue(IDENTITY) @DbName(TEACHER_CODE1) @DbType(INTEGER) @FK(FK_STU_TEACHER1, Teacher.code) };
+  teacherCode2 : int { @GeneratedValue(IDENTITY) @DbName(TEACHER_CODE2) @DbType(INTEGER) @FK(FK_STU_TEACHER2, Teacher.code) };
   // links
   teacher : Teacher { @LinkByFK(FK_STU_TEACHER1) };
   teacher2 : Teacher { @LinkByFK(FK_STU_TEACHER2) };

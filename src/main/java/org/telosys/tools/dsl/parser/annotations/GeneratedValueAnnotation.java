@@ -32,10 +32,10 @@ import org.telosys.tools.generic.model.enums.GeneratedValueStrategy;
 
 /**
  * "GeneratedValue" annotation 
- *  . GeneratedValue(AUTO)
- *  . GeneratedValue(IDENTITY)
- *  . GeneratedValue(SEQUENCE [, GeneratorName, SequenceName [, AllocationSize ] ])
- *  . GeneratedValue(TABLE [, GeneratorName, TableName [, PkColumnName, PkColumnValue, ValueColumnName [, AllocationSize ] ] ])
+ *  . GeneratedValue( AUTO )
+ *  . GeneratedValue( IDENTITY )
+ *  . GeneratedValue( SEQUENCE, sequenceName  [, allocationSize [, initialValue ] ] )
+ *  . GeneratedValue( TABLE,    pkValue       [, allocationSize [, initialValue ] ] )
  *   
  * Added in v 3.4.0
  * 

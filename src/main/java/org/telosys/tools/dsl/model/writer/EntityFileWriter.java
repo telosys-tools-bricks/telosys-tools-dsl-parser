@@ -233,7 +233,7 @@ public class EntityFileWriter extends AbstractWriter {
 		// @Id
 		buildAnnotationWithoutParam(list, new IdAnnotation(), attribute.isKeyElement());
 		// @AutoIncremented, @GeneratedValue
-		buildAnnotationWithoutParam(list, new AutoIncrementedAnnotation(), attribute.isAutoIncremented());
+		// v 4.1.0 :: buildAnnotationWithoutParam(list, new AutoIncrementedAnnotation(), attribute.isAutoIncremented());
 		buildGeneratedValueAnnotationIfAny(list, attribute);
 		// @Dbxxxx (database annotations)
 		buildAnnotation(list, new DbNameAnnotation(), attribute.getDatabaseName() );
@@ -428,40 +428,43 @@ public class EntityFileWriter extends AbstractWriter {
 		sb.append(")") ;
 		list.add(sb.toString());
 	}
-	private void completeGeneratedValueSequence(StringBuilder sb, DslModelAttribute attribute) {
+
+	private void completeGeneratedValueSequence(StringBuilder sb, DslModelAttribute attribute) { // v 4.1.0
 		sb.append("SEQUENCE");
-//		String generator = attribute.getGeneratedValueGeneratorName(); // removed in v 4.1.0
-		String sequence  = attribute.getGeneratedValueSequenceName();
-//		if ( ( ! StrUtil.nullOrVoid(generator) ) && ( ! StrUtil.nullOrVoid(sequence) ) ) {
-//			sb.append(", ").append(generator);
-		if ( ! StrUtil.nullOrVoid(sequence) ) {
-			sb.append(", ").append(sequence);
-			if ( attribute.getGeneratedValueAllocationSize() != null ) {
-				sb.append(", ").append(attribute.getGeneratedValueAllocationSize());
-			}
+		// add sequence name
+		String sequenceName  = attribute.getGeneratedValueSequenceName();
+		if ( StrUtil.nullOrVoid(sequenceName) ) {
+			sequenceName = "undefinedSequenceName"; 
 		}
+		sb.append(", ");
+		sb.append(sequenceName);
+		// add allocation size & initial value if any
+		addGeneratedValueAllocationSizeAndInitialValue(sb, attribute);
 	}
-	private void completeGeneratedValueTable(StringBuilder sb, DslModelAttribute attribute) {
+	
+	private void completeGeneratedValueTable(StringBuilder sb, DslModelAttribute attribute) {  // v 4.1.0
 		sb.append("TABLE");
-//		String generator = attribute.getGeneratedValueGeneratorName(); // removed in v 4.1.0
-		String table = attribute.getGeneratedValueTableName();
-//		if ( ( ! StrUtil.nullOrVoid(generator) ) && ( ! StrUtil.nullOrVoid(table) ) ) {
-//			sb.append(", ").append(generator);
-		if ( ! StrUtil.nullOrVoid(table) ) {
-			sb.append(", ").append(table);
-			String pkColName = attribute.getGeneratedValueTablePkColumnName();
-			String pkColVal  = attribute.getGeneratedValueTablePkColumnValue();
-			String tableValColName = attribute.getGeneratedValueTableValueColumnName();
-			if ( ( ! StrUtil.nullOrVoid(pkColName) ) 
-					&& ( ! StrUtil.nullOrVoid(pkColVal) ) 
-					&& ( ! StrUtil.nullOrVoid(tableValColName) ) ) {
-				sb.append(", ").append(pkColName);
-				sb.append(", ").append(pkColVal);
-				sb.append(", ").append(tableValColName);
-				if ( attribute.getGeneratedValueAllocationSize() != null ) {
-					sb.append(", ").append(attribute.getGeneratedValueAllocationSize());
-				}
+		// add primary key value 
+		String pkValue = attribute.getGeneratedValueTablePkColumnValue();
+		if ( ! StrUtil.nullOrVoid(pkValue) ) {
+			pkValue = "undefinedPkValue"; 
+		}
+		sb.append(", ");
+		sb.append(pkValue);
+		// add allocation size & initial value if any
+		addGeneratedValueAllocationSizeAndInitialValue(sb, attribute);
+	}
+	
+	private void addGeneratedValueAllocationSizeAndInitialValue(StringBuilder sb, DslModelAttribute attribute) { // v 4.1.0
+		// add allocation size if any
+		if ( attribute.getGeneratedValueAllocationSize() != null ) {
+			sb.append(", ");
+			sb.append(attribute.getGeneratedValueAllocationSize());
+			// add initial value if any
+			if ( attribute.getGeneratedValueInitialValue() != null ) {
+				sb.append(", ");
+				sb.append(attribute.getGeneratedValueInitialValue());
 			}
 		}
-	}
+	}	
 }

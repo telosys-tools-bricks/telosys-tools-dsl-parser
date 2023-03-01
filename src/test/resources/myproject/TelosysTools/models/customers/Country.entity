@@ -3,7 +3,7 @@
 @DbSchema(CUSTOMERS)
 Country {
   // attributes
-  code : string { @Id @DbName(CODE) @DbType("CHARACTER VARYING(2)") @NotNull @NotEmpty @Size(2) @MaxLen(2) };
-  name : string { @DbName(NAME) @DbType("CHARACTER VARYING(45)") @Size(45) @MaxLen(45) };
+  code : string { @Id @GeneratedValue(IDENTITY) @DbName(CODE) @DbType("CHARACTER VARYING(2)") @NotNull @NotEmpty @Size(2) @MaxLen(2) };
+  name : string { @GeneratedValue(IDENTITY) @DbName(NAME) @DbType("CHARACTER VARYING(45)") @Size(45) @MaxLen(45) };
   // links
 }

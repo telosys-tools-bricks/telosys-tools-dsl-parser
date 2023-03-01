@@ -23,7 +23,15 @@ import org.telosys.tools.dsl.parser.annotation.AnnotationName;
 import org.telosys.tools.dsl.parser.annotation.AnnotationParamType;
 import org.telosys.tools.dsl.parser.annotation.AnnotationScope;
 import org.telosys.tools.dsl.parser.commons.ParamError;
+import org.telosys.tools.generic.model.enums.GeneratedValueStrategy;
 
+/**
+ * 'AutoIncremented' annotation
+ * Since ver 4.1 this annotation is just a shortcut for 'GeneratedValue(IDENTITY)'
+ * 
+ * @author Laurent Guerin
+ *
+ */
 public class AutoIncrementedAnnotation extends AnnotationDefinition {
 
 	public AutoIncrementedAnnotation() {
@@ -34,6 +42,8 @@ public class AutoIncrementedAnnotation extends AnnotationDefinition {
 	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, 
 					  Object paramValue) throws ParamError {
 		checkParamValue(entity, attribute, paramValue);
-		attribute.setAutoIncremented(true);
+		// attribute.setAutoIncremented(true);
+		// same as 'GeneratedValue(IDENTITY)'
+		attribute.setGeneratedValueStrategy(GeneratedValueStrategy.IDENTITY); // v 4.1.0
 	}
 }

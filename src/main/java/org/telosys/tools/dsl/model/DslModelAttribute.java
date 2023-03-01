@@ -66,7 +66,7 @@ public class DslModelAttribute implements Attribute {
 	private String generatedValueTablePkColumnValue;
 	private String generatedValueTableName;
 	private String generatedValueTableValueColumnName;
-	private boolean autoIncremented = false ;
+	// private boolean autoIncremented = false ; // removed in v 4.1
 	// private boolean databaseNotNull = false ; // removed in v 4.1
 	private boolean keyElement = false;
 	private boolean longText = false;
@@ -355,13 +355,14 @@ public class DslModelAttribute implements Attribute {
 		this.pattern = pattern;
 	}
 
-	@Override
-	public boolean isAutoIncremented() {
-		return autoIncremented;
-	}
-	public void setAutoIncremented(boolean autoIncremented) {
-		this.autoIncremented = autoIncremented;
-	}
+// removed in v 4.1
+//	@Override
+//	public boolean isAutoIncremented() {
+//		return autoIncremented;
+//	}
+//	public void setAutoIncremented(boolean autoIncremented) {
+//		this.autoIncremented = autoIncremented;
+//	}
 
 // removed in v 4.1
 //	@Override

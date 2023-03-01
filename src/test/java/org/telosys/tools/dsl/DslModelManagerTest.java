@@ -127,7 +127,7 @@ public class DslModelManagerTest {
         	if ( attribute.getName().equals("id") ) {
         		assertEquals("int", attribute.getNeutralType() ); 
         		assertTrue(attribute.isKeyElement());
-        		assertFalse(attribute.isAutoIncremented());
+        		assertFalse(attribute.isGeneratedValue());
         		
         		assertFalse(attribute.isPrimitiveTypeExpected());
         		assertFalse(attribute.isUnsignedTypeExpected());
@@ -137,23 +137,23 @@ public class DslModelManagerTest {
         		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertTrue(attribute.isNotEmpty());
         		assertFalse(attribute.isKeyElement());
-        		assertFalse(attribute.isAutoIncremented());
+        		assertFalse(attribute.isGeneratedValue());
         	}
         	else if ( attribute.getName().equals("lastName") ) {
         		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertTrue(attribute.isNotBlank());
         		assertFalse(attribute.isKeyElement());
-        		assertFalse(attribute.isAutoIncremented());
+        		assertFalse(attribute.isGeneratedValue());
         	}
         	else if ( attribute.getName().equals("counter") ) {
         		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
-        		assertTrue(attribute.isAutoIncremented());
+        		assertTrue(attribute.isGeneratedValue());
         	}
         	else if ( attribute.getName().equals("counter2") ) {
         		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());
         		assertEquals("short", attribute.getNeutralType()); 
-        		assertTrue(attribute.isAutoIncremented());
+        		assertTrue(attribute.isGeneratedValue());
         	}
         	else if ( attribute.getName().equals("counter3") ) {
         		println(attribute.getNeutralType() + " --> " + attribute.getNeutralType());

@@ -22,6 +22,7 @@ import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
 import org.telosys.tools.db.model.DatabaseColumn;
 import org.telosys.tools.dsl.model.DslModelAttribute;
 import org.telosys.tools.generic.model.enums.DateType;
+import org.telosys.tools.generic.model.enums.GeneratedValueStrategy;
 import org.telosys.tools.generic.model.types.NeutralType;
 
 /**
@@ -82,7 +83,8 @@ public class DbToAttributeConverter {
 		// Is this attribute/column in the Table Primary Key ?
 		attribute.setKeyElement( dbCol.isInPrimaryKey()); 
 		// Is this column auto-incremented ?
-		attribute.setAutoIncremented(dbCol.isAutoIncremented());
+		// v 4.1.0 :: attribute.setAutoIncremented(dbCol.isAutoIncremented());
+		attribute.setGeneratedValueStrategy(GeneratedValueStrategy.IDENTITY); // v 4.1.0
 		// Attribute size
     	if ( ! StrUtil.nullOrVoid(size) ) {
     		attribute.setSize(size);
