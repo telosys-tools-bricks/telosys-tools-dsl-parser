@@ -50,7 +50,7 @@ public class DslModelLink implements Link {
     private Optional       optional    = Optional.UNDEFINED;
     private Cardinality    cardinality = Cardinality.UNDEFINED;
     private FetchType      fetchType   = FetchType.UNDEFINED;
-    private CascadeOptions cascadeOptions;
+    private CascadeOptions cascadeOptions = new CascadeOptions(); // init with an empty set of CascadeOption
     
     private boolean basedOnForeignKey = false ;
     private String foreignKeyName;

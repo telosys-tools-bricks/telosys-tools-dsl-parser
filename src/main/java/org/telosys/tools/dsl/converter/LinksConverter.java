@@ -122,7 +122,7 @@ public class LinksConverter extends AbstractConverter {
 		}
 		
 		// void "cascade options"  (default values)
-		dslLink.setCascadeOptions(new CascadeOptions()); 
+		dslLink.setCascadeOptions(new CascadeOptions()); // init with an empty set of CascadeOption
 
 		// Link based on FK : @LinkByFK or implicit FK
 		dslLink.setBasedOnForeignKey(false);
