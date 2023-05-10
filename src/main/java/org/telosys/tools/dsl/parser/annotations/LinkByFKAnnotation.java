@@ -49,8 +49,8 @@ public class LinkByFKAnnotation extends AnnotationDefinition {
 		String fkName = (String)paramValue;
 		
 		// Try to get and check FK
-		DslModelForeignKey fk = getForeignKeyByName(entity, link, fkName);
-		checkIfLinkIsCompatibleWithForeignKey(entity, link, fk);
+		DslModelForeignKey fk = getForeignKeyByName(entity, fkName);
+		checkIfLinkIsCompatibleWithForeignKey(link, fk);
 
 		link.setAttributes(fk.getLinkAttributes()); // new in 3.4.0
 		
@@ -59,7 +59,7 @@ public class LinkByFKAnnotation extends AnnotationDefinition {
 		link.setForeignKeyName(fkName);
 	}
 	
-	private DslModelForeignKey getForeignKeyByName(DslModelEntity entity, DslModelLink link, String fkName) throws ParamError {
+	private DslModelForeignKey getForeignKeyByName(DslModelEntity entity, String fkName) throws ParamError {
 		if ( ! StrUtil.nullOrVoid(fkName) ) {
 			ForeignKey fk = entity.getForeignKeyByName(fkName);
 			if ( fk != null ) {
@@ -67,28 +67,25 @@ public class LinkByFKAnnotation extends AnnotationDefinition {
 			}
 			else {
 				// FK not found => ERROR
-				throw newParamError(entity.getClassName(), link.getFieldName(), 
-						"cannot found Foreign Key '" + fkName + "' in entity");
+				throw new ParamError("cannot found Foreign Key '" + fkName + "' in entity");
 			}
 		}
 		else {
 			// no FK name => ERROR
-			throw newParamError(entity.getClassName(), link.getFieldName(), "no Foreign Key name");
+			throw new ParamError("no Foreign Key name");
 		}
 	}
 
-	private void checkIfLinkIsCompatibleWithForeignKey(DslModelEntity entity, DslModelLink link, DslModelForeignKey fk) throws ParamError  {
+	private void checkIfLinkIsCompatibleWithForeignKey(DslModelLink link, DslModelForeignKey fk) throws ParamError  {
 		String linkReferencedEntityName = link.getReferencedEntityName();
 		String fkReferencedEntityName = fk.getReferencedEntityName();
 		if ( linkReferencedEntityName != null ) {
 			if ( ! linkReferencedEntityName.equals(fkReferencedEntityName) ) {
-				throw newParamError(entity.getClassName(), link.getFieldName(), 
-						"invalid Foreign Key : reference '" + fkReferencedEntityName + "' != '" + linkReferencedEntityName + "'");
+				throw new ParamError("invalid Foreign Key : reference '" + fkReferencedEntityName + "' != '" + linkReferencedEntityName + "'");
 			}
 		}
 		else {
-			throw newParamError(entity.getClassName(), link.getFieldName(), 
-					"cannot check reference because link target is null");
+			throw new ParamError("cannot check reference because link target is null");
 		}
 	}
 

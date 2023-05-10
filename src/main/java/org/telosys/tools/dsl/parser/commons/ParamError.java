@@ -25,6 +25,10 @@ public class ParamError extends Exception {
 
     private static final long serialVersionUID = 1L;
     
+    /**
+     * Constructor 
+     * @param errorMessage just the error message without annotation name, field name or entity name (added at the top level by the caller)
+     */
     public ParamError(String errorMessage) {
     	super(errorMessage);
     }

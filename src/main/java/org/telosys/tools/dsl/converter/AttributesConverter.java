@@ -128,7 +128,8 @@ public class AttributesConverter extends AbstractConverter {
 					annotation.applyToAttribute(dslModel, dslEntity, dslAttribute);
 				} catch (Exception e) {
 					errors.addError(
-							new DslModelError( dslEntity.getClassName(), dslAttribute.getName(), e.getMessage() ) );
+							new DslModelError( dslEntity.getClassName(), dslAttribute.getName(), 
+									"@" + annotation.getName() + " : "+ e.getMessage() ) );
 				}
 			}		
 			

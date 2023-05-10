@@ -52,36 +52,34 @@ public class LinkByAttrAnnotation extends AnnotationDefinition {
 	
 	@Override
 	public void afterCreation(String entityName, String fieldName, DomainAnnotation annotation) throws ParamError {
-		@SuppressWarnings("unchecked")
-		List<String> list = (List<String>) annotation.getParameterAsList();
-		if ( list.isEmpty() ) {
-			throw newParamError(entityName, fieldName, "at least 1 attribute required");
+		if ( annotation.getParameterAsList().isEmpty() ) {
+			throw new ParamError("at least 1 attribute required");
 		}
 	}
 	
 	@Override
 	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParamError {
 		checkParamValue(entity, link, paramValue);
-		List<String> attributeNames = (List<String>) paramValue;
-		List<Attribute> originAttributes = getOriginAttributes(entity, link, attributeNames);
+		List<String> attributeNames = getListOfParameters(paramValue);
+		List<Attribute> originAttributes = getOriginAttributes(entity, attributeNames);
 		DslModelEntity referencedEntity = getReferencedEntity(model, link);
 		List<Attribute> referencedAttributes = referencedEntity.getKeyAttributes();
-		List<LinkAttribute> joinAttributes = buildJoinAttributes(entity, link, originAttributes, referencedAttributes);
+		List<LinkAttribute> joinAttributes = buildJoinAttributes(originAttributes, referencedAttributes);
 		
 		link.setAttributes(joinAttributes);
 		link.setBasedOnAttributes(true);
 	}
 	
-	private List<Attribute> getOriginAttributes(DslModelEntity entity, DslModelLink link, List<String> attributes) throws ParamError {
+	private List<Attribute> getOriginAttributes(DslModelEntity entity, List<String> attributes) throws ParamError {
 		List<Attribute> originAttributes = new LinkedList<>();
 		for ( String rawAttributeName : attributes ) {
 			String attributeName = rawAttributeName.trim();
 			if ( attributeName.isEmpty() ) {
-				throw newParamError(entity.getClassName(), link.getFieldName(), "invalid attribute (name is void)");
+				throw new ParamError("invalid attribute (name is void)");
 			}
 			Attribute attribute = entity.getAttributeByName(attributeName);
 			if ( attribute == null ) {
-				throw newParamError(entity.getClassName(), link.getFieldName(), "unknown attribute '" + attributeName + "'");
+				throw new ParamError("unknown attribute '" + attributeName + "'");
 			}
 			originAttributes.add(attribute);
 		}
@@ -97,19 +95,18 @@ public class LinkByAttrAnnotation extends AnnotationDefinition {
 		return e;
 	}
 	
-	private List<LinkAttribute> buildJoinAttributes(DslModelEntity entity, DslModelLink link, List<Attribute> originAttributes, 
+	private List<LinkAttribute> buildJoinAttributes(List<Attribute> originAttributes, 
 			List<Attribute> referencedAttributes) throws ParamError {
 		// check number of attributes = number of PK attributes 
 		if ( originAttributes.size() != referencedAttributes.size() ) {
-			throw newParamError(entity.getClassName(), link.getFieldName(), 
-					referencedAttributes.size() + " attribute(s) expected to match the referenced entity id");
+			throw new ParamError(referencedAttributes.size() + " attribute(s) expected to match the referenced entity id");
 		}
 		List<LinkAttribute> joinAttributes = new LinkedList<>();
 		for ( int i = 0 ; i < originAttributes.size() ; i++ ) {
 			Attribute originAttribute = originAttributes.get(i);
 			Attribute referencedAttribute = referencedAttributes.get(i);
 			// Check attribute types compatibility (to be sure to conform to PK attributes types)
-			checkAttributesType(entity, link, originAttribute, referencedAttribute);
+			checkAttributesType(originAttribute, referencedAttribute);
 			// If OK : create a JoinAttribute
 			LinkAttribute linkAttribute = new DslModelLinkAttribute(originAttribute.getName(), referencedAttribute.getName());
 			joinAttributes.add(linkAttribute);
@@ -117,13 +114,11 @@ public class LinkByAttrAnnotation extends AnnotationDefinition {
 		return joinAttributes;
 	}
 	
-	private void checkAttributesType(DslModelEntity entity, DslModelLink link, Attribute originAttribute, 
-			Attribute referencedAttribute) throws ParamError {
+	private void checkAttributesType(Attribute originAttribute, Attribute referencedAttribute) throws ParamError {
 		String referencedType = referencedAttribute.getNeutralType();
 		String originType = originAttribute.getNeutralType();
 		if ( ! compatibleTypes(referencedType, originType) ) {
-			throw newParamError(entity.getClassName(), link.getFieldName(), 
-					"attribute type '" + originType +"' incompatible with referenced type '" + referencedType + "'");
+			throw new ParamError("attribute type '" + originType +"' incompatible with referenced type '" + referencedType + "'");
 		}
 	}
 	private boolean compatibleTypes(String type1, String type2) {

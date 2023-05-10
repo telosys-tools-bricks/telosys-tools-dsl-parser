@@ -207,14 +207,16 @@ public class DomainAnnotation {
 	}
 
 	/**
-	 * Returns the annotation List parameter or null if none
+	 * Returns the annotation List of parameters or null if none
 	 * 
 	 * @return
 	 */
-	public List<?> getParameterAsList() {
+	public List<String> getParameterAsList() {
 		// null is not an instance of anything
 		if (parameter instanceof List<?>) {
-			return (List<?>) parameter;
+			@SuppressWarnings("unchecked")
+			List<String> list = (List<String>) parameter;
+			return list;
 		}
 		throw newParamTypeError("List");
 	}

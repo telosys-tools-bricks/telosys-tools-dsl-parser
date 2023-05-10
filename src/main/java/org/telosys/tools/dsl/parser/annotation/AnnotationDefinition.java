@@ -18,7 +18,7 @@ package org.telosys.tools.dsl.parser.annotation;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.telosys.tools.dsl.DslModelError;
+import org.telosys.tools.commons.exception.TelosysRuntimeException;
 import org.telosys.tools.dsl.commons.StringUtil;
 import org.telosys.tools.dsl.model.DslModel;
 import org.telosys.tools.dsl.model.DslModelAttribute;
@@ -86,24 +86,27 @@ public abstract class AnnotationDefinition {
 	//-------------------------------------------------------------------------------------------
 	// Annotation error 
 	//-------------------------------------------------------------------------------------------
-	protected ParamError newParamError(DslModelEntity entity, DslModelAttribute attribute, String error) {
-		return new ParamError(entity.getClassName() + "." + attribute.getName() + " : " + error); 
-	}
-	protected ParamError newParamError(DslModelEntity entity, DslModelLink link, String error) {
-		return new ParamError(entity.getClassName() + "." + link.getFieldName() + " : " + error); 
-	}
-	protected ParamError newParamError(String entityName, String fieldName, String error) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(entityName);
-		if ( fieldName != null ) {
-			sb.append(".").append(fieldName);
-		}
-		sb.append(" : ").append(error);
-		return new ParamError(sb.toString());
-	}
-	protected DslModelError newError(String entityName, int lineNumber, String fieldName, String errorMessage) {
-		return new DslModelError(entityName, lineNumber, fieldName, errorMessage);
-	}
+////	protected ParamError newParamError(DslModelEntity entity, DslModelAttribute attribute, String error) {
+////		return newParamError(entity.getClassName(), attribute.getName(), error); 
+////	}
+////	protected ParamError newParamError(DslModelEntity entity, DslModelLink link, String error) {
+////		return newParamError(entity.getClassName(), link.getFieldName(), error); 
+////	}
+//	protected ParamError newParamError(String entityName, String fieldName, String error) {
+//		StringBuilder sb = new StringBuilder();
+//		sb.append(entityName);
+//		if ( fieldName != null ) {
+//			sb.append(".").append(fieldName);
+//		}
+//		sb.append(" : ");
+//		sb.append("@").append(name);
+//		sb.append(" : ");
+//		sb.append(error);
+//		return new ParamError(sb.toString());
+//	}
+////	protected DslModelError newError(String entityName, int lineNumber, String fieldName, String errorMessage) {
+////		return new DslModelError(entityName, lineNumber, fieldName, errorMessage);
+////	}
 	
 	//-------------------------------------------------------------------------------------------
 	// Annotation parsing 
@@ -118,57 +121,56 @@ public abstract class AnnotationDefinition {
 	// Ultimate check (no errors expected at this level, already checked in parameter constructor)
 	//-------------------------------------------------------------------------------------------
 	protected void checkParamValue(DslModelEntity entity, Object paramValue) throws ParamError {
-		checkParamValue(entity.getClassName(), null, paramValue);
+		checkParamValue(paramValue);
 	}
 	protected void checkParamValue(DslModelEntity entity, DslModelAttribute attribute, Object paramValue) throws ParamError {
-		checkParamValue(entity.getClassName(), attribute.getName(), paramValue);
+		checkParamValue(paramValue);
 	}
 	protected void checkParamValue(DslModelEntity entity, DslModelLink link, Object paramValue) throws ParamError {
-		checkParamValue(entity.getClassName(), link.getFieldName(), paramValue);
+		checkParamValue(paramValue);
 	}
 
-	private void checkParamType(String entityName, String fieldName, Object paramValue, Class<?> expectedClass, String expectedMsg ) throws ParamError {
+	private void checkParamType(Object paramValue, Class<?> expectedClass, String expectedMsg ) throws ParamError {
 		if ( paramValue == null ) {
-			throw newParamError(entityName, fieldName, "Parameter is null (parameter expected)");
+			throw new ParamError("Parameter is null (parameter expected)");
 		}
 		else {
 			// check if paramValue is instance of the expected class
 			if ( ! ( expectedClass.isInstance(paramValue) ) ) {
-				throw newParamError(entityName, fieldName, 
-							expectedMsg + " expected, actual type is " + getParamValueActualType(paramValue));
+				throw new ParamError(expectedMsg + " expected, actual type is " + getParamValueActualType(paramValue));
 			}
 		}
 	}
-	private void checkParamValue(String entityName, String fieldName, Object paramValue) throws ParamError {
+	private void checkParamValue(Object paramValue) throws ParamError {
 		switch ( this.paramType ) {
 		case STRING:
-			checkParamType(entityName, fieldName, paramValue, String.class, "String value");
+			checkParamType(paramValue, String.class, "String value");
 			break;
 		case SIZE: // Size is stored as a String
-			checkParamType(entityName, fieldName, paramValue, String.class, "Size value");
+			checkParamType(paramValue, String.class, "Size value");
 			break;
 		case FK_ELEMENT: // FK element is stored as a String
-			checkParamType(entityName, fieldName, paramValue, String.class, "FK element");
+			checkParamType(paramValue, String.class, "FK element");
 			break;
 		case INTEGER:
-			checkParamType(entityName, fieldName, paramValue, Integer.class, "Integer value");
+			checkParamType(paramValue, Integer.class, "Integer value");
 			break;
 		case DECIMAL:
-			checkParamType(entityName, fieldName, paramValue, BigDecimal.class, "BigDecimal value");
+			checkParamType(paramValue, BigDecimal.class, "BigDecimal value");
 			break;
 		case BOOLEAN:
-			checkParamType(entityName, fieldName, paramValue, Boolean.class, "Boolean value");
+			checkParamType(paramValue, Boolean.class, "Boolean value");
 			break;
 		case LIST:
-			checkParamType(entityName, fieldName, paramValue, List.class, "List value");
+			checkParamType(paramValue, List.class, "List value");
 			break;
 		case NONE:
 			if ( paramValue != null ) {
-				throw newParamError(entityName, fieldName, "No value expected, actual value is " + paramValue );
+				throw new ParamError("No value expected, actual value is " + paramValue );
 			}
 			break;
 		default:
-			throw newParamError(entityName, fieldName, "Unexpected parameter type '" + this.paramType + "'" );
+			throw new ParamError("Unexpected parameter type '" + this.paramType + "'" );
 		}
 	}
 	
@@ -196,11 +198,11 @@ public abstract class AnnotationDefinition {
 		}
 	}
 	
-	protected int toInt(DslModelEntity entity, DslModelAttribute attribute, String s) throws ParamError {
+	protected int toInt(String s) throws ParamError {
 		try {
 			return Integer.parseInt(s);
 		} catch (NumberFormatException e) {
-			throw newParamError(entity, attribute, "Cannot convert '"+s+"' to int");
+			throw new ParamError("Cannot convert '" + s + "' to int");
 		}  
 	}
 	
@@ -284,6 +286,68 @@ public abstract class AnnotationDefinition {
 		}
 		else {
 			return s;
+		}
+	}
+	
+	/**
+	 * Checks if the number of parameters is OK <br>
+	 * (for an annotation with a list of parameters)
+	 * @param annotation
+	 * @param minimumExpected
+	 * @param maximumExpected
+	 * @param errorMessage
+	 * @throws ParamError
+	 */
+	protected void checkNumberOfParameters(DomainAnnotation annotation, int minimumExpected, int maximumExpected, String errorMessage) throws ParamError {
+		int numberOfParameters = annotation.getParameterAsList().size();
+		if ( numberOfParameters < minimumExpected || numberOfParameters > maximumExpected ) {
+			throw new ParamError(errorMessage);
+		}
+	}
+	
+	/**
+	 * Converts the given parameter object to a List of String <br>
+	 * (for an annotation with a list of parameters)
+	 * @param param
+	 * @return
+	 */
+	protected List<String> getListOfParameters(Object param) {
+		if (param instanceof List<?>) {
+			@SuppressWarnings("unchecked")
+			List<String> list = (List<String>) param;
+			return list;
+		}
+		else {
+			throw new TelosysRuntimeException("@"+this.getName() + " : getParameter() : unexpected type " + param.getClass().getSimpleName() );
+		}
+	}
+	
+	/**
+	 * Checks if the given parameter object is a list and has a parameter at the given index <br>
+	 * (for an annotation with a list of parameters)
+	 * @param param
+	 * @param index
+	 * @return
+	 */
+	protected boolean hasParameter(Object param, int index) {
+		List<String> list = getListOfParameters(param);
+		return index < list.size();
+	}
+	
+	/**
+	 * Returns the parameter value located at the given index in the given parameter object (list expected) <br>
+	 * (for an annotation with a list of parameters)
+	 * @param param
+	 * @param index
+	 * @return
+	 */
+	protected String getParameter(Object param, int index) {
+		List<String> list = getListOfParameters(param);
+		if ( index < list.size() ) {
+			return list.get(index);
+		}
+		else {
+			throw new TelosysRuntimeException("@"+this.getName() + " : getParameter("+ index + ") : index out of bounds");
 		}
 	}
 

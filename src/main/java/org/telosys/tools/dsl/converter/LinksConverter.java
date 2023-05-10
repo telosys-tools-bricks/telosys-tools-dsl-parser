@@ -75,7 +75,7 @@ public class LinksConverter extends AbstractConverter {
 				// 1) init link default values
 				step1InitLink(dslLink, domainField);
 				// 2) apply annotations on the link
-				step2ApplyAnnotations(dslEntity, dslLink, domainField);
+				step2ApplyAnnotationsToLink(dslEntity, dslLink, domainField);
 				// 3) apply tags on the link
 				step3ApplyTags(dslEntity, dslLink, domainField);				
 				// 4) try to infer undefined join attributes
@@ -138,7 +138,7 @@ public class LinksConverter extends AbstractConverter {
 		dslLink.setJoinEntityName(null); // v 3.4.0
 	}
 	
-	private void step2ApplyAnnotations(DslModelEntity dslEntity, DslModelLink dslLink, DomainField domainField) {
+	private void step2ApplyAnnotationsToLink(DslModelEntity dslEntity, DslModelLink dslLink, DomainField domainField) {
 		log(dslLink.getFieldName() + " : apply annotations" );
 		// Apply annotations usable for link ( @Embedded @Optional @FetchTypeLazy @FetchTypeEager etc ) 
 		if (domainField.getAnnotations() != null) {
@@ -149,8 +149,9 @@ public class LinksConverter extends AbstractConverter {
 				try {
 					annotation.applyToLink(dslModel, dslEntity, dslLink);
 				} catch (Exception e) {
+					String errorMessage = "@" + annotation.getName() + " : " + e.getMessage();
 					errors.addError(
-						new DslModelError( dslEntity.getClassName(), dslLink.getFieldName(), e.getMessage() ) );
+						new DslModelError( dslEntity.getClassName(), dslLink.getFieldName(), errorMessage ) );
 				}
 			}
 		} else {

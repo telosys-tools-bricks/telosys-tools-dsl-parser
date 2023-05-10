@@ -15,7 +15,6 @@
  */
 package org.telosys.tools.dsl.parser.annotations;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.telosys.tools.dsl.commons.StringUtil;
@@ -37,7 +36,7 @@ import org.telosys.tools.generic.model.enums.GeneratedValueStrategy;
  *  . GeneratedValue( SEQUENCE, sequenceName  [, allocationSize [, initialValue ] ] )
  *  . GeneratedValue( TABLE,    pkValue       [, allocationSize [, initialValue ] ] )
  *   
- * Added in v 3.4.0
+ * Added in v 3.4.0, changed in v 4.1.0
  * 
  * @author Laurent Guerin
  *
@@ -48,7 +47,6 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 	private static final String IDENTITY = "IDENTITY";
 	private static final String SEQUENCE = "SEQUENCE";
 	private static final String TABLE = "TABLE";
-	private static final List<String> stategies = Arrays.asList(AUTO, IDENTITY, SEQUENCE, TABLE) ;
 	
 	public GeneratedValueAnnotation() {
 		super(AnnotationName.GENERATED_VALUE, AnnotationParamType.LIST, AnnotationScope.ATTRIBUTE);
@@ -57,95 +55,74 @@ public class GeneratedValueAnnotation extends AnnotationDefinition {
 	@Override
 	public void afterCreation(String entityName, String fieldName, 
 			 DomainAnnotation annotation) throws ParamError {
-		@SuppressWarnings("unchecked")
-		List<String> list = (List<String>) annotation.getParameterAsList();
+		List<String> list = annotation.getParameterAsList();
 		if ( list.isEmpty() ) {
-			throw newParamError(entityName, fieldName, "invalid parameter ('strategy' is required)");
+			throw new ParamError( "'strategy' parameter is required)");
 		}
 		else {
 			//--- Check strategy 
 			String strategy = list.get(0);
-			if ( ! stategies.contains(strategy) ) {
-				throw newParamError(entityName, fieldName, "invalid strategy '" + strategy + "'");
-			}
-			//--- Check number of parameters 
-			int n = list.size();
-			// GeneratedValue(AUTO) 
-			if ( strategy.equals(AUTO) && n != 1 ) {
-				throw newParamError(entityName, fieldName, "invalid number of parameters for 'AUTO'");
-			}
-			// GeneratedValue(IDENTITY) 
-			if ( strategy.equals(IDENTITY) && n != 1 ) {
-				throw newParamError(entityName, fieldName, "invalid number of parameters for 'IDENTITY'");
-			}
-			// GeneratedValue(SEQUENCE, sequenceName [, allocationSize [, initialValue ] ] ) 
-			if ( strategy.equals(SEQUENCE) && n != 2 && n != 3 && n != 4 ) {
-				throw newParamError(entityName, fieldName, "invalid number of parameters for 'SEQUENCE'");
-			}
-			// GeneratedValue(TABLE, pkValueId [, allocationSize [, initialValue ] ] ) 
-			if ( strategy.equals(TABLE) && n != 2 && n != 3 && n != 4 ) {
-				throw newParamError(entityName, fieldName, "invalid number of parameters for 'TABLE'");
+			switch (strategy) {
+			case AUTO : 
+				// GeneratedValue(AUTO) 
+				checkNumberOfParameters(annotation, 1, 1, "'AUTO' is the only expected parameter");
+				break;
+			case IDENTITY : 
+				// GeneratedValue(IDENTITY) 
+				checkNumberOfParameters(annotation, 1, 1, "'IDENTITY' is the only expected parameter");
+				break;
+			case SEQUENCE : 
+				// GeneratedValue(SEQUENCE, sequenceName [, allocationSize [, initialValue ] ] )
+				checkNumberOfParameters(annotation, 2, 4, "2 to 4 parameters expected for 'SEQUENCE'");
+				break;
+			case TABLE : 
+				// GeneratedValue(TABLE, pkValueId [, allocationSize [, initialValue ] ] ) 
+				checkNumberOfParameters(annotation, 2, 4, "2 to 4 parameters expected for 'TABLE'");
+				break;
+			default :
+				throw new ParamError("invalid strategy '" + strategy + "'");
 			}
 		}
 	}
-
+	
 	@Override
 	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, 
 			Object paramValue) throws ParamError {
 		checkParamValue(entity, attribute, paramValue);
-		@SuppressWarnings("unchecked")
-		List<String> list = (List<String>)paramValue;
-		String strategy = list.get(0); // cannot be empty 
+		String strategy = getParameter(paramValue, 0); // cannot be empty 
 		switch(strategy) {
 		case AUTO :
+			// GeneratedValue(AUTO) 
 			attribute.setGeneratedValueStrategy(GeneratedValueStrategy.AUTO);
 			break;
 		case IDENTITY :
+			// GeneratedValue(IDENTITY) 
 			attribute.setGeneratedValueStrategy(GeneratedValueStrategy.IDENTITY);
 			break;
 		case SEQUENCE :
 			// GeneratedValue(SEQUENCE, sequenceName [, allocationSize [, initialValue ] ] ) 
-			attribute.setGeneratedValueStrategy(GeneratedValueStrategy.SEQUENCE);
-			attribute.setGeneratedValueSequenceName(stringValue(list.get(1)));
-			if ( list.size() >= 3 ) {
-				attribute.setGeneratedValueAllocationSize(toInt(entity, attribute, list.get(3)));
+			attribute.setGeneratedValueStrategy(GeneratedValueStrategy.SEQUENCE); // #0
+			attribute.setGeneratedValueSequenceName(stringValue(getParameter(paramValue, 1))); // #1
+			if ( hasParameter(paramValue, 2) ) {
+				attribute.setGeneratedValueAllocationSize(toInt(getParameter(paramValue, 2))); // #2
 			}
-			if ( list.size() >= 4 ) {
-				attribute.setGeneratedValueInitialValue(toInt(entity, attribute, list.get(4)));
+			if ( hasParameter(paramValue, 3) ) {
+				attribute.setGeneratedValueInitialValue(toInt(getParameter(paramValue, 3))); // #3
 			}
-//			if ( list.size() >= 3 ) {
-//				attribute.setGeneratedValueGeneratorName(stringValue(list.get(1)));
-//				attribute.setGeneratedValueSequenceName(stringValue(list.get(2)));
-//			}
-//			if ( list.size() >= 4 ) {
-//				attribute.setGeneratedValueAllocationSize(toInt(entity, attribute, list.get(3)));
-//			}
 			break;
 		case TABLE:
 			// GeneratedValue(TABLE, pkValueId [, allocationSize [, initialValue ] ] ) 
-			attribute.setGeneratedValueStrategy(GeneratedValueStrategy.TABLE);
-//			if ( list.size() >= 3 ) {
-//				attribute.setGeneratedValueGeneratorName(stringValue(list.get(1)));
-//				attribute.setGeneratedValueTableName(stringValue(list.get(2)));
-//			}
-//			if ( list.size() >= 6 ) {
-//				attribute.setGeneratedValueTablePkColumnName(stringValue(list.get(3)));
-//				attribute.setGeneratedValueTablePkColumnValue(stringValue(list.get(4)));
-//				attribute.setGeneratedValueTableValueColumnName(stringValue(list.get(5)));
-//			}
-//			if ( list.size() >= 7 ) {
-//				attribute.setGeneratedValueAllocationSize(toInt(entity, attribute, list.get(6)));
-//			}
-			attribute.setGeneratedValueTablePkColumnValue(stringValue(list.get(1)));
-			if ( list.size() >= 3 ) {
-				attribute.setGeneratedValueAllocationSize(toInt(entity, attribute, list.get(3)));
+			attribute.setGeneratedValueStrategy(GeneratedValueStrategy.TABLE); // #0
+			attribute.setGeneratedValueTablePkColumnValue(stringValue(getParameter(paramValue, 1))); // #1
+			if ( hasParameter(paramValue, 2) ) {
+				attribute.setGeneratedValueAllocationSize(toInt(getParameter(paramValue, 2))); // #2
 			}
-			if ( list.size() >= 4 ) {
-				attribute.setGeneratedValueInitialValue(toInt(entity, attribute, list.get(4)));
+			if ( hasParameter(paramValue, 3) ) {
+				attribute.setGeneratedValueInitialValue(toInt(getParameter(paramValue, 3))); // #3
 			}
 			break;
 		default:
-			throw newParamError(entity, attribute, "invalid strategy '" + strategy + "'");
+			throw new ParamError("invalid strategy '" + strategy + "'");
 		}
 	}
 	

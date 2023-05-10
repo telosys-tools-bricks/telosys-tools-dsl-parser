@@ -31,6 +31,7 @@ import org.telosys.tools.generic.model.enums.CascadeOption;
 
 /**
  * 'Cascade' annotation
+ * Examples :   Cascade(MERGE)   Cascade(M)   Cascade(MERGE, REMOVE)
  *  
  * @author Laurent Guerin
  *
@@ -43,26 +44,23 @@ public class CascadeAnnotation extends AnnotationDefinition {
 	
 	@Override
 	public void afterCreation(String entityName, String fieldName, DomainAnnotation annotation) throws ParamError {
-		@SuppressWarnings("unchecked")
-		List<String> list = (List<String>) annotation.getParameterAsList();
-		if ( list.isEmpty() ) {
-			throw newParamError(entityName, fieldName, "at least 1 cascade option required");
+		if ( annotation.getParameterAsList().isEmpty() ) {
+			throw new ParamError("at least 1 cascade option required");
 		}
 	}
 	
 	@Override
 	public void apply(DslModel model, DslModelEntity entity, DslModelLink link, Object paramValue) throws ParamError {
 		checkParamValue(entity, link, paramValue);
-		@SuppressWarnings("unchecked")
-		List<String> list = (List<String>) paramValue;
+		List<String> list = getListOfParameters(paramValue);
 		CascadeOptions cascadeOptions = new CascadeOptions();
 		for (String s : list ) {
-			cascadeOptions.add(getCascadeOption(entity, link, s));
+			cascadeOptions.add(getCascadeOption(s));
 		}
 		link.setCascadeOptions(cascadeOptions);
 	}
 
-	private CascadeOption getCascadeOption(DslModelEntity entity, DslModelLink link, String s) throws ParamError {
+	private CascadeOption getCascadeOption(String s) throws ParamError {
 		if ( CascadeOption.ALL.getLongText().equalsIgnoreCase(s) 
 			|| CascadeOption.ALL.getShortText().equalsIgnoreCase(s) ) {
 			return CascadeOption.ALL;
@@ -83,6 +81,6 @@ public class CascadeAnnotation extends AnnotationDefinition {
 			|| CascadeOption.REMOVE.getShortText().equalsIgnoreCase(s) ) {
 			return CascadeOption.REMOVE;
 		}
-		throw newParamError(entity, link, "invalid cascade option '" + s + "'");
+		throw new ParamError("invalid cascade option '" + s + "'");
 	}
 }

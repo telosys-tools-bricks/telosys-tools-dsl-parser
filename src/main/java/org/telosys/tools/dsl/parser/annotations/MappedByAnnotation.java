@@ -48,7 +48,7 @@ public class MappedByAnnotation extends AnnotationDefinition {
 	@Override
 	public void afterCreation(String entityName, String fieldName, DomainAnnotation annotation) throws ParamError  {
 		if ( annotation.getParameterAsString().trim().length() == 0 ) {
-			throw newParamError(entityName, fieldName, "invalid link name (blank)");
+			throw new ParamError("invalid link name (blank)");
 		}
 	}
 

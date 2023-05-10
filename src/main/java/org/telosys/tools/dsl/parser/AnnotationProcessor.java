@@ -15,6 +15,7 @@
  */
 package org.telosys.tools.dsl.parser;
 
+import org.telosys.tools.commons.exception.TelosysRuntimeException;
 import org.telosys.tools.dsl.DslModelError;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinition;
 import org.telosys.tools.dsl.parser.annotation.AnnotationDefinitions;
@@ -98,11 +99,9 @@ public class AnnotationProcessor extends AnnotationAndTagProcessor {
 			AnnotationParamType paramType) throws ParamError {
 		
 		// Build param value 
-//		ParamValue paramValue = new ParamValue(getEntityName(), getFieldName(), 
-//				annotationName, annotationParameter,
-//				ParamValueOrigin.FIELD_ANNOTATION);
 		ParamValue paramValue = new ParamValue(getEntityName(), annotationParameter);
 
+		// Build annotation with the expected parameter if any 
 		switch(paramType) {
 		case STRING :
 			return new DomainAnnotation(annotationName, paramValue.getAsString() );
@@ -118,13 +117,17 @@ public class AnnotationProcessor extends AnnotationAndTagProcessor {
 			return new DomainAnnotation(annotationName, paramValue.getAsList() );
 		case FK_ELEMENT :
 			return new DomainAnnotation(annotationName, paramValue.getAsForeignKeyElement() );
-
-		default :
+		case NONE :
 			// annotation without parameter
 			if (annotationParameter != null) {
 				throw new ParamError("unexpected parameter '" + annotationParameter + "'");
+			} 
+			else {
+				return new DomainAnnotation(annotationName);
 			}
-			return new DomainAnnotation(annotationName);
+		default :
+			// not supposed to happen
+			throw new TelosysRuntimeException("Unexpected annotation parameter type"); 
 		}
 	}
 	
