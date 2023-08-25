@@ -12,7 +12,7 @@
 
 	<name>telosys-tools-dsl-parser</name>
 	<artifactId>telosys-tools-dsl-parser</artifactId>
-	<version>4.0.0</version>  <!-- also update version in DslModelVersion.java  -->
+	<version>4.1.0</version>  <!-- also update version in "model/DslModelVersion.java"  -->
 	<packaging>jar</packaging>
 
 	<dependencies>
