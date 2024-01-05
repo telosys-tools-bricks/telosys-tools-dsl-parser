@@ -98,8 +98,9 @@ public class ParserV2 {
 		}
 		
 		//--- search duplicated FK names in the model
-		ModelFKChecker modelFKChecker = new ModelFKChecker();
-		modelFKChecker.checkNoDuplicateFK(model, errors);
+// Removed in v 4.1.1 in order to allow duplicated contraint names (FK, etc) at model level (for PostgreSQL, etc )
+//		ModelFKChecker modelFKChecker = new ModelFKChecker();
+//		modelFKChecker.checkNoDuplicateFK(model, errors);
 		
 		return new ParsingResult(model, errors);
 	}

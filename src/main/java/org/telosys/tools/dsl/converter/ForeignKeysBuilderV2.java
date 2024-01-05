@@ -200,7 +200,7 @@ public class ForeignKeysBuilderV2 {
 		if ( StrUtil.nullOrVoid(referencedFieldName) ) {
 			// The field name is NOT specified in FK definition 
 			// => try to find a unique PK attribute in the referenced entity
-			List<Attribute> pkAttributes = referencedEntity.getKeyAttributes();
+			List<Attribute> pkAttributes = referencedEntity.getKeyAttributes(); // TODO: a FK can ref UNIQUE (attr) intead of PK 
 			switch ( pkAttributes.size() ) {
 			case 0 :
 				throw new IllegalStateException( fieldName
@@ -220,12 +220,14 @@ public class ForeignKeysBuilderV2 {
 				throw new IllegalStateException( fieldName
 						+ " : FK error : '" + referencedFieldName + "' not found in entity '" + referencedEntity.getClassName() + "'");
 			}
-			else {
-				if ( ! a.isKeyElement() ) {
-					throw new IllegalStateException( fieldName
-							+ " : FK error : '" + referencedFieldName + "' is not a ID/PK attribute in entity '" + referencedEntity.getClassName() + "'");
-				}
-			}
+// Removed in v 4.1.1 in order to allow Foreign Keys that refer to non-PK attributes (ex UNIQUE attributes with PostgreSQL)
+// TODO: move this type of control in "Check Model" (not in parser)
+//			else {
+//				if ( ! a.isKeyElement() ) {
+//					throw new IllegalStateException( fieldName
+//							+ " : FK error : '" + referencedFieldName + "' is not a ID/PK attribute in entity '" + referencedEntity.getClassName() + "'");
+//				}
+//			}
 			return a;
 		}
 	}
