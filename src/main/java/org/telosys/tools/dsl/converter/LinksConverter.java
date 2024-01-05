@@ -235,13 +235,14 @@ public class LinksConverter extends AbstractConverter {
 	private void checkJoinAttributes(DslModelLink dslLink) {
 		if ( dslLink.getAttributes() != null ) {
 			//--- Check number of attributes expected
-			int nbJoinAttrib = dslLink.getAttributes().size() ;
-			String referencedEntityName = dslLink.getReferencedEntityName();
-			int nbKeyAttributesExpected = getNbKeyAttributes(referencedEntityName);
-			if ( nbJoinAttrib != nbKeyAttributesExpected ) {
-				throw new IllegalStateException("Link error : " + nbJoinAttrib + " join attribute(s), "
-						+ nbKeyAttributesExpected + " expected for a reference to '" + referencedEntityName + "' entity ");
-			}
+			// Removed in v 4.1.1 in order to allow Foreign Keys that refer to non-PK attributes (ex UNIQUE attributes with PostgreSQL)
+//			int nbJoinAttrib = dslLink.getAttributes().size() ;
+//			String referencedEntityName = dslLink.getReferencedEntityName();
+//			int nbKeyAttributesExpected = getNbKeyAttributes(referencedEntityName);
+//			if ( nbJoinAttrib != nbKeyAttributesExpected ) {
+//				throw new IllegalStateException("Link error : " + nbJoinAttrib + " join attribute(s), "
+//						+ nbKeyAttributesExpected + " expected for a reference to '" + referencedEntityName + "' entity ");
+//			}
 			//--- Check duplicates
 			int n = JoinAttributesUtil.numberOfDuplicates(dslLink.getAttributes());
 			if ( n > 0 ) {

@@ -253,23 +253,29 @@ public class ForeignKeysBuilderV2 {
 	}
 
 	private void checkForeignKeyValidity(String entityName, ForeignKey fk) {
+		// Check FK has at least 1 attribute
 		List<ForeignKeyAttribute> fkAttributes = fk.getAttributes() ;
 		if ( fkAttributes.isEmpty() ) {
 			throw new IllegalStateException( entityName
 					+ " : FK error '" +fk.getName()+"' is empty (no reference)");
 		}
+		
+		// Check FK references an existing entity
 		String referencedEntityName = fk.getReferencedEntityName();
 		DslModelEntity referencedEntity = (DslModelEntity) model.getEntityByClassName(referencedEntityName);
 		if ( referencedEntity == null ) {
 			throw new IllegalStateException( entityName
 					+ " : FK '" +fk.getName()+"' references invalid entity '" + referencedEntityName + "'");
 		}
-		int expectedColumnsCount = referencedEntity.getIdCount();
-		if ( fkAttributes.size() != expectedColumnsCount ) {
-			throw new IllegalStateException( entityName
-					+ " : FK '" +fk.getName()+"' invalid number of references : " + fkAttributes.size() 
-					+ " (" + expectedColumnsCount + " expected)" );
-		}
+		
+		// Check number of FK attributes == number of PK elements in referenced entity
+		// Removed in v 4.1.1 in order to allow Foreign Keys that refer to non-PK attributes (ex UNIQUE attributes with PostgreSQL)
+//		int expectedColumnsCount = referencedEntity.getIdCount();
+//		if ( fkAttributes.size() != expectedColumnsCount ) {
+//			throw new IllegalStateException( entityName
+//					+ " : FK '" +fk.getName()+"' invalid number of references : " + fkAttributes.size() 
+//					+ " (" + expectedColumnsCount + " expected)" );
+//		}
 	}
 	
 	/**
