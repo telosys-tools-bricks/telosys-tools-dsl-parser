@@ -3,17 +3,17 @@
 @DbSchema(CUSTOMERS)
 Customer {
   // attributes
-  code : string { @Id @GeneratedValue(IDENTITY) @DbName(CODE) @DbType("CHARACTER VARYING(5)") @NotNull @NotEmpty @Size(5) @MaxLen(5) };
-  countryCode : string { @GeneratedValue(IDENTITY) @DbName(COUNTRY_CODE) @DbType("CHARACTER VARYING(2)") @NotNull @NotEmpty @Size(2) @MaxLen(2) };
-  firstName : string { @GeneratedValue(IDENTITY) @DbName(FIRST_NAME) @DbType("CHARACTER VARYING(40)") @DbDefaultValue(" a zer") @DbComment(my comment) @Size(40) @MaxLen(40) };
-  lastName : string { @GeneratedValue(IDENTITY) @DbName(LAST_NAME) @DbType("CHARACTER VARYING(40)") @Size(40) @MaxLen(40) };
-  score : decimal { @GeneratedValue(IDENTITY) @DbName(SCORE) @DbType("DECIMAL(5,2)") @Size(5,2) };
-  login : string { @GeneratedValue(IDENTITY) @DbName(LOGIN) @DbType("CHARACTER VARYING(20)") @NotNull @NotEmpty @Size(20) @MaxLen(20) };
-  password : string { @GeneratedValue(IDENTITY) @DbName(PASSWORD) @DbType("CHARACTER VARYING(20)") @Size(20) @MaxLen(20) };
-  age : int { @GeneratedValue(IDENTITY) @DbName(AGE) @DbType(INTEGER) };
-  city : string { @GeneratedValue(IDENTITY) @DbName(CITY) @DbType("CHARACTER VARYING(45)") @Size(45) @MaxLen(45) };
-  zipCode : int { @GeneratedValue(IDENTITY) @DbName(ZIP_CODE) @DbType(INTEGER) };
-  phone : string { @GeneratedValue(IDENTITY) @DbName(PHONE) @DbType("CHARACTER VARYING(20)") @Size(20) @MaxLen(20) };
-  reviewer : short { @GeneratedValue(IDENTITY) @DbName(REVIEWER) @DbType(SMALLINT) };
+  code : string { @Id @DbName(CODE) @DbType("CHARACTER VARYING(5)") @NotNull @NotEmpty @Size(5) @MaxLen(5) };
+  countryCode : string { @DbName(COUNTRY_CODE) @DbType("CHARACTER VARYING(2)") @NotNull @NotEmpty @Size(2) @MaxLen(2) };
+  firstName : string { @DbName(FIRST_NAME) @DbType("CHARACTER VARYING(40)") @DbDefaultValue(" a zer") @DbComment(my comment) @Size(40) @MaxLen(40) };
+  lastName : string { @DbName(LAST_NAME) @DbType("CHARACTER VARYING(40)") @Size(40) @MaxLen(40) };
+  score : decimal { @DbName(SCORE) @DbType("DECIMAL(5,2)") @Size(5,2) };
+  login : string { @DbName(LOGIN) @DbType("CHARACTER VARYING(20)") @NotNull @NotEmpty @Size(20) @MaxLen(20) };
+  password : string { @DbName(PASSWORD) @DbType("CHARACTER VARYING(20)") @Size(20) @MaxLen(20) };
+  age : int { @DbName(AGE) @DbType(INTEGER) };
+  city : string { @DbName(CITY) @DbType("CHARACTER VARYING(45)") @Size(45) @MaxLen(45) };
+  zipCode : int { @DbName(ZIP_CODE) @DbType(INTEGER) };
+  phone : string { @DbName(PHONE) @DbType("CHARACTER VARYING(20)") @Size(20) @MaxLen(20) };
+  reviewer : short { @DbName(REVIEWER) @DbType(SMALLINT) };
   // links
 }

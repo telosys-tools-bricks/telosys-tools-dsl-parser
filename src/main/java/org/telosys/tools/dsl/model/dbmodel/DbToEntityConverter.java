@@ -59,7 +59,7 @@ public class DbToEntityConverter {
 		
 		// @DbComment(x) (if option is TRUE in config file)
 		if ( databaseDefinition.isDbComment() && ( ! StrUtil.nullOrVoid(dbTable.getComment()) ) ) { // v 4.1.0
-			entity.setDatabaseComment( dbTable.getComment() );
+			entity.setDatabaseComment( DbConvUtils.cleanComment(dbTable.getComment()) ); // v 4.1.1 : cleanComment
 		}
 		
 		// @DbView (if option is TRUE in config file)

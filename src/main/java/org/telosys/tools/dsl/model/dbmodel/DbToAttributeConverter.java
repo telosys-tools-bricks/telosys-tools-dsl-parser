@@ -51,7 +51,7 @@ public class DbToAttributeConverter {
 
 		//--- Create a new "attribute" for this "column"
 		String attributeName = NameConverter.columnNameToAttributeName(dbCol.getColumnName());
-		String attributeType = AttributeUtils.getAttributeType(dbCol.getJdbcTypeCode());
+		String attributeType = DbConvUtils.getAttributeType(dbCol.getJdbcTypeCode());
 		DslModelAttribute attribute = new DslModelAttribute(attributeName, attributeType);
 		
 		String size = builSize(dbCol); // usable as attribute size and database size 
@@ -72,11 +72,11 @@ public class DbToAttributeConverter {
     	// DB default value (if option is TRUE in config file) // v 4.1.0
     	if ( databaseDefinition.isDbDefaultValue() && ( ! StrUtil.nullOrVoid(dbCol.getDefaultValue()) ) ) {
     		// default value is returned between single quotes => remove single quotes if any
-    		attribute.setDatabaseDefaultValue( AttributeUtils.cleanDefaultValue(dbCol.getDefaultValue()) ); 
+    		attribute.setDatabaseDefaultValue( DbConvUtils.cleanDefaultValue(dbCol.getDefaultValue()) ); 
     	}
     	// DB comment (if option is TRUE in config file) // v 4.1.0
     	if ( databaseDefinition.isDbComment() && ( ! StrUtil.nullOrVoid(dbCol.getComment()) ) ) { // Bug Fix ver 4.1.0 : dbCol.getDefaultValue() --> dbCol.getComment()
-    		attribute.setDatabaseComment( dbCol.getComment() ); 
+    		attribute.setDatabaseComment( DbConvUtils.cleanComment(dbCol.getComment()) ); // v 4.1.1 : cleanComment
     	}
 
 		//--- Other info 
@@ -84,7 +84,9 @@ public class DbToAttributeConverter {
 		attribute.setKeyElement( dbCol.isInPrimaryKey()); 
 		// Is this column auto-incremented ?
 		// v 4.1.0 :: attribute.setAutoIncremented(dbCol.isAutoIncremented());
-		attribute.setGeneratedValueStrategy(GeneratedValueStrategy.IDENTITY); // v 4.1.0
+		if ( dbCol.isAutoIncremented() ) { // BUG FIX 4.1.1
+			attribute.setGeneratedValueStrategy(GeneratedValueStrategy.IDENTITY); // v 4.1.0
+		}
 		// Attribute size
     	if ( ! StrUtil.nullOrVoid(size) ) {
     		attribute.setSize(size);

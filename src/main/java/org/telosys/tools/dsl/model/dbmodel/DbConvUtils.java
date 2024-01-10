@@ -26,12 +26,12 @@ import org.telosys.tools.generic.model.types.NeutralType;
  * @author Laurent GUERIN
  * 
  */
-public class AttributeUtils {
+public class DbConvUtils {
 
 	/**
 	 * Constructor
 	 */
-	private AttributeUtils() {
+	private DbConvUtils() {
 	}
 
 	protected static String getAttributeType(int jdbcSqlType) {
@@ -117,6 +117,21 @@ public class AttributeUtils {
 		}
 	}
 
+	/**
+	 * Clean the raw comment value (for TABLE comment and COLUMN comment)
+	 * @param value
+	 * @return
+	 * @since 4.1.1
+	 */
+	protected static String cleanComment(String value) {
+		return removeSpecialCharacters(value);
+	}
+	
+	/**
+	 * Replaces all 'control-char' by a blank (eg CR, LF, etc)
+	 * @param value
+	 * @return
+	 */
 	protected static String removeSpecialCharacters(String value) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < value.length(); i++) {
@@ -124,6 +139,10 @@ public class AttributeUtils {
 			if (c >= ' ') {
 				// Not a special character => keep it
 				sb.append(c);
+			} 
+			else {
+				// Replace Ctrl-char by a blank
+				sb.append(' ');
 			}
 		}
 		return sb.toString();

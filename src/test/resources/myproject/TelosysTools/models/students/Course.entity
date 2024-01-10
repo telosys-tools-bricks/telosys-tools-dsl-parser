@@ -3,8 +3,8 @@
 @DbSchema(STUDENTS)
 Course {
   // attributes
-  id : string { @Id @GeneratedValue(IDENTITY) @DbName(ID) @DbType("CHARACTER VARYING(2)") @NotNull @NotEmpty @Size(2) @MaxLen(2) };
-  name : string { @GeneratedValue(IDENTITY) @DbName(NAME) @DbType("CHARACTER VARYING(40)") @Size(40) @MaxLen(40) };
+  id : string { @Id @DbName(ID) @DbType("CHARACTER VARYING(2)") @NotNull @NotEmpty @Size(2) @MaxLen(2) };
+  name : string { @DbName(NAME) @DbType("CHARACTER VARYING(40)") @Size(40) @MaxLen(40) };
   // links
   teacherList : Teacher[] { @ManyToMany @LinkByJoinEntity(CourseTeacher) };
 }
