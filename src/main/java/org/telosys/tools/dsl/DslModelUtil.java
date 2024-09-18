@@ -242,7 +242,7 @@ public class DslModelUtil {
     	File entityFile = getEntityFile(modelFolder, entityNameInModel);
     	if ( ! entityFile.exists() ) {
         	try {
-				FileUtil.copy(content, entityFile, true);
+				FileUtil.copyDataToFile(content, entityFile, true);
 	        	return entityFile ;
 			} catch (Exception e) {
 				throw new RuntimeException("Cannot create new entity '" + entityNameInModel + "'", e);
