@@ -22,6 +22,7 @@ import java.util.List;
 import org.telosys.tools.commons.DirUtil;
 import org.telosys.tools.commons.FileUtil;
 import org.telosys.tools.commons.StrUtil;
+import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.dsl.commons.ModelInfo;
 import org.telosys.tools.dsl.model.writer.ModelInfoFileWriter;
 
@@ -195,8 +196,9 @@ public class DslModelUtil {
     /**
      * Delete the DSL model identified by the given model folder
      * @param modelFolder
+     * @throws TelosysToolsException 
      */
-    public static void deleteModel(File modelFolder) {
+    public static void deleteModel(File modelFolder) throws TelosysToolsException {
 		if ( modelFolder.exists() ) {
 			DirUtil.deleteDirectory(modelFolder);
 		}
