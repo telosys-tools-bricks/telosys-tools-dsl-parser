@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 
 import org.junit.Test;
-import org.telosys.tools.commons.env.TelosysToolsEnv;
 import org.telosys.tools.junit.utils.TestFileProvider;
 
 import static org.junit.Assert.assertEquals;
@@ -13,22 +12,11 @@ import static org.junit.Assert.assertTrue;
 
 public class DslModelUtilTest {
 	
-//    @Test
-//    public void testGetModelShortFileName() {
-//    	assertEquals("foo.model", DslModelUtil.getModelShortFileName("foo") );
-//    	assertEquals("foo.model", DslModelUtil.getModelShortFileName(" foo ") );
-//    }
-    
     @Test
     public void testGetModelName() {
     	assertEquals("mymodel", DslModelUtil.getModelNameFromFolderName("foo/bar/mymodel") );
     	assertEquals("toto", DslModelUtil.getModelNameFromFolderName("C:/foo/bar/toto") );
     }
-    
-//    @Test(expected=RuntimeException.class)
-//    public void testGetModelNameInvalid() {
-//    	DslModelUtil.getModelName(new File("C:/foo/bar/toto.foo"));
-//    }
     
     @Test
     public void testGetEntityName() {
@@ -46,7 +34,6 @@ public class DslModelUtilTest {
     	File modelFolder = new File("src/test/resources/model_test/valid/FourEntitiesModel");
     	List<String> list = DslModelUtil.getEntityFullFileNames(modelFolder);
     	for ( String s : list ) {
-    		//System.out.println(" . " + s );
         	assertTrue(s.contains("FourEntitiesModel"));
         	assertTrue(s.endsWith(".entity"));
     	}
@@ -58,7 +45,6 @@ public class DslModelUtilTest {
     	File modelFolder = new File("src/test/resources/model_test/valid/FourEntitiesModel");
     	List<String> list = DslModelUtil.getEntityShortFileNames(modelFolder);
     	for ( String s : list ) {
-    		//System.out.println(" . " + s );
         	assertTrue(s.endsWith(".entity"));
     	}
     	assertEquals(4, list.size());
@@ -85,7 +71,6 @@ public class DslModelUtilTest {
     	TestFileProvider.removeTargetTmpFileIfExists("model_test/valid/TwoEntitiesModel/Country2.entity");
     	File newFile = TestFileProvider.getTargetTmpFile("model_test/valid/TwoEntitiesModel/Country2.entity");
     	
-    	System.out.println("Rename " + entityFile.getAbsolutePath() + " to " + newName );
     	File renamedFile = DslModelUtil.renameEntity(entityFile, newName);
     	assertTrue( newFile.exists() );
     	assertTrue( renamedFile.exists() );
@@ -93,21 +78,12 @@ public class DslModelUtilTest {
     }
     
     private File getFile(String fileFullPath) {
-    	File file = new File(fileFullPath) ;
-    	System.out.println("File getAbsolutePath() : " + file.getAbsolutePath() );
-    	System.out.println("File getName() : " + file.getName() );
-    	System.out.println("File getParent() : " + file.getParent() );
-    	return file ;
+    	return new File(fileFullPath) ;
     }
     
     @Test
     public void testIsValidModelFile() {
-		TelosysToolsEnv telosysToolsEnv = TelosysToolsEnv.getInstance() ;
-		System.out.println("TelosysToolsEnv.getModelsFolder() : " +  telosysToolsEnv.getModelsFolder() ) ;
-		
 		// check only file path (without folder existence)
-//    	assertTrue(DslModelUtil.isValidModelFile( getFile("/foo/bar/TelosysTools/aaaa.model"), false )) ;
-//    	assertTrue(DslModelUtil.isValidModelFile( getFile("/foo/bar/TelosysTools/aaaa/model.properties") )) ;
     	assertTrue(DslModelUtil.isValidModelFile( getFile("/foo/bar/TelosysTools/aaaa/model.yaml") )) ;
     	
 //    	assertFalse(DslModelUtil.isValidModelFile( getFile("/foo/bar/aaaa.model"), false )) ;
@@ -120,10 +96,7 @@ public class DslModelUtilTest {
     }
 
     @Test
-    public void testIsValidEntityFile() {
-		TelosysToolsEnv telosysToolsEnv = TelosysToolsEnv.getInstance() ;
-		System.out.println("TelosysToolsEnv.getModelsFolder() : " +  telosysToolsEnv.getModelsFolder() ) ;
-		
+    public void testIsValidEntityFile() {		
 		// check only file path (without folder existence)
     	assertTrue(DslModelUtil.isValidEntityFile( getFile("/foo/bar/TelosysTools/foo_model/aaaa.entity") )) ;
     	assertTrue(DslModelUtil.isValidEntityFile( getFile("/foo/bar/TelosysTools/foo_model/Book.entity") )) ;
@@ -138,16 +111,10 @@ public class DslModelUtilTest {
     	assertTrue(DslModelUtil.isValidEntityFile( getFile("demo_model/aaaa.entity") )) ;
     }
     
-    private boolean samePath(File file, String path) {
-    	File file2 = new File(path);
-    	System.out.println("Compare : " + file.getAbsolutePath() + " :: " + file2.getAbsolutePath() );
-    	return file.getAbsolutePath().equals(file2.getAbsolutePath()) ;
-    }
     @Test
     public void testGetModelFileForEntityFile() {
     	File file ;
 		file = DslModelUtil.getModelFileFromEntityFile( getFile("/a/b/c/mymodel/aaaa.entity") ) ;
-		//assertTrue( samePath(file, "/foo/bar/TelosysTools/foo.model") );
 		assertEquals("model.yaml", file.getName());
 		assertEquals("mymodel", file.getParentFile().getName());
     }
