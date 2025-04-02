@@ -94,6 +94,10 @@ public class DslModelAttribute implements Attribute {
     private String  size; // String for size with comma ( eg "8,2" ) // Added in v 3.4.0
 	private boolean isUnique = false ; // Added in v 3.4.0
 
+	// numeric type support
+	private Integer scale;
+	private Integer precision;
+
 	/**
 	 * Constructor 
 	 * @param name
@@ -576,7 +580,26 @@ public class DslModelAttribute implements Attribute {
     public boolean isUnique() { // v 3.4.0
         return this.isUnique;
     }
-    public void setUnique(boolean b) { // v 3.4.0
+
+	@Override
+	public Integer getScale() {
+		return this.scale;
+	}
+
+	@Override
+	public Integer getPrecision() {
+		return this.precision;
+	}
+
+	public void setScale(Integer scale) {
+		this.scale = scale;
+	}
+
+	public void setPrecision(Integer precision) {
+		this.precision = precision;
+	}
+
+	public void setUnique(boolean b) { // v 3.4.0
         this.isUnique = b;
     }
 

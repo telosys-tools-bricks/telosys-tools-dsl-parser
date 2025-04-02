@@ -70,8 +70,10 @@ import org.telosys.tools.dsl.parser.annotations.OrphanRemovalAnnotation;
 import org.telosys.tools.dsl.parser.annotations.PackageAnnotation;
 import org.telosys.tools.dsl.parser.annotations.PastAnnotation;
 import org.telosys.tools.dsl.parser.annotations.PatternAnnotation;
+import org.telosys.tools.dsl.parser.annotations.PrecisionAnnotation;
 import org.telosys.tools.dsl.parser.annotations.PrimitiveTypeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.ReadOnlyAnnotation;
+import org.telosys.tools.dsl.parser.annotations.ScaleAnnotation;
 import org.telosys.tools.dsl.parser.annotations.SizeAnnotation;
 import org.telosys.tools.dsl.parser.annotations.SizeMaxAnnotation;
 import org.telosys.tools.dsl.parser.annotations.SizeMinAnnotation;
@@ -163,7 +165,12 @@ public class AnnotationDefinitions {
 		annotations.add(new OrphanRemovalAnnotation()); 
 		annotations.add(new CascadeAnnotation()); 
 		annotations.add(new JoinEntityAnnotation()); 
-		
+
+		//--- Added in 2025-04-02
+		annotations.add(new ScaleAnnotation());
+		annotations.add(new PrecisionAnnotation());
+
+
 	}
 	
 	private AnnotationDefinitions() {

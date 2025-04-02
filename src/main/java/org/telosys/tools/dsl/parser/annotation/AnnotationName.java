@@ -86,7 +86,11 @@ public class AnnotationName {
 	public static final String MIN_LEN   = "MinLen" ; // v 3.4.0
 	public static final String MAX_LEN   = "MaxLen" ; // v 3.4.0
 	public static final String GENERATED_VALUE   = "GeneratedValue" ; // v 3.4.0
-	
+
+	// Added 2025-04-2
+	public static final String SCALE  = "Scale";
+	public static final String PRECISION  = "Precision";
+
 	// Added in ver 3.4.0 : ENITY scope
 	public static final String DB_TABLE      = "DbTable";      // v 3.4.0
 	public static final String DB_VIEW       = "DbView";       // v 3.4.0
