@@ -42,7 +42,8 @@ public final class DomainNeutralTypes {
     public static final String DATE      = "date";
     public static final String TIME      = "time";
     public static final String TIMESTAMP = "timestamp";
-    
+    public static final String TIMESTAMPZ = "timestampz";
+
     public static final String BINARY_BLOB = "binary"; // BLOB
 
 
@@ -51,7 +52,7 @@ public final class DomainNeutralTypes {
     	BYTE, SHORT, INTEGER, LONG,
     	DECIMAL, FLOAT, DOUBLE,
     	BOOLEAN, 
-    	DATE, TIME, TIMESTAMP, 
+    	DATE, TIME, TIMESTAMP, TIMESTAMPZ,
     	BINARY_BLOB };
 
     private static final Map<String, DomainNeutralType> NEUTRAL_TYPES = new HashMap<>();
