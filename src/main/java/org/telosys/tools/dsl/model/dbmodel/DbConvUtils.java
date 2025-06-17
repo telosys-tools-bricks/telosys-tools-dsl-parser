@@ -34,7 +34,42 @@ public class DbConvUtils {
 	private DbConvUtils() {
 	}
 
-	protected static String getAttributeType(int jdbcSqlType) {
+	/**
+	 * Conversion for database types : NUMERIC(precision, scale) and DECIMAL(precision, scale)
+	 * @param precision
+	 * @param scale
+	 * @return
+	 * @since 4.2.1
+	 */
+	protected static String getNumericOrDecimalAttributeType(int precision, int scale) {
+		if ( scale == 0 ) {
+			if ( precision == 0 ) {
+				// No precision and no scale (eg "NUMERIC") => "decimal"
+				return NeutralType.DECIMAL;
+			}
+			// No "scale" = No "fractional digits" => INTEGER : int or long or short 
+			else if ( precision > 18 ) { // exceed max value for "long"
+				// Max value for "long" in most languages 9,223,372,036,854,775,807
+				return NeutralType.DECIMAL;
+			}
+			else if ( precision > 9 ) { // exceed max value for "int"
+				// Max value for "int" in Java/C/C++/C#/Python : 2,147,483,647 ( or 4,294,967,295 if unsigned )
+				return NeutralType.LONG;
+			}
+			else if ( precision > 4 ) { //  9,999
+				// Max value for "short" : 32,767 
+				return NeutralType.INTEGER;
+			}
+			else {
+				return NeutralType.SHORT;
+			}
+		}
+		else {
+			// Scale is specified and != 0 => "decimal"
+			return NeutralType.DECIMAL;
+		}
+	}
+	protected static String getAttributeType(int jdbcSqlType, int size, int decimalDigits) {
 
 		switch (jdbcSqlType) {
 
@@ -65,7 +100,8 @@ public class DbConvUtils {
 
 		case Types.NUMERIC:
 		case Types.DECIMAL:
-			return NeutralType.DECIMAL;
+			// for "numeric" or "decimal" types "size" = "precision" and "decimalDigits" = "scale"
+			return getNumericOrDecimalAttributeType(size, decimalDigits); // v 4.2.1 (instead of "DECIMAL" always)
 
 		case Types.DATE:
 			return NeutralType.DATE;
