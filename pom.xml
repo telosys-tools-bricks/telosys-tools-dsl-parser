@@ -12,8 +12,15 @@
 
 	<name>telosys-tools-dsl-parser</name>
 	<artifactId>telosys-tools-dsl-parser</artifactId>
-	<version>4.1.1</version>  <!-- also update version in "model/DslModelVersion.java"  -->
+	<version>4.2.1</version>   <!-- Version & build-id updated at each build with "telosys-dsl-model-build.properties" -->
 	<packaging>jar</packaging>
+
+	<properties>
+		<maven.build.timestamp.format>yyMMdd.HHmmss.S</maven.build.timestamp.format>	<!-- day in the year . min . milliseconds -->	
+		<build.id>${maven.build.timestamp}</build.id> <!-- for resource filtering -->
+		<!-- TEMPORARELY -->
+		<!-- <properties> <skip-license>true</skip-license> </properties> -->
+	</properties>
 
 	<dependencies>
 		<!-- For compilation -->
@@ -39,5 +46,24 @@
     	</dependency>
 		 
 	</dependencies>
-	
+
+	<build>
+	    <resources>
+	    	<!-- Filtering file with build.id  -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>telosys-dsl-model-build.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>telosys-dsl-model-build.properties</exclude>
+				</excludes>
+			</resource>
+	    </resources>
+	</build>
 </project>
