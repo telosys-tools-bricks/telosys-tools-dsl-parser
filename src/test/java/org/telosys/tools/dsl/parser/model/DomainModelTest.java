@@ -34,10 +34,6 @@ public class DomainModelTest {
 		
 		List<String> entityNames = model.getEntityNames();
 		assertTrue(entityNames.size() == 3 ) ;		
-//		System.out.println("Entity names : ");
-//		for ( String name : entityNames ) {
-//			System.out.println(" . " + name);
-//		}
 	}
 
 	@Test ( expected = IllegalStateException.class )

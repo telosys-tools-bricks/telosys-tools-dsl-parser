@@ -2,6 +2,7 @@ package org.telosys.tools.dsl.parser.model;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.DslModelError;
+import org.telosys.tools.generic.model.types.NeutralType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -34,16 +35,9 @@ public class DomainEntityTest {
 	
 	@Test
 	public void testEntity() {
-		//DomainModel model = new DomainModel("mymodel");
-		
 		DomainEntity entity = new DomainEntity("Book") ;
 		assertEquals ( entity.getName(), "Book" );
 		
-//		assertTrue ( entity.getNature() == DomainTypeNature.ENTITY );
-//		
-//		assertTrue ( entity.isEntity() );		
-//		assertFalse ( entity.isEnumeration() );
-//		assertFalse ( entity.isNeutralType() );
 		assertEquals(0, entity.getNumberOfFields());
 		assertNotNull(entity.getFields());
 	}
@@ -53,13 +47,11 @@ public class DomainEntityTest {
 		DomainEntity entity = new DomainEntity("Student") ;
 		assertTrue ( entity.getNumberOfFields() == 0 ) ;
 		
-//		entity.addField( new DomainField("firstName", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
-		declareField(entity,"firstName", DomainNeutralTypes.STRING);
+		declareField(entity,"firstName", NeutralType.STRING);
 		
 		assertTrue ( entity.getNumberOfFields() == 1 ) ;
 
-//		entity.addField( new DomainField("lastName", DomainNeutralTypes.getType(DomainNeutralTypes.STRING) ) );
-		declareField(entity,"lastName", DomainNeutralTypes.STRING);
+		declareField(entity,"lastName", NeutralType.STRING);
 		assertTrue ( entity.getNumberOfFields() == 2 ) ;
 		
 		DomainField field = null ;
@@ -96,8 +88,8 @@ public class DomainEntityTest {
 	@Test ( expected = Exception.class )
 	public void testFieldDuplicated1() {
 		DomainEntity entity = new DomainEntity("Book") ;
-		declareField(entity,"lastName", DomainNeutralTypes.STRING);
-		declareField(entity,"lastName", DomainNeutralTypes.STRING);
+		declareField(entity,"lastName", NeutralType.STRING);
+		declareField(entity,"lastName", NeutralType.STRING);
 	}
 	
 	@Test ( expected = Exception.class )
@@ -110,8 +102,8 @@ public class DomainEntityTest {
 	@Test ( expected = Exception.class )
 	public void testFieldDuplicated3() {
 		DomainEntity entity = new DomainEntity("Student") ;
-		declareField(entity,"foo", DomainNeutralTypes.STRING);
-		declareField(entity,"foo", DomainNeutralTypes.INTEGER);
+		declareField(entity,"foo", NeutralType.STRING);
+		declareField(entity,"foo", NeutralType.INTEGER);
 	}
 	
 }

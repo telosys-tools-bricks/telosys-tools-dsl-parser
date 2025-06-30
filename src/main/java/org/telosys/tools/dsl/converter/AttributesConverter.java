@@ -82,8 +82,7 @@ public class AttributesConverter extends AbstractConverter {
 		// New attribute 
 		DslModelAttribute dslAttribute = new DslModelAttribute(attributeName, attributeType);
 		
-		// Init attribute state (useless => removed in ver 4.1.0)
-		// step1InitAttributeDefaultValues(dslAttribute, domainField);
+		// STEP1 (init attribute state) is now useless => STEP1 removed in ver 4.1.0
 
 		// Apply annotations if any
 		step2ApplyAnnotations(dslEntity, dslAttribute, domainField);
@@ -96,22 +95,6 @@ public class AttributesConverter extends AbstractConverter {
 		
 		return dslAttribute;
 	}
-	
-//	/**
-//	 * Initializes default values according with the given attribute
-//	 * @param dslAttribute
-//	 * @param domainField
-//	 */
-//	private void step1InitAttributeDefaultValues(DslModelAttribute dslAttribute, DomainField domainField) {
-//
-//		// All the default attribute values are set in the attribute class
-//		// Here some default values can be set depending on other attribute information 
-//		
-//		// By default the label is the attribute name 
-//		// it will be overridden by @Label(xxx) if any
-//		// v 3.4.0 : no default label
-//		// dslAttribute.setLabel(domainField.getName());
-//	}
 	
 	/**
 	 * Apply annotations to the given attribute
@@ -157,11 +140,7 @@ public class AttributesConverter extends AbstractConverter {
 		if ( dslAttribute.isKeyElement() ) {
 			dslAttribute.setNotNull(true);
 		}
-// removed in v 4.1
-//		// If attribute is NOT NULL ( @NotNull ) => Database NOT NULL
-//		if ( dslAttribute.isNotNull() ) {
-//			dslAttribute.setDatabaseNotNull(true);
-//		}
+		// removed in v 4.1: if attribute is NOT NULL ( @NotNull ) => Database NOT NULL
 		// If database size is not defined use max length if any 
 		if ( dslAttribute.getDatabaseSize() == null && dslAttribute.getMaxLength() != null ) {
 			dslAttribute.setDatabaseSize(dslAttribute.getMaxLength().toString());

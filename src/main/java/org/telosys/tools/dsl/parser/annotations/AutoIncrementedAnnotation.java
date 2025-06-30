@@ -42,7 +42,6 @@ public class AutoIncrementedAnnotation extends AnnotationDefinition {
 	public void apply(DslModel model, DslModelEntity entity, DslModelAttribute attribute, 
 					  Object paramValue) throws ParamError {
 		checkParamValue(entity, attribute, paramValue);
-		// attribute.setAutoIncremented(true);
 		// same as 'GeneratedValue(IDENTITY)'
 		attribute.setGeneratedValueStrategy(GeneratedValueStrategy.IDENTITY); // v 4.1.0
 	}

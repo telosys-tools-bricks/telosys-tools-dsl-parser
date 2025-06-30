@@ -22,6 +22,7 @@ import org.telosys.tools.generic.model.Link;
 import org.telosys.tools.generic.model.Model;
 import org.telosys.tools.generic.model.enums.Cardinality;
 import org.telosys.tools.generic.model.enums.ModelType;
+import org.telosys.tools.generic.model.types.NeutralType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -32,7 +33,6 @@ import static org.junit.Assert.assertTrue;
 public class ConverterTest {
 
 	private static final String     MODEL_NAME = "test" ;
-//	private static final Properties MODEL_PROPERTIES = null ;
 	
 	private static final String     ENTITY1 = "Entity1" ;
 	private static final String     ENTITY2 = "Entity2" ;
@@ -110,10 +110,6 @@ public class ConverterTest {
 		assertEquals("", e.getDatabaseSchema());
 		assertEquals("TABLE", e.getDatabaseType());
 		assertEquals(0, e.getForeignKeys().size());
-
-// removed in v 3.4.0 (no default table name)
-//		Entity e2 = model.getEntityByTableName(ENTITY1);
-//		assertEquals(ENTITY1, e2.getClassName());
 	}
 	
 	@Test
@@ -123,18 +119,18 @@ public class ConverterTest {
 		DomainEntity domainEntity1 = new DomainEntity(ENTITY1);
 
 		domainModel.addEntity(domainEntity1);
-		domainEntity1.addField( buildField("myBoolean", DomainNeutralTypes.BOOLEAN) );
+		domainEntity1.addField( buildField("myBoolean", NeutralType.BOOLEAN) );
 		
-		domainEntity1.addField( buildField("myDecimal", DomainNeutralTypes.DECIMAL) );
-		domainEntity1.addField( buildField("myInteger", DomainNeutralTypes.INTEGER) );
+		domainEntity1.addField( buildField("myDecimal", NeutralType.DECIMAL) );
+		domainEntity1.addField( buildField("myInteger", NeutralType.INTEGER) );
 		
-		domainEntity1.addField( buildField("myString", DomainNeutralTypes.STRING) );
+		domainEntity1.addField( buildField("myString", NeutralType.STRING) );
 		
-		domainEntity1.addField( buildField("myDate", DomainNeutralTypes.DATE) );
-		domainEntity1.addField( buildField("myTime", DomainNeutralTypes.TIME) );
-		domainEntity1.addField( buildField("myTimestamp", DomainNeutralTypes.TIMESTAMP));
+		domainEntity1.addField( buildField("myDate", NeutralType.DATE) );
+		domainEntity1.addField( buildField("myTime", NeutralType.TIME) );
+		domainEntity1.addField( buildField("myTimestamp", NeutralType.TIMESTAMP));
 
-		domainEntity1.addField( buildField("myBinary", DomainNeutralTypes.BINARY_BLOB) );
+		domainEntity1.addField( buildField("myBinary", NeutralType.BINARY) );
 		
 		DomainEntity domainEntity2 = new DomainEntity(ENTITY2);
 		domainModel.addEntity(domainEntity2);
@@ -167,14 +163,14 @@ public class ConverterTest {
 		DomainEntity domainEntity1 = new DomainEntity(ENTITY1);
 
 		domainModel.addEntity(domainEntity1);
-		DomainField domainField1A = buildField("field_1_1", DomainNeutralTypes.BOOLEAN);
-		DomainField domainField1B = buildField("field_1_2", DomainNeutralTypes.BOOLEAN);
-		DomainField domainField1C = buildField("field_1_3", DomainNeutralTypes.BOOLEAN);
-		DomainField domainField1D = buildField("field_1_4", DomainNeutralTypes.BOOLEAN);
-		DomainField domainField1E = buildField("field_1_5", DomainNeutralTypes.BOOLEAN);
-		DomainField domainField1F = buildField("field_1_6", DomainNeutralTypes.BOOLEAN);
-		DomainField domainField1G = buildField("field_1_7", DomainNeutralTypes.BOOLEAN);
-		DomainField domainField1H = buildField("field_1_8", DomainNeutralTypes.BOOLEAN);
+		DomainField domainField1A = buildField("field_1_1", NeutralType.BOOLEAN);
+		DomainField domainField1B = buildField("field_1_2", NeutralType.BOOLEAN);
+		DomainField domainField1C = buildField("field_1_3", NeutralType.BOOLEAN);
+		DomainField domainField1D = buildField("field_1_4", NeutralType.BOOLEAN);
+		DomainField domainField1E = buildField("field_1_5", NeutralType.BOOLEAN);
+		DomainField domainField1F = buildField("field_1_6", NeutralType.BOOLEAN);
+		DomainField domainField1G = buildField("field_1_7", NeutralType.BOOLEAN);
+		DomainField domainField1H = buildField("field_1_8", NeutralType.BOOLEAN);
 		domainEntity1.addField(domainField1A);
 		domainEntity1.addField(domainField1B);
 		domainEntity1.addField(domainField1C);
@@ -240,16 +236,6 @@ public class ConverterTest {
 		assertTrue(entity2.getAttributes().isEmpty());
 	}
 	
-//	private DomainType getType(String typeName) {
-//		DomainType type = DomainNeutralTypes.getType(typeName);
-//		if ( type != null ) {
-//			return type;
-//		}
-//		else {
-//			throw new IllegalStateException("No type " + typeName);
-//		}
-//	}
-
 	private DomainModel buildFullModel() throws DslModelError {
 		DomainModel domainModel = new DomainModel(MODEL_NAME, new ModelInfo());
 
@@ -258,42 +244,32 @@ public class ConverterTest {
 		DomainEntity groupEntity = new DomainEntity("Group");
 		
 		//--- "Driver" entity
-//		DomainField driverCode = new DomainField("code", getType("long"));
-		DomainField driverCode = buildField("code", DomainNeutralTypes.LONG);
+		DomainField driverCode = buildField("code", NeutralType.LONG);
 		driverCode.addAnnotation(new DomainAnnotation(AnnotationName.ID));
 		driverCode.addAnnotation(new DomainAnnotation(AnnotationName.SIZE_MAX, Integer.valueOf(20) ));
 		driverEntity.addField(driverCode);
 		
-//		driverEntity.addField( new DomainField("firstName", getType("string") ) );
-		driverEntity.addField( buildField("firstName", DomainNeutralTypes.STRING) );
+		driverEntity.addField( buildField("firstName", NeutralType.STRING) );
 		
-//		driverEntity.addField( new DomainField("lastName",  getType("string") ) );
-		driverEntity.addField( buildField("lastName", DomainNeutralTypes.STRING ) );
+		driverEntity.addField( buildField("lastName", NeutralType.STRING ) );
 
-//		driverEntity.addField( new DomainField(0, "car",  new DomainEntityType("Car") , 1 ) );
 		driverEntity.addField( buildField("car", "Car" ) );
 
 		//--- "Car" entity referencing "Driver" entity
-//		DomainField carId = new DomainField("id",     getType("short") );
-		DomainField carId = buildField("id", DomainNeutralTypes.SHORT) ;
+		DomainField carId = buildField("id", NeutralType.SHORT) ;
 		carId.addAnnotation(new DomainAnnotation(AnnotationName.ID));
 		carEntity.addField(carId);
 		
-//		carEntity.addField(new DomainField("name",   getType("string")) );
-		carEntity.addField(buildField("name",  DomainNeutralTypes.STRING) );
+		carEntity.addField(buildField("name",  NeutralType.STRING) );
 
-//		carEntity.addField(new DomainField("driver", new DomainEntityType("Driver")) ); // Reference to "Driver"
 		carEntity.addField(buildField("driver", "Driver") ); // Reference to "Driver"
 		
 		//--- "Group" entity referencing N "Driver" entity
-//		DomainField groupId = new DomainField("id",     getType("int"));
-		DomainField groupId = buildField("id",  DomainNeutralTypes.INTEGER);
+		DomainField groupId = buildField("id",  NeutralType.INTEGER);
 		groupId.addAnnotation(new DomainAnnotation(AnnotationName.ID));
 		groupEntity.addField(groupId);
 		
-//		groupEntity.addField(new DomainField("name",   getType("string")) );
-		groupEntity.addField(buildField("name", DomainNeutralTypes.STRING) );
-//		groupEntity.addField(new DomainField(0, "drivers", new DomainEntityType("Driver"), -1) ); // Reference to "Driver"
+		groupEntity.addField(buildField("name", NeutralType.STRING) );
 		groupEntity.addField(buildFieldMany("drivers", "Driver") ); // Reference to "Driver"
 		
 		//--- Add entities to model
@@ -331,10 +307,6 @@ public class ConverterTest {
 		assertNotNull(model.getEntityByClassName("Car"));
 		assertNotNull(model.getEntityByClassName("Driver")); 
 		
-		//--- Get by table name ( table name = class name )
-// removed in v 3.4.0 (no default table nale)
-//		assertNotNull(model.getEntityByTableName("Car"));
-//		assertNotNull(model.getEntityByTableName("Driver"));
 	}
 	
 	/**
@@ -346,7 +318,6 @@ public class ConverterTest {
 		print("check 'Car' entity...");
 		
 		assertEquals("Car", carEntity.getClassName());
-//		assertEquals("Car", carEntity.getDatabaseTable() );
 		assertEquals("", carEntity.getDatabaseTable() ); // v 3.4.0
 		
 		//--- "Car" attributes
@@ -356,7 +327,6 @@ public class ConverterTest {
 		assertEquals(2, carEntity.getAttributes().size() );
 		assertNotNull(carEntity.getAttributeByName("id"));
 		assertNotNull(carEntity.getAttributeByName("name"));
-		//assertNotNull(carEntity.getAttributeByName("driver")); // LINK
 
 		//--- "Car" - "name" attribute
 		Attribute attribute = carEntity.getAttributeByName("name");
@@ -381,7 +351,6 @@ public class ConverterTest {
 	private void checkDriverEntity(DslModelEntity driverEntity) {
 		print("check 'Driver' entity...");
 		assertEquals("Driver", driverEntity.getClassName() );
-//		assertEquals("Driver", driverEntity.getDatabaseTable() );
 		assertEquals("", driverEntity.getDatabaseTable() ); // V 3.4.0
 		//--- Attributes
 		for ( Attribute attribute : driverEntity.getAttributes() ) {
@@ -401,7 +370,6 @@ public class ConverterTest {
 	private void checkGroupEntity(DslModelEntity groupEntity) {
 		print("check 'Group' entity...");
 		assertEquals("Group", groupEntity.getClassName() );
-//		assertEquals("Group", groupEntity.getDatabaseTable() );
 		assertEquals("", groupEntity.getDatabaseTable() ); // v 3.4.0
 		
 		//--- Attributes

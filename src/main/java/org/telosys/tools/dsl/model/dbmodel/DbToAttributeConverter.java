@@ -62,14 +62,12 @@ public class DbToAttributeConverter {
 		if ( databaseDefinition.isDbType() ) { // v 4.1.0
 			attribute.setDatabaseType(buildSqlFullType(dbCol));
 		}
-    	// DB not null
-		// attribute.setDatabaseNotNull(dbCol.isNotNull()); // removed in v 4.1
+    	
+		// DB not null: removed in v 4.1
 		
-    	// DB size
-//    	if ( ! StrUtil.nullOrVoid(size) ) {
-//    		attribute.setDatabaseSize(size); // removed in v 4.1
-//    	}
-    	// DB default value (if option is TRUE in config file) // v 4.1.0
+    	// DB size: removed in v 4.1
+
+		// DB default value (if option is TRUE in config file) // v 4.1.0
     	if ( databaseDefinition.isDbDefaultValue() && ( ! StrUtil.nullOrVoid(dbCol.getDefaultValue()) ) ) {
     		// default value is returned between single quotes => remove single quotes if any
     		attribute.setDatabaseDefaultValue( DbConvUtils.cleanDefaultValue(dbCol.getDefaultValue()) ); 
@@ -83,7 +81,6 @@ public class DbToAttributeConverter {
 		// Is this attribute/column in the Table Primary Key ?
 		attribute.setKeyElement( dbCol.isInPrimaryKey()); 
 		// Is this column auto-incremented ?
-		// v 4.1.0 :: attribute.setAutoIncremented(dbCol.isAutoIncremented());
 		if ( dbCol.isAutoIncremented() ) { // BUG FIX 4.1.1
 			attribute.setGeneratedValueStrategy(GeneratedValueStrategy.IDENTITY); // v 4.1.0
 		}

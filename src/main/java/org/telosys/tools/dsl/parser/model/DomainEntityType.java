@@ -24,7 +24,6 @@ public class DomainEntityType extends DomainType {
 
     @Override
     public String toString() {
-//        return "DomainEntityType [getName()=" + getName() + ", getNature()=" + getNature() + "]";
         StringBuilder sb = new StringBuilder();
         sb.append(this.getName());
        	if(this.getCardinality() == DomainCardinality.MANY) {

@@ -39,7 +39,7 @@ public class DatabaseInMemory {
 		this.connection = databaseConnectionProvider.getConnection(databaseDefinition);
 	}
 	
-	protected DatabaseDefinition getDatabaseDefinition(TelosysToolsCfg telosysToolsCfg, String databaseId) throws TelosysToolsException {
+	private DatabaseDefinition getDatabaseDefinition(TelosysToolsCfg telosysToolsCfg, String databaseId) throws TelosysToolsException {
 		// Get database definitions file 
 		File dbDefinitionsFile = new File(telosysToolsCfg.getDatabasesDbCfgFileAbsolutePath());
 		// Load databases definitions
@@ -50,9 +50,9 @@ public class DatabaseInMemory {
 		} catch (TelosysYamlException e) {
 			throw new TelosysToolsException("Cannot load databases definitions (YAML error)");
 		}
-		DatabaseDefinition databaseDefinition = databaseDefinitions.getDatabaseDefinition(databaseId);
-		if ( databaseDefinition != null ) {
-			return databaseDefinition;
+		DatabaseDefinition dbDef = databaseDefinitions.getDatabaseDefinition(databaseId);
+		if ( dbDef != null ) {
+			return dbDef;
 		}
 		else {
 			throw new TelosysToolsException("Unknown database '" + databaseId + "'");
@@ -76,12 +76,6 @@ public class DatabaseInMemory {
 		}
 		throw new RuntimeException("Connection null or already closed ");
 	}
-	
-//	private DatabaseConfiguration getDatabaseConfigurations(int dbId) throws TelosysToolsException {
-//		DbConfigManager dbConfigManager = new DbConfigManager( FileUtil.getFileByClassPath(DBCFG_FILE) );
-//		DatabasesConfigurations databasesConfigurations = dbConfigManager.load();
-//		return databasesConfigurations.getDatabaseConfiguration(dbId);
-//	}
 	
 	private void log(String s) {
 		System.out.println("[LOG] " + s );

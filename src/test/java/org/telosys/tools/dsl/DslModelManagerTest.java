@@ -18,35 +18,6 @@ public class DslModelManagerTest {
 		System.out.println(s);
 	}
 
-//	private Model loadValidModel(String modelFileName) {
-//		println("----- " );
-//		println("Loading valid model : " + modelFileName );
-//        DslModelManager dslModelManager = new DslModelManager();
-//        Model model = dslModelManager.loadModel(modelFileName);
-//		printErrors(dslModelManager);
-//		if ( model == null ) {
-//			println("ERROR : cannot load model");
-//			println(dslModelManager.getErrorMessage());
-//			throw new IllegalStateException("Cannot load model : " + dslModelManager.getErrorMessage());
-//		}
-//		// No error expected
-//		assertEquals(0, dslModelManager.getErrorMessage().length() );
-//		assertEquals(0, dslModelManager.getErrors().getAllErrorsCount() );
-//		return model ;
-//    }
-//	private Model loadValidModel(String modelFileName) {
-//		println("----- " );
-//		println("Loading valid model : " + modelFileName );
-//        DslModelManager dslModelManager = new DslModelManager();
-//        Model model = dslModelManager.loadModel(modelFileName);
-//        PrintUtil.printErrors(dslModelManager.getErrors());
-//		if ( model == null || dslModelManager.getErrors().getNumberOfErrors() > 0 ) {
-//			println("ERROR : cannot load model");
-//			throw new RuntimeException("Cannot load model : " + dslModelManager.getErrorMessage());
-//		}
-//		return model ;
-//    }
-    
     @Test
     public void testValidModelOneEntityModel() {
         Model model = ModelUtil.loadValidModel("src/test/resources/model_test/valid/OneEntityModel");
@@ -59,14 +30,12 @@ public class DslModelManagerTest {
         
         Entity employeeEntity = model.getEntityByClassName("Employee");
         assertNotNull(employeeEntity);
-        // TODO
-        // employeeEntity.isAggregateRoot() ;
+        assertTrue(employeeEntity.isAggregateRoot()) ;
         
         TagContainer tagContainer = employeeEntity.getTagContainer();
-        // TODO 
-        // assertFalse(tagContainer.isEmpty());
-        // assertEquals(1, tagContainer.size());
-        // assertTrue(tagContainer.containsTag("MyEntityTag"));
+        assertFalse(tagContainer.isEmpty());
+        assertEquals(1, tagContainer.size());
+        assertTrue(tagContainer.containsTag("MyEntityTag"));
         
         assertEquals(3, employeeEntity.getAttributes().size());    
         int i = 0 ;
@@ -84,7 +53,7 @@ public class DslModelManagerTest {
         // Tags defined for this attribute
         tags = attrib.getTagContainer();
         assertNotNull(tags);
-//        assertFalse(tags.isEmpty());
+        assertFalse(tags.isEmpty());
         assertTrue(tags.containsTag("Id"));
         assertTrue(tags.containsTag("Foo"));
         assertEquals("abc",tags.getTagValue("Foo"));
@@ -97,7 +66,7 @@ public class DslModelManagerTest {
         assertFalse(attrib.isNotNull());
         tags = attrib.getTagContainer();
         assertNotNull(tags);
-//        assertFalse(tags.isEmpty());
+        assertFalse(tags.isEmpty());
         assertTrue(tags.containsTag("tag"));
 
         //--- "birthDate" ATTRIBUTE 

@@ -51,9 +51,6 @@ public class AnnotationParserTest {
 		DomainAnnotation annotation = parseAnnotationInAttribute("@Id");
 		assertEquals("Id", annotation.getName());
 		assertFalse(annotation.hasParameter());
-//		assertNull(annotation.getParameterAsString());
-//		assertNull(annotation.getParameterAsBigDecimal());
-//		assertNull(annotation.getParameterAsInteger());
 		
 		annotation = parseAnnotationInAttribute("@AutoIncremented");
 		assertEquals("AutoIncremented", annotation.getName());
@@ -85,14 +82,6 @@ public class AnnotationParserTest {
 
 		annotation = parseAnnotationInAttribute("@DbSize(22,4)");
 		annotation = parseAnnotationInAttribute("@DbSize(22,0)");
-		//annotation = parser.parse("@DbSize(-22,2)"); // ERR : negative size
-		//annotation = parser.parse("@DbSize(22,-2)"); // ERR : negative size
-		//annotation = parser.parse("@DbSize(22,)"); // ERR
-		//annotation = parser.parse("@DbSize(,)"); // ERR
-		//annotation = parser.parse("@DbSize()"); // ERR
-		//annotation = parser.parse("@DbSize(aa,2)"); // ERR
-		//annotation = parser.parse("@DbSize(aa)"); //ERR
-		
 	}
 	@Test
 	public void testParseLinkAnnotations() throws DslModelError {
@@ -113,7 +102,10 @@ public class AnnotationParserTest {
 		assertNotNull(annotation.getParameterAsString());
 
 		annotation = parseAnnotationInAttribute("@DbSize(22,4)");
+		assertEquals("DbSize", annotation.getName());
+		assertEquals("22,4", annotation.getParameterAsString());
 		annotation = parseAnnotationInAttribute("@DbSize(22,0)");
+		assertEquals("22,0", annotation.getParameterAsString());
 		
 		parseWithExpectedException("@DbSize(-22,2)"); // ERR : negative size
 		parseWithExpectedException("@DbSize(22,-2)"); // ERR : negative size

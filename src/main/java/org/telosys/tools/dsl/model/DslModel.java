@@ -70,9 +70,9 @@ public class DslModel implements Model {
 	}
 
 	@Override
-	public String getFolderName() {  // v 3.3.0
+	public String getFolderName() {
 		// since v 3.4.0 the folder name is the model name
-		return modelName ;
+		return getName();
 	}
 
 	@Override

@@ -84,31 +84,6 @@ public abstract class AnnotationDefinition {
 	}
 
 	//-------------------------------------------------------------------------------------------
-	// Annotation error 
-	//-------------------------------------------------------------------------------------------
-////	protected ParamError newParamError(DslModelEntity entity, DslModelAttribute attribute, String error) {
-////		return newParamError(entity.getClassName(), attribute.getName(), error); 
-////	}
-////	protected ParamError newParamError(DslModelEntity entity, DslModelLink link, String error) {
-////		return newParamError(entity.getClassName(), link.getFieldName(), error); 
-////	}
-//	protected ParamError newParamError(String entityName, String fieldName, String error) {
-//		StringBuilder sb = new StringBuilder();
-//		sb.append(entityName);
-//		if ( fieldName != null ) {
-//			sb.append(".").append(fieldName);
-//		}
-//		sb.append(" : ");
-//		sb.append("@").append(name);
-//		sb.append(" : ");
-//		sb.append(error);
-//		return new ParamError(sb.toString());
-//	}
-////	protected DslModelError newError(String entityName, int lineNumber, String fieldName, String errorMessage) {
-////		return new DslModelError(entityName, lineNumber, fieldName, errorMessage);
-////	}
-	
-	//-------------------------------------------------------------------------------------------
 	// Annotation parsing 
 	//-------------------------------------------------------------------------------------------
 	public void afterCreation(String entityName, String fieldName, 

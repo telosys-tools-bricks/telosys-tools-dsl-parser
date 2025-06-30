@@ -99,7 +99,7 @@ public class DslModelManagerV33Test {
         assertEquals("Country", link.getReferencedEntityName() );
         assertEquals(FetchType.LAZY, link.getFetchType() );
         assertEquals(Optional.TRUE, link.getOptional() );
-        //assertEquals("foo", link.getMappedBy());
+        assertNull(link.getMappedBy());
         // Join columns 
         assertEquals(1, link.getAttributes().size() );
         joinAttribute = link.getAttributes().get(0);
@@ -270,8 +270,6 @@ public class DslModelManagerV33Test {
     private void test3CheckLinePoint1Link(Link link) {    	
         assertEquals(Cardinality.MANY_TO_ONE, link.getCardinality());
         assertEquals("Point", link.getReferencedEntityName() );
-//        assertNotNull(link.getId());
-//        assertEquals("", link.getComparableString());
 
         CascadeOptions cascadeOptions = link.getCascadeOptions();
         assertFalse(cascadeOptions.isCascadeAll());
@@ -309,7 +307,6 @@ public class DslModelManagerV33Test {
     private void test3CheckLinePoint2Link(Link link) {
     	assertEquals(Cardinality.MANY_TO_ONE, link.getCardinality());
         assertEquals("Point", link.getReferencedEntityName() );
-//        assertNotNull(link.getId());
         
         assertTrue(link.isEmbedded()); // @Embedded 
 

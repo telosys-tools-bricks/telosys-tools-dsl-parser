@@ -15,49 +15,19 @@
  */
 package org.telosys.tools.dsl.parser.model;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+
+import org.telosys.tools.generic.model.types.NeutralType;
 
 public final class DomainNeutralTypes {
 
     private DomainNeutralTypes(){}
 
-    // Neutral type list of predefined names
-    public static final String STRING    = "string";
-    
-    public static final String BYTE      = "byte";
-    public static final String SHORT     = "short";
-    public static final String INTEGER   = "int";
-    public static final String LONG      = "long";
-    
-    public static final String DECIMAL   = "decimal";
-    public static final String FLOAT     = "float";
-    public static final String DOUBLE    = "double";
-    
-    public static final String BOOLEAN   = "boolean";
-    
-    public static final String DATE      = "date";
-    public static final String TIME      = "time";
-    public static final String TIMESTAMP = "timestamp";
-    
-    public static final String BINARY_BLOB = "binary"; // BLOB
-
-
-    private static final String[] NAMES = {
-    	STRING, 
-    	BYTE, SHORT, INTEGER, LONG,
-    	DECIMAL, FLOAT, DOUBLE,
-    	BOOLEAN, 
-    	DATE, TIME, TIMESTAMP, 
-    	BINARY_BLOB };
-
+	// Builds the Map of DomainNeutralType for each NeutralType
     private static final Map<String, DomainNeutralType> NEUTRAL_TYPES = new HashMap<>();
-
     static {
-        for (String name : NAMES) {
+        for (String name : NeutralType.getAllNeutralTypes()) {
             DomainNeutralType type = new DomainNeutralType(name);
             NEUTRAL_TYPES.put(type.getName(), type);
         }
@@ -75,16 +45,6 @@ public final class DomainNeutralTypes {
      */
     public static final DomainNeutralType getType(String typeName) {
         return NEUTRAL_TYPES.get(typeName);
-    }
-
-    public static final List<String> getNames() {
-        return new LinkedList<>(NEUTRAL_TYPES.keySet());
-    }
-
-    public static final List<String> getSortedNames() {
-        List<String> list = getNames();
-        Collections.sort(list);
-        return list;
     }
 
 }

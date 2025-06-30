@@ -31,6 +31,7 @@ import org.telosys.tools.dsl.parser.model.DomainAnnotation;
 import org.telosys.tools.dsl.parser.model.DomainNeutralTypes;
 import org.telosys.tools.generic.model.Attribute;
 import org.telosys.tools.generic.model.LinkAttribute;
+import org.telosys.tools.generic.model.types.NeutralType;
 
 
 /**
@@ -134,9 +135,13 @@ public class LinkByAttrAnnotation extends AnnotationDefinition {
 		return false;
 	}
 	private boolean isIntegerType(String type) {
-		return DomainNeutralTypes.LONG.equals(type) ||
-				DomainNeutralTypes.INTEGER.equals(type) ||
-				DomainNeutralTypes.SHORT.equals(type) ;
+//		return DomainNeutralTypes.LONG.equals(type) ||
+//				DomainNeutralTypes.INTEGER.equals(type) ||
+//				DomainNeutralTypes.SHORT.equals(type) ;
+		// v 4.3.0 
+		return NeutralType.LONG.equals(type) ||
+				NeutralType.INTEGER.equals(type) ||
+				NeutralType.SHORT.equals(type) ;
 	}
 
 }

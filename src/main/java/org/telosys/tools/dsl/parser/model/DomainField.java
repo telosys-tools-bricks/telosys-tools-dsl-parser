@@ -31,23 +31,14 @@ public class DomainField {
 
     private final Map<String, DomainAnnotation> annotations = new HashMap<>();
     private final Map<String, DomainTag> tags = new HashMap<>();
-//    private final List<DomainFK> fkDeclarations = new LinkedList<>() ; // v 3.3.0
     private final List<FkElement> fkElements = new LinkedList<>() ; // v 3.4.0
 	
     /**
-     * Constructor with initial data
+     * Constructor
      * @param lineNumber
      * @param name
      * @param type
-     * @param cardinality
      */
-//    public DomainField(int lineNumber, String name, DomainType type, DomainCardinality cardinality) {
-//    	this.lineNumber = lineNumber;
-//        this.name = name;
-//        this.type = type;
-//        this.cardinality = cardinality;
-//    }
-
     public DomainField(int lineNumber, String name, DomainType type) {
     	this.lineNumber = lineNumber;
         this.name = name;
@@ -86,15 +77,6 @@ public class DomainField {
     	tags.put(tag.getName(), tag);
     }
     
-//    /**
-//     * Add a new error to the field 
-//     * @param error
-//     */
-////    public void addError(AnnotationOrTagError error) {
-//    public void addError(ParsingError error) {
-//    	errors.add(error);
-//    }
-    
     public final int getLineNumber() {
         return lineNumber;
     }
@@ -123,19 +105,10 @@ public class DomainField {
         return type.getName();
     }
 
-//    public final boolean isNeutralType() {
-//        return type.isNeutralType();
-//    }
     public final boolean isAttribute() {
         return type.isNeutralType();
     }
 
-//    public final boolean isEntity() {
-//        return type.isEntity();
-//    }
-//    public final boolean isEnumeration() {
-//        return type.isEnumeration();
-//    }
     public final boolean isLink() {
         return type.isEntity();
     }
@@ -186,32 +159,14 @@ public class DomainField {
     }
 
     //------------------------------------------------------------------------
-    // FOREIGN KEYS DECLARATIONS ( v 3.3.0 )
+    // FOREIGN KEYS DECLARATIONS 
     //------------------------------------------------------------------------
-//    public List<DomainFK> getFKDeclarations() {
-//    	return fkDeclarations;
-//    }
-//    public void addFKDeclaration(DomainFK fk) {
-//    	fkDeclarations.add(fk);
-//    }
     public List<FkElement> getFkElements() { // v 3.4.0
     	return fkElements;
     }
     public void addFkElement(FkElement fke) { // v 3.4.0
     	fkElements.add(fke); 
     }
-    
-//    //------------------------------------------------------------------------
-//    // ERRORS
-//    //------------------------------------------------------------------------
-//    public boolean hasErrors() {
-//    	return ! this.errors.isEmpty();
-//    }
-//    
-////    public List<AnnotationOrTagError> getErrors() {
-//    public List<ParsingError> getErrors() {
-//    	return this.errors;
-//    }
     
     //------------------------------------------------------------------------
     @Override
@@ -221,16 +176,8 @@ public class DomainField {
     	sb.append(name);
 		sb.append( " : ");
     	// entity or enum
-//    	if(isEntity()) {
-//    		sb.append("(entity) ");
-//    	} else if(isEnumeration()) {
-//    		sb.append("(enum) ");
-//    	}
     	// type with cardinality
     	sb.append( type.toString() );
-//    	if(cardinality == DomainCardinality.MANY) {
-//    		sb.append("[]");
-//    	}
     	sb.append(" {");
     	// annotations
     	for (Map.Entry<String, DomainAnnotation> e : annotations.entrySet()) {

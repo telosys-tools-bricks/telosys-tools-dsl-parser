@@ -355,23 +355,9 @@ public class DslModelAttribute implements Attribute {
 		this.pattern = pattern;
 	}
 
-// removed in v 4.1
-//	@Override
-//	public boolean isAutoIncremented() {
-//		return autoIncremented;
-//	}
-//	public void setAutoIncremented(boolean autoIncremented) {
-//		this.autoIncremented = autoIncremented;
-//	}
+// isAutoIncremented - removed in v 4.1
 
-// removed in v 4.1
-//	@Override
-//	public boolean isDatabaseNotNull() {
-//		return databaseNotNull;
-//	}
-//	public void setDatabaseNotNull(boolean databaseNotNull) {
-//		this.databaseNotNull = databaseNotNull;
-//	}
+// isDatabaseNotNull - removed in v 4.1
 
 	@Override
 	public boolean isDateFuture() { // @Future

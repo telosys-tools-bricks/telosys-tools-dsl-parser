@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.telosys.tools.dsl.DslModelErrors;
-import org.telosys.tools.dsl.parser.ParserV2;
 import org.telosys.tools.dsl.parser.model.DomainEntity;
 import org.telosys.tools.dsl.parser.reporting.ResultReport;
 
