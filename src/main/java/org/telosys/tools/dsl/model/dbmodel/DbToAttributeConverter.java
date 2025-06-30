@@ -51,7 +51,7 @@ public class DbToAttributeConverter {
 
 		//--- Create a new "attribute" for this "column"
 		String attributeName = NameConverter.columnNameToAttributeName(dbCol.getColumnName());
-		String attributeType = DbConvUtils.getAttributeType(dbCol.getJdbcTypeCode(), dbCol.getSize(), dbCol.getDecimalDigits() );
+		String attributeType = DbConvUtils.getAttributeType(dbCol.getJdbcTypeCode(), dbCol.getSize(), dbCol.getDecimalDigits(), dbCol.getDbTypeName() );
 		DslModelAttribute attribute = new DslModelAttribute(attributeName, attributeType);
 		
 		String size = builSize(dbCol); // usable as attribute size and database size 

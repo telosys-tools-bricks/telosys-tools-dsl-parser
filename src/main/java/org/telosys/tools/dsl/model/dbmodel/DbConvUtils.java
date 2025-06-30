@@ -69,8 +69,25 @@ public class DbConvUtils {
 			return NeutralType.DECIMAL;
 		}
 	}
-	protected static String getAttributeType(int jdbcSqlType, int size, int decimalDigits) {
+	private static String detectSpecificType(int jdbcSqlType, String dbTypeName) {
+		if ( "uuid".equalsIgnoreCase(dbTypeName) && jdbcSqlType == Types.OTHER ) {
+			// PostgreSQL UUID 
+			return NeutralType.UUID;
+		}
+		if ( "uniqueidentifier".equalsIgnoreCase(dbTypeName) && ( jdbcSqlType == Types.CHAR || jdbcSqlType == Types.BINARY ) ) {
+			// SQL Server UUID 
+			return NeutralType.UUID;
+		}
+		return null;
+	}
+	
+	protected static String getAttributeType(int jdbcSqlType, int size, int decimalDigits, String dbTypeName) {
 
+		String specificType = detectSpecificType(jdbcSqlType, dbTypeName);
+		if ( specificType != null ) {
+			return specificType ;
+		}
+			
 		switch (jdbcSqlType) {
 
 		case Types.CHAR:
@@ -105,10 +122,16 @@ public class DbConvUtils {
 
 		case Types.DATE:
 			return NeutralType.DATE;
+			
 		case Types.TIME:
 			return NeutralType.TIME;
+		case Types.TIME_WITH_TIMEZONE:  // ver 4.3.0
+			return NeutralType.TIMETZ; 
+			
 		case Types.TIMESTAMP:
-			return NeutralType.TIMESTAMP;
+			return NeutralType.DATETIME; // ver 4.3.0  (TIMESTAMP is depracted)
+		case Types.TIMESTAMP_WITH_TIMEZONE:
+			return NeutralType.DATETIMETZ; // ver 4.3.0
 
 		case Types.CLOB: // Character Large Object
 			return NeutralType.STRING;

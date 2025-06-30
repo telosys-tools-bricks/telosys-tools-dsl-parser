@@ -37,6 +37,10 @@ public final class DomainNeutralTypes {
         return NEUTRAL_TYPES.containsKey(typeName);
     }
 
+    public static final int size() {
+        return NEUTRAL_TYPES.size();
+    }
+
     /**
      * Returns the Neutral Type for the given type name <br>
      * or null if the given type doesn't exist

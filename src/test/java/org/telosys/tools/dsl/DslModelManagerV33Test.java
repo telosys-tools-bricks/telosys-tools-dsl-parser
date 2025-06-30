@@ -16,6 +16,7 @@ import org.telosys.tools.generic.model.TagContainer;
 import org.telosys.tools.generic.model.enums.Cardinality;
 import org.telosys.tools.generic.model.enums.FetchType;
 import org.telosys.tools.generic.model.enums.Optional;
+import org.telosys.tools.generic.model.types.NeutralType;
 import org.telosys.tools.junit.utils.PrintUtil;
 
 import static org.junit.Assert.assertEquals;
@@ -69,6 +70,11 @@ public class DslModelManagerV33Test {
         //--- 4 FK : 3 + 1 implicit FK
         PrintUtil.printForeignKeys(personEntity);
         assertEquals(4, personEntity.getForeignKeys().size());
+        
+        assertEquals(NeutralType.DATETIME,   personEntity.getAttributeByName("lastAccess").getNeutralType() );
+        assertEquals(NeutralType.DATETIMETZ, personEntity.getAttributeByName("activeFrom").getNeutralType() );
+        assertEquals(NeutralType.TIMETZ,     personEntity.getAttributeByName("meetingTime").getNeutralType() );
+        assertEquals(NeutralType.UUID,       personEntity.getAttributeByName("id2").getNeutralType() );
         
         //--- FK referencing 'Gender'
         attrib = personEntity.getAttributeByName("genderId");

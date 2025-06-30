@@ -38,14 +38,30 @@ public class DbConvUtilsTest {
 	
 	@Test
 	public void testGetAttributeType() {
-		
-		assertEquals (NeutralType.DECIMAL, DbConvUtils.getAttributeType(Types.NUMERIC, 10, 2) );
-		assertEquals (NeutralType.DECIMAL, DbConvUtils.getAttributeType(Types.DECIMAL, 10, 2) );
-		assertEquals (NeutralType.DECIMAL, DbConvUtils.getAttributeType(Types.NUMERIC, 0, 0) );
-		assertEquals (NeutralType.DECIMAL, DbConvUtils.getAttributeType(Types.DECIMAL, 0, 0) );
+		String notSupposedToBeUsed = "xyz";
+		assertEquals (NeutralType.DECIMAL, DbConvUtils.getAttributeType(Types.NUMERIC, 10, 2, notSupposedToBeUsed) );
+		assertEquals (NeutralType.DECIMAL, DbConvUtils.getAttributeType(Types.DECIMAL, 10, 2, notSupposedToBeUsed) );
+		assertEquals (NeutralType.DECIMAL, DbConvUtils.getAttributeType(Types.NUMERIC,  0, 0, notSupposedToBeUsed) );
+		assertEquals (NeutralType.DECIMAL, DbConvUtils.getAttributeType(Types.DECIMAL,  0, 0, notSupposedToBeUsed) );
 
-		assertEquals (NeutralType.INTEGER, DbConvUtils.getAttributeType(Types.NUMERIC, 6, 0) );
-		assertEquals (NeutralType.INTEGER, DbConvUtils.getAttributeType(Types.DECIMAL, 6, 0) );
+		assertEquals (NeutralType.INTEGER, DbConvUtils.getAttributeType(Types.NUMERIC,  6, 0, notSupposedToBeUsed) );
+		assertEquals (NeutralType.INTEGER, DbConvUtils.getAttributeType(Types.DECIMAL,  6, 0, notSupposedToBeUsed) );
+		
+		// Ver 4.3.0 - Specific types detection (for UUID)
+		assertEquals (NeutralType.UUID,    DbConvUtils.getAttributeType(Types.OTHER,   0, 0, "uuid") ); // PostgreSQL UUID
+		assertEquals (NeutralType.UUID,    DbConvUtils.getAttributeType(Types.OTHER,   0, 0, "UUID") ); // PostgreSQL UUID
+
+		assertEquals (NeutralType.UUID,    DbConvUtils.getAttributeType(Types.CHAR,    0, 0, "UNIQUEIDENTIFIER") ); // SQL Server UUID
+		assertEquals (NeutralType.UUID,    DbConvUtils.getAttributeType(Types.BINARY,  0, 0, "UNIQUEIDENTIFIER") ); // SQL Server UUID
+		assertEquals (NeutralType.UUID,    DbConvUtils.getAttributeType(Types.CHAR,    0, 0, "uniqueidentifier") ); // SQL Server UUID
+
+		assertEquals (NeutralType.STRING,  DbConvUtils.getAttributeType(Types.OTHER,   0, 0, "not-uuid") );         // "string" for default value
+		assertEquals (NeutralType.STRING,  DbConvUtils.getAttributeType(Types.OTHER,   0, 0, "uniqueidentifier") ); // "string" for default value
+		assertEquals (NeutralType.STRING,  DbConvUtils.getAttributeType(Types.VARCHAR, 0, 0, "uuid") ); 
+		assertEquals (NeutralType.STRING,  DbConvUtils.getAttributeType(Types.CHAR,    0, 0, "uuid") );
+		assertEquals (NeutralType.BINARY,  DbConvUtils.getAttributeType(Types.BINARY,  0, 0, "uuid") );
+		assertEquals (NeutralType.INTEGER, DbConvUtils.getAttributeType(Types.NUMERIC, 6, 0, "uuid") );
+		
 	}
 	
 	@Test

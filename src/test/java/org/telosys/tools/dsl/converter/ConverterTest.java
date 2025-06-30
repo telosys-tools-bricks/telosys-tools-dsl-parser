@@ -116,20 +116,20 @@ public class ConverterTest {
 	public void testAttributeWithNeutralTypes() throws DslModelError {
 		// Given
 		DomainModel domainModel = new DomainModel(MODEL_NAME, new ModelInfo());
+		
 		DomainEntity domainEntity1 = new DomainEntity(ENTITY1);
-
 		domainModel.addEntity(domainEntity1);
 		domainEntity1.addField( buildField("myBoolean", NeutralType.BOOLEAN) );
-		
 		domainEntity1.addField( buildField("myDecimal", NeutralType.DECIMAL) );
 		domainEntity1.addField( buildField("myInteger", NeutralType.INTEGER) );
-		
 		domainEntity1.addField( buildField("myString", NeutralType.STRING) );
-		
 		domainEntity1.addField( buildField("myDate", NeutralType.DATE) );
 		domainEntity1.addField( buildField("myTime", NeutralType.TIME) );
 		domainEntity1.addField( buildField("myTimestamp", NeutralType.TIMESTAMP));
-
+		domainEntity1.addField( buildField("myDateTime",   NeutralType.DATETIME)); // ver 4.3.0
+		domainEntity1.addField( buildField("myDateTimeTZ", NeutralType.DATETIMETZ)); // ver 4.3.0
+		domainEntity1.addField( buildField("myTimeTZ",     NeutralType.TIMETZ)); // ver 4.3.0
+		domainEntity1.addField( buildField("myUUID",       NeutralType.UUID)); // ver 4.3.0
 		domainEntity1.addField( buildField("myBinary", NeutralType.BINARY) );
 		
 		DomainEntity domainEntity2 = new DomainEntity(ENTITY2);
@@ -145,9 +145,13 @@ public class ConverterTest {
 		// entity 1
 		Entity entity1 = model.getEntityByClassName(ENTITY1);
 		assertEquals(ENTITY1, entity1.getClassName());
+		assertEquals(NeutralType.DATETIME,   entity1.getAttributeByName("myDateTime").getNeutralType()); // ver 4.3.0
+		assertEquals(NeutralType.DATETIMETZ, entity1.getAttributeByName("myDateTimeTZ").getNeutralType()); // ver 4.3.0
+		assertEquals(NeutralType.TIMETZ,     entity1.getAttributeByName("myTimeTZ").getNeutralType()); // ver 4.3.0
+		assertEquals(NeutralType.UUID,       entity1.getAttributeByName("myUUID").getNeutralType()); // ver 4.3.0
 		
 		// attributes of entity 1
-		assertEquals(8, entity1.getAttributes().size());
+		assertEquals(12, entity1.getAttributes().size());
 		
 		// entity 2
 		Entity entity2 = model.getEntityByClassName(ENTITY2);
