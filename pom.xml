@@ -12,7 +12,7 @@
 
 	<name>telosys-tools-dsl-parser</name>
 	<artifactId>telosys-tools-dsl-parser</artifactId>
-	<version>4.2.1</version>   <!-- Version & build-id updated at each build with "telosys-dsl-model-build.properties" -->
+	<version>4.3.0</version>   <!-- Version & build-id updated at each build with "telosys-dsl-model-build.properties" -->
 	<packaging>jar</packaging>
 
 	<properties>
