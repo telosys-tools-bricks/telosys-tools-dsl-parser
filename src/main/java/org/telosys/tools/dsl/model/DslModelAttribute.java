@@ -25,7 +25,6 @@ import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.ForeignKeyPart;
 import org.telosys.tools.generic.model.TagContainer;
 import org.telosys.tools.generic.model.enums.BooleanValue;
-import org.telosys.tools.generic.model.enums.DateType;
 import org.telosys.tools.generic.model.enums.GeneratedValueStrategy;
 
 public class DslModelAttribute implements Attribute {
@@ -46,10 +45,8 @@ public class DslModelAttribute implements Attribute {
 	private String dateAfterValue = "";
 	private String dateBeforeValue = "";
 	
-	private DateType dateType = DateType.UNDEFINED;
 	private String defaultValue = "" ; 
 	private Entity entity;
-	// private String generatedValueGeneratorName; // removed in v 4.1.0
 	private GeneratedValueStrategy generatedValueStrategy = GeneratedValueStrategy.UNDEFINED; // v 3.4.0
 	private String initialValue = "" ; 
 	private String inputType = "" ; 
@@ -66,8 +63,6 @@ public class DslModelAttribute implements Attribute {
 	private String generatedValueTablePkColumnValue;
 	private String generatedValueTableName;
 	private String generatedValueTableValueColumnName;
-	// private boolean autoIncremented = false ; // removed in v 4.1
-	// private boolean databaseNotNull = false ; // removed in v 4.1
 	private boolean keyElement = false;
 	private boolean longText = false;
 	private boolean notBlank = false;
@@ -188,14 +183,6 @@ public class DslModelAttribute implements Attribute {
 	}
 
 	@Override
-	public DateType getDateType() {
-		return dateType;
-	}
-	public void setDateType(DateType dateType) {
-		this.dateType = dateType;
-	}
-
-	@Override
 	public String getDefaultValue() {
 		return defaultValue;
 	}
@@ -222,15 +209,6 @@ public class DslModelAttribute implements Attribute {
 		this.generatedValueStrategy = strategy;
 	}
 
-// removed in v 4.1.0
-//	@Override // Generator name (used by 'sequence' and 'table' )
-//	public String getGeneratedValueGeneratorName() {
-//		return generatedValueGeneratorName;
-//	}
-//	public void setGeneratedValueGeneratorName(String generatorName) {
-//		this.generatedValueGeneratorName = generatorName;
-//	}
-	
 	@Override
 	public String getGeneratedValueSequenceName() {
 		return generatedValueSequenceName;

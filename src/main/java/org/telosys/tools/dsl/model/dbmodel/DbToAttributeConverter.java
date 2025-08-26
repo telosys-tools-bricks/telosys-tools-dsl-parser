@@ -21,7 +21,6 @@ import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
 import org.telosys.tools.db.model.DatabaseColumn;
 import org.telosys.tools.dsl.model.DslModelAttribute;
-import org.telosys.tools.generic.model.enums.DateType;
 import org.telosys.tools.generic.model.enums.GeneratedValueStrategy;
 import org.telosys.tools.generic.model.types.NeutralType;
 
@@ -104,25 +103,8 @@ public class DbToAttributeConverter {
 			}
 		}
 
-		// Date type ??? To be removed ???
-		attribute.setDateType(getAttributeDateType(dbCol.getJdbcTypeCode()));
-		
 		return attribute ;
 	}
-	
-    private DateType getAttributeDateType(int jdbcColumnType ) {
-    	switch ( jdbcColumnType ) {
-    		//--- Type of Date :
-    		case Types.DATE : 
-    			return DateType.DATE_ONLY ;
-    		case Types.TIME : 
-    			return DateType.TIME_ONLY ;
-    		case Types.TIMESTAMP : 
-    			return DateType.DATE_AND_TIME ;
-    		default:
-    			return DateType.UNDEFINED ;
-    	}
-    }
 	
     private String builSize(DatabaseColumn dbCol) {
     	switch(dbCol.getJdbcTypeCode()) {
