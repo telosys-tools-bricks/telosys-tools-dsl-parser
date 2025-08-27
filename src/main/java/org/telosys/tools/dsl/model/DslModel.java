@@ -23,12 +23,11 @@ import org.telosys.tools.commons.StrUtil;
 import org.telosys.tools.dsl.commons.ModelInfo;
 import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Model;
-import org.telosys.tools.generic.model.enums.ModelType;
 import org.telosys.tools.generic.model.util.EntityClassNameComparator;
 
 public class DslModel implements Model {
 	
-	private static final ModelType MODEL_TYPE    = ModelType.DOMAIN_SPECIFIC_LANGUAGE ;
+//	private static final ModelType MODEL_TYPE    = ModelType.DOMAIN_SPECIFIC_LANGUAGE ; // removed in v 4.3.0
 
 	private final String modelName;
 
@@ -69,16 +68,10 @@ public class DslModel implements Model {
 		return modelName ;
 	}
 
-	@Override
-	public String getFolderName() {
-		// since v 3.4.0 the folder name is the model name
-		return getName();
-	}
-
-	@Override
-	public ModelType getType() {
-		return MODEL_TYPE;
-	}
+//	@Override
+//	public ModelType getType() { // removed in v 4.3.0
+//		return MODEL_TYPE;
+//	}
 	
 	//----------------------------------------------------------------------------------------
 	public ModelInfo getModelInfo() {

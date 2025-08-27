@@ -21,7 +21,6 @@ import org.telosys.tools.generic.model.Entity;
 import org.telosys.tools.generic.model.Link;
 import org.telosys.tools.generic.model.Model;
 import org.telosys.tools.generic.model.enums.Cardinality;
-import org.telosys.tools.generic.model.enums.ModelType;
 import org.telosys.tools.generic.model.types.NeutralType;
 
 import static org.junit.Assert.assertEquals;
@@ -73,7 +72,6 @@ public class ConverterTest {
 		
 		assertEquals("test", model.getName());
 		assertTrue(model.getEntities().isEmpty());		
-		assertEquals(ModelType.DOMAIN_SPECIFIC_LANGUAGE, model.getType() );
 	}
 	
 	private Model buildModelWithTwoEmptyEntities() {
