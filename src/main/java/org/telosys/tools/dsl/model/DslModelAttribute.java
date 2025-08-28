@@ -42,8 +42,8 @@ public class DslModelAttribute implements Attribute {
 	
 	private boolean isDateFuture = false; // @Future
 	private boolean isDatePast = false; // @Past
-	private String dateAfterValue = "";
-	private String dateBeforeValue = "";
+//	private String dateAfterValue = ""; // removed in ver 4.3.0
+//	private String dateBeforeValue = ""; // removed in ver 4.3.0
 	
 	private String defaultValue = "" ; 
 	private Entity entity;
@@ -166,21 +166,21 @@ public class DslModelAttribute implements Attribute {
 		this.databaseType = databaseType;
 	}
 
-	@Override
-	public String getDateAfterValue() {
-		return dateAfterValue;
-	}
-	public void setDateAfterValue(String dateAfterValue) {
-		this.dateAfterValue = dateAfterValue;
-	}
+//	@Override
+//	public String getDateAfterValue() {
+//		return dateAfterValue;
+//	}
+//	public void setDateAfterValue(String dateAfterValue) {
+//		this.dateAfterValue = dateAfterValue;
+//	}
 
-	@Override
-	public String getDateBeforeValue() {
-		return dateBeforeValue;
-	}
-	public void setDateBeforeValue(String dateBeforeValue) {
-		this.dateBeforeValue = dateBeforeValue;
-	}
+//	@Override
+//	public String getDateBeforeValue() {
+//		return dateBeforeValue;
+//	}
+//	public void setDateBeforeValue(String dateBeforeValue) {
+//		this.dateBeforeValue = dateBeforeValue;
+//	}
 
 	@Override
 	public String getDefaultValue() {
