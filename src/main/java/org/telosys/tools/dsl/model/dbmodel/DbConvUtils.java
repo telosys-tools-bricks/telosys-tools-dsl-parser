@@ -123,15 +123,15 @@ public class DbConvUtils {
 		case Types.DATE:
 			return NeutralType.DATE;
 			
-		case Types.TIME:
-			return NeutralType.TIME;
 		case Types.TIME_WITH_TIMEZONE:  // ver 4.3.0
-			return NeutralType.TIMETZ; 
+		case Types.TIME:
+			// TIME_WITH_TIMEZONE = new SQL type code added in JDBC 4.2 but not returned by PostgreSQL => check type
+			return getNeutralTypeForTime(jdbcSqlType, dbTypeName);  // ver 4.3.0
 			
+		case Types.TIMESTAMP_WITH_TIMEZONE: // ver 4.3.0
 		case Types.TIMESTAMP:
-			return NeutralType.DATETIME; // ver 4.3.0  (TIMESTAMP is depracted)
-		case Types.TIMESTAMP_WITH_TIMEZONE:
-			return NeutralType.DATETIMETZ; // ver 4.3.0
+			// TIMESTAMP_WITH_TIMEZONE = new SQL type code added in JDBC 4.2 but not returned by PostgreSQL => check type
+			return getNeutralTypeForTimestamp(jdbcSqlType, dbTypeName);  // ver 4.3.0
 
 		case Types.CLOB: // Character Large Object
 			return NeutralType.STRING;
@@ -153,6 +153,58 @@ public class DbConvUtils {
 		// Types.DATALINK
 	}
 
+	protected static String getNeutralTypeForTimestamp(int jdbcSqlType, String dbTypeName) {
+		if ( jdbcSqlType == Types.TIMESTAMP_WITH_TIMEZONE ) {
+			// TIMESTAMP_WITH_TIMEZONE (value=2014) = new SQL type code added in JDBC 4.2 but not returned by PostgreSQL 
+			// if supported by the JDBC driver => it's a TIMESTAMP_WITH_TIMEZONE
+			return NeutralType.DATETIMETZ;
+		}
+		else if ( jdbcSqlType == Types.TIMESTAMP ) {
+			// TIMESTAMP (value=93) => can be return by the JDBC driver even for a TIMESTAMP_WITH_TIMEZONE !
+			if ( endsWithTimeZoneString(dbTypeName) ) {
+				// Can be considered to have a time zone
+				return NeutralType.DATETIMETZ;
+			}
+			else {
+				// Supposed to have no time zone
+				return NeutralType.DATETIME;
+			}
+		}
+		// By default keep the standard conversion without time zone
+		return NeutralType.DATETIME;
+	}
+	
+	protected static String getNeutralTypeForTime(int jdbcSqlType, String dbTypeName) {
+		if ( jdbcSqlType == Types.TIME_WITH_TIMEZONE ) {
+			// TIME_WITH_TIMEZONE (value=2013) = new SQL type code added in JDBC 4.2 but not returned by PostgreSQL 
+			// if returned by the JDBC driver => it's a TIME_WITH_TIMEZONE
+			return NeutralType.TIMETZ;
+		}
+		else if ( jdbcSqlType == Types.TIME ) {
+			// TIME (value=92) => can be return by the JDBC driver even if WITH_TIMEZONE !
+			if ( endsWithTimeZoneString(dbTypeName) ) {
+				// Can be considered to have a time zone
+				return NeutralType.TIMETZ;
+			}
+			else {
+				// Supposed to have no time zone
+				return NeutralType.TIME;
+			}
+		}
+		// By default keep the standard conversion without time zone
+		return NeutralType.TIME;
+	}
+	
+	private static boolean endsWithTimeZoneString(String dbTypeName) {
+		if (dbTypeName != null) {
+			String dbTypeNameLC = dbTypeName.toLowerCase();
+			// PostgreSQL : dbTypeName = "timestamptz" (even if created with "timestamp with time zone")
+			// SQLserver  : dbTypeName = "datetimeoffset" ??? (to be verified)
+			return dbTypeNameLC.endsWith("tz") || dbTypeNameLC.endsWith("zone") || dbTypeNameLC.endsWith("offset") ;
+		}
+		return false;
+	}
+	
 	/**
 	 * Clean the raw default value <br>
 	 * With some databases (eg Oracle) the value may contain special characters

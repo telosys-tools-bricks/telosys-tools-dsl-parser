@@ -85,4 +85,28 @@ public class DbConvUtilsTest {
 		// more than 18 => decimal
 		assertEquals (NeutralType.DECIMAL, DbConvUtils.getNumericOrDecimalAttributeType(19, 0) );
 	}
+
+	@Test
+	public void testGetNeutralTypeForTimestamp() {
+		assertEquals (NeutralType.DATETIME,   DbConvUtils.getNeutralTypeForTimestamp(Types.TIMESTAMP, "timestamp"));
+		assertEquals (NeutralType.DATETIME,   DbConvUtils.getNeutralTypeForTimestamp(Types.TIMESTAMP, "foo"));
+		assertEquals (NeutralType.DATETIMETZ, DbConvUtils.getNeutralTypeForTimestamp(Types.TIMESTAMP, "timestamptz"));
+		assertEquals (NeutralType.DATETIMETZ, DbConvUtils.getNeutralTypeForTimestamp(Types.TIMESTAMP, "TIMESTAMPTZ"));
+		assertEquals (NeutralType.DATETIMETZ, DbConvUtils.getNeutralTypeForTimestamp(Types.TIMESTAMP, "timestamp with timezone"));
+		assertEquals (NeutralType.DATETIMETZ, DbConvUtils.getNeutralTypeForTimestamp(Types.TIMESTAMP, "datetimeoffset"));
+		assertEquals (NeutralType.DATETIMETZ, DbConvUtils.getNeutralTypeForTimestamp(Types.TIMESTAMP, "datetime offset"));
+		assertEquals (NeutralType.DATETIMETZ, DbConvUtils.getNeutralTypeForTimestamp(Types.TIMESTAMP_WITH_TIMEZONE, "foo"));
+	}
+	@Test
+	public void testGetNeutralTypeForTime() {
+		assertEquals (NeutralType.TIME,   DbConvUtils.getNeutralTypeForTime(Types.TIME, "time"));
+		assertEquals (NeutralType.TIME,   DbConvUtils.getNeutralTypeForTime(Types.TIME, "foo"));
+		assertEquals (NeutralType.TIMETZ, DbConvUtils.getNeutralTypeForTime(Types.TIME, "timetz"));
+		assertEquals (NeutralType.TIMETZ, DbConvUtils.getNeutralTypeForTime(Types.TIME, "TIMETZ"));
+		assertEquals (NeutralType.TIMETZ, DbConvUtils.getNeutralTypeForTime(Types.TIME, "time with timezone"));
+		assertEquals (NeutralType.TIMETZ, DbConvUtils.getNeutralTypeForTime(Types.TIME, "timeoffset"));
+		assertEquals (NeutralType.TIMETZ, DbConvUtils.getNeutralTypeForTime(Types.TIME, "time offset"));
+		assertEquals (NeutralType.TIMETZ, DbConvUtils.getNeutralTypeForTime(Types.TIME, "foo offset"));
+		assertEquals (NeutralType.TIMETZ, DbConvUtils.getNeutralTypeForTime(Types.TIME_WITH_TIMEZONE, "foo"));
+	}
 }
