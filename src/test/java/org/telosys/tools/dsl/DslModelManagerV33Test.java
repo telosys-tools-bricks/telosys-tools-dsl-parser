@@ -284,8 +284,6 @@ public class DslModelManagerV33Test {
         assertFalse(cascadeOptions.isCascadeRefresh());
         assertFalse(cascadeOptions.isCascadeRemove());
         
-        assertTrue(link.isSelected()); // Always
-        
         assertFalse(link.isEmbedded()); // @Embedded
 
         assertEquals(FetchType.DEFAULT, link.getFetchType()); // @FetchTypeLazy or @FetchTypeEager

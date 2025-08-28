@@ -111,15 +111,6 @@ public class DslModelLink implements Link {
         return fieldName;
     }
 
-// removed in v 4.1.0
-//    @Override
-//    public boolean isOwningSide() {
-//        return owningSide;
-//    }
-//    public void setOwningSide(boolean owningSide) {
-//        this.owningSide = owningSide;
-//    }
-
     @Override
     public String getMappedBy() {
         return mappedBy;
@@ -128,18 +119,10 @@ public class DslModelLink implements Link {
         this.mappedBy = mappedBy;
     }
 
-    @Override
-    public boolean isSelected() {
-        return true; // Always "TRUE" ( "SELECTED" )
-    }
-
-// removed in v 4.1.0
+// removed in v 4.3.0
 //    @Override
-//    public boolean isInverseSide() {
-//        return inverseSide;
-//    }
-//    public void setInverseSide(boolean inverseSide) {
-//        this.inverseSide = inverseSide;
+//    public boolean isSelected() {
+//        return true; // Always "TRUE" ( "SELECTED" )
 //    }
 
     @Override
