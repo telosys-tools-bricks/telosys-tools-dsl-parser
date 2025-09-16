@@ -36,8 +36,18 @@ public class ModelInfoLoaderTest {
 		ModelInfo modelInfo = ModelInfoLoader.loadModelInformation(modelYamlFile);
 		
 		assertEquals("", modelInfo.getTitle());
-		assertEquals("", modelInfo.getVersion());
+		assertEquals("1.2.0", modelInfo.getVersion());
 		assertEquals("", modelInfo.getDescription());
 	}
 	
+	@Test
+	public void testNoFile() throws DslModelError {
+		
+		File modelYamlFile = new File("src/test/resources/model-yaml-files/model-not-exist.yaml") ;
+		ModelInfo modelInfo = ModelInfoLoader.loadModelInformation(modelYamlFile);
+		
+		assertEquals("", modelInfo.getTitle());
+		assertEquals("", modelInfo.getVersion());
+		assertEquals("", modelInfo.getDescription());
+	}
 }

@@ -16,6 +16,7 @@
 package org.telosys.tools.dsl.commons;
 
 import java.io.File;
+import java.util.Map;
 
 import org.telosys.tools.commons.YamlFileManager;
 import org.telosys.tools.commons.exception.TelosysYamlException;
@@ -37,17 +38,38 @@ public class ModelInfoLoader {
 	 * @throws DslModelError 
 	 */
 	public static ModelInfo loadModelInformation(File modelYamlFile) throws DslModelError {
+		ModelInfo modelInfo = new ModelInfo();
 		if ( modelYamlFile.exists() && modelYamlFile.isFile() ) {
-			YamlFileManager yaml = new YamlFileManager();
+			YamlFileManager yaml = new YamlFileManager(modelYamlFile);
 			try {
-				return yaml.load(modelYamlFile, ModelInfo.class);
+				Map<String, Object> map = yaml.loadMap();
+				if ( map != null ) {
+					modelInfo.setDescription(asString( map.get(ModelInfo.DESCRIPTION) ) ); 
+					modelInfo.setTitle(      asString( map.get(ModelInfo.TITLE      ) ) ); 
+					modelInfo.setVersion(    asString( map.get(ModelInfo.VERSION    ) ) ); 
+				}
 			} catch (TelosysYamlException e) {
 				throw new DslModelError("Invalid model file : YAML error" );
 			}
 		}
-		else {
-			return new ModelInfo() ;
-		}
+		return modelInfo;
 	}
 
+	/**
+	 * Converts the given value to String 
+	 *   null -> ""
+	 *   ""   -> ""
+	 *   1.2  -> "1.2"
+	 *   true -> "true"
+	 * @param value
+	 * @return
+	 */
+	private static String asString(Object value) {
+		if ( value != null ) {
+			return String.valueOf(value);
+		}
+		else {
+			return "";
+		}
+	}
 }
