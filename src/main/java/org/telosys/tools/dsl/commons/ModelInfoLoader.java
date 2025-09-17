@@ -18,8 +18,8 @@ package org.telosys.tools.dsl.commons;
 import java.io.File;
 import java.util.Map;
 
+import org.telosys.tools.commons.TelosysToolsException;
 import org.telosys.tools.commons.YamlFileManager;
-import org.telosys.tools.commons.exception.TelosysYamlException;
 import org.telosys.tools.dsl.DslModelError;
 
 public class ModelInfoLoader {
@@ -48,7 +48,7 @@ public class ModelInfoLoader {
 					modelInfo.setTitle(      asString( map.get(ModelInfo.TITLE      ) ) ); 
 					modelInfo.setVersion(    asString( map.get(ModelInfo.VERSION    ) ) ); 
 				}
-			} catch (TelosysYamlException e) {
+			} catch (TelosysToolsException e) {
 				throw new DslModelError("Invalid model file : YAML error" );
 			}
 		}

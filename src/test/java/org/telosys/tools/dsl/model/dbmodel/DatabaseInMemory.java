@@ -11,7 +11,6 @@ import org.telosys.tools.commons.dbcfg.yaml.DatabaseConnectionProvider;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinition;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitions;
 import org.telosys.tools.commons.dbcfg.yaml.DatabaseDefinitionsLoader;
-import org.telosys.tools.commons.exception.TelosysYamlException;
 import org.telosys.tools.commons.jdbc.SqlScriptRunner;
 
 public class DatabaseInMemory {
@@ -44,12 +43,14 @@ public class DatabaseInMemory {
 		File dbDefinitionsFile = new File(telosysToolsCfg.getDatabasesDbCfgFileAbsolutePath());
 		// Load databases definitions
 		DatabaseDefinitionsLoader loader = new DatabaseDefinitionsLoader();
-		DatabaseDefinitions databaseDefinitions;
-		try {
-			databaseDefinitions = loader.load(dbDefinitionsFile);
-		} catch (TelosysYamlException e) {
-			throw new TelosysToolsException("Cannot load databases definitions (YAML error)");
-		}
+//		DatabaseDefinitions databaseDefinitions;
+//		try {
+//			databaseDefinitions = loader.load(dbDefinitionsFile);
+//		} catch (TelosysYamlException e) {
+//			throw new TelosysToolsException("Cannot load databases definitions (YAML error)");
+//		}
+		DatabaseDefinitions databaseDefinitions = loader.load(dbDefinitionsFile);
+		
 		DatabaseDefinition dbDef = databaseDefinitions.getDatabaseDefinition(databaseId);
 		if ( dbDef != null ) {
 			return dbDef;
